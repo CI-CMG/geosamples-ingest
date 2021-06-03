@@ -1,2 +1,57 @@
 server:
+  compression:
+    enabled: true
+  tomcat:
+    accesslog:
+      directory: ${svc.home}/log
+      enabled: true
+      max-days: 31
+    redirect-context-root: false
+    use-relative-redirects: true
+    max-http-form-post-size: 2GB
+  error:
+    whitelabel:
+      enabled: false
   port: 54781
+  ssl:
+    enabled: false
+    #key-store: ''
+    #key-store-password: ''
+    key-store-type: PKCS12
+    #key-alias: ''
+
+spring:
+  jackson:
+    default-property-inclusion: non_null
+  mvc:
+    throw-exception-if-no-handler-found: true
+  jmx:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: MUD
+        dialect: org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect
+        spatial:
+          connection_finder: gov.noaa.ncei.mgg.geosamples.ingest.jpa.PooledConnectionFinder
+    open-in-view: false
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url:
+    username:
+    password:
+  flyway:
+    locations: classpath:db/migration/{vendor}
+    enabled: false
+    baseline-on-migrate: true
+    baseline-version: '000'
+    user: '${spring.datasource.username}'
+    password: '${spring.datasource.password}'
+    default-schema: '${spring.jpa.properties.hibernate.default_schema}'
+    placeholders:
+      schema_name: '${spring.jpa.properties.hibernate.default_schema}'
+    schemas:
+      - '${spring.jpa.properties.hibernate.default_schema}'
+    create-schemas: false

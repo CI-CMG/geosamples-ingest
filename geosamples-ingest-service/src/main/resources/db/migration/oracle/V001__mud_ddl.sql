@@ -1,32 +1,32 @@
-create sequence R367
+create sequence ${schema_name}.R367
 	increment by 16
 	maxvalue 2147483647
 /
 
-create sequence SDE_LOGFILE_LID_GEN
+create sequence ${schema_name}.SDE_LOGFILE_LID_GEN
 /
 
-create sequence R129
+create sequence ${schema_name}.R129
 	increment by 16
 	maxvalue 2147483647
 /
 
-create sequence R120
+create sequence ${schema_name}.R120
 	increment by 16
 	maxvalue 2147483647
 /
 
-create sequence R118
+create sequence ${schema_name}.R118
 	increment by 16
 	maxvalue 2147483647
 /
 
-create sequence R119
+create sequence ${schema_name}.R119
 	increment by 16
 	maxvalue 2147483647
 /
 
-create table NEWDECK
+create table ${schema_name}.NEWDECK
 (
 	MGGID VARCHAR2(8),
 	NODCREF VARCHAR2(5),
@@ -67,7 +67,7 @@ create table NEWDECK
 )
 /
 
-create table NEWDECK_REFS
+create table ${schema_name}.NEWDECK_REFS
 (
 	NODCREF VARCHAR2(5),
 	SOURCE_REFERENCE VARCHAR2(2000),
@@ -76,7 +76,7 @@ create table NEWDECK_REFS
 )
 /
 
-create table CURATORS_FACILITY
+create table ${schema_name}.CURATORS_FACILITY
 (
 	INST_CODE VARCHAR2(3),
 	FACILITY_CODE VARCHAR2(10) not null
@@ -101,7 +101,7 @@ create table CURATORS_FACILITY
 )
 /
 
-create table CURATORS_WEATH_META
+create table ${schema_name}.CURATORS_WEATH_META
 (
 	WEATH_META_CODE VARCHAR2(1),
 	WEATH_META VARCHAR2(30) not null
@@ -113,7 +113,7 @@ create table CURATORS_WEATH_META
 )
 /
 
-create table GEOLIN_SAMPLE
+create table ${schema_name}.GEOLIN_SAMPLE
 (
 	MGGID VARCHAR2(8),
 	CRUISE VARCHAR2(30),
@@ -159,123 +159,123 @@ create table GEOLIN_SAMPLE
 )
 /
 
-create index GEOLIN_SAMPLE_PHOTO_DESC
-	on GEOLIN_SAMPLE (PHOTO_DESCRIPTION)
+create index ${schema_name}.GEOLIN_SAMPLE_PHOTO_DESC
+	on ${schema_name}.GEOLIN_SAMPLE (PHOTO_DESCRIPTION)
 /
 
-create index GEOLIN_SAMPLE_PETROLOGY
-	on GEOLIN_SAMPLE (PETROLOGY)
+create index ${schema_name}.GEOLIN_SAMPLE_PETROLOGY
+	on ${schema_name}.GEOLIN_SAMPLE (PETROLOGY)
 /
 
-create index GEOLIN_SAMPLE_HEAT_FLOW
-	on GEOLIN_SAMPLE (HEAT_FLOW)
+create index ${schema_name}.GEOLIN_SAMPLE_HEAT_FLOW
+	on ${schema_name}.GEOLIN_SAMPLE (HEAT_FLOW)
 /
 
-create index GEOLIN_SAMPLE_WELL_LOGS
-	on GEOLIN_SAMPLE (WELL_LOGS)
+create index ${schema_name}.GEOLIN_SAMPLE_WELL_LOGS
+	on ${schema_name}.GEOLIN_SAMPLE (WELL_LOGS)
 /
 
-create index GEOLIN_SAMPLE_MNNODULE_SET
-	on GEOLIN_SAMPLE (MNNODULE_SET)
+create index ${schema_name}.GEOLIN_SAMPLE_MNNODULE_SET
+	on ${schema_name}.GEOLIN_SAMPLE (MNNODULE_SET)
 /
 
-create index GEOLIN_SAMPLE_PALEOMAGNETICS
-	on GEOLIN_SAMPLE (PALEOMAGNETICS)
+create index ${schema_name}.GEOLIN_SAMPLE_PALEOMAGNETICS
+	on ${schema_name}.GEOLIN_SAMPLE (PALEOMAGNETICS)
 /
 
-create index GEOLIN_SAMPLE_INST
-	on GEOLIN_SAMPLE (INST)
+create index ${schema_name}.GEOLIN_SAMPLE_INST
+	on ${schema_name}.GEOLIN_SAMPLE (INST)
 /
 
-create index GEOLIN_SAMPLE_LATLON
-	on GEOLIN_SAMPLE (LAT, LON)
+create index ${schema_name}.GEOLIN_SAMPLE_LATLON
+	on ${schema_name}.GEOLIN_SAMPLE (LAT, LON)
 /
 
-create index GEOLIN_SAMPLE_WATER_DEPTH
-	on GEOLIN_SAMPLE (WATER_DEPTH)
+create index ${schema_name}.GEOLIN_SAMPLE_WATER_DEPTH
+	on ${schema_name}.GEOLIN_SAMPLE (WATER_DEPTH)
 /
 
-create index GEOLIN_SAMPLE_DEVICE_CODE
-	on GEOLIN_SAMPLE (DEVICE_CODE)
+create index ${schema_name}.GEOLIN_SAMPLE_DEVICE_CODE
+	on ${schema_name}.GEOLIN_SAMPLE (DEVICE_CODE)
 /
 
-create index GEOLIN_SAMPLE_BEGIN_DATE
-	on GEOLIN_SAMPLE (BEGIN_DATE)
+create index ${schema_name}.GEOLIN_SAMPLE_BEGIN_DATE
+	on ${schema_name}.GEOLIN_SAMPLE (BEGIN_DATE)
 /
 
-create index GEOLIN_SAMPLE_DESCRIPTION
-	on GEOLIN_SAMPLE (DESCRIPTION)
+create index ${schema_name}.GEOLIN_SAMPLE_DESCRIPTION
+	on ${schema_name}.GEOLIN_SAMPLE (DESCRIPTION)
 /
 
-create index GEOLIN_SAMPLE_GRAIN_SIZE
-	on GEOLIN_SAMPLE (GRAIN_SIZE)
+create index ${schema_name}.GEOLIN_SAMPLE_GRAIN_SIZE
+	on ${schema_name}.GEOLIN_SAMPLE (GRAIN_SIZE)
 /
 
-create index GEOLIN_SAMPLE_SIZE
-	on GEOLIN_SAMPLE (GRAIN_SIZE, GRAIN_STATS)
+create index ${schema_name}.GEOLIN_SAMPLE_SIZE
+	on ${schema_name}.GEOLIN_SAMPLE (GRAIN_SIZE, GRAIN_STATS)
 /
 
-create index GEOLIN_SAMPLE_MINERALOGY
-	on GEOLIN_SAMPLE (MINERALOGY)
+create index ${schema_name}.GEOLIN_SAMPLE_MINERALOGY
+	on ${schema_name}.GEOLIN_SAMPLE (MINERALOGY)
 /
 
-create index GEOLIN_SAMPLE_ORGANIC_GEOCHEM
-	on GEOLIN_SAMPLE (ORGANIC_GEOCHEM)
+create index ${schema_name}.GEOLIN_SAMPLE_ORGANIC_GEOCHEM
+	on ${schema_name}.GEOLIN_SAMPLE (ORGANIC_GEOCHEM)
 /
 
-create index GEOLIN_SAMPLE_INORG_GEOCHEM
-	on GEOLIN_SAMPLE (INORGANIC_GEOCHEM)
+create index ${schema_name}.GEOLIN_SAMPLE_INORG_GEOCHEM
+	on ${schema_name}.GEOLIN_SAMPLE (INORGANIC_GEOCHEM)
 /
 
-create index GEOLIN_SAMPLE_PALEONTOLOGY
-	on GEOLIN_SAMPLE (PALEONTOLOGY)
+create index ${schema_name}.GEOLIN_SAMPLE_PALEONTOLOGY
+	on ${schema_name}.GEOLIN_SAMPLE (PALEONTOLOGY)
 /
 
-create index GEOLIN_SAMPLE_GEOTECHNICAL
-	on GEOLIN_SAMPLE (GEOTECHNICAL)
+create index ${schema_name}.GEOLIN_SAMPLE_GEOTECHNICAL
+	on ${schema_name}.GEOLIN_SAMPLE (GEOTECHNICAL)
 /
 
-create index GEOLIN_SAMPLE_ACOUSTICS
-	on GEOLIN_SAMPLE (ACOUSTICS)
+create index ${schema_name}.GEOLIN_SAMPLE_ACOUSTICS
+	on ${schema_name}.GEOLIN_SAMPLE (ACOUSTICS)
 /
 
-create index GEOLIN_SAMPLE_AGE
-	on GEOLIN_SAMPLE (AGE)
+create index ${schema_name}.GEOLIN_SAMPLE_AGE
+	on ${schema_name}.GEOLIN_SAMPLE (AGE)
 /
 
-create index GEOLIN_SAMPLE_SAMPLE_PHOTO
-	on GEOLIN_SAMPLE (SAMPLE_PHOTO)
+create index ${schema_name}.GEOLIN_SAMPLE_SAMPLE_PHOTO
+	on ${schema_name}.GEOLIN_SAMPLE (SAMPLE_PHOTO)
 /
 
-create index GEOLIN_SAMPLE_NEPHELOMETRY
-	on GEOLIN_SAMPLE (NEPHELOMETRY)
+create index ${schema_name}.GEOLIN_SAMPLE_NEPHELOMETRY
+	on ${schema_name}.GEOLIN_SAMPLE (NEPHELOMETRY)
 /
 
-create index GEOLIN_SAMPLE_RADIOACTIVITY
-	on GEOLIN_SAMPLE (RADIOACTIVITY)
+create index ${schema_name}.GEOLIN_SAMPLE_RADIOACTIVITY
+	on ${schema_name}.GEOLIN_SAMPLE (RADIOACTIVITY)
 /
 
-create index GEOLIN_SEARCH_LON
-	on GEOLIN_SAMPLE (SEARCH_LON)
+create index ${schema_name}.GEOLIN_SEARCH_LON
+	on ${schema_name}.GEOLIN_SAMPLE (SEARCH_LON)
 /
 
-create index GEOLIN_LAT_INDEX
-	on GEOLIN_SAMPLE (LAT)
+create index ${schema_name}.GEOLIN_LAT_INDEX
+	on ${schema_name}.GEOLIN_SAMPLE (LAT)
 /
 
-create index GEOLIN_LON_INDEX
-	on GEOLIN_SAMPLE (LON)
+create index ${schema_name}.GEOLIN_LON_INDEX
+	on ${schema_name}.GEOLIN_SAMPLE (LON)
 /
 
-create index GEOLIN_SAMPLE_MGGID
-	on GEOLIN_SAMPLE (MGGID)
+create index ${schema_name}.GEOLIN_SAMPLE_MGGID
+	on ${schema_name}.GEOLIN_SAMPLE (MGGID)
 /
 
-create index GEOLIN_SEARCH_LAT
-	on GEOLIN_SAMPLE (SEARCH_LAT)
+create index ${schema_name}.GEOLIN_SEARCH_LAT
+	on ${schema_name}.GEOLIN_SAMPLE (SEARCH_LAT)
 /
 
-create table TEMPINT
+create table ${schema_name}.TEMPINT
 (
 	FACILITY_CODE VARCHAR2(10),
 	SHIP_CODE VARCHAR2(4),
@@ -335,7 +335,7 @@ create table TEMPINT
 )
 /
 
-create table SIZE_CRUISE
+create table ${schema_name}.SIZE_CRUISE
 (
 	MGGID VARCHAR2(8) not null,
 	SHIP_CODE VARCHAR2(4),
@@ -368,11 +368,11 @@ create table SIZE_CRUISE
 )
 /
 
-create index SIZE_MGGC
-	on SIZE_CRUISE (MGGID)
+create index ${schema_name}.SIZE_MGGC
+	on ${schema_name}.SIZE_CRUISE (MGGID)
 /
 
-create table CURATORS_TEXTURE
+create table ${schema_name}.CURATORS_TEXTURE
 (
 	TEXTURE_CODE VARCHAR2(1),
 	TEXTURE VARCHAR2(40) not null
@@ -384,14 +384,14 @@ create table CURATORS_TEXTURE
 )
 /
 
-create table RESULTS
+create table ${schema_name}.RESULTS
 (
 	SDO_ROWID ROWID,
 	RESULT VARCHAR2(1000)
 )
 /
 
-create table MMBIB
+create table ${schema_name}.MMBIB
 (
 	MMBIB VARCHAR2(12) not null
 		primary key,
@@ -453,7 +453,7 @@ create table MMBIB
 )
 /
 
-create table CURATORS_PROVINCE
+create table ${schema_name}.CURATORS_PROVINCE
 (
 	PROVINCE_CODE VARCHAR2(2),
 	PROVINCE VARCHAR2(35) not null
@@ -466,7 +466,7 @@ create table CURATORS_PROVINCE
 )
 /
 
-create table SIZE_SAMPLE
+create table ${schema_name}.SIZE_SAMPLE
 (
 	MGGID VARCHAR2(8) not null,
 	SHIP VARCHAR2(40),
@@ -503,19 +503,19 @@ create table SIZE_SAMPLE
 )
 /
 
-create index SIZE_MGGCRUSAMPDEV
-	on SIZE_SAMPLE (MGGID, CRUISE, SAMPLE, DEVICE)
+create index ${schema_name}.SIZE_MGGCRUSAMPDEV
+	on ${schema_name}.SIZE_SAMPLE (MGGID, CRUISE, SAMPLE, DEVICE)
 /
 
-create index SIZE_MGGCRUS
-	on SIZE_SAMPLE (MGGID, CRUISE)
+create index ${schema_name}.SIZE_MGGCRUS
+	on ${schema_name}.SIZE_SAMPLE (MGGID, CRUISE)
 /
 
-create index SIZE_MGGS
-	on SIZE_SAMPLE (MGGID)
+create index ${schema_name}.SIZE_MGGS
+	on ${schema_name}.SIZE_SAMPLE (MGGID)
 /
 
-create table SIZE_INTERVAL
+create table ${schema_name}.SIZE_INTERVAL
 (
 	MGGID VARCHAR2(8) not null,
 	SHIP VARCHAR2(40),
@@ -566,23 +566,23 @@ create table SIZE_INTERVAL
 )
 /
 
-create index SIZE_MGGI
-	on SIZE_INTERVAL (MGGID)
+create index ${schema_name}.SIZE_MGGI
+	on ${schema_name}.SIZE_INTERVAL (MGGID)
 /
 
-create index SIZE_MGGCRUSAMPDEVI
-	on SIZE_INTERVAL (MGGID, CRUISE, SAMPLE, DEVICE)
+create index ${schema_name}.SIZE_MGGCRUSAMPDEVI
+	on ${schema_name}.SIZE_INTERVAL (MGGID, CRUISE, SAMPLE, DEVICE)
 /
 
-create index SIZE_MGGCRUSAMPDEVSIR
-	on SIZE_INTERVAL (MGGID, CRUISE, SAMPLE, DEVICE, SUBCORE, INTERVAL, REPLICATE)
+create index ${schema_name}.SIZE_MGGCRUSAMPDEVSIR
+	on ${schema_name}.SIZE_INTERVAL (MGGID, CRUISE, SAMPLE, DEVICE, SUBCORE, INTERVAL, REPLICATE)
 /
 
-create index SIZE_MGGCRUI
-	on SIZE_INTERVAL (MGGID, CRUISE)
+create index ${schema_name}.SIZE_MGGCRUI
+	on ${schema_name}.SIZE_INTERVAL (MGGID, CRUISE)
 /
 
-create table CURATORS_EXHAUST
+create table ${schema_name}.CURATORS_EXHAUST
 (
 	EXHAUST_CODE VARCHAR2(1) not null
 		constraint CURATORS_EXHAUST__CODE_PK
@@ -593,7 +593,7 @@ create table CURATORS_EXHAUST
 )
 /
 
-create table CURATORS_MUNSELL
+create table ${schema_name}.CURATORS_MUNSELL
 (
 	MUNSELL_CODE VARCHAR2(10) not null
 		constraint CURATORS_MUN_CODE_PK
@@ -604,7 +604,7 @@ create table CURATORS_MUNSELL
 )
 /
 
-create table CURATORS_REMARK
+create table ${schema_name}.CURATORS_REMARK
 (
 	REMARK_CODE VARCHAR2(1),
 	REMARK VARCHAR2(70) not null
@@ -616,7 +616,7 @@ create table CURATORS_REMARK
 )
 /
 
-create table PLATFORM
+create table ${schema_name}.PLATFORM
 (
 	INST_CODE VARCHAR2(3),
 	SHIP_CODE VARCHAR2(4) not null
@@ -628,7 +628,7 @@ create table PLATFORM
 )
 /
 
-create table CURATORS_AGE
+create table ${schema_name}.CURATORS_AGE
 (
 	AGE_CODE VARCHAR2(2),
 	AGE VARCHAR2(20) not null
@@ -640,7 +640,7 @@ create table CURATORS_AGE
 )
 /
 
-create table CURATORS_DEVICE
+create table ${schema_name}.CURATORS_DEVICE
 (
 	DEVICE_CODE VARCHAR2(2),
 	DEVICE VARCHAR2(30) not null
@@ -652,7 +652,7 @@ create table CURATORS_DEVICE
 )
 /
 
-create table PLATFORM_MASTER
+create table ${schema_name}.PLATFORM_MASTER
 (
 	MASTER_ID NUMBER(8),
 	PLATFORM VARCHAR2(50) not null
@@ -667,7 +667,7 @@ create table PLATFORM_MASTER
 )
 /
 
-create table CURATORS_CRUISE_LINKS
+create table ${schema_name}.CURATORS_CRUISE_LINKS
 (
 	PLATFORM VARCHAR2(50)
 		constraint CUR_CRUISE_LINKS_PLATFORM_FK
@@ -683,7 +683,7 @@ create table CURATORS_CRUISE_LINKS
 )
 /
 
-create table SIZE_WT_PCT
+create table ${schema_name}.SIZE_WT_PCT
 (
 	MGGID VARCHAR2(8),
 	SHIP VARCHAR2(40),
@@ -702,23 +702,23 @@ create table SIZE_WT_PCT
 )
 /
 
-create index SIZE_MGGCRUSAMPDEVW
-	on SIZE_WT_PCT (MGGID, CRUISE, SAMPLE, DEVICE)
+create index ${schema_name}.SIZE_MGGCRUSAMPDEVW
+	on ${schema_name}.SIZE_WT_PCT (MGGID, CRUISE, SAMPLE, DEVICE)
 /
 
-create index SIZE_MGGCRUSAMPDEVSIRW
-	on SIZE_WT_PCT (MGGID, CRUISE, SAMPLE, DEVICE, SUBCORE, INTERVAL, REPLICATE)
+create index ${schema_name}.SIZE_MGGCRUSAMPDEVSIRW
+	on ${schema_name}.SIZE_WT_PCT (MGGID, CRUISE, SAMPLE, DEVICE, SUBCORE, INTERVAL, REPLICATE)
 /
 
-create index SIZE_MGGCRUW
-	on SIZE_WT_PCT (MGGID, CRUISE)
+create index ${schema_name}.SIZE_MGGCRUW
+	on ${schema_name}.SIZE_WT_PCT (MGGID, CRUISE)
 /
 
-create index SIZE_MGGW
-	on SIZE_WT_PCT (MGGID)
+create index ${schema_name}.SIZE_MGGW
+	on ${schema_name}.SIZE_WT_PCT (MGGID)
 /
 
-create table CURATORS_ROCK_LITH
+create table ${schema_name}.CURATORS_ROCK_LITH
 (
 	ROCK_LITH_CODE VARCHAR2(2),
 	ROCK_LITH VARCHAR2(100) not null
@@ -730,7 +730,7 @@ create table CURATORS_ROCK_LITH
 )
 /
 
-create table CURATORS_STORAGE_METH
+create table ${schema_name}.CURATORS_STORAGE_METH
 (
 	STORAGE_METH_CODE VARCHAR2(1),
 	STORAGE_METH VARCHAR2(35) not null
@@ -742,7 +742,7 @@ create table CURATORS_STORAGE_METH
 )
 /
 
-create table CURATORS_SAMPLE_LINKS
+create table ${schema_name}.CURATORS_SAMPLE_LINKS
 (
 	PLATFORM VARCHAR2(50)
 		constraint CUR_SAMPLE_LINKS_PLATFORM_FK
@@ -764,7 +764,7 @@ create table CURATORS_SAMPLE_LINKS
 )
 /
 
-create table GEOLIN_SET
+create table ${schema_name}.GEOLIN_SET
 (
 	MGGID VARCHAR2(8) not null
 		constraint GEOL_REP_PK
@@ -815,11 +815,11 @@ create table GEOLIN_SET
 )
 /
 
-create index GEOLIN_SET_INSTITUTION
-	on GEOLIN_SET (INSTITUTION)
+create index ${schema_name}.GEOLIN_SET_INSTITUTION
+	on ${schema_name}.GEOLIN_SET (INSTITUTION)
 /
 
-create table CURATORS_LITHOLOGY
+create table ${schema_name}.CURATORS_LITHOLOGY
 (
 	LITHOLOGY_CODE VARCHAR2(1),
 	LITHOLOGY VARCHAR2(40) not null
@@ -832,7 +832,7 @@ create table CURATORS_LITHOLOGY
 )
 /
 
-create table CURATORS_ROCK_MIN
+create table ${schema_name}.CURATORS_ROCK_MIN
 (
 	ROCK_MIN_CODE VARCHAR2(1),
 	ROCK_MIN VARCHAR2(35) not null
@@ -844,7 +844,7 @@ create table CURATORS_ROCK_MIN
 )
 /
 
-create table TEMPQC_INTERVAL
+create table ${schema_name}.TEMPQC_INTERVAL
 (
 	FACILITY_CODE VARCHAR2(10) not null
 		constraint TEMPQC_INTERVAL_FACILITY_FK
@@ -942,7 +942,7 @@ create table TEMPQC_INTERVAL
 )
 /
 
-create table CURATORS_LAKE
+create table ${schema_name}.CURATORS_LAKE
 (
 	LAKE VARCHAR2(255),
 	CONTINENT VARCHAR2(30),
@@ -969,11 +969,11 @@ create table CURATORS_LAKE
 )
 /
 
-create index CURLAKE_LAKE
-	on CURATORS_LAKE (LAKE)
+create index ${schema_name}.CURLAKE_LAKE
+	on ${schema_name}.CURATORS_LAKE (LAKE)
 /
 
-create table INST
+create table ${schema_name}.INST
 (
 	INST_CODE VARCHAR2(3) not null
 		constraint INST_CODE_PK
@@ -986,7 +986,7 @@ create table INST
 )
 /
 
-create table MARINE_GEOLOGY_TSQP
+create table ${schema_name}.MARINE_GEOLOGY_TSQP
 (
 	OBJECTID NUMBER(38) not null
 		primary key,
@@ -1028,12 +1028,17 @@ create table MARINE_GEOLOGY_TSQP
 )
 /
 
-create index MARINE_GEOLOGY_TSQP_SPX
-	on MARINE_GEOLOGY_TSQP (SHAPE)
+insert into MDSYS.USER_SDO_GEOM_METADATA (table_name, column_name, diminfo, srid)
+values ('MARINE_GEOLOGY_TSQP', 'SHAPE',
+        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 8307);
+
+
+create index ${schema_name}.MARINE_GEOLOGY_TSQP_SPX
+	on ${schema_name}.MARINE_GEOLOGY_TSQP (SHAPE)
 	indextype is MDSYS.SPATIAL_INDEX
 /
 
-create table CURATORS_SAMPLE_WEBM_TSQP
+create table ${schema_name}.CURATORS_SAMPLE_WEBM_TSQP
 (
 	FACILITY_CODE VARCHAR2(10) not null,
 	SHIP_CODE VARCHAR2(4),
@@ -1085,12 +1090,16 @@ create table CURATORS_SAMPLE_WEBM_TSQP
 )
 /
 
-create index CURATORS_SAMPLE_WEBM_TSQP_SPX
-	on CURATORS_SAMPLE_WEBM_TSQP (SHAPE)
+insert into MDSYS.USER_SDO_GEOM_METADATA (table_name, column_name, diminfo, srid)
+values ('CURATORS_SAMPLE_WEBM_TSQP', 'SHAPE',
+        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 3857);
+
+create index ${schema_name}.CURATORS_SAMPLE_WEBM_TSQP_SPX
+	on ${schema_name}.CURATORS_SAMPLE_WEBM_TSQP (SHAPE)
 	indextype is MDSYS.SPATIAL_INDEX
 /
 
-create table TEMPQC_SAMPLE
+create table ${schema_name}.TEMPQC_SAMPLE
 (
 	FACILITY_CODE VARCHAR2(10) not null
 		constraint TEMPQC_SAMPLE_FACILITY_FK
@@ -1153,7 +1162,7 @@ create table TEMPQC_SAMPLE
 )
 /
 
-create table TEMPSMP
+create table ${schema_name}.TEMPSMP
 (
 	FACILITY_CODE VARCHAR2(10),
 	SHIP_CODE VARCHAR2(4),
@@ -1204,15 +1213,18 @@ create table TEMPSMP
 )
 /
 
-create table CURATORS_SAMPLE_TSQP
+create table ${schema_name}.CURATORS_SAMPLE_TSQP
 (
 	FACILITY_CODE VARCHAR2(10)
 		constraint CURATORS_SAMPTSQP_FACILITY_FK
 			references CURATORS_FACILITY,
 	SHIP_CODE VARCHAR2(4),
-	PLATFORM VARCHAR2(50)
-		constraint CURATORS_SAMPTSQP_PLATFORM_FK
-			references MB.PLATFORM_MASTER (),
+-- 	PLATFORM VARCHAR2(50)
+-- 		constraint CURATORS_SAMPTSQP_PLATFORM_FK
+-- 			references MB.PLATFORM_MASTER (),
+    PLATFORM VARCHAR2(50)
+        constraint CURATORS_SAMPTSQP_PLATFORM_FK
+            references PLATFORM_MASTER,
 	CRUISE VARCHAR2(30),
 	SAMPLE VARCHAR2(30),
 	DEVICE VARCHAR2(30)
@@ -1273,15 +1285,18 @@ create table CURATORS_SAMPLE_TSQP
 )
 /
 
-create table CURATORS_INTERVAL
+create table ${schema_name}.CURATORS_INTERVAL
 (
 	FACILITY_CODE VARCHAR2(10)
 		constraint CURATORS_INTERVAL_FACILITY_FK
 			references CURATORS_FACILITY,
 	SHIP_CODE VARCHAR2(4),
-	PLATFORM VARCHAR2(50)
-		constraint CURATORS_INTERVAL_PLATFORM_FK
-			references MB.PLATFORM_MASTER (),
+-- 	PLATFORM VARCHAR2(50)
+-- 		constraint CURATORS_INTERVAL_PLATFORM_FK
+-- 			references MB.PLATFORM_MASTER (),
+    PLATFORM VARCHAR2(50)
+        constraint CURATORS_INTERVAL_PLATFORM_FK
+            references PLATFORM_MASTER,
 	CRUISE VARCHAR2(30),
 	SAMPLE VARCHAR2(30),
 	DEVICE VARCHAR2(30)
@@ -1375,12 +1390,17 @@ create table CURATORS_INTERVAL
 )
 /
 
-create index CURATORS_SAMPLE_TSQP_SPX
-	on CURATORS_SAMPLE_TSQP (SHAPE)
+insert into MDSYS.USER_SDO_GEOM_METADATA (table_name, column_name, diminfo, srid)
+values ('CURATORS_SAMPLE_TSQP', 'SHAPE',
+        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 4326);
+
+
+create index ${schema_name}.CURATORS_SAMPLE_TSQP_SPX
+	on ${schema_name}.CURATORS_SAMPLE_TSQP (SHAPE)
 	indextype is MDSYS.SPATIAL_INDEX
 /
 
-create table TEMP_GEOLOGY_TSQP
+create table ${schema_name}.TEMP_GEOLOGY_TSQP
 (
 	OBJECTID NUMBER(38),
 	LATITUDE NUMBER(9,5) not null,
@@ -1421,7 +1441,7 @@ create table TEMP_GEOLOGY_TSQP
 )
 /
 
-create table DECK41_TSQP
+create table ${schema_name}.DECK41_TSQP
 (
 	OBJECTID NUMBER(38) not null
 		primary key,
@@ -1442,12 +1462,17 @@ create table DECK41_TSQP
 )
 /
 
-create index DECK41_TSQP_SPX
-	on DECK41_TSQP (SHAPE)
+insert into MDSYS.USER_SDO_GEOM_METADATA (table_name, column_name, diminfo, srid)
+values ('DECK41_TSQP', 'SHAPE',
+        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 8307);
+
+
+create index ${schema_name}.DECK41_TSQP_SPX
+	on ${schema_name}.DECK41_TSQP (SHAPE)
 	indextype is MDSYS.SPATIAL_INDEX
 /
 
-create table NEUMANN
+create table ${schema_name}.NEUMANN
 (
 	SURVEY VARCHAR2(30) not null,
 	SAMPLE VARCHAR2(38) not null,
@@ -1476,7 +1501,7 @@ create table NEUMANN
 )
 /
 
-create table UNPUBLISH_SURVEYS
+create table ${schema_name}.UNPUBLISH_SURVEYS
 (
 	SURVEY VARCHAR2(30) not null,
 	SAMPLE VARCHAR2(38) not null,
@@ -1505,87 +1530,87 @@ create table UNPUBLISH_SURVEYS
 )
 /
 
-create view CURATORS_SAMPLE_VSQP as
-select
-FACILITY_CODE,
-PLATFORM,
-CRUISE,
-SAMPLE,
-DEVICE,
-BEGIN_DATE,
-END_DATE,
-LAT,
-END_LAT,
-LON,
-END_LON,
-WATER_DEPTH,
-END_WATER_DEPTH,
-STORAGE_METH,
-CORED_LENGTH,
-CORED_LENGTH_MM,
-CORED_DIAM,
-CORED_DIAM_MM,
-PI,
-PROVINCE,
-LAKE,
-OTHER_LINK,
-LAST_UPDATE,
-IGSN,
-LEG,
-SAMPLE_COMMENTS,
-PUBLISH,
-OBJECTID,
-SHAPE,
-SHOW_SAMPL,
-'http://www.ngdc.noaa.gov/geosamples/leg.jsp?leg=' || CRUISE as CRUISE_URL,
-case when LEG is null then null else ' http://www.ngdc.noaa.gov/geosamples/leg.jsp?leg=' || LEG end as LEG_URL,
-'http://www.ngdc.noaa.gov/geosamples/displayfacility.jsp?fac=' || FACILITY_CODE as REPOSITORY_URL,
-IMLGS
-from MUD.CURATORS_SAMPLE_TSQP
-/
+-- create view CURATORS_SAMPLE_VSQP as
+-- select
+-- FACILITY_CODE,
+-- PLATFORM,
+-- CRUISE,
+-- SAMPLE,
+-- DEVICE,
+-- BEGIN_DATE,
+-- END_DATE,
+-- LAT,
+-- END_LAT,
+-- LON,
+-- END_LON,
+-- WATER_DEPTH,
+-- END_WATER_DEPTH,
+-- STORAGE_METH,
+-- CORED_LENGTH,
+-- CORED_LENGTH_MM,
+-- CORED_DIAM,
+-- CORED_DIAM_MM,
+-- PI,
+-- PROVINCE,
+-- LAKE,
+-- OTHER_LINK,
+-- LAST_UPDATE,
+-- IGSN,
+-- LEG,
+-- SAMPLE_COMMENTS,
+-- PUBLISH,
+-- OBJECTID,
+-- SHAPE,
+-- SHOW_SAMPL,
+-- 'http://www.ngdc.noaa.gov/geosamples/leg.jsp?leg=' || CRUISE as CRUISE_URL,
+-- case when LEG is null then null else ' http://www.ngdc.noaa.gov/geosamples/leg.jsp?leg=' || LEG end as LEG_URL,
+-- 'http://www.ngdc.noaa.gov/geosamples/displayfacility.jsp?fac=' || FACILITY_CODE as REPOSITORY_URL,
+-- IMLGS
+-- from MUD.CURATORS_SAMPLE_TSQP
+-- /
 
-create view MARINE_GEOLOGY_VSQP as
-select
-a.OBJECTID,
-a.LATITUDE,
-a.LONGITUDE,
-a.MGGID,
-a.SHIP,
-a.CRUISE,
-a.SAMPLE,
-a.DEVICE,
-a.YEARMODA,
-a.WDEPTH,
-a.ANALYSES,
-a.DESCRIPTION,
-a.GRAIN_SIZE,
-a.GRAIN_STATS,
-a.MINERALOGY,
-a.ORGANIC_GEOCHEM,
-a.INORGANIC_GEOCHEM,
-a.PALEONTOLOGY,
-a.GEOTECHNICAL,
-a.ACOUSTICS,
-a.AGE,
-a.SAMPLE_PHOTO,
-a.NEPHELOMETRY,
-a.RADIOACTIVITY,
-a.PHOTO_DESCRIPTION,
-a.PETROLOGY,
-a.HEAT_FLOW,
-a.WELL_LOGS,
-a.MNNODULE_SET,
-a.PALEOMAGNETICS,
-a.TITLE,
-a.FGDCID,
-a.SHAPE,
-a.IGSN,
-a.PUBLISH,
-a.PREVIOUS_STATE,
-b.INSTITUTION,
-'http://www.ngdc.noaa.gov/nndc/struts/results?op_28=eq&t=101477&s=1&d=2&v_28='|| a.MGGID URL,
-CASE WHEN a.FGDCID IS NULL THEN NULL ELSE 'http://www.ngdc.noaa.gov/docucomp/page?xml=NOAA/NESDIS/NGDC/MGG/Geology/iso/xml/'|| a.FGDCID || '.xml&view=getDataView&header=none' end METADATA_URL
-from MUD.MARINE_GEOLOGY_TSQP a, MUD.GEOLIN_SET b
-where a.mggid = b.mggid(+)
-/
+-- create view MARINE_GEOLOGY_VSQP as
+-- select
+-- a.OBJECTID,
+-- a.LATITUDE,
+-- a.LONGITUDE,
+-- a.MGGID,
+-- a.SHIP,
+-- a.CRUISE,
+-- a.SAMPLE,
+-- a.DEVICE,
+-- a.YEARMODA,
+-- a.WDEPTH,
+-- a.ANALYSES,
+-- a.DESCRIPTION,
+-- a.GRAIN_SIZE,
+-- a.GRAIN_STATS,
+-- a.MINERALOGY,
+-- a.ORGANIC_GEOCHEM,
+-- a.INORGANIC_GEOCHEM,
+-- a.PALEONTOLOGY,
+-- a.GEOTECHNICAL,
+-- a.ACOUSTICS,
+-- a.AGE,
+-- a.SAMPLE_PHOTO,
+-- a.NEPHELOMETRY,
+-- a.RADIOACTIVITY,
+-- a.PHOTO_DESCRIPTION,
+-- a.PETROLOGY,
+-- a.HEAT_FLOW,
+-- a.WELL_LOGS,
+-- a.MNNODULE_SET,
+-- a.PALEOMAGNETICS,
+-- a.TITLE,
+-- a.FGDCID,
+-- a.SHAPE,
+-- a.IGSN,
+-- a.PUBLISH,
+-- a.PREVIOUS_STATE,
+-- b.INSTITUTION,
+-- 'http://www.ngdc.noaa.gov/nndc/struts/results?op_28=eq&t=101477&s=1&d=2&v_28='|| a.MGGID URL,
+-- CASE WHEN a.FGDCID IS NULL THEN NULL ELSE 'http://www.ngdc.noaa.gov/docucomp/page?xml=NOAA/NESDIS/NGDC/MGG/Geology/iso/xml/'|| a.FGDCID || '.xml&view=getDataView&header=none' end METADATA_URL
+-- from MUD.MARINE_GEOLOGY_TSQP a, MUD.GEOLIN_SET b
+-- where a.mggid = b.mggid(+)
+-- /
 

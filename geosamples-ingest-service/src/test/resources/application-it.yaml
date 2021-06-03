@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_schema: CROWBAR_PROVIDER
+    open-in-view: false
+  datasource:
+    url: jdbc:oracle:thin:@localhost:15215/XEPDB1
+    username: CROWBAR_PROVIDER
+    password: letmein
+  flyway:
+    enabled: true

@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,10 +19,38 @@ import javax.persistence.Table;
 @Table(name = "CURATORS_REMARK")
 public class CuratorsRemarkEntity {
 
-
   @Id
   @Column(name = "REMARK", nullable = false, length = 70)
   private String remark;
+
+  @Column(name = "REMARK_CODE",  length = 1)
+  private String remarkCode;
+
+  @Column(name = "PUBLISH", length = 1)
+  private String publish;
+
+  @Column(name = "PREVIOUS_STATE", length = 1)
+  private String previousState;
+
+  @Column(name = "SOURCE_URI", length = 255)
+  private String sourceUri;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CuratorsRemarkEntity that = (CuratorsRemarkEntity) o;
+    return Objects.equals(remark, that.remark);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(remark);
+  }
 
   public String getRemark() {
     return remark;
@@ -29,5 +58,37 @@ public class CuratorsRemarkEntity {
 
   public void setRemark(String remark) {
     this.remark = remark;
+  }
+
+  public String getRemarkCode() {
+    return remarkCode;
+  }
+
+  public void setRemarkCode(String remarkCode) {
+    this.remarkCode = remarkCode;
+  }
+
+  public String getPublish() {
+    return publish;
+  }
+
+  public void setPublish(String publish) {
+    this.publish = publish;
+  }
+
+  public String getPreviousState() {
+    return previousState;
+  }
+
+  public void setPreviousState(String previousState) {
+    this.previousState = previousState;
+  }
+
+  public String getSourceUri() {
+    return sourceUri;
+  }
+
+  public void setSourceUri(String sourceUri) {
+    this.sourceUri = sourceUri;
   }
 }

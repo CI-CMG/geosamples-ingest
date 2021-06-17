@@ -1,3 +1,8 @@
+geosamples:
+  show-sample-base-url: https://www.ngdc.noaa.gov/geosamples/showsample.jsp
+  username: ''
+  password: ''
+
 server:
   compression:
     enabled: true
@@ -14,15 +19,13 @@ server:
       enabled: false
   port: 54781
   ssl:
-    enabled: false
+    enabled: true
     #key-store: ''
     #key-store-password: ''
     key-store-type: PKCS12
     #key-alias: ''
 
 spring:
-  jackson:
-    default-property-inclusion: non_null
   mvc:
     throw-exception-if-no-handler-found: true
   jmx:

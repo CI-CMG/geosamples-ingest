@@ -1,3 +1,3 @@
 <template>
-  <h2>Welcome to Crowbar</h2>
+  <h2>Welcome to the Geosamples API</h2>
 </template>

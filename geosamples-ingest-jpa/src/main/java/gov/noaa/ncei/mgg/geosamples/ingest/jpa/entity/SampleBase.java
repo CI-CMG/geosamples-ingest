@@ -2,13 +2,11 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
 import java.util.Objects;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Table;
 import org.locationtech.jts.geom.Geometry;
 
 /*
@@ -96,15 +94,15 @@ public abstract class SampleBase {
 //  private String deviceId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "FACILITY_CODE", nullable = false, insertable = false, updatable = false)
+  @JoinColumn(name = "FACILITY_CODE", nullable = false)
   private CuratorsFacilityEntity facility;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PLATFORM", nullable = false, insertable = false, updatable = false)
+  @JoinColumn(name = "PLATFORM", nullable = false)
   private PlatformMasterEntity platform;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "DEVICE", nullable = false, insertable = false, updatable = false)
+  @JoinColumn(name = "DEVICE", nullable = false)
   private CuratorsDeviceEntity device;
 
   @Column(name = "SHIP_CODE", length = 4)
@@ -206,7 +204,7 @@ public abstract class SampleBase {
   private String lastUpdate;
 
   @Column(name = "IGSN", length = 9, unique = true)
-  private String isgn;
+  private String igsn;
 
   @Column(name = "LEG", length = 30)
   private String leg;
@@ -571,12 +569,12 @@ public abstract class SampleBase {
     this.lastUpdate = lastUpdate;
   }
 
-  public String getIsgn() {
-    return isgn;
+  public String getIgsn() {
+    return igsn;
   }
 
-  public void setIsgn(String isgn) {
-    this.isgn = isgn;
+  public void setIgsn(String igsn) {
+    this.igsn = igsn;
   }
 
   public String getLeg() {

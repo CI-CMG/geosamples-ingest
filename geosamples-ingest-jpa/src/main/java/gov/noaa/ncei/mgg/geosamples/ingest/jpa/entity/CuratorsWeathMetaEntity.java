@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -23,11 +24,72 @@ public class CuratorsWeathMetaEntity {
   @Column(name = "WEATH_META", nullable = false, length = 30)
   private String weathMeta;
 
+  @Column(name = "WEATH_META_CODE", length = 1)
+  private String weathMetaCode;
+
+  @Column(name = "PUBLISH", length = 1)
+  private String publish;
+
+  @Column(name = "PREVIOUS_STATE", length = 1)
+  private String previousState;
+
+  @Column(name = "SOURCE_URI", length = 255)
+  private String sourceUri;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CuratorsWeathMetaEntity that = (CuratorsWeathMetaEntity) o;
+    return Objects.equals(weathMeta, that.weathMeta);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(weathMeta);
+  }
+
   public String getWeathMeta() {
     return weathMeta;
   }
 
   public void setWeathMeta(String weathMeta) {
     this.weathMeta = weathMeta;
+  }
+
+  public String getWeathMetaCode() {
+    return weathMetaCode;
+  }
+
+  public void setWeathMetaCode(String weathMetaCode) {
+    this.weathMetaCode = weathMetaCode;
+  }
+
+  public String getPublish() {
+    return publish;
+  }
+
+  public void setPublish(String publish) {
+    this.publish = publish;
+  }
+
+  public String getPreviousState() {
+    return previousState;
+  }
+
+  public void setPreviousState(String previousState) {
+    this.previousState = previousState;
+  }
+
+  public String getSourceUri() {
+    return sourceUri;
+  }
+
+  public void setSourceUri(String sourceUri) {
+    this.sourceUri = sourceUri;
   }
 }

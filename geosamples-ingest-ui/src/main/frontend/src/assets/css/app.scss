@@ -6,39 +6,6 @@ html {
   content: ">";
 }
 
-.csb-ex-row-collapse-btn {
-  cursor: pointer;
-}
-
-.cesium-map {
-  width: 100%;
-  height: 100%;
-
-  .cesium-credit-logoContainer {
-    display: none;
-  }
-
-  .cesium-viewer-bottom {
-    display: none;
-  }
-
-  .cesium-widget-credits {
-    display: none;
-  }
-
-  .cesium-viewer-animationContainer {
-    display: none;
-  }
-
-  .cesium-credit-logoContainer {
-    display: none;
-  }
-
-  .cesium-viewer-toolbar {
-    display: none;
-  }
-}
-
 .crowbar-alert {
   position: fixed;
   top: 0;

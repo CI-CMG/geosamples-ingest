@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,14 +20,42 @@ import javax.persistence.Table;
 @Table(name = "CURATORS_LITHOLOGY")
 public class CuratorsLithologyEntity {
 
-  /*
-	DEVICE VARCHAR2(30) not null
-		constraint CURATORS_DEVICE_PK
-			primary key,
-   */
+
   @Id
-  @Column(name = "LITHOLOGY", nullable = false, length = 40)
+  @Column(name = "LITHOLOGY", length = 40)
   private String lithology;
+
+  @Column(name = "LITHOLOGY_CODE", length = 1)
+  private String lithologyCode;
+
+  @Column(name = "OLD_LITHOLOGY", length = 40)
+  private String oldLithology;
+
+  @Column(name = "PUBLISH", length = 1)
+  private String publish;
+
+  @Column(name = "PREVIOUS_STATE", length = 1)
+  private String previousState;
+
+  @Column(name = "SOURCE_URI", length = 255)
+  private String sourceUri;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CuratorsLithologyEntity that = (CuratorsLithologyEntity) o;
+    return Objects.equals(lithology, that.lithology);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(lithology);
+  }
 
   public String getLithology() {
     return lithology;
@@ -34,5 +63,45 @@ public class CuratorsLithologyEntity {
 
   public void setLithology(String lithology) {
     this.lithology = lithology;
+  }
+
+  public String getLithologyCode() {
+    return lithologyCode;
+  }
+
+  public void setLithologyCode(String lithologyCode) {
+    this.lithologyCode = lithologyCode;
+  }
+
+  public String getOldLithology() {
+    return oldLithology;
+  }
+
+  public void setOldLithology(String oldLithology) {
+    this.oldLithology = oldLithology;
+  }
+
+  public String getPublish() {
+    return publish;
+  }
+
+  public void setPublish(String publish) {
+    this.publish = publish;
+  }
+
+  public String getPreviousState() {
+    return previousState;
+  }
+
+  public void setPreviousState(String previousState) {
+    this.previousState = previousState;
+  }
+
+  public String getSourceUri() {
+    return sourceUri;
+  }
+
+  public void setSourceUri(String sourceUri) {
+    this.sourceUri = sourceUri;
   }
 }

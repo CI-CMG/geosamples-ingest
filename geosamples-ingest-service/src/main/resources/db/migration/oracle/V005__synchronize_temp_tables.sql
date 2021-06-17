@@ -55,7 +55,7 @@ alter table ${schema_name}.CURATORS_SAMPLE_TSQP
         check ( OBJECTID is not null );
 
 
-create or replace trigger ${schema_name}.TEMPQC_SAMPLE_BI BEFORE
+create or replace trigger ${schema_name}.TEMPQC_SAMPLE_bi BEFORE
     INSERT ON ${schema_name}.TEMPQC_SAMPLE REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
 begin
 
@@ -71,4 +71,56 @@ begin
     end if;
 end;
 /
+
+
+alter table ${schema_name}.TEMPQC_INTERVAL drop constraint TEMPQC_INTERVAL_PK;
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_PK
+        primary key (IMLGS, INTERVAL);
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_UK
+        unique (FACILITY_CODE, PLATFORM, CRUISE, SAMPLE, DEVICE, INTERVAL);
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_FACILITY_CODE_NN
+        check ( FACILITY_CODE is not null );
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_PLATFORM_NN
+        check ( PLATFORM is not null );
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_CRUISE_NN
+        check ( CRUISE is not null );
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_DEVICE_NN
+        check ( DEVICE is not null );
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint TEMPQC_INTERVAL_PARENT_IGSN_NN
+        check ( PARENT_IGSN is not null );
+
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint CURATORS_INTERVAL_FACILITY_CODE_NN
+        check ( FACILITY_CODE is not null );
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint CURATORS_INTERVAL_PLATFORM_NN
+        check ( PLATFORM is not null );
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint CURATORS_INTERVAL_CRUISE_NN
+        check ( CRUISE is not null );
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint CURATORS_INTERVAL_DEVICE_NN
+        check ( DEVICE is not null );
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint CURATORS_INTERVAL_PARENT_IGSN_NN
+        check ( PARENT_IGSN is not null );
 

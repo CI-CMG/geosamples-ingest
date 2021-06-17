@@ -9,7 +9,7 @@ import App from './App.vue';
 
 Vue.config.productionTip = false;
 
-startSessionMonster();
+startSessionMonster(store);
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);

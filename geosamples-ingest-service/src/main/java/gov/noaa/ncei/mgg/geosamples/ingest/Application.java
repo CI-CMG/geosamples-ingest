@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @SpringBootApplication
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableTransactionManagement
 public class Application {
 

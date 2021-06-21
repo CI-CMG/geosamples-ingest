@@ -44,7 +44,7 @@ public class PlatformMasterEntity {
   private String prefix;
 
   @Column(name = "ICES_CODE", length = 4)
-  private String icesPrefix;
+  private String icesCode;
 
   @Column(name = "SOURCE_URI", length = 255)
   private String sourceUri;
@@ -114,12 +114,12 @@ public class PlatformMasterEntity {
     this.prefix = prefix;
   }
 
-  public String getIcesPrefix() {
-    return icesPrefix;
+  public String getIcesCode() {
+    return icesCode;
   }
 
-  public void setIcesPrefix(String icesPrefix) {
-    this.icesPrefix = icesPrefix;
+  public void setIcesCode(String icesPrefix) {
+    this.icesCode = icesPrefix;
   }
 
   public String getSourceUri() {

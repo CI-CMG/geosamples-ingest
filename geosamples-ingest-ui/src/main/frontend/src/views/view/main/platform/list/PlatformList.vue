@@ -37,8 +37,11 @@
     no-local-sorting
     @sort-changed="sortChanged"
     :sort-by="sortBy"
-    :sort-desc="sortDesc"
-  />
+    :sort-desc="sortDesc">
+    <template #cell(platform)="data">
+      <b-link :to="{ name: 'PlatformEdit', params: { id: data.item.platform }}">{{ data.item.platform }}</b-link>
+    </template>
+  </b-table>
   <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>
 </div>
 </template>
@@ -124,6 +127,11 @@ export default {
 
       fields: [
         {
+          key: 'platform',
+          label: 'Platform',
+          sortable: true,
+        },
+        {
           key: 'masterId',
           label: 'Master ID',
           sortable: true,
@@ -131,11 +139,6 @@ export default {
         {
           key: 'prefix',
           label: 'Prefix',
-        },
-        {
-          key: 'platform',
-          label: 'Platform',
-          sortable: true,
         },
         {
           key: 'icesCode',

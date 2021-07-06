@@ -7,11 +7,12 @@ private String sourceUri;
 
     <div v-if="ready">
 
-      <b-form @submit.prevent="saveForm" @reset.prevent="reset"><br />
+      <h1 v-if="isEdit" class="text-primary">Edit Platform - {{ getValue('platform') }}</h1>
+      <h1 v-else class="text-primary">Add New Platform</h1>
 
-        <h1 v-if="isEdit" class="text-primary">Edit Platform - {{ getValue('platform') }}</h1>
-        <h1 v-else class="text-primary">Add New Platform</h1>
-        <br />
+      <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
+
+      <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
         <b-form-group v-if="!isEdit" label="Platform" :label-for="platformId">
           <b-form-input
@@ -123,6 +124,9 @@ export default {
         .then((provider) => this.save({ provider, id: this.id }))
         .then(() => this.$router.push({ name: 'PlatformList' }));
     },
+    doDelete() {
+      this.delete(this.id).then(() => this.$router.push({ name: 'PlatformList' }));
+    },
   },
 
   computed: {
@@ -159,7 +163,7 @@ export default {
   },
   created() {
     if (this.id != null) {
-      this.loadProvider(this.id).then(this.initialize);
+      this.load(this.id).then(this.initialize);
     } else {
       this.initialize();
     }

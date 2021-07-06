@@ -54,9 +54,9 @@ public class AgeService extends
   }
 
   @Override
-  protected CuratorsAgeEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsAgeEntity newEntityWithDefaultValues(AgeView view) {
     CuratorsAgeEntity entity = new CuratorsAgeEntity();
-    entity.setAge(id);
+    entity.setAge(view.getAge());
     entity.setPublish("Y");
     return entity;
   }

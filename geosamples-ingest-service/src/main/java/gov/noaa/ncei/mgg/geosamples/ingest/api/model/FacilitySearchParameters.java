@@ -23,7 +23,7 @@ public class FacilitySearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(FacilityView.class) String> order = DEFAULT_SORT;
 
   private List<String> facilityCode = new ArrayList<>(0);
   private List<String> instCode = new ArrayList<>(0);

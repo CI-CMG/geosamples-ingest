@@ -63,9 +63,9 @@ public class StorageMethodService extends
   }
 
   @Override
-  protected CuratorsStorageMethEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsStorageMethEntity newEntityWithDefaultValues(StorageMethodView view) {
     CuratorsStorageMethEntity entity = new CuratorsStorageMethEntity();
-    entity.setStorageMeth(id);
+    entity.setStorageMeth(view.getStorageMethod());
     entity.setPublish("Y");
     return entity;
   }

@@ -64,9 +64,9 @@ public class WeatheringService extends
   }
 
   @Override
-  protected CuratorsWeathMetaEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsWeathMetaEntity newEntityWithDefaultValues(WeatheringView view) {
     CuratorsWeathMetaEntity entity = new CuratorsWeathMetaEntity();
-    entity.setWeathMeta(id);
+    entity.setWeathMeta(view.getWeathering());
     entity.setPublish("Y");
     return entity;
   }

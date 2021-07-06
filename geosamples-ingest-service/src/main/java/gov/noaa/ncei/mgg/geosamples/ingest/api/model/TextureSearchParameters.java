@@ -23,7 +23,7 @@ public class TextureSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(TextureView.class) String> order = DEFAULT_SORT;
 
   private List<String> texture = new ArrayList<>(0);
   private List<String> textureCode = new ArrayList<>(0);

@@ -64,9 +64,9 @@ public class ProvinceService extends
   }
 
   @Override
-  protected CuratorsProvinceEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsProvinceEntity newEntityWithDefaultValues(ProvinceView view) {
     CuratorsProvinceEntity entity = new CuratorsProvinceEntity();
-    entity.setProvince(id);
+    entity.setProvince(view.getProvince());
     entity.setPublish("Y");
     return entity;
   }

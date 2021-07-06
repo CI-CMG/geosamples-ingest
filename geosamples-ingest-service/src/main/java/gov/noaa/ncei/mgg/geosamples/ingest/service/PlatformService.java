@@ -61,9 +61,9 @@ public class PlatformService extends
   }
 
   @Override
-  protected PlatformMasterEntity newEntityWithDefaultValues(String id) {
+  protected PlatformMasterEntity newEntityWithDefaultValues(PlatformView view) {
     PlatformMasterEntity entity = new PlatformMasterEntity();
-    entity.setPlatform(id);
+    entity.setPlatform(view.getPlatform());
     entity.setDateAdded(Instant.now());
     entity.setPublish("Y");
     return entity;

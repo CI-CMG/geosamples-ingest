@@ -23,7 +23,7 @@ public class ProvinceSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(ProvinceView.class) String> order = DEFAULT_SORT;
 
   private List<String> province = new ArrayList<>(0);
   private List<String> provinceCode = new ArrayList<>(0);

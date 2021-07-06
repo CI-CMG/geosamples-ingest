@@ -23,7 +23,7 @@ public class RemarkSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(RemarkView.class) String> order = DEFAULT_SORT;
 
   private List<String> remark = new ArrayList<>(0);
   private List<String> remarkCode = new ArrayList<>(0);

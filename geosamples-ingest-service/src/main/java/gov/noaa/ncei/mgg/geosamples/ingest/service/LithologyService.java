@@ -56,9 +56,9 @@ public class LithologyService extends
   }
 
   @Override
-  protected CuratorsLithologyEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsLithologyEntity newEntityWithDefaultValues(LithologyView view) {
     CuratorsLithologyEntity entity = new CuratorsLithologyEntity();
-    entity.setLithology(id);
+    entity.setLithology(view.getLithology());
     entity.setPublish("Y");
     return entity;
   }

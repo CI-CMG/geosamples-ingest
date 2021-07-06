@@ -54,9 +54,9 @@ public class DeviceService extends
   }
 
   @Override
-  protected CuratorsDeviceEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsDeviceEntity newEntityWithDefaultValues(DeviceView view) {
     CuratorsDeviceEntity entity = new CuratorsDeviceEntity();
-    entity.setDevice(id);
+    entity.setDevice(view.getDevice());
     entity.setPublish("Y");
     return entity;
   }

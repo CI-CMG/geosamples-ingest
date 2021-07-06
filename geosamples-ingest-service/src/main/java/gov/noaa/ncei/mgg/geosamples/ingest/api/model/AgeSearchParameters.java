@@ -23,7 +23,7 @@ public class AgeSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(AgeView.class) String> order = DEFAULT_SORT;
 
   private List<String> age = new ArrayList<>(0);
   private List<String> ageCode = new ArrayList<>(0);

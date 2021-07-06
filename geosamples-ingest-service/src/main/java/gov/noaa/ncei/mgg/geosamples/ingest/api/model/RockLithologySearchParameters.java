@@ -23,7 +23,7 @@ public class RockLithologySearchParameters implements PagingAndSortingParameters
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(RockLithologyView.class) String> order = DEFAULT_SORT;
 
   private List<String> rockLithology = new ArrayList<>(0);
   private List<String> rockLithologyCode = new ArrayList<>(0);

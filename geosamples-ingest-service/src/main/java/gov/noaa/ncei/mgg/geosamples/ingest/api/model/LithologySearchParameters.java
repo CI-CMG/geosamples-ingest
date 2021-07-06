@@ -1,6 +1,5 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class LithologySearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(LithologyView.class) String> order = DEFAULT_SORT;
 
   private List<String> lithology = new ArrayList<>(0);
   private List<String> lithologyCode = new ArrayList<>(0);

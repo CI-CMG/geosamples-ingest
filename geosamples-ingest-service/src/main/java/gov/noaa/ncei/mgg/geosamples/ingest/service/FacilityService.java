@@ -76,9 +76,9 @@ public class FacilityService extends
   }
 
   @Override
-  protected CuratorsFacilityEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsFacilityEntity newEntityWithDefaultValues(FacilityView view) {
     CuratorsFacilityEntity entity = new CuratorsFacilityEntity();
-    entity.setFacilityCode(id);
+    entity.setFacilityCode(view.getFacilityCode());
     entity.setPublish("Y");
     return entity;
   }

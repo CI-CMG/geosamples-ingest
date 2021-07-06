@@ -24,7 +24,7 @@ public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParamete
   protected abstract List<Specification<E>> getSpecs(S searchParameters);
   protected abstract R getRepository();
   protected abstract V toView(E entity);
-  protected abstract E newEntityWithDefaultValues(I id);
+  protected abstract E newEntityWithDefaultValues(V view);
   protected abstract void updateEntity(E entity, V view);
 
   private E getRequiredEntity(I id) {
@@ -37,7 +37,7 @@ public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParamete
   private E toEntity(V view, I id) {
     E entity;
     if(id == null) {
-      entity = newEntityWithDefaultValues(id);
+      entity = newEntityWithDefaultValues(view);
     } else {
       entity = getRequiredEntity(id);
     }

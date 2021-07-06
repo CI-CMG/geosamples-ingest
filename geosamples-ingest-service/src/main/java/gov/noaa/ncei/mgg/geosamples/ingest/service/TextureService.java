@@ -54,9 +54,9 @@ public class TextureService extends
   }
 
   @Override
-  protected CuratorsTextureEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsTextureEntity newEntityWithDefaultValues(TextureView view) {
     CuratorsTextureEntity entity = new CuratorsTextureEntity();
-    entity.setTexture(id);
+    entity.setTexture(view.getTexture());
     entity.setPublish("Y");
     return entity;
   }

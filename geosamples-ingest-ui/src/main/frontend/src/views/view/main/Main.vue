@@ -6,7 +6,7 @@
         <b-navbar-nav>
           <b-nav-item :to="{ name: 'Home'}">Home</b-nav-item>
           <b-nav-item-dropdown text="Supporting Data">
-<!--            <b-dropdown-item :to="{ name: 'Provider'}">Providers</b-dropdown-item>-->
+            <b-dropdown-item :to="{ name: 'Platform'}">Platforms</b-dropdown-item>
 <!--            <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>-->
 <!--            <b-dropdown-item :to="{ name: 'Audit'}">Audit</b-dropdown-item>-->
 <!--            <b-dropdown-item :to="{ name: 'Filter'}">Filter</b-dropdown-item>-->

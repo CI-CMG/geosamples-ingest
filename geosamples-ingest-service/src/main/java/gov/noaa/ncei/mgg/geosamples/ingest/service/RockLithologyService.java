@@ -63,9 +63,9 @@ public class RockLithologyService extends
   }
 
   @Override
-  protected CuratorsRockLithEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsRockLithEntity newEntityWithDefaultValues(RockLithologyView view) {
     CuratorsRockLithEntity entity = new CuratorsRockLithEntity();
-    entity.setRockLith(id);
+    entity.setRockLith(view.getRockLithology());
     entity.setPublish("Y");
     return entity;
   }

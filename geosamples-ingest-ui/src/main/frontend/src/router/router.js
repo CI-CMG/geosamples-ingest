@@ -4,6 +4,9 @@ import { register } from '@/apiMiddleware';
 import View from '@/views/view/View.vue';
 import Main from '@/views/view/main/Main.vue';
 import Home from '@/views/view/main/home/Home.vue';
+import Platform from '@/views/view/main/platform/Platform.vue';
+import PlatformList from '@/views/view/main/platform/list/PlatformList.vue';
+import PlatformEdit from '@/views/view/main/platform/edit/PlatformEdit.vue';
 import Login from '@/views/view/login/Login.vue';
 import { RAW_BASE_PATH } from '@/resourceBasePath';
 import store from '@/store/store';
@@ -28,6 +31,34 @@ const routes = [
         component: Main,
         redirect: { name: 'Home' },
         children: [
+          {
+            path: 'platform',
+            component: Platform,
+            name: 'Platform',
+            redirect: { name: 'PlatformList' },
+            children: [
+              {
+                path: 'list',
+                name: 'PlatformList',
+                component: PlatformList,
+              },
+              {
+                path: 'add',
+                name: 'PlatformAdd',
+                component: PlatformEdit,
+              },
+              {
+                path: 'edit/:id',
+                name: 'PlatformEdit',
+                component: PlatformEdit,
+                props: true,
+              },
+              {
+                path: '*',
+                redirect: { name: 'Platform' },
+              },
+            ],
+          },
           // {
           //   path: 'admin',
           //   name: 'Admin',

@@ -23,7 +23,7 @@ public class PlatformSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(PlatformView.class) String> order = DEFAULT_SORT;
 
 
   private List<String> platform = new ArrayList<>(0);

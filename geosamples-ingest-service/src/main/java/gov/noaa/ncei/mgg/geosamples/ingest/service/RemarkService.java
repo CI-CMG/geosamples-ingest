@@ -55,9 +55,9 @@ public class RemarkService extends
   }
 
   @Override
-  protected CuratorsRemarkEntity newEntityWithDefaultValues(String id) {
+  protected CuratorsRemarkEntity newEntityWithDefaultValues(RemarkView view) {
     CuratorsRemarkEntity entity = new CuratorsRemarkEntity();
-    entity.setRemark(id);
+    entity.setRemark(view.getRemark());
     entity.setPublish("Y");
     return entity;
   }

@@ -23,7 +23,7 @@ public class WeatheringSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(UserView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(WeatheringView.class) String> order = DEFAULT_SORT;
 
 
   private List<String> weathering = new ArrayList<>(0);

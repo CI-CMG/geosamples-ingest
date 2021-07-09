@@ -89,7 +89,7 @@ public class ExcelService {
     }
   }
 
-  public static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
+  public final static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
 
   private static String parseString(DataFormatter dataFormatter, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     String value = getValue(dataFormatter, headers, row, headerName);
@@ -123,14 +123,6 @@ public class ExcelService {
     }
   }
 
-  private static LocalDate parseLocalDate(DataFormatter df, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
-    String value = getValue(df, headers, row, headerName);
-    if (value == null) {
-      return null;
-    }
-    int columnIndex = headers.get(headerName).get(0);
-    return parseLocalDate(value, row.getRowNum(), headerName, columnIndex);
-  }
 
   private static String getValue(DataFormatter dataFormatter, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     List<String> values = getValues(dataFormatter, headers, row, headerName);

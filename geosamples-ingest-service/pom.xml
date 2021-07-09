@@ -19,6 +19,11 @@
       <artifactId>geosamples-ingest-jpa</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>gov.noaa.ncei.mgg.geology</groupId>
+      <artifactId>geosamples-ingest-ui</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
 
     <dependency>

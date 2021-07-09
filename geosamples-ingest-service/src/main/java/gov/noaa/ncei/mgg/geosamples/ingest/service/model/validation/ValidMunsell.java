@@ -1,0 +1,50 @@
+package gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsMunsellRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidMunsell.ValidMunsellValidator;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidTextureCode.ValidTextureCodeValidator;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Target(FIELD)
+@Retention(RUNTIME)
+@Constraint(validatedBy = ValidMunsellValidator.class)
+@Documented
+public @interface ValidMunsell {
+
+  String message() default "Invalid Munsell Color";
+
+  Class<?>[] groups() default {};
+
+  Class<? extends Payload>[] payload() default {};
+
+  class ValidMunsellValidator implements ConstraintValidator<ValidMunsell, String> {
+
+    private final CuratorsMunsellRepository repository;
+
+    @Autowired
+    public ValidMunsellValidator(CuratorsMunsellRepository repository) {
+      this.repository = repository;
+    }
+
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+      if (value == null) {
+        return true;
+      }
+      //TODO Munsell colors can be duplicated, sholuld the spreadsheet use the code?
+      return repository.existsByMunsell(value);
+    }
+  }
+
+}

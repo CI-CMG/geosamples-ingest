@@ -9,4 +9,5 @@ public interface CuratorsRemarkRepository extends JpaRepository<CuratorsRemarkEn
 
 
   Optional<CuratorsRemarkEntity> findByRemarkCode(String code);
+  boolean existsByRemarkCode(String code);
 }

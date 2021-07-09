@@ -9,4 +9,5 @@ public interface CuratorsTextureRepository extends JpaRepository<CuratorsTexture
 
 
   Optional<CuratorsTextureEntity> findByTextureCode(String code);
+  boolean existsByTextureCode(String code);
 }

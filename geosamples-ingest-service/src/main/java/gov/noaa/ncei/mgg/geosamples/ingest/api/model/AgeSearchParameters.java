@@ -67,7 +67,7 @@ public class AgeSearchParameters implements PagingAndSortingParameters {
   }
 
   @Override
-  public void setItemsPerPage(int resultsPerPage) {
+  public void setItemsPerPage(int itemsPerPage) {
     this.itemsPerPage = itemsPerPage;
   }
 

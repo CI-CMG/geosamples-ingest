@@ -11,7 +11,7 @@ public interface PagingAndSortingParameters {
 
   int getItemsPerPage();
 
-  void setItemsPerPage(int resultsPerPage);
+  void setItemsPerPage(int itemsPerPage);
 
   List<String> getOrder();
 

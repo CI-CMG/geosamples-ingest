@@ -9,4 +9,5 @@ public interface CuratorsRockLithRepository extends JpaRepository<CuratorsRockLi
 
 
   Optional<CuratorsRockLithEntity> findByRockLithCode(String code);
+  boolean existsByRockLithCode(String code);
 }

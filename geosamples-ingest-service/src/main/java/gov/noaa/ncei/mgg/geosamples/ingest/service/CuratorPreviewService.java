@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CuratorDataResponse;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -31,8 +32,12 @@ public class CuratorPreviewService {
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file", e);
     }
-    validationService.validate(samples);
-    curatorPreviewPersistenceService.save(samples);
+    return upload(new SampleRowHolder(samples));
+  }
+
+  public CuratorDataResponse upload(SampleRowHolder sampleRowHolder) {
+    validationService.validate(sampleRowHolder);
+    curatorPreviewPersistenceService.save(sampleRowHolder.getRows());
     return new CuratorDataResponse();
   }
 

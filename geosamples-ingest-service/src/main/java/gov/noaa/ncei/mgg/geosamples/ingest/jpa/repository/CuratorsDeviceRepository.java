@@ -9,4 +9,5 @@ public interface CuratorsDeviceRepository extends JpaRepository<CuratorsDeviceEn
 
 
   Optional<CuratorsDeviceEntity> findByDeviceCode(String deviceCode);
+  boolean existsByDeviceCode(String deviceCode);
 }

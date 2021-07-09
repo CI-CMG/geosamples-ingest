@@ -9,4 +9,5 @@ public interface CuratorsRockMinRepository extends JpaRepository<CuratorsRockMin
 
 
   Optional<CuratorsRockMinEntity> findByRockMinCode(String code);
+  boolean existsByRockMinCode(String code);
 }

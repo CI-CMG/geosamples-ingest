@@ -43,9 +43,6 @@ public enum HeaderNames {
   FREE_FORM_DESCRIPTION_OF_COMPOSITION("Free[ -]?form Description of Composition.*"),
   COMMENTS_ON_SUBSAMPLE_OR_INTERVAL("Comments.*");
 
-  //TODO new columns
-//  LAKE("Lake Code.*")
-
 
   private final Pattern match;
   private final boolean multiValue;

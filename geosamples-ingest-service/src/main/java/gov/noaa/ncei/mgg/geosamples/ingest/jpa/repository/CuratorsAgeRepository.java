@@ -9,4 +9,5 @@ public interface CuratorsAgeRepository extends JpaRepository<CuratorsAgeEntity, 
 
 
   Optional<CuratorsAgeEntity> findByAgeCode(String code);
+  boolean existsByAgeCode(String code);
 }

@@ -9,4 +9,5 @@ public interface CuratorsStorageMethRepository extends JpaRepository<CuratorsSto
 
 
   Optional<CuratorsStorageMethEntity> findByStorageMethCode(String code);
+  boolean existsByStorageMethCode(String code);
 }

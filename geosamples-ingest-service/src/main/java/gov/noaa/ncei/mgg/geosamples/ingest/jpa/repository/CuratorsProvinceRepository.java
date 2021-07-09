@@ -9,4 +9,5 @@ public interface CuratorsProvinceRepository extends JpaRepository<CuratorsProvin
 
 
   Optional<CuratorsProvinceEntity> findByProvinceCode(String code);
+  boolean existsByProvinceCode(String code);
 }

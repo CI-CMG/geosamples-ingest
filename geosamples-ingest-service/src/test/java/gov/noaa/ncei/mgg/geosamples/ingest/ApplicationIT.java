@@ -59,6 +59,7 @@ public class ApplicationIT {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBasicAuth("geo", "samples");
 
     MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
     body.add("file", new FileSystemResource("src/test/resources/imlgs_new_entry_LDEO2021.xlsm"));
@@ -67,6 +68,7 @@ public class ApplicationIT {
 
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/curator-data/upload", HttpMethod.POST, httpEntity, String.class);
 
+    System.out.println(response.getBody());
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
 

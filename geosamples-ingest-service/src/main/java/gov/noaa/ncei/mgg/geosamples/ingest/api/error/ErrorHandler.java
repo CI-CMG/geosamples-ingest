@@ -2,7 +2,10 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.error;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError.ApiErrorBuilder;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -10,6 +13,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ErrorHandler.class);
+
+  private final ObjectMapper objectMapper;
+
+  @Autowired
+  public ErrorHandler(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
   @Override
   protected ResponseEntity<Object> handleMissingServletRequestParameter(
@@ -109,19 +120,33 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     return pathBuilder.toString();
   }
 
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ApiError> handleConstraintViolationException(ConstraintViolationException ex) {
+  @ExceptionHandler(SpreadsheetValidationException.class)
+  public ResponseEntity<ApiError> handleSpreadsheetValidationException(SpreadsheetValidationException ex) {
     LOGGER.debug("Controller rejected request", ex);
+    ApiErrorBuilder errorBuilder = buildFromViolations(ex.getViolations(), true);
+    errorBuilder.additionalData(objectMapper.convertValue(ex.getSampleRowHolder(), JsonNode.class));
+    return new ResponseEntity<>(errorBuilder.build(), HttpStatus.BAD_REQUEST);
+  }
+
+  private static ApiErrorBuilder buildFromViolations(Set<ConstraintViolation<?>> violations, boolean raw) {
     ApiErrorBuilder errorBuilder = ApiError.builder().error("Invalid Request");
-    Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
     for (ConstraintViolation<?> violation : violations) {
       String path = violation.getPropertyPath().toString();
-      String[] parts = path.split("\\.", 2);
-      if (parts.length > 1) {
-        path = parts[1];
+      if(!raw) {
+        String[] parts = path.split("\\.", 2);
+        if (parts.length > 1) {
+          path = parts[1];
+        }
       }
       errorBuilder.fieldError(path, violation.getMessage());
     }
+    return errorBuilder;
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ApiError> handleConstraintViolationException(ConstraintViolationException ex) {
+    LOGGER.debug("Controller rejected request", ex);
+    ApiErrorBuilder errorBuilder = buildFromViolations(ex.getConstraintViolations(), false);
     return new ResponseEntity<>(errorBuilder.build(), HttpStatus.BAD_REQUEST);
   }
 

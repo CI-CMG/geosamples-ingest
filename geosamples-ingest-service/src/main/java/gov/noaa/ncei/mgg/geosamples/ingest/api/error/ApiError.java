@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.error;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,6 +16,15 @@ public class ApiError {
 
   private final List<String> flashErrors = new ArrayList<>();
   private final Map<String, List<String>> formErrors = new HashMap<>();
+  private JsonNode additionalData = null;
+
+  public JsonNode getAdditionalData() {
+    return additionalData;
+  }
+
+  public void setAdditionalData(JsonNode additionalData) {
+    this.additionalData = additionalData;
+  }
 
   public List<String> getFlashErrors() {
     return flashErrors;
@@ -42,6 +52,11 @@ public class ApiError {
 
     public ApiErrorBuilder error(String error) {
       apiError.addFlashError(error);
+      return this;
+    }
+
+    public ApiErrorBuilder additionalData(JsonNode data) {
+      apiError.setAdditionalData(data);
       return this;
     }
 

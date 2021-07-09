@@ -1,12 +1,23 @@
+geosamples:
+  username: geo
+  password: samples
+
 spring:
   jpa:
     properties:
       hibernate:
-        default_schema: CROWBAR_PROVIDER
+        default_schema: CROWBAR_OTHER_3
     open-in-view: false
   datasource:
     url: jdbc:oracle:thin:@localhost:15215/XEPDB1
-    username: CROWBAR_PROVIDER
+    username: CROWBAR_OTHER_3
     password: letmein
   flyway:
     enabled: true
+
+server:
+  tomcat:
+    accesslog:
+      enabled: false
+  ssl:
+    enabled: false

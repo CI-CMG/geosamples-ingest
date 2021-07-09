@@ -1,21 +1,29 @@
 <template>
   <div>
-    <b-navbar fixed="top">
+    <b-navbar fixed="top" variant="info">
       <b-navbar-toggle :target="navbarId" class="mr-2"></b-navbar-toggle>
       <b-collapse :id="navbarId" is-nav>
         <b-navbar-nav>
           <b-nav-item :to="{ name: 'Home'}">Home</b-nav-item>
           <b-nav-item-dropdown text="Supporting Data">
+            <b-dropdown-item :to="{ name: 'Age'}">Age</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Device'}">Device</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Facility'}">Facility</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Lithology'}">Lithology</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Munsell'}">Munsell</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Platform'}">Platforms</b-dropdown-item>
-<!--            <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>-->
-<!--            <b-dropdown-item :to="{ name: 'Audit'}">Audit</b-dropdown-item>-->
-<!--            <b-dropdown-item :to="{ name: 'Filter'}">Filter</b-dropdown-item>-->
+            <b-dropdown-item :to="{ name: 'Province'}">Province</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Remark'}">Remark</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'RockLithology'}">Rock Lithology</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'RockMineral'}">Rock Mineral</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'StorageMethod'}">Storage Method</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Texture'}">Texture</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Weathering'}">Weathering</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Curator Data">
-            <!--            <b-dropdown-item :to="{ name: 'Provider'}">Providers</b-dropdown-item>-->
-            <!--            <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>-->
-            <!--            <b-dropdown-item :to="{ name: 'Audit'}">Audit</b-dropdown-item>-->
-            <!--            <b-dropdown-item :to="{ name: 'Filter'}">Filter</b-dropdown-item>-->
+            <b-dropdown-item :to="{ name: 'NewSubmission'}">New Submission</b-dropdown-item>
+<!--            <b-dropdown-item :to="{ name: ''}">Edit & Finalize Submission</b-dropdown-item>-->
+<!--            <b-dropdown-item :to="{ name: ''}">Finalized Sample & Interval Data</b-dropdown-item>-->
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>

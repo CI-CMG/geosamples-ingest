@@ -23,7 +23,7 @@ public class DeviceSearchParameters implements PagingAndSortingParameters {
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(DeviceSearchParameters.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(DeviceView.class) String> order = DEFAULT_SORT;
 
   private List<String> device = new ArrayList<>(0);
   private List<String> deviceCode = new ArrayList<>(0);
@@ -67,7 +67,7 @@ public class DeviceSearchParameters implements PagingAndSortingParameters {
   }
 
   @Override
-  public void setItemsPerPage(int resultsPerPage) {
+  public void setItemsPerPage(int itemsPerPage) {
     this.itemsPerPage = itemsPerPage;
   }
 

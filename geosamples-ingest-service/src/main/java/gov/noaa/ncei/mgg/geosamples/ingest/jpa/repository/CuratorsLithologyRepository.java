@@ -9,4 +9,5 @@ public interface CuratorsLithologyRepository extends JpaRepository<CuratorsLitho
 
 
   Optional<CuratorsLithologyEntity> findByLithologyCode(String code);
+  boolean existsByLithologyCode(String code);
 }

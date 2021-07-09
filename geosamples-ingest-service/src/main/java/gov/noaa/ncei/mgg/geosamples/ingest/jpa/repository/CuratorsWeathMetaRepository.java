@@ -9,4 +9,5 @@ public interface CuratorsWeathMetaRepository extends JpaRepository<CuratorsWeath
 
 
   Optional<CuratorsWeathMetaEntity> findByWeathMetaCode(String code);
+  boolean existsByWeathMetaCode(String code);
 }

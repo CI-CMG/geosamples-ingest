@@ -59,11 +59,10 @@ public class ExcelService {
   }
 
   private static String parseString(String value) {
-    value = value.trim();
     if (StringUtils.isBlank(value)) {
       return null;
     }
-    return value;
+    return value.trim();
   }
 
   private static Double parseDouble(String value, int rowIndex, HeaderNames headerName, int columnIndex) {
@@ -90,7 +89,7 @@ public class ExcelService {
     }
   }
 
-  private static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
+  public static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
 
   private static String parseString(DataFormatter dataFormatter, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     String value = getValue(dataFormatter, headers, row, headerName);
@@ -163,8 +162,8 @@ public class ExcelService {
     sampleRow.setShipName(parseString(df, headers, row, HeaderNames.SHIP_NAME));
     sampleRow.setCruiseId(parseString(df, headers, row, HeaderNames.CRUISE_ID));
     sampleRow.setSampleId(parseString(df, headers, row, HeaderNames.SAMPLE_ID));
-    sampleRow.setDateCollected(parseLocalDate(df, headers, row, HeaderNames.DATE_COLLECTED));
-    sampleRow.setEndDate(parseLocalDate(df, headers, row, HeaderNames.END_DATE));
+    sampleRow.setDateCollected(parseString(df, headers, row, HeaderNames.DATE_COLLECTED));
+    sampleRow.setEndDate(parseString(df, headers, row, HeaderNames.END_DATE));
     sampleRow.setBeginningLatitude(parseDouble(df, headers, row, HeaderNames.BEGINNING_LATITUDE));
     sampleRow.setBeginningLongitude(parseDouble(df, headers, row, HeaderNames.BEGINNING_LONGITUDE));
     sampleRow.setEndingLatitude(parseDouble(df, headers, row, HeaderNames.ENDING_LATITUDE));
@@ -192,7 +191,7 @@ public class ExcelService {
     sampleRow.setGlassRemarksCode(parseString(df, headers, row, HeaderNames.GLASS_REMARKS_CODE));
     sampleRow.setMunsellColor(parseString(df, headers, row, HeaderNames.MUNSEL_COLOR));
     sampleRow.setPrincipalInvestigator(parseString(df, headers, row, HeaderNames.PRINCIPAL_INVESTIGATOR));
-    sampleRow.setSampleNotAvailable(parseString(df, headers, row, HeaderNames.SAMPLE_NOT_AVAILABLE) != null);
+    sampleRow.setSampleNotAvailable(parseString(df, headers, row, HeaderNames.SAMPLE_NOT_AVAILABLE));
     sampleRow.setIgsn(parseString(df, headers, row, HeaderNames.ISGN));
     sampleRow.setAlternateCruise(parseString(df, headers, row, HeaderNames.ALTERNATE_CRUISE_OR_LEG));
     sampleRow.setDescription(parseString(df, headers, row, HeaderNames.FREE_FORM_DESCRIPTION_OF_COMPOSITION));
@@ -215,8 +214,8 @@ public class ExcelService {
       throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to read file: " + e.getMessage()).build());
     }
 
-    if (workbook.getNumberOfSheets() != 1) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Multiple sheets provided. Only one is supported.").build());
+    if (workbook.getNumberOfSheets() == 0) {
+      throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("At least one sheet must be provided").build());
     }
 
     Sheet sheet = workbook.getSheetAt(0);

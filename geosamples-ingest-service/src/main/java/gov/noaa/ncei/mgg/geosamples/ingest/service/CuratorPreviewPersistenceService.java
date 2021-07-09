@@ -8,6 +8,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRemarkEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockLithEntity;
@@ -22,6 +23,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsDeviceRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsMunsellRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsProvinceRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRemarkRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRockLithRepository;
@@ -33,25 +35,37 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterReposito
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcSampleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
+import org.hibernate.engine.jdbc.dialect.spi.DatabaseMetaDataDialectResolutionInfoAdapter;
 import org.locationtech.jts.geom.CoordinateXY;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
 public class CuratorPreviewPersistenceService {
 
   private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
+
+  private static final String sequenceName = "CURATORS_SEQ";
 
   private final TempQcSampleRepository tempQcSampleRepository;
   private final TempQcIntervalRepository tempQcIntervalRepository;
@@ -67,8 +81,12 @@ public class CuratorPreviewPersistenceService {
   private final CuratorsRemarkRepository curatorsRemarkRepository;
   private final CuratorsRockMinRepository curatorsRockMinRepository;
   private final CuratorsRockLithRepository curatorsRockLithRepository;
+  private final CuratorsMunsellRepository curatorsMunsellRepository;
   private final GeometryFactory geometryFactory;
   private final ServiceProperties serviceProperties;
+  private final DataSource dataSource;
+  private final String schema;
+
 
   @Autowired
   public CuratorPreviewPersistenceService(TempQcSampleRepository tempQcSampleRepository,
@@ -84,8 +102,11 @@ public class CuratorPreviewPersistenceService {
       CuratorsWeathMetaRepository curatorsWeathMetaRepository,
       CuratorsRemarkRepository curatorsRemarkRepository,
       CuratorsRockMinRepository curatorsRockMinRepository,
-      CuratorsRockLithRepository curatorsRockLithRepository, GeometryFactory geometryFactory,
-      ServiceProperties serviceProperties) {
+      CuratorsRockLithRepository curatorsRockLithRepository,
+      CuratorsMunsellRepository curatorsMunsellRepository, GeometryFactory geometryFactory,
+      ServiceProperties serviceProperties,
+      DataSource dataSource,
+      @Value("${spring.jpa.properties.hibernate.default_schema}") String schema) {
     this.tempQcSampleRepository = tempQcSampleRepository;
     this.tempQcIntervalRepository = tempQcIntervalRepository;
     this.curatorsFacilityRepository = curatorsFacilityRepository;
@@ -100,100 +121,136 @@ public class CuratorPreviewPersistenceService {
     this.curatorsRemarkRepository = curatorsRemarkRepository;
     this.curatorsRockMinRepository = curatorsRockMinRepository;
     this.curatorsRockLithRepository = curatorsRockLithRepository;
+    this.curatorsMunsellRepository = curatorsMunsellRepository;
     this.geometryFactory = geometryFactory;
     this.serviceProperties = serviceProperties;
+    this.dataSource = dataSource;
+    this.schema = schema;
   }
 
   private CuratorsFacilityEntity getFacility(String facility) {
     if(facility == null) {
       return null;
     }
-    return curatorsFacilityRepository.findById(facility).orElse(null);
+    return curatorsFacilityRepository
+        .findById(facility)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find facility: " + facility).build()));
   }
 
   private PlatformMasterEntity getPlatform(String platformName) {
     if(platformName == null) {
       return null;
     }
-    return platformMasterRepository.findById(platformName).orElse(null);
+    return platformMasterRepository
+        .findById(platformName)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
   }
 
   private CuratorsDeviceEntity getDevice(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsDeviceRepository.findByDeviceCode(code).orElse(null);
+    return curatorsDeviceRepository
+        .findByDeviceCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find device code: " + code).build()));
   }
 
   private CuratorsStorageMethEntity getStorageMethod(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsStorageMethRepository.findByStorageMethCode(code).orElse(null);
+    return curatorsStorageMethRepository
+        .findByStorageMethCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find storage method code: " + code).build()));
   }
 
   private CuratorsProvinceEntity getProvince(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsProvinceRepository.findByProvinceCode(code).orElse(null);
+    return curatorsProvinceRepository
+        .findByProvinceCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find province code: " + code).build()));
   }
 
   private CuratorsLithologyEntity getLithology(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsLithologyRepository.findByLithologyCode(code).orElse(null);
+    return curatorsLithologyRepository
+        .findByLithologyCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find lithology code: " + code).build()));
   }
 
   private CuratorsTextureEntity getTexture(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsTextureRepository.findByTextureCode(code).orElse(null);
+    return curatorsTextureRepository
+        .findByTextureCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find texture code: " + code).build()));
   }
 
   private CuratorsAgeEntity getAge(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsAgeRepository.findByAgeCode(code).orElse(null);
+    return curatorsAgeRepository
+        .findByAgeCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find age code: " + code).build()));
   }
 
   private CuratorsWeathMetaEntity getWeathering(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsWeathMetaRepository.findByWeathMetaCode(code).orElse(null);
+    return curatorsWeathMetaRepository
+        .findByWeathMetaCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find weathering code: " + code).build()));
   }
 
   private CuratorsRemarkEntity getGlassRemark(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsRemarkRepository.findByRemarkCode(code).orElse(null);
+    return curatorsRemarkRepository
+        .findByRemarkCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find remark code: " + code).build()));
+  }
+
+  private CuratorsMunsellEntity getMunsell(String munsell) {
+    if(munsell == null) {
+      return null;
+    }
+    return curatorsMunsellRepository
+        .findByMunsell(munsell)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find munsell: " + munsell).build()));
   }
 
   private CuratorsRockMinEntity getMineralogy(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsRockMinRepository.findByRockMinCode(code).orElse(null);
+    return curatorsRockMinRepository
+        .findByRockMinCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find rock mineral code: " + code).build()));
   }
 
   private CuratorsRockLithEntity getRockLithology(String code) {
     if(code == null) {
       return null;
     }
-    return curatorsRockLithRepository.findByRockLithCode(code).orElse(null);
+    return curatorsRockLithRepository
+        .findByRockLithCode(code)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find rock lithology code: " + code).build()));
   }
 
-  private static String formatDate(LocalDate value) {
-    if(value == null) {
-      return null;
-    }
-    return value.format(DTF);
-  }
+//  private static String formatDate(String value) {
+//    if(value == null) {
+//      return null;
+//    }
+//    return value.format(DTF);
+//  }
 
   private static PositionDim getPositionDim(Double value, boolean lat){
     if(value == null) {
@@ -223,7 +280,7 @@ public class CuratorPreviewPersistenceService {
     public PositionDim(Double value, Integer degrees, Double minutes, String direction) {
       this.value = value;
       this.degrees = degrees;
-      this.minutes = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros(minutes);
+      this.minutes = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros2Decimal(minutes);
       this.direction = direction;
     }
 
@@ -259,7 +316,7 @@ public class CuratorPreviewPersistenceService {
       if(cm == null) {
         return null;
       }
-      return truncate((cm - getCm()) * 10D);
+      return round((cm - getCm()) * 10D);
     }
   }
 
@@ -270,6 +327,13 @@ public class CuratorPreviewPersistenceService {
     return (int) Math.floor(d);
   }
 
+  private static Integer round(Double d) {
+    if(d == null) {
+      return null;
+    }
+    return (int) Math.round(d);
+  }
+
   private Geometry getShape(Double lon, Double lat) {
     if(lon == null || lat == null) {
       return null;
@@ -277,9 +341,27 @@ public class CuratorPreviewPersistenceService {
     return geometryFactory.createPoint(new CoordinateXY(lon, lat));
   }
 
+  private String resolveSeq() throws SQLException {
+    if(!StringUtils.hasText(schema)) {
+      return sequenceName;
+    }
+    return String.format("%s.%s", schema, sequenceName);
+  }
+
   private long getObjectId() {
-    //TODO
-    throw new UnsupportedOperationException();
+    try (Connection connection = dataSource.getConnection()) {
+      Dialect dialect = new StandardDialectResolver()
+          .resolveDialect(new DatabaseMetaDataDialectResolutionInfoAdapter(connection.getMetaData()));
+      try (
+          PreparedStatement preparedStatement = connection.prepareStatement(dialect.getSequenceNextValString(resolveSeq()));
+          ResultSet resultSet = preparedStatement.executeQuery();
+      ) {
+        resultSet.next();
+        return resultSet.getLong(1);
+      }
+    } catch (SQLException e) {
+      throw new IllegalStateException("Unable to get connection", e);
+    }
   }
 
   private String getImlgs(long objectId) {
@@ -304,8 +386,8 @@ public class CuratorPreviewPersistenceService {
       sample.setDevice(getDevice(row.getSamplingDeviceCode()));
       // TODO what is this - ask Kelly?
 //      sample.setShipCode();
-      sample.setBeginDate(formatDate(row.getDateCollected()));
-      sample.setEndDate(formatDate(row.getEndDate()));
+      sample.setBeginDate(row.getDateCollected());
+      sample.setEndDate(row.getEndDate());
 
       PositionDim beginningLat = getPositionDim(row.getBeginningLatitude(), true);
       sample.setLat(beginningLat.getValue());
@@ -333,12 +415,11 @@ public class CuratorPreviewPersistenceService {
 
       sample.setLatLonOrig("D");
 
-      //TODO truncate or round - ROUND yes?
-      sample.setWaterDepth(truncate(row.getBeginningWaterDepth()));
-      sample.setEndWaterDepth(truncate(row.getEndingWaterDepth()));
+      sample.setWaterDepth(round(row.getBeginningWaterDepth()));
+      sample.setEndWaterDepth(round(row.getEndingWaterDepth()));
 
       sample.setStorageMeth(getStorageMethod(row.getStorageMethodCode()));
-      sample.setCoredLength(truncate(row.getCoreLength()));
+      sample.setCoredLength(round(row.getCoreLength()));
 
       CmConverter coredLength = new CmConverter(row.getCoreLength());
       sample.setCoredLength(coredLength.getCm());
@@ -353,8 +434,6 @@ public class CuratorPreviewPersistenceService {
 
       sample.setIgsn(row.getIgsn());
 
-      // TODO add me?
-//      sample.setLake();
       // TODO add me ? - DOI per curator - pass in form?
 //      sample.setOtherLink();
       sample.setLastUpdate(lastUpdated);
@@ -395,26 +474,9 @@ public class CuratorPreviewPersistenceService {
       interval.setDepthBot(depthBottom.getCm());
       interval.setDepthBotMm(depthBottom.getMm());
 
-      // TODO add me
-//      interval.setDhCoreId();
-
       CmConverter coreLength = new CmConverter(row.getCoreLength());
       interval.setDhCoreLength(coreLength.getCm());
       interval.setDhCoreLengthMm(coreLength.getMm());
-
-      // TODO add me
-//      interval.setDhCoreInterval();
-
-// TODO add me
-//      interval.setdTopInDhCore();
-      // TODO add me
-//      interval.setdTopMmInDhCore();
-
-// TODO add me
-//      interval.setdBotInDhCore();
-      // TODO add me
-//      interval.setdBotMmInDhCore();
-
 
       interval.setLith1(getLithology(row.getPrimaryLithologicCompositionCode()));
       interval.setText1(getTexture(row.getPrimaryTextureCode()));
@@ -452,46 +514,25 @@ public class CuratorPreviewPersistenceService {
       interval.setDescription(row.getDescription());
       interval.setAge(getAge(row.getGeologicAgeCode()));
 
-      // TODO add me - EXCLUDE
-//      interval.setAbsoluteAgeTop();
-      // TODO add me  - EXCLUDE
-//      interval.setAbsoluteAgeBot();
-
       interval.setWeight(row.getBulkWeight());
       interval.setRockLith(getRockLithology(row.getSampleLithologyCode()));
       interval.setRockMin(getMineralogy(row.getSampleMineralogyCode()));
       interval.setWeathMeta(getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
       interval.setRemark(getGlassRemark(row.getGlassRemarksCode()));
 
+      //TODO Munsell colors can be duplicated, sholuld the spreadsheet use the code?
 
-      //TODO add me - Look up color and set code if available
-//      interval.setMunsellCode();
-      //TODO add me
 //      interval.setMunsell(row.getMunsellColor());
-      interval.setExhaustCode(row.isSampleNotAvailable() ? "X" : null);
-      //TODO add me - EXCLUDE
-//      interval.setPhotoLink();
-      // TODO add me - SET the same as sample
-//      interval.setLake();
-      // TODO add me
-//      interval.setUnitNumber();
+//      CuratorsMunsellEntity munsell = getMunsell(row.getMunsellColor());
+//      if(munsell != null) {
+//        interval.setMunsellCode(munsell.getMunsellCode());
+//      }
+
+      interval.setExhaustCode(row.getSampleNotAvailable());
 
       interval.setIntComments(row.getComments());
 
-      // TODO add me
-//      interval.setDhDevice();
-      // TODO add me
-//      interval.setCmcdTop();
-      // TODO add me
-//      interval.setMmcdTop();
-      // TODO add me
-//      interval.setCmcdBot();
-      // TODO add me
-//      interval.setMmcdBot();
-
       interval.setPublish("Y");
-      // TODO add me - DONT use, this is for the parent
-//      interval.setIgsn();
 
       tempQcIntervalRepository.saveAndFlush(interval);
 

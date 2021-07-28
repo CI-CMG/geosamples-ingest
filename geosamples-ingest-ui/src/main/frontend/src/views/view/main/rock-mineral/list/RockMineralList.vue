@@ -4,13 +4,13 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="RockMineral" :label-for="deviceId">
-            <b-form-input :id="deviceId" v-model="device"/>
+          <b-form-group label="Rock Mineral" :label-for="rockMineralId">
+            <b-form-input :id="rockMineralId" v-model="rockMineral"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="RockMineral Code" :label-for="deviceCodeId">
-            <b-form-input :id="deviceCodeId" v-model="deviceCode"/>
+          <b-form-group label="Rock Mineral Code" :label-for="rockMineralCodeId">
+            <b-form-input :id="rockMineralCodeId" v-model="rockMineralCode"/>
           </b-form-group>
         </b-col>
       </b-row>
@@ -34,7 +34,7 @@
     :sort-by="sortBy"
     :sort-desc="sortDesc">
     <template #cell(rockMineral)="data">
-      <b-link :to="{ name: 'RockMineralEdit', params: { id: data.item.device }}">{{ data.item.device }}</b-link>
+      <b-link :to="{ name: 'RockMineralEdit', params: { id: data.item.rockMineral }}">{{ data.item.rockMineral }}</b-link>
     </template>
   </b-table>
   <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>
@@ -50,8 +50,8 @@ import {
 
 export default {
   beforeMount() {
-    this.deviceId = genId();
-    this.deviceCodeId = genId();
+    this.rockMineralId = genId();
+    this.rockMineralCodeId = genId();
   },
   beforeRouteEnter(to, from, next) {
     next((self) => {
@@ -68,8 +68,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations('device', ['setRockMineral', 'clearParams', 'setRockMineralCode', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
-    ...mapActions('device', ['search', 'reset', 'changePage']),
+    ...mapMutations('rockMineral', ['setRockMineral', 'clearParams', 'setRockMineralCode', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
+    ...mapActions('rockMineral', ['search', 'reset', 'changePage']),
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
       this.setSortDesc(sortDesc);
@@ -78,18 +78,18 @@ export default {
   },
 
   computed: {
-    ...mapState('device', ['searching', 'page', 'totalItems', 'totalPages', 'items', 'params', 'sortDesc', 'sortBy']),
-    device: {
+    ...mapState('rockMineral', ['searching', 'page', 'totalItems', 'totalPages', 'items', 'params', 'sortDesc', 'sortBy']),
+    rockMineral: {
       get() {
-        return this.params.device;
+        return this.params.rockMineral;
       },
       set(value) {
         this.setRockMineral(value);
       },
     },
-    deviceCode: {
+    rockMineralCode: {
       get() {
-        return this.params.deviceCode;
+        return this.params.rockMineralCode;
       },
       set(value) {
         this.setRockMineralCode(value);
@@ -107,18 +107,18 @@ export default {
 
   data() {
     return {
-      deviceId: null,
-      deviceCodeId: null,
+      rockMineralId: null,
+      rockMineralCodeId: null,
 
       fields: [
         {
-          key: 'device',
-          label: 'RockMineral',
+          key: 'rockMineral',
+          label: 'Rock Mineral',
           sortable: true,
         },
         {
-          key: 'deviceCode',
-          label: 'RockMineral Code',
+          key: 'rockMineralCode',
+          label: 'Rock Mineral Code',
           sortable: true,
         },
       ],

@@ -13,3 +13,21 @@ html {
   left: 0;
   z-index: 2000;
 }
+
+.geo-submission-result-cell {
+
+  &.geo-submission-result-error {
+
+    .geo-submission-result-value {
+      background-color: red;
+      border: 1px solid black;
+    }
+
+  }
+
+  .geo-submission-result-error-message {
+    border: 1px solid red;
+  }
+
+}
+

@@ -192,6 +192,22 @@ public class ExcelService {
     return sampleRow;
   }
 
+  private static boolean isRowEmpty(Row row) {
+    boolean isEmpty = true;
+    DataFormatter dataFormatter = new DataFormatter();
+
+    if (row != null) {
+      for (Cell cell : row) {
+        if (dataFormatter.formatCellValue(cell).trim().length() > 0) {
+          isEmpty = false;
+          break;
+        }
+      }
+    }
+
+    return isEmpty;
+  }
+
   public List<SampleRow> read(InputStream in) {
 
     List<SampleRow> sampleRows = new ArrayList<>();
@@ -217,7 +233,7 @@ public class ExcelService {
       Row row = rowIterator.next();
       if (row.getRowNum() == 0) {
         headers = parseHeader(row);
-      } else {
+      } else if(!isRowEmpty(row)) {
         sampleRows.add(parseSampleRow(df, headers, row));
       }
     }

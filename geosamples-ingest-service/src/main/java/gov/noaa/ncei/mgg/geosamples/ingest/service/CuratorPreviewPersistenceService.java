@@ -218,13 +218,13 @@ public class CuratorPreviewPersistenceService {
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find remark code: " + code).build()));
   }
 
-  private CuratorsMunsellEntity getMunsell(String munsell) {
-    if(munsell == null) {
+  private CuratorsMunsellEntity getMunsell(String munsellCode) {
+    if(munsellCode == null) {
       return null;
     }
     return curatorsMunsellRepository
-        .findByMunsell(munsell)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find munsell: " + munsell).build()));
+        .findById(munsellCode)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find munsell: " + munsellCode).build()));
   }
 
   private CuratorsRockMinEntity getMineralogy(String code) {
@@ -520,13 +520,13 @@ public class CuratorPreviewPersistenceService {
       interval.setWeathMeta(getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
       interval.setRemark(getGlassRemark(row.getGlassRemarksCode()));
 
-      //TODO Munsell colors can be duplicated, sholuld the spreadsheet use the code?
+      //TODO Munsell colors can be duplicated, should the spreadsheet use the code?
 
-//      interval.setMunsell(row.getMunsellColor());
-//      CuratorsMunsellEntity munsell = getMunsell(row.getMunsellColor());
-//      if(munsell != null) {
-//        interval.setMunsellCode(munsell.getMunsellCode());
-//      }
+      interval.setMunsellCode(row.getMunsellColor());
+      CuratorsMunsellEntity munsell = getMunsell(row.getMunsellColor());
+      if(munsell != null) {
+        interval.setMunsell(munsell.getMunsell());
+      }
 
       interval.setExhaustCode(row.getSampleNotAvailable());
 

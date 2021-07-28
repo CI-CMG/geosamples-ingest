@@ -1,34 +1,38 @@
 <template>
   <b-card title="Submission Errors - Correct And Resubmit">
-{{errorData}}
-<!--    <b-table-->
-<!--      striped-->
-<!--      bordered-->
-<!--      small-->
-<!--      hover-->
-<!--      :items="errorData.rows"-->
-<!--      :fields="fields">-->
-<!--      <template #cell()="data">-->
-<!--        <b-form-input-->
-<!--          type="text" @blur="() => setTouched({path: `rows[${data.index}].${data.field.key}`, touched: true})"-->
-<!--          :value="getValue(`rows[${data.index}].${data.field.key}`)"-->
-<!--          @update="(value) => setValue({ path: `rows[${data.index}].${data.field.key}`, value })"-->
-<!--          :state="showError(`rows[${data.index}].${data.field.key}`)"-->
-<!--        />-->
-<!--        <b-form-invalid-feedback>{{ getError(`rows[${data.index}].${data.field.key}`) }}</b-form-invalid-feedback>-->
-<!--      </template>-->
-<!--    </b-table>-->
+    <b-table
+      striped
+      bordered
+      small
+      hover
+      :items="form.rows"
+      :fields="fields">
+        <template #cell(rowNum)="data">
+          {{data.index + 2}}
+        </template>
+        <template #cell()="data">
+          <SubmissionResultCell :value="getValue(`rows[${data.index}].${data.field.key}`)" :error="getError(`rows[${data.index}].${data.field.key}`)"/>
+        </template>
+    </b-table>
   </b-card>
 
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex';
+import SubmissionResultCell from './SubmissionResultCell.vue';
 
 export default {
+  components: {
+    SubmissionResultCell,
+  },
   data() {
     return {
       fields: [
+        {
+          key: 'rowNum',
+          label: 'Row Number',
+        },
         {
           key: 'facilityCode',
           label: 'Facility Code',
@@ -205,7 +209,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('submissionForm', ['deleting', 'loading', 'saving']),
+    ...mapState('submissionForm', ['deleting', 'loading', 'saving', 'form']),
     ...mapGetters('submissionForm',
       [
         'getValue',
@@ -214,9 +218,12 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
-    ...mapState('submission', ['errorData']),
+    ...mapState('submission', ['errorData', 'dataRows']),
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
+    },
+    rows() {
+      return this.form.rows.map((item, index) => ({ ...item, index }));
     },
   },
   methods: {
@@ -231,15 +238,15 @@ export default {
       ]),
     ...mapMutations('submission', ['setErrorData']),
   },
-  beforeRouteEnter(to, from, next) {
-    next((self) => {
-      self.initialize();
-    });
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.initialize();
-    next();
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   next((self) => {
+  //     self.initialize(self.dataRows);
+  //   });
+  // },
+  // beforeRouteUpdate(to, from, next) {
+  //   this.initialize(this.dataRows);
+  //   next();
+  // },
   beforeRouteLeave(to, from, next) {
     this.setErrorData(null);
     this.initialize();

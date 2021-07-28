@@ -31,6 +31,7 @@ import user from './modules/userModule';
 import loginForm from './modules/loginFormModule';
 import submission from './modules/submissionModule';
 import submissionForm from './modules/submissionFormModule';
+import tempSampleInterval from './modules/tempSampleIntervalModule';
 
 Vue.use(Vuex);
 
@@ -67,5 +68,6 @@ export default new Vuex.Store({
     weatheringForm,
     submission,
     submissionForm,
+    tempSampleInterval,
   },
 });

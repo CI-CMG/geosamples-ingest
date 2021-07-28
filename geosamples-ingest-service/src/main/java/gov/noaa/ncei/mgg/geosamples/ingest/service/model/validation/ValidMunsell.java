@@ -42,8 +42,7 @@ public @interface ValidMunsell {
       if (value == null) {
         return true;
       }
-      //TODO Munsell colors can be duplicated, sholuld the spreadsheet use the code?
-      return repository.existsByMunsell(value);
+      return repository.existsById(value);
     }
   }
 

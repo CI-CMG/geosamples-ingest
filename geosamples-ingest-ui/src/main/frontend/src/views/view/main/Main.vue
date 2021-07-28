@@ -18,10 +18,11 @@
             <b-dropdown-item :to="{ name: 'RockMineral'}">Rock Mineral</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'StorageMethod'}">Storage Method</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Texture'}">Texture</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Weathering'}">Weathering</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Weathering'}">Weathering/Metamorphism</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Curator Data">
             <b-dropdown-item :to="{ name: 'NewSubmission'}">New Submission</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'TempSampleList'}">Sample / Interval Preview</b-dropdown-item>
 <!--            <b-dropdown-item :to="{ name: ''}">Edit & Finalize Submission</b-dropdown-item>-->
 <!--            <b-dropdown-item :to="{ name: ''}">Finalized Sample & Interval Data</b-dropdown-item>-->
           </b-nav-item-dropdown>

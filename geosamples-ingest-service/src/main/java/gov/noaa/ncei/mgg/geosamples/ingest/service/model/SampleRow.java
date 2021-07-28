@@ -112,7 +112,7 @@ public class SampleRow {
   private String glassRemarksCode;
   @Size(max = 10, message = "Munsell Color must be at most 10 characters")
   //TODO Munsell colors can be duplicated, sholuld the spreadsheet use the code?
-//  @ValidMunsell
+  @ValidMunsell
   private String munsellColor;
   @Size(max = 255, message = "Principal Investigator must be at most 255 characters")
   private String principalInvestigator;

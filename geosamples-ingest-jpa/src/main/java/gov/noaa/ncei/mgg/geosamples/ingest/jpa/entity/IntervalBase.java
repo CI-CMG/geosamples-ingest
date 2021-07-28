@@ -292,13 +292,13 @@ public abstract class IntervalBase<P extends SampleBase> {
   private String imlgs;
 
   @Column(name = "PARENT_IGSN", length = 9)
-  private String parentIsgn;
+  private String parentIgsn;
 
   protected abstract void setParentEntityInternal(P parentEntity);
   public abstract P getParentEntity();
 
   public void setParentEntity(P parentEntity) {
-    parentIsgn = parentEntity.getIgsn();
+    parentIgsn = parentEntity.getIgsn();
     imlgs = parentEntity.getImlgs();
     facility = parentEntity.getFacility();
     shipCode = parentEntity.getShipCode();
@@ -767,8 +767,8 @@ public abstract class IntervalBase<P extends SampleBase> {
 //    this.imlgs = imlgs;
 //  }
 
-  public String getParentIsgn() {
-    return parentIsgn;
+  public String getParentIgsn() {
+    return parentIgsn;
   }
 
 //  protected void setParentIsgn(String parentIsgn) {

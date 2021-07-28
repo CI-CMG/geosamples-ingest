@@ -9,10 +9,6 @@ alter table ${schema_name}.TEMPQC_SAMPLE
         unique (IGSN);
 
 alter table ${schema_name}.TEMPQC_SAMPLE
-    add constraint TEMPQC_SAMPLE_IGSN_NN
-        check ( IGSN is not null );
-
-alter table ${schema_name}.TEMPQC_SAMPLE
     add constraint TEMPQC_SAMPLE_OBJECTID_UK
         unique (OBJECTID);
 
@@ -45,10 +41,6 @@ alter table ${schema_name}.CURATORS_SAMPLE_TSQP
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     add constraint CURATORS_SAMPLE_TSQP_DEVICE_NN
         check ( DEVICE is not null );
-
-alter table ${schema_name}.CURATORS_SAMPLE_TSQP
-    add constraint CURATORS_SAMPLE_TSQP_IGSN_NN
-        check ( IGSN is not null );
 
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     add constraint CURATORS_SAMPLE_TSQP_OBJECTID_NN
@@ -99,10 +91,6 @@ alter table ${schema_name}.TEMPQC_INTERVAL
     add constraint TEMPQC_INTERVAL_DEVICE_NN
         check ( DEVICE is not null );
 
-alter table ${schema_name}.TEMPQC_INTERVAL
-    add constraint TEMPQC_INTERVAL_PARENT_IGSN_NN
-        check ( PARENT_IGSN is not null );
-
 
 alter table ${schema_name}.CURATORS_INTERVAL
     add constraint CURATORS_INTERVAL_FACILITY_CODE_NN
@@ -119,8 +107,4 @@ alter table ${schema_name}.CURATORS_INTERVAL
 alter table ${schema_name}.CURATORS_INTERVAL
     add constraint CURATORS_INTERVAL_DEVICE_NN
         check ( DEVICE is not null );
-
-alter table ${schema_name}.CURATORS_INTERVAL
-    add constraint CURATORS_INTERVAL_PARENT_IGSN_NN
-        check ( PARENT_IGSN is not null );
 

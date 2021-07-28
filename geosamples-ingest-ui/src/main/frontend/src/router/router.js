@@ -47,6 +47,8 @@ import Submit from '@/views/view/main/submit/Submit.vue';
 import NewSubmission from '@/views/view/main/submit/new/NewSubmission.vue';
 import ErrorSubmission from '@/views/view/main/submit/error/ErrorSubmission.vue';
 import Login from '@/views/view/login/Login.vue';
+import TempSample from '@/views/view/main/temp-sample/TempSample.vue';
+import TempSampleList from '@/views/view/main/temp-sample/list/TempSampleList.vue';
 import { RAW_BASE_PATH } from '@/resourceBasePath';
 import store from '@/store/store';
 
@@ -89,6 +91,23 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'Submit' },
+              },
+            ],
+          },
+          {
+            path: 'temp-sample',
+            component: TempSample,
+            name: 'TempSample',
+            redirect: { name: 'TempSampleList' },
+            children: [
+              {
+                path: 'list',
+                name: 'TempSampleList',
+                component: TempSampleList,
+              },
+              {
+                path: '*',
+                redirect: { name: 'TempSample' },
               },
             ],
           },

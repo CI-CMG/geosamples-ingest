@@ -21,6 +21,7 @@ import {
 const model = {
   rows: [
     {
+      index: 'int',
       facilityCode: 'string',
       shipName: 'string',
       cruiseId: 'string',

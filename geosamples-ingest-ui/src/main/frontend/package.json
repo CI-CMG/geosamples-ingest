@@ -13,6 +13,7 @@
     "base64url": "^3.0.1",
     "bootstrap": "^4.5.3",
     "bootstrap-vue": "^2.21.1",
+    "classnames": "^2.3.1",
     "dot-object": "^2.1.4",
     "popper": "^1.0.1",
     "portal-vue": "^2.1.7",
@@ -20,6 +21,7 @@
     "urijs": "^1.19.6",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
+    "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0",
     "vuex-map-fields": "^1.4.1"
   },

@@ -8,6 +8,7 @@ export default {
     file: null,
     uploading: false,
     errorData: {},
+    dataRows: [],
   },
 
   mutations: {
@@ -16,6 +17,9 @@ export default {
     },
     setErrorData(state, errorData) {
       state.errorData = errorData;
+    },
+    setDataRows(state, dataRows) {
+      state.dataRows = dataRows;
     },
     uploadRequest(state) {
       state.uploading = true;
@@ -30,7 +34,7 @@ export default {
   },
 
   actions: {
-    uploadFile({ commit, state, dispatch }, { router }) {
+    uploadFile({ commit, state }, { router }) {
       commit('uploadRequest');
 
       const formData = new FormData();
@@ -46,7 +50,12 @@ export default {
         .then(
           (response) => {
             commit('uploadSuccess');
-            dispatch('checkTilesGenerating');
+            const data = response.data;
+            const { facilityCodes } = data;
+            if (facilityCodes.length > 0) {
+              // TODO support more specific query
+              router.push({ name: 'TempSampleList', query: { facilityCode: facilityCodes[0] } });
+            }
             return response.data;
           },
           (error) => {
@@ -54,16 +63,21 @@ export default {
             if (response) {
               const { data } = response;
               if (data) {
-                const { formErrors } = data;
-                commit('setErrorData', formErrors);
-                // if (formErrors) {
-                //   const paths = Object.keys(formErrors);
-                //   paths.forEach((path) => {
-                //     const message = formErrors[path].join(', ');
-                //     commit('submissionForm/setTouched', { path, touched: false }, { root: true });
-                //     commit('submissionForm/setError', { path, error: message }, { root: true });
-                //   });
-                // }
+                const { formErrors, additionalData } = data;
+                // commit('setErrorData', formErrors);
+                if (additionalData && additionalData.rows) {
+                  commit('submissionForm/initialize', additionalData, { root: true });
+                } else {
+                  commit('submissionForm/initialize', null, { root: true });
+                }
+                if (formErrors) {
+                  const paths = Object.keys(formErrors);
+                  paths.forEach((path) => {
+                    const message = formErrors[path].join(', ');
+                    commit('submissionForm/setTouched', { path, touched: false }, { root: true });
+                    commit('submissionForm/setError', { path, error: message }, { root: true });
+                  });
+                }
               }
             }
             commit('uploadFailure');

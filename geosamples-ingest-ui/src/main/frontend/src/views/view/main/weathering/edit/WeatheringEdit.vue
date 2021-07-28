@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Weathering - {{ getValue('weathering') }}</h1>
-      <h1 v-else class="text-primary">Add New Weathering</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Weathering/Metamorphism - {{ getValue('weathering') }}</h1>
+      <h1 v-else class="text-primary">Add New Weathering/Metamorphism</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Weathering" :label-for="weatheringId">
+        <b-form-group v-if="!isEdit" label="Weathering/Metamorphism" :label-for="weatheringId">
           <b-form-input
             :id="weatheringId"
             type="text" @blur="() => setTouched({path: 'weathering', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('weathering') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Weathering Code" :label-for="weatheringCodeId">
+        <b-form-group label="Weathering/Metamorphism Code" :label-for="weatheringCodeId">
           <b-form-input
             :id="weatheringCodeId"
             type="text" @blur="() => setTouched({path: 'weatheringCode', touched: true})"

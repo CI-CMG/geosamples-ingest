@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Weathering" :label-for="weatheringId">
+          <b-form-group label="Weathering/Metamorphism" :label-for="weatheringId">
             <b-form-input :id="weatheringId" v-model="weathering"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Weathering Code" :label-for="weatheringCodeId">
+          <b-form-group label="Weathering/Metamorphism Code" :label-for="weatheringCodeId">
             <b-form-input :id="weatheringCodeId" v-model="weatheringCode"/>
           </b-form-group>
         </b-col>
@@ -21,7 +21,7 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'WeatheringAdd' }" variant="secondary" class="m-3">Add New Weathering</b-button>
+  <b-button :to="{ name: 'WeatheringAdd' }" variant="secondary" class="m-3">Add New Weathering/Metamorphism</b-button>
   <b-table
     striped
     bordered
@@ -113,12 +113,12 @@ export default {
       fields: [
         {
           key: 'weathering',
-          label: 'Weathering',
+          label: 'Weathering/Metamorphism',
           sortable: true,
         },
         {
           key: 'weatheringCode',
-          label: 'Weathering Code',
+          label: 'Weathering/Metamorphism Code',
           sortable: true,
         },
       ],

@@ -45,7 +45,7 @@ public class CuratorPreviewService {
   public CuratorDataResponse upload(SampleRowHolder sampleRowHolder) {
     validationService.validate(sampleRowHolder);
     List<SampleRow> rows = sampleRowHolder.getRows();
-    curatorPreviewPersistenceService.save(rows);
+    curatorPreviewPersistenceService.save(sampleRowHolder);
     TreeSet<String> platforms = new TreeSet<>();
     TreeSet<String> facilityCodes = new TreeSet<>();
     TreeSet<String> cruises = new TreeSet<>();

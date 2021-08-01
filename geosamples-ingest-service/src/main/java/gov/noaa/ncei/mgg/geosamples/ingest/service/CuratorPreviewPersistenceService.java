@@ -8,50 +8,37 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsDeviceRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsMunsellRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsProvinceRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRemarkRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRockLithRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRockMinRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsStorageMethRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsWeathMetaRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcSampleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
-import javax.sql.DataSource;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
-import org.hibernate.engine.jdbc.dialect.spi.DatabaseMetaDataDialectResolutionInfoAdapter;
-import org.locationtech.jts.geom.CoordinateXY;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import javax.validation.Validator;
+import javax.validation.metadata.ConstraintDescriptor;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -60,31 +47,35 @@ public class CuratorPreviewPersistenceService {
   private final TempQcSampleRepository tempQcSampleRepository;
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   private final TempQcIntervalRepository tempQcIntervalRepository;
+  private final CuratorsIntervalRepository curatorsIntervalRepository;
   private final ServiceProperties serviceProperties;
   private final SampleDataUtils sampleDataUtils;
+  private final Validator validator;
 
 
   @Autowired
   public CuratorPreviewPersistenceService(TempQcSampleRepository tempQcSampleRepository,
       CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
       TempQcIntervalRepository tempQcIntervalRepository,
-      ServiceProperties serviceProperties,
-      SampleDataUtils sampleDataUtils) {
+      CuratorsIntervalRepository curatorsIntervalRepository, ServiceProperties serviceProperties,
+      SampleDataUtils sampleDataUtils, Validator validator) {
     this.tempQcSampleRepository = tempQcSampleRepository;
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.tempQcIntervalRepository = tempQcIntervalRepository;
+    this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.serviceProperties = serviceProperties;
     this.sampleDataUtils = sampleDataUtils;
+    this.validator = validator;
   }
 
   private TempQcSampleEntity saveCopy(CuratorsSampleTsqpEntity sample) {
     TempQcSampleEntity entity = new TempQcSampleEntity();
     entity.setCruise(sample.getCruise());
-    entity.setSample(entity.getSample());
-    entity.setFacility(entity.getFacility());
+    entity.setSample(sample.getSample());
+    entity.setFacility(sample.getFacility());
     entity.setPlatform(sample.getPlatform());
     entity.setDevice(sample.getDevice());
-    entity.setShipCode(entity.getShipCode());
+    entity.setShipCode(sample.getShipCode());
     entity.setBeginDate(sample.getBeginDate());
     entity.setEndDate(sample.getEndDate());
     entity.setLat(sample.getLat());
@@ -129,9 +120,17 @@ public class CuratorPreviewPersistenceService {
   }
 
   private Optional<TempQcSampleEntity> resolveSample(TempQcSampleEntity potSample) {
+    Optional<TempQcSampleEntity> maybeTempSample = tempQcSampleRepository.findOne(SearchUtils.findExistingSample(potSample));
+    if (maybeTempSample.isPresent()) {
+      return maybeTempSample;
+    }
+
     Optional<CuratorsSampleTsqpEntity> maybeSample = curatorsSampleTsqpRepository.findOne(SearchUtils.findExistingSample(potSample));
-    return maybeSample.map(curatorsSampleTsqpEntity -> Optional.of(saveCopy(curatorsSampleTsqpEntity)))
-        .orElseGet(() -> tempQcSampleRepository.findOne(SearchUtils.findExistingSample(potSample)));
+    if (maybeSample.isPresent()) {
+      return Optional.of(saveCopy(maybeSample.get()));
+    }
+
+    return Optional.empty();
   }
 
   private TempQcSampleEntity createSample(
@@ -217,11 +216,19 @@ public class CuratorPreviewPersistenceService {
     return sample;
   }
 
-  public void save(List<SampleRow> samples) {
+
+  public void save(SampleRowHolder sampleRowHolder) {
+
+    List<SampleRow> samples = sampleRowHolder.getRows();
+
 
     String lastUpdated = LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF);
 
-    for (SampleRow row : samples) {
+    Set<IntervalPk> intervalKeys = new HashSet<>();
+    Set<ConstraintViolation<?>> violations = new HashSet<>();
+    for (int index = 0; index < samples.size(); index++) {
+
+      SampleRow row = samples.get(index);
 
       CuratorsFacilityEntity facility = sampleDataUtils.getFacility(row.getFacilityCode());
       PlatformMasterEntity platform = sampleDataUtils.getPlatform(row.getShipName());
@@ -238,6 +245,15 @@ public class CuratorPreviewPersistenceService {
             potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
             return tempQcSampleRepository.saveAndFlush(potSample);
           });
+
+      PkValidator pkValidator = new PkValidator(index, sample.getImlgs(), row.getIntervalNumber(), intervalKeys);
+
+      Set<ConstraintViolation<PkValidator>> violationSet = validator.validate(pkValidator);
+      violations.addAll(violationSet);
+
+      if (!violations.isEmpty()) {
+        continue;
+      }
 
 
       TempQcIntervalEntity interval = new TempQcIntervalEntity();
@@ -318,7 +334,9 @@ public class CuratorPreviewPersistenceService {
 
     }
 
-
+    if (!violations.isEmpty()) {
+      throw new SpreadsheetValidationException(sampleRowHolder, violations);
+    }
 
 
   }

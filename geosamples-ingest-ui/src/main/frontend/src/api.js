@@ -3,7 +3,7 @@ import {
   BASE_PATH, BASE_API,
 } from '@/basePath';
 
-const defaultTimeout = 60000;
+const defaultTimeout = 600000;
 
 const apiService = axios.create();
 

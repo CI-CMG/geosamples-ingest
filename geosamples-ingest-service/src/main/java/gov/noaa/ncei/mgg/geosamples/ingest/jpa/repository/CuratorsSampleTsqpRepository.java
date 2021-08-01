@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface CuratorsSampleTsqpRepository extends JpaRepository<CuratorsSampleTsqpEntity, String>, JpaSpecificationExecutor<CuratorsSampleTsqpEntity> {
 
+  boolean existsByIgsn(String igsn);
 }

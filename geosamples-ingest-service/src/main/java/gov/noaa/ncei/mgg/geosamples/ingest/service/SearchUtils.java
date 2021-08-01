@@ -75,28 +75,7 @@ public class SearchUtils {
         cb.equal(e.get("sample"), sample.getSample()),
         cb.equal(e.get("facility"), sample.getFacility()),
         cb.equal(e.get("platform"), sample.getPlatform()),
-        cb.equal(e.get("device"), sample.getDevice()),
-        cb.equal(e.get("beginDate"), sample.getBeginDate()),
-        cb.equal(e.get("endDate"), sample.getEndDate()),
-        cb.equal(e.get("lat"), sample.getLat()),
-        cb.equal(e.get("endLat"), sample.getEndLat()),
-        cb.equal(e.get("lon"), sample.getLon()),
-        cb.equal(e.get("endLon"), sample.getEndLon()),
-        cb.equal(e.get("latLonOrig"), sample.getLatLonOrig()),
-        cb.equal(e.get("waterDepth"), sample.getWaterDepth()),
-        cb.equal(e.get("endWaterDepth"), sample.getEndWaterDepth()),
-        cb.equal(e.get("storageMeth"), sample.getStorageMeth()),
-        cb.equal(e.get("coredLength"), sample.getCoredLength()),
-        cb.equal(e.get("coredLengthMm"), sample.getCoredLengthMm()),
-        cb.equal(e.get("coredDiam"), sample.getCoredDiam()),
-        cb.equal(e.get("coredDiamMm"), sample.getCoredDiamMm()),
-        cb.equal(e.get("pi"), sample.getPi()),
-        cb.equal(e.get("province"), sample.getProvince()),
-        cb.equal(e.get("lake"), sample.getLake()),
-        cb.equal(e.get("otherLink"), sample.getOtherLink()),
-        cb.equal(e.get("igsn"), sample.getIgsn()),
-        cb.equal(e.get("leg"), sample.getLeg()),
-        cb.equal(e.get("sampleComments"), sample.getSampleComments())
+        cb.equal(e.get("device"), sample.getDevice())
         );
   }
 

@@ -1,26 +1,29 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.DeviceView;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalIdView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleIntervalAcceptanceView;
+import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcIntervalRepository;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcSampleRepository;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
-import javax.persistence.criteria.Predicate;
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,161 +32,177 @@ import org.springframework.transaction.annotation.Transactional;
 public class TempSampleIntervalService extends
     SearchServiceBase<TempQcIntervalEntity, IntervalPk, CombinedIntervalSampleSearchParameters, CombinedSampleIntervalView, TempQcIntervalRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping;
-
-  static {
-    Map<String, String> map = new HashMap<>();
-    map.put("cruise", "parentEntity.cruise");
-    map.put("sample", "parentEntity.sample");
-    map.put("facility", "parentEntity.facility");
-    map.put("platform", "parentEntity.platform");
-    viewToEntitySortMapping = Collections.unmodifiableMap(map);
-  }
-
   private final TempQcIntervalRepository tempQcIntervalRepository;
+  private final TempQcSampleRepository tempQcSampleRepository;
+  private final CuratorsIntervalRepository curatorsIntervalRepository;
+  private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
+  private final ServiceProperties serviceProperties;
 
   @Autowired
-  public TempSampleIntervalService(TempQcIntervalRepository tempQcIntervalRepository) {
+  public TempSampleIntervalService(TempQcIntervalRepository tempQcIntervalRepository,
+      TempQcSampleRepository tempQcSampleRepository,
+      CuratorsIntervalRepository curatorsIntervalRepository,
+      CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
+      ServiceProperties serviceProperties) {
     this.tempQcIntervalRepository = tempQcIntervalRepository;
+    this.tempQcSampleRepository = tempQcSampleRepository;
+    this.curatorsIntervalRepository = curatorsIntervalRepository;
+    this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
+    this.serviceProperties = serviceProperties;
   }
+
+  private CuratorsSampleTsqpEntity saveCopy(TempQcSampleEntity sample, String imlgs) {
+    CuratorsSampleTsqpEntity entity = new CuratorsSampleTsqpEntity();
+    entity.setImlgs(imlgs);
+    entity.setCruise(sample.getCruise());
+    entity.setSample(sample.getSample());
+    entity.setFacility(sample.getFacility());
+    entity.setPlatform(sample.getPlatform());
+    entity.setDevice(sample.getDevice());
+    entity.setShipCode(sample.getShipCode());
+    entity.setBeginDate(sample.getBeginDate());
+    entity.setEndDate(sample.getEndDate());
+    entity.setLat(sample.getLat());
+    entity.setLatDeg(sample.getLatDeg());
+    entity.setLatMin(sample.getLatMin());
+    entity.setNs(sample.getNs());
+    entity.setEndLat(sample.getEndLat());
+    entity.setEndLatDeg(sample.getEndLatDeg());
+    entity.setEndLatMin(sample.getEndLatMin());
+    entity.setEndNs(sample.getEndNs());
+    entity.setLon(sample.getLon());
+    entity.setLonDeg(sample.getLonDeg());
+    entity.setLonMin(sample.getLonMin());
+    entity.setEw(sample.getEw());
+    entity.setEndLon(sample.getEndLon());
+    entity.setEndLonDeg(sample.getEndLonDeg());
+    entity.setEndLonMin(sample.getEndLonMin());
+    entity.setEndEw(sample.getEndEw());
+    entity.setLatLonOrig(sample.getLatLonOrig());
+    entity.setWaterDepth(sample.getWaterDepth());
+    entity.setEndWaterDepth(sample.getEndWaterDepth());
+    entity.setStorageMeth(sample.getStorageMeth());
+    entity.setCoredLength(sample.getCoredLength());
+    entity.setCoredLengthMm(sample.getCoredLengthMm());
+    entity.setCoredDiam(sample.getCoredDiam());
+    entity.setCoredDiamMm(sample.getCoredDiamMm());
+    entity.setPi(sample.getPi());
+    entity.setProvince(sample.getProvince());
+    entity.setLake(sample.getLake());
+    entity.setOtherLink(sample.getOtherLink());
+    entity.setLastUpdate(sample.getLastUpdate());
+    entity.setIgsn(sample.getIgsn());
+    entity.setLeg(sample.getLeg());
+    entity.setSampleComments(sample.getSampleComments());
+    entity.setPublish(sample.getPublish());
+    entity.setPreviousState(sample.getPreviousState());
+    entity.setObjectId(sample.getObjectId());
+    entity.setShape(sample.getShape());
+    entity.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + imlgs);
+    return curatorsSampleTsqpRepository.saveAndFlush(entity);
+  }
+
+  private CuratorsSampleTsqpEntity resolveSample(String imlgs) {
+    if (imlgs.startsWith("temp_")) {
+      String acceptedImlgs = imlgs.replaceAll("^temp_", "");
+      Optional<CuratorsSampleTsqpEntity> maybeSample = curatorsSampleTsqpRepository.findById(acceptedImlgs);
+      return maybeSample.orElseGet(
+          () -> tempQcSampleRepository.findById(imlgs)
+              .map(s -> saveCopy(s, acceptedImlgs))
+              .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find " + imlgs).build()))
+      );
+    } else {
+      return curatorsSampleTsqpRepository.findById(imlgs)
+          .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find " + imlgs).build()));
+    }
+  }
+
+  private void saveCopyInterval(TempQcIntervalEntity interval, CuratorsSampleTsqpEntity sample) {
+    CuratorsIntervalEntity entity = new CuratorsIntervalEntity();
+    entity.setParentEntity(sample);
+    entity.setInterval(interval.getInterval());
+    entity.setDepthTop(interval.getDepthTop());
+    entity.setDepthTopMm(interval.getDepthTopMm());
+    entity.setDepthBot(interval.getDepthBot());
+    entity.setDepthBotMm(interval.getDepthBotMm());
+    entity.setDhCoreId(interval.getDhCoreId());
+    entity.setDhCoreLength(interval.getDhCoreLength());
+    entity.setDhCoreLengthMm(interval.getDhCoreLengthMm());
+    entity.setDhCoreInterval(interval.getDhCoreInterval());
+    entity.setdTopInDhCore(interval.getdTopInDhCore());
+    entity.setdTopMmInDhCore(interval.getdTopMmInDhCore());
+    entity.setdBotInDhCore(interval.getdBotInDhCore());
+    entity.setdBotMmInDhCore(interval.getdBotMmInDhCore());
+    entity.setLith1(interval.getLith1());
+    entity.setText1(interval.getText1());
+    entity.setLith2(interval.getLith2());
+    entity.setText2(interval.getText2());
+    entity.setComp1(interval.getComp1());
+    entity.setComp2(interval.getComp2());
+    entity.setComp3(interval.getComp3());
+    entity.setComp4(interval.getComp4());
+    entity.setComp5(interval.getComp5());
+    entity.setComp6(interval.getComp6());
+    entity.setDescription(interval.getDescription());
+    entity.setAge(interval.getAge());
+    entity.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
+    entity.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
+    entity.setWeight(interval.getWeight());
+    entity.setRockLith(interval.getRockLith());
+    entity.setRockMin(interval.getRockMin());
+    entity.setWeathMeta(interval.getWeathMeta());
+    entity.setRemark(interval.getRemark());
+    entity.setMunsellCode(interval.getMunsellCode());
+    entity.setMunsell(interval.getMunsell());
+    entity.setExhaustCode(interval.getExhaustCode());
+    entity.setPhotoLink(interval.getPhotoLink());
+    entity.setLake(interval.getLake());
+    entity.setUnitNumber(interval.getUnitNumber());
+    entity.setIntComments(interval.getIntComments());
+    entity.setDhDevice(interval.getDhDevice());
+    entity.setCmcdTop(interval.getCmcdTop());
+    entity.setMmcdTop(interval.getMmcdTop());
+    entity.setCmcdBot(interval.getCmcdBot());
+    entity.setMmcdBot(interval.getMmcdBot());
+    entity.setPublish(interval.getPublish());
+    entity.setPreviousState(interval.getPreviousState());
+    entity.setIgsn(interval.getIgsn());
+    curatorsIntervalRepository.saveAndFlush(entity);
+  }
+
+  public SampleIntervalAcceptanceView accept(SampleIntervalAcceptanceView acceptance) {
+    Set<String> tempImlgsToDelete = new HashSet<>();
+    for (IntervalIdView intervalId : acceptance.getIntervals()) {
+      tempImlgsToDelete.add(intervalId.getImlgs());
+      CuratorsSampleTsqpEntity sample = resolveSample(intervalId.getImlgs());
+      IntervalPk pk = new IntervalPk();
+      pk.setImlgs(intervalId.getImlgs());
+      pk.setInterval(intervalId.getInterval());
+      TempQcIntervalEntity interval = tempQcIntervalRepository.findById(pk)
+          .orElseThrow(() -> new ApiException(
+              HttpStatus.BAD_REQUEST,
+              ApiError.builder().error("Unable to find interval: " + intervalId.getImlgs() + " + " + intervalId.getInterval()).build()));
+      saveCopyInterval(interval, sample);
+      tempQcIntervalRepository.delete(interval);
+      tempQcIntervalRepository.flush();
+    }
+    for (String imlgs : tempImlgsToDelete) {
+      if (tempQcIntervalRepository.countByImlgs(imlgs) == 0) {
+        tempQcSampleRepository.deleteById(imlgs);
+      }
+    }
+    return acceptance;
+  }
+
 
   @Override
   protected List<Specification<TempQcIntervalEntity>> getSpecs(CombinedIntervalSampleSearchParameters searchParameters) {
-    List<Specification<TempQcIntervalEntity>> specs = new ArrayList<>();
-
-    List<String> cruise = searchParameters.getCruise();
-    List<String> facilityCode = searchParameters.getFacilityCode();
-    List<String> platform = searchParameters.getPlatform();
-
-    if (!cruise.isEmpty()) {
-      specs.add((Specification<TempQcIntervalEntity>) (e, cq, cb) ->
-          cb.or(cruise.stream().map(v ->
-              cb.equal(
-                  cb.lower(e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.CRUISE)),
-                  v.toLowerCase(Locale.ENGLISH)))
-                  .collect(Collectors.toList()).toArray(new Predicate[0])));
-    }
-
-    if (!facilityCode.isEmpty()) {
-      specs.add((Specification<TempQcIntervalEntity>) (e, cq, cb) ->
-          cb.or(facilityCode.stream().map(v ->
-              cb.equal(
-                  cb.lower(e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE)),
-                  v.toLowerCase(Locale.ENGLISH)))
-              .collect(Collectors.toList()).toArray(new Predicate[0])));
-    }
-
-    if (!platform.isEmpty()) {
-      specs.add((Specification<TempQcIntervalEntity>) (e, cq, cb) ->
-          cb.or(platform.stream().map(v ->
-              cb.like(
-                  cb.lower(e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
-                  SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
-              .collect(Collectors.toList()).toArray(new Predicate[0])));
-    }
-
-    return specs;
+    return SampleIntervalUtils.getBaseSpecs(searchParameters);
   }
 
   @Override
   protected CombinedSampleIntervalView toView(TempQcIntervalEntity entity) {
-    CombinedSampleIntervalView view = new CombinedSampleIntervalView();
-    TempQcSampleEntity sampleEntity = entity.getParentEntity();
-    view.setCruise(sampleEntity.getCruise());
-    view.setSample(sampleEntity.getSample());
-    view.setFacility(sampleEntity.getFacility().getFacility());
-    view.setPlatform(sampleEntity.getPlatform().getPlatform());
-    view.setDevice(sampleEntity.getDevice().getDevice());
-    view.setShipCode(sampleEntity.getShipCode());
-    view.setBeginDate(sampleEntity.getBeginDate());
-    view.setEndDate(sampleEntity.getEndDate());
-    view.setLat(sampleEntity.getLat());
-    view.setLatDeg(sampleEntity.getLatDeg());
-    view.setLatMin(sampleEntity.getLatMin());
-    view.setNs(sampleEntity.getNs());
-    view.setEndLat(sampleEntity.getEndLat());
-    view.setEndLatDeg(sampleEntity.getEndLatDeg());
-    view.setEndLatMin(sampleEntity.getEndLatMin());
-    view.setEndNs(sampleEntity.getEndNs());
-    view.setLon(sampleEntity.getLon());
-    view.setLonDeg(sampleEntity.getLonDeg());
-    view.setLonMin(sampleEntity.getLonMin());
-    view.setEndEw(sampleEntity.getEndEw());
-    view.setEndLon(sampleEntity.getEndLon());
-    view.setEndLonDeg(sampleEntity.getEndLonDeg());
-    view.setEndLonMin(sampleEntity.getEndLonMin());
-    view.setEndEw(sampleEntity.getEndEw());
-    view.setLatLonOrig(sampleEntity.getLatLonOrig());
-    view.setWaterDepth(sampleEntity.getWaterDepth());
-    view.setEndWaterDepth(sampleEntity.getEndWaterDepth());
-    view.setStorageMeth(sampleEntity.getStorageMeth() == null ? null : sampleEntity.getStorageMeth().getStorageMeth());
-    view.setCoredLength(sampleEntity.getCoredLength());
-    view.setCoredLengthMm(sampleEntity.getCoredLengthMm());
-    view.setCoredDiam(sampleEntity.getCoredDiam());
-    view.setCoredDiamMm(sampleEntity.getCoredDiamMm());
-    view.setPi(sampleEntity.getPi());
-    view.setProvince(sampleEntity.getProvince() == null ? null : sampleEntity.getProvince().getProvince());
-    view.setSampleLake(sampleEntity.getLake());
-    view.setOtherLink(sampleEntity.getOtherLink());
-    view.setLastUpdate(sampleEntity.getLastUpdate());
-    view.setIgsn(sampleEntity.getIgsn());
-    view.setLeg(sampleEntity.getLeg());
-    view.setSample(sampleEntity.getSampleComments());
-    view.setSamplePublish(sampleEntity.getPublish());
-    view.setObjectId(sampleEntity.getObjectId());
-    view.setShowSampl(sampleEntity.getShowSampl());
-    view.setImlgs(sampleEntity.getImlgs());
-
-    view.setInterval(entity.getInterval());
-    view.setDepthTop(entity.getDepthTop());
-    view.setDepthTopMm(entity.getDepthTopMm());
-    view.setDepthBot(entity.getDepthBot());
-    view.setDepthBotMm(entity.getDepthBotMm());
-    view.setDhCoreId(entity.getDhCoreId());
-    view.setDhCoreLength(entity.getDhCoreLength());
-    view.setDhCoreLengthMm(entity.getDhCoreLengthMm());
-    view.setDhCoreInterval(entity.getDhCoreInterval());
-    view.setdTopInDhCore(entity.getdTopInDhCore());
-    view.setdTopMmInDhCore(entity.getdTopMmInDhCore());
-    view.setdBotInDhCore(entity.getdBotInDhCore());
-    view.setdBotMmInDhCore(entity.getdBotMmInDhCore());
-    view.setLith1(entity.getLith1() == null ? null : entity.getLith1().getLithology());
-    view.setText1(entity.getText1() == null ? null : entity.getText1().getTexture());
-    view.setLith1(entity.getLith2() == null ? null : entity.getLith2().getLithology());
-    view.setText2(entity.getText2() == null ? null : entity.getText2().getTexture());
-    view.setComp1(entity.getComp1() == null ? null : entity.getComp1().getLithology());
-    view.setComp2(entity.getComp2() == null ? null : entity.getComp2().getLithology());
-    view.setComp3(entity.getComp3() == null ? null : entity.getComp3().getLithology());
-    view.setComp4(entity.getComp4() == null ? null : entity.getComp4().getLithology());
-    view.setComp5(entity.getComp5() == null ? null : entity.getComp5().getLithology());
-    view.setComp6(entity.getComp6() == null ? null : entity.getComp6().getLithology());
-    view.setDescription(entity.getDescription());
-    view.setAge(entity.getAge() == null ? null : entity.getAge().getAge());
-    view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
-    view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());
-    view.setWeight(entity.getWeight());
-    view.setRockLith(entity.getRockLith() == null ? null : entity.getRockLith().getRockLith());
-    view.setRockMin(entity.getRockMin() == null ? null : entity.getRockMin().getRockMin());
-    view.setWeathMeta(entity.getWeathMeta() == null ? null : entity.getWeathMeta().getWeathMeta());
-    view.setRemark(entity.getRemark() == null ? null : entity.getRemark().getRemark());
-    view.setMunsellCode(entity.getMunsellCode());
-    view.setMunsell(entity.getMunsell());
-    view.setExhaustCode(entity.getExhaustCode());
-    view.setPhotoLink(entity.getPhotoLink());
-    view.setIntervalLake(entity.getLake());
-    view.setUnitNumber(entity.getUnitNumber());
-    view.setIntComments(entity.getIntComments());
-    view.setDhDevice(entity.getDhDevice());
-    view.setCmcdTop(entity.getCmcdTop());
-    view.setMmcdTop(entity.getMmcdTop());
-    view.setCmcdBot(entity.getCmcdBot());
-    view.setMmcdBot(entity.getMmcdBot());
-    view.setIntervalPublish(entity.getPublish());
-    view.setIntervalIgsn(entity.getIgsn());
-    view.setIntervalImlgs(entity.getImlgs());
-    view.setIntervalParentIsgn(entity.getParentIgsn());
-
-    return view;
+    return SampleIntervalUtils.toViewBase(entity);
   }
 
   @Override
@@ -199,7 +218,7 @@ public class TempSampleIntervalService extends
 
   @Override
   protected Map<String, String> getViewToEntitySortMapping() {
-    return viewToEntitySortMapping;
+    return SampleIntervalUtils.SORT_MAPPING;
   }
 
   @Override

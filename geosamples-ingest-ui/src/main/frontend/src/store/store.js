@@ -32,6 +32,7 @@ import loginForm from './modules/loginFormModule';
 import submission from './modules/submissionModule';
 import submissionForm from './modules/submissionFormModule';
 import tempSampleInterval from './modules/tempSampleIntervalModule';
+import interval from './modules/intervalModule';
 
 Vue.use(Vuex);
 
@@ -69,5 +70,6 @@ export default new Vuex.Store({
     submission,
     submissionForm,
     tempSampleInterval,
+    interval,
   },
 });

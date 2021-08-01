@@ -23,6 +23,7 @@
           <b-nav-item-dropdown text="Curator Data">
             <b-dropdown-item :to="{ name: 'NewSubmission'}">New Submission</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'TempSampleList'}">Sample / Interval Preview</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'IntervalList'}">Interval</b-dropdown-item>
 <!--            <b-dropdown-item :to="{ name: ''}">Edit & Finalize Submission</b-dropdown-item>-->
 <!--            <b-dropdown-item :to="{ name: ''}">Finalized Sample & Interval Data</b-dropdown-item>-->
           </b-nav-item-dropdown>

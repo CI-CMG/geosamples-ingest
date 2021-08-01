@@ -1,3 +1,5 @@
+alter table ${schema_name}.TEMPQC_SAMPLE modify IMLGS VARCHAR2( 20 );
+
 alter table ${schema_name}.TEMPQC_SAMPLE drop constraint TEMPQC_SAMPLE_PK;
 
 alter table ${schema_name}.TEMPQC_SAMPLE
@@ -59,11 +61,12 @@ begin
         :new.OBJECTID := CURATORS_SEQ.NEXTVAL ;
     end if;
     if :new.IMLGS is null then
-        :new.IMLGS := 'imlgs'||lpad(:new.objectid,7,'0');
+        :new.IMLGS := 'temp_imlgs'||lpad(:new.objectid,7,'0');
     end if;
 end;
 /
 
+alter table ${schema_name}.TEMPQC_INTERVAL modify IMLGS VARCHAR2( 20 );
 
 alter table ${schema_name}.TEMPQC_INTERVAL drop constraint TEMPQC_INTERVAL_PK;
 
@@ -74,6 +77,10 @@ alter table ${schema_name}.TEMPQC_INTERVAL
 alter table ${schema_name}.TEMPQC_INTERVAL
     add constraint TEMPQC_INTERVAL_UK
         unique (FACILITY_CODE, PLATFORM, CRUISE, SAMPLE, DEVICE, INTERVAL);
+
+alter table ${schema_name}.TEMPQC_INTERVAL
+    add constraint  TEMPQC_INTERVAL_IMLGS_FK
+		foreign key ( IMLGS )	references ${schema_name}.TEMPQC_SAMPLE (IMLGS);
 
 alter table ${schema_name}.TEMPQC_INTERVAL
     add constraint TEMPQC_INTERVAL_FACILITY_CODE_NN
@@ -91,6 +98,10 @@ alter table ${schema_name}.TEMPQC_INTERVAL
     add constraint TEMPQC_INTERVAL_DEVICE_NN
         check ( DEVICE is not null );
 
+
+alter table ${schema_name}.CURATORS_INTERVAL
+    add constraint  CURATORS_INTERVAL_IMLGS_FK
+        foreign key ( IMLGS ) references ${schema_name}.CURATORS_SAMPLE_TSQP (IMLGS);
 
 alter table ${schema_name}.CURATORS_INTERVAL
     add constraint CURATORS_INTERVAL_FACILITY_CODE_NN

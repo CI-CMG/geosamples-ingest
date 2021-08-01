@@ -2,35 +2,50 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+public class SampleSearchParameters implements PagingAndSortingParameters {
 
-public class CombinedIntervalSampleSearchParameters implements PagingAndSortingParameters {
-
-  private static final List<String> DEFAULT_SORT = Arrays.asList("cruise:asc", "sample:asc");
+  private static final List<String> DEFAULT_SORT = Collections.singletonList("platform:asc");
 
   @Min(1)
   private int page = 1;
 
   @Min(1)
-  @Max(1000)
-  private int itemsPerPage = 1000;
+  @Max(200)
+  private int itemsPerPage = 100;
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(CombinedSampleIntervalView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(SampleView.class) String> order = DEFAULT_SORT;
 
 
+  private List<String> imlgs = new ArrayList<>(0);
   private List<String> cruise = new ArrayList<>(0);
+  private List<String> sample = new ArrayList<>(0);
   private List<String> facilityCode = new ArrayList<>(0);
   private List<String> platform = new ArrayList<>(0);
+  private List<String> deviceCode = new ArrayList<>(0);
+  private List<String> igsn = new ArrayList<>(0);
 
+  public List<String> getImlgs() {
+    return imlgs;
+  }
+
+  public void setImlgs(List<String> imlgs) {
+    if(imlgs == null) {
+      imlgs = new ArrayList<>(0);
+    }
+    this.imlgs = imlgs;
+  }
 
   public List<String> getCruise() {
     return cruise;
@@ -43,6 +58,16 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
     this.cruise = cruise;
   }
 
+  public List<String> getSample() {
+    return sample;
+  }
+
+  public void setSample(List<String> sample) {
+    if(sample == null) {
+      sample = new ArrayList<>(0);
+    }
+    this.sample = sample;
+  }
 
   public List<String> getFacilityCode() {
     return facilityCode;
@@ -66,6 +91,27 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
     this.platform = platform;
   }
 
+  public List<String> getDeviceCode() {
+    return deviceCode;
+  }
+
+  public void setDeviceCode(List<String> deviceCode) {
+    if(deviceCode == null) {
+      deviceCode = new ArrayList<>(0);
+    }
+    this.deviceCode = deviceCode;
+  }
+
+  public List<String> getIgsn() {
+    return igsn;
+  }
+
+  public void setIgsn(List<String> igsn) {
+    if(igsn == null) {
+      igsn = new ArrayList<>(0);
+    }
+    this.igsn = igsn;
+  }
 
   @Override
   public int getPage() {

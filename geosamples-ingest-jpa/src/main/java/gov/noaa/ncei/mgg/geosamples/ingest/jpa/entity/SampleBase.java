@@ -228,7 +228,7 @@ public abstract class SampleBase {
   private String showSampl;
 
   @Id
-  @Column(name = "IMLGS", length = 15, nullable = false)
+  @Column(name = "IMLGS", length = 20, nullable = false)
   private String imlgs;
 
 //  private TempQcSamplePk getPk() {

@@ -31,3 +31,11 @@ html {
 
 }
 
+.geo-temp-samples-table {
+  overflow: scroll;
+  width: 100%;
+  table {
+    white-space: nowrap;
+  }
+}
+

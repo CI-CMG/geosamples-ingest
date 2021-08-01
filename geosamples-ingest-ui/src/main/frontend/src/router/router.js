@@ -49,6 +49,8 @@ import ErrorSubmission from '@/views/view/main/submit/error/ErrorSubmission.vue'
 import Login from '@/views/view/login/Login.vue';
 import TempSample from '@/views/view/main/temp-sample/TempSample.vue';
 import TempSampleList from '@/views/view/main/temp-sample/list/TempSampleList.vue';
+import Interval from '@/views/view/main/interval/Interval.vue';
+import IntervalList from '@/views/view/main/interval/list/IntervalList.vue';
 import { RAW_BASE_PATH } from '@/resourceBasePath';
 import store from '@/store/store';
 
@@ -108,6 +110,23 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'TempSample' },
+              },
+            ],
+          },
+          {
+            path: 'interval',
+            component: Interval,
+            name: 'Interval',
+            redirect: { name: 'IntervalList' },
+            children: [
+              {
+                path: 'list',
+                name: 'IntervalList',
+                component: IntervalList,
+              },
+              {
+                path: '*',
+                redirect: { name: 'Interval' },
               },
             ],
           },

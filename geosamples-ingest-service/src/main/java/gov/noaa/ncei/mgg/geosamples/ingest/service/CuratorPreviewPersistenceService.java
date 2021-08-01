@@ -2,20 +2,12 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
-import gov.noaa.ncei.mgg.geosamples.ingest.config.FormatUtils;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRemarkEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockLithEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockMinEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsStorageMethEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsTextureEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsWeathMetaEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity;
@@ -28,6 +20,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsProvinceReposi
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRemarkRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRockLithRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsRockMinRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsStorageMethRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsWeathMetaRepository;
@@ -44,6 +37,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Consumer;
 import javax.sql.DataSource;
 import org.hibernate.dialect.Dialect;
@@ -63,407 +57,192 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class CuratorPreviewPersistenceService {
 
-  private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
-
-  private static final String sequenceName = "CURATORS_SEQ";
-
   private final TempQcSampleRepository tempQcSampleRepository;
+  private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   private final TempQcIntervalRepository tempQcIntervalRepository;
-  private final CuratorsFacilityRepository curatorsFacilityRepository;
-  private final PlatformMasterRepository platformMasterRepository;
-  private final CuratorsDeviceRepository curatorsDeviceRepository;
-  private final CuratorsStorageMethRepository curatorsStorageMethRepository;
-  private final CuratorsProvinceRepository curatorsProvinceRepository;
-  private final CuratorsLithologyRepository curatorsLithologyRepository;
-  private final CuratorsTextureRepository curatorsTextureRepository;
-  private final CuratorsAgeRepository curatorsAgeRepository;
-  private final CuratorsWeathMetaRepository curatorsWeathMetaRepository;
-  private final CuratorsRemarkRepository curatorsRemarkRepository;
-  private final CuratorsRockMinRepository curatorsRockMinRepository;
-  private final CuratorsRockLithRepository curatorsRockLithRepository;
-  private final CuratorsMunsellRepository curatorsMunsellRepository;
-  private final GeometryFactory geometryFactory;
   private final ServiceProperties serviceProperties;
-  private final DataSource dataSource;
-  private final String schema;
+  private final SampleDataUtils sampleDataUtils;
 
 
   @Autowired
   public CuratorPreviewPersistenceService(TempQcSampleRepository tempQcSampleRepository,
+      CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
       TempQcIntervalRepository tempQcIntervalRepository,
-      CuratorsFacilityRepository curatorsFacilityRepository,
-      PlatformMasterRepository platformMasterRepository,
-      CuratorsDeviceRepository curatorsDeviceRepository,
-      CuratorsStorageMethRepository curatorsStorageMethRepository,
-      CuratorsProvinceRepository curatorsProvinceRepository,
-      CuratorsLithologyRepository curatorsLithologyRepository,
-      CuratorsTextureRepository curatorsTextureRepository,
-      CuratorsAgeRepository curatorsAgeRepository,
-      CuratorsWeathMetaRepository curatorsWeathMetaRepository,
-      CuratorsRemarkRepository curatorsRemarkRepository,
-      CuratorsRockMinRepository curatorsRockMinRepository,
-      CuratorsRockLithRepository curatorsRockLithRepository,
-      CuratorsMunsellRepository curatorsMunsellRepository, GeometryFactory geometryFactory,
       ServiceProperties serviceProperties,
-      DataSource dataSource,
-      @Value("${spring.jpa.properties.hibernate.default_schema}") String schema) {
+      SampleDataUtils sampleDataUtils) {
     this.tempQcSampleRepository = tempQcSampleRepository;
+    this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.tempQcIntervalRepository = tempQcIntervalRepository;
-    this.curatorsFacilityRepository = curatorsFacilityRepository;
-    this.platformMasterRepository = platformMasterRepository;
-    this.curatorsDeviceRepository = curatorsDeviceRepository;
-    this.curatorsStorageMethRepository = curatorsStorageMethRepository;
-    this.curatorsProvinceRepository = curatorsProvinceRepository;
-    this.curatorsLithologyRepository = curatorsLithologyRepository;
-    this.curatorsTextureRepository = curatorsTextureRepository;
-    this.curatorsAgeRepository = curatorsAgeRepository;
-    this.curatorsWeathMetaRepository = curatorsWeathMetaRepository;
-    this.curatorsRemarkRepository = curatorsRemarkRepository;
-    this.curatorsRockMinRepository = curatorsRockMinRepository;
-    this.curatorsRockLithRepository = curatorsRockLithRepository;
-    this.curatorsMunsellRepository = curatorsMunsellRepository;
-    this.geometryFactory = geometryFactory;
     this.serviceProperties = serviceProperties;
-    this.dataSource = dataSource;
-    this.schema = schema;
+    this.sampleDataUtils = sampleDataUtils;
   }
 
-  private CuratorsFacilityEntity getFacility(String facility) {
-    if(facility == null) {
-      return null;
-    }
-    return curatorsFacilityRepository
-        .findById(facility)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find facility: " + facility).build()));
+  private TempQcSampleEntity saveCopy(CuratorsSampleTsqpEntity sample) {
+    TempQcSampleEntity entity = new TempQcSampleEntity();
+    entity.setCruise(sample.getCruise());
+    entity.setSample(entity.getSample());
+    entity.setFacility(entity.getFacility());
+    entity.setPlatform(sample.getPlatform());
+    entity.setDevice(sample.getDevice());
+    entity.setShipCode(entity.getShipCode());
+    entity.setBeginDate(sample.getBeginDate());
+    entity.setEndDate(sample.getEndDate());
+    entity.setLat(sample.getLat());
+    entity.setLatDeg(sample.getLatDeg());
+    entity.setLatMin(sample.getLatMin());
+    entity.setNs(sample.getNs());
+    entity.setEndLat(sample.getEndLat());
+    entity.setEndLatDeg(sample.getEndLatDeg());
+    entity.setEndLatMin(sample.getEndLatMin());
+    entity.setEndNs(sample.getEndNs());
+    entity.setLon(sample.getLon());
+    entity.setLonDeg(sample.getLonDeg());
+    entity.setLonMin(sample.getLonMin());
+    entity.setEw(sample.getEw());
+    entity.setEndLon(sample.getEndLon());
+    entity.setEndLonDeg(sample.getEndLonDeg());
+    entity.setEndLonMin(sample.getEndLonMin());
+    entity.setEndEw(sample.getEndEw());
+    entity.setLatLonOrig(sample.getLatLonOrig());
+    entity.setWaterDepth(sample.getWaterDepth());
+    entity.setEndWaterDepth(sample.getEndWaterDepth());
+    entity.setStorageMeth(sample.getStorageMeth());
+    entity.setCoredLength(sample.getCoredLength());
+    entity.setCoredLengthMm(sample.getCoredLengthMm());
+    entity.setCoredDiam(sample.getCoredDiam());
+    entity.setCoredDiamMm(sample.getCoredDiamMm());
+    entity.setPi(sample.getPi());
+    entity.setProvince(sample.getProvince());
+    entity.setLake(sample.getLake());
+    entity.setOtherLink(sample.getOtherLink());
+    entity.setLastUpdate(sample.getLastUpdate());
+    entity.setIgsn(sample.getIgsn());
+    entity.setLeg(sample.getLeg());
+    entity.setSampleComments(sample.getSampleComments());
+    entity.setPublish(sample.getPublish());
+    entity.setPreviousState(sample.getPreviousState());
+    entity.setObjectId(sample.getObjectId());
+    entity.setShape(sample.getShape());
+    entity.setShowSampl(sample.getShowSampl());
+    entity.setImlgs(sample.getImlgs());
+    return tempQcSampleRepository.saveAndFlush(entity);
   }
 
-  private PlatformMasterEntity getPlatform(String platformName) {
-    if(platformName == null) {
-      return null;
-    }
-    return platformMasterRepository
-        .findById(platformName)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
+  private Optional<TempQcSampleEntity> resolveSample(TempQcSampleEntity potSample) {
+    Optional<CuratorsSampleTsqpEntity> maybeSample = curatorsSampleTsqpRepository.findOne(SearchUtils.findExistingSample(potSample));
+    return maybeSample.map(curatorsSampleTsqpEntity -> Optional.of(saveCopy(curatorsSampleTsqpEntity)))
+        .orElseGet(() -> tempQcSampleRepository.findOne(SearchUtils.findExistingSample(potSample)));
   }
 
-  private CuratorsDeviceEntity getDevice(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsDeviceRepository
-        .findByDeviceCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find device code: " + code).build()));
-  }
+  private TempQcSampleEntity createSample(
+      CuratorsFacilityEntity facility,
+      PlatformMasterEntity platform,
+      CuratorsDeviceEntity device,
+      String cruiseId,
+      String sampleId,
+      SampleRow row,
+      String lastUpdated) {
 
-  private CuratorsStorageMethEntity getStorageMethod(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsStorageMethRepository
-        .findByStorageMethCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find storage method code: " + code).build()));
-  }
+    TempQcSampleEntity sample = new TempQcSampleEntity();
 
-  private CuratorsProvinceEntity getProvince(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsProvinceRepository
-        .findByProvinceCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find province code: " + code).build()));
-  }
+    sample.setCruise(cruiseId);
+    sample.setSample(sampleId);
+    sample.setFacility(facility);
+    sample.setPlatform(platform);
+    sample.setDevice(device);
 
-  private CuratorsLithologyEntity getLithology(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsLithologyRepository
-        .findByLithologyCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find lithology code: " + code).build()));
-  }
+//    sample.setObjectId(getObjectId());
+//    sample.setImlgs(getImlgs(sample.getObjectId()));
 
-  private CuratorsTextureEntity getTexture(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsTextureRepository
-        .findByTextureCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find texture code: " + code).build()));
-  }
+    // TODO what is this - ask Kelly?
+//      sample.setShipCode();
+    sample.setBeginDate(row.getDateCollected());
+    sample.setEndDate(row.getEndDate());
 
-  private CuratorsAgeEntity getAge(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsAgeRepository
-        .findByAgeCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find age code: " + code).build()));
-  }
+    PositionDim beginningLat = SampleDataUtils.getPositionDim(row.getBeginningLatitude(), true);
+    sample.setLat(beginningLat.getValue());
+    sample.setLatDeg(beginningLat.getDegrees());
+    sample.setLatMin(beginningLat.getMinutes());
+    sample.setNs(beginningLat.getDirection());
 
-  private CuratorsWeathMetaEntity getWeathering(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsWeathMetaRepository
-        .findByWeathMetaCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find weathering code: " + code).build()));
-  }
+    PositionDim endingLat = SampleDataUtils.getPositionDim(row.getEndingLatitude(), true);
+    sample.setEndLon(endingLat.getValue());
+    sample.setEndLatDeg(endingLat.getDegrees());
+    sample.setEndLatMin(endingLat.getMinutes());
+    sample.setEndNs(endingLat.getDirection());
 
-  private CuratorsRemarkEntity getGlassRemark(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsRemarkRepository
-        .findByRemarkCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find remark code: " + code).build()));
-  }
+    PositionDim beginningLon = SampleDataUtils.getPositionDim(row.getBeginningLongitude(), false);
+    sample.setLon(beginningLon.getValue());
+    sample.setLonDeg(beginningLon.getDegrees());
+    sample.setLonMin(beginningLon.getMinutes());
+    sample.setEw(beginningLon.getDirection());
 
-  private CuratorsMunsellEntity getMunsell(String munsellCode) {
-    if(munsellCode == null) {
-      return null;
-    }
-    return curatorsMunsellRepository
-        .findById(munsellCode)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find munsell: " + munsellCode).build()));
-  }
+    PositionDim endingLon = SampleDataUtils.getPositionDim(row.getEndingLongitude(), false);
+    sample.setEndLon(endingLon.getValue());
+    sample.setEndLonDeg(endingLon.getDegrees());
+    sample.setEndLonMin(endingLon.getMinutes());
+    sample.setEndEw(endingLon.getDirection());
 
-  private CuratorsRockMinEntity getMineralogy(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsRockMinRepository
-        .findByRockMinCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find rock mineral code: " + code).build()));
-  }
+    sample.setLatLonOrig("D");
 
-  private CuratorsRockLithEntity getRockLithology(String code) {
-    if(code == null) {
-      return null;
-    }
-    return curatorsRockLithRepository
-        .findByRockLithCode(code)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find rock lithology code: " + code).build()));
-  }
+    sample.setWaterDepth(SampleDataUtils.round(row.getBeginningWaterDepth()));
+    sample.setEndWaterDepth(SampleDataUtils.round(row.getEndingWaterDepth()));
 
-//  private static String formatDate(String value) {
-//    if(value == null) {
-//      return null;
-//    }
-//    return value.format(DTF);
-//  }
+    sample.setStorageMeth(sampleDataUtils.getStorageMethod(row.getStorageMethodCode()));
 
-  private static PositionDim getPositionDim(Double value, boolean lat){
-    if(value == null) {
-      return new PositionDim();
-    }
-    int degrees = (int) Math.floor(value);
-    double minutes = (value - degrees) * 60D;
-    String dir;
-    if(lat) {
-      dir = value >= 0D ? "N" : "S";
-    } else {
-      dir = value >= 0D ? "E" : "W";
-    }
-    return new PositionDim(value, degrees, minutes, dir);
-  }
+    CmConverter coredLength = new CmConverter(row.getCoreLength());
+    sample.setCoredLength(coredLength.getCm());
+    sample.setCoredLengthMm(coredLength.getMm());
 
-  private static class PositionDim {
-    private final Double value;
-    private final Integer degrees;
-    private final String minutes;
-    private final String direction;
+    CmConverter coredDiam = new CmConverter(row.getCoreDiameter());
+    sample.setCoredDiam(coredDiam.getCm());
+    sample.setCoredDiamMm(coredDiam.getMm());
 
-    public PositionDim() {
-      this(null, null, null, null);
-    }
+    sample.setPi(row.getPrincipalInvestigator());
+    sample.setProvince(sampleDataUtils.getProvince(row.getPhysiographicProvinceCode()));
 
-    public PositionDim(Double value, Integer degrees, Double minutes, String direction) {
-      this.value = value;
-      this.degrees = degrees;
-      this.minutes = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros2Decimal(minutes);
-      this.direction = direction;
-    }
+    sample.setIgsn(row.getIgsn());
 
-    public Double getValue() {
-      return value;
-    }
+    // TODO add me ? - DOI per curator - pass in form?
+//      sample.setOtherLink();
+    sample.setLastUpdate(lastUpdated);
+    sample.setLeg(row.getAlternateCruise());
 
-    public Integer getDegrees() {
-      return degrees;
-    }
+    sample.setPublish("Y");
 
-    public String getMinutes() {
-      return minutes;
-    }
 
-    public String getDirection() {
-      return direction;
-    }
-  }
+    sample.setShape(sampleDataUtils.getShape(row.getBeginningLongitude(), row.getBeginningLatitude()));
 
-  private static class CmConverter {
-    private final Double cm;
-
-    private CmConverter(Double cm) {
-      this.cm = cm;
-    }
-
-    public Integer getCm() {
-      return truncate(cm);
-    }
-
-    public Integer getMm() {
-      if(cm == null) {
-        return null;
-      }
-      return round((cm - getCm()) * 10D);
-    }
-  }
-
-  private static Integer truncate(Double d) {
-    if(d == null) {
-      return null;
-    }
-    return (int) Math.floor(d);
-  }
-
-  private static Integer round(Double d) {
-    if(d == null) {
-      return null;
-    }
-    return (int) Math.round(d);
-  }
-
-  private Geometry getShape(Double lon, Double lat) {
-    if(lon == null || lat == null) {
-      return null;
-    }
-    return geometryFactory.createPoint(new CoordinateXY(lon, lat));
-  }
-
-  private String resolveSeq() throws SQLException {
-    if(!StringUtils.hasText(schema)) {
-      return sequenceName;
-    }
-    return String.format("%s.%s", schema, sequenceName);
-  }
-
-  private long getObjectId() {
-    try (Connection connection = dataSource.getConnection()) {
-      Dialect dialect = new StandardDialectResolver()
-          .resolveDialect(new DatabaseMetaDataDialectResolutionInfoAdapter(connection.getMetaData()));
-      try (
-          PreparedStatement preparedStatement = connection.prepareStatement(dialect.getSequenceNextValString(resolveSeq()));
-          ResultSet resultSet = preparedStatement.executeQuery();
-      ) {
-        resultSet.next();
-        return resultSet.getLong(1);
-      }
-    } catch (SQLException e) {
-      throw new IllegalStateException("Unable to get connection", e);
-    }
-  }
-
-  private String getImlgs(long objectId) {
-    return String.format("imlgs%07d", objectId);
+    sample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + sample.getImlgs());
+    return sample;
   }
 
   public void save(List<SampleRow> samples) {
 
-    String lastUpdated = LocalDate.now(ZoneId.of("UTC")).format(DTF);
+    String lastUpdated = LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF);
 
     for (SampleRow row : samples) {
 
-      TempQcSampleEntity sample = new TempQcSampleEntity();
+      CuratorsFacilityEntity facility = sampleDataUtils.getFacility(row.getFacilityCode());
+      PlatformMasterEntity platform = sampleDataUtils.getPlatform(row.getShipName());
+      CuratorsDeviceEntity device = sampleDataUtils.getDevice(row.getSamplingDeviceCode());
+      String cruiseId = row.getCruiseId();
+      String sampleId = row.getSampleId();
 
-      sample.setObjectId(getObjectId());
-      sample.setImlgs(getImlgs(sample.getObjectId()));
+      TempQcSampleEntity potSample = createSample(facility, platform, device, cruiseId, sampleId, row, lastUpdated);
 
-      sample.setCruise(row.getCruiseId());
-      sample.setSample(row.getSampleId());
-      sample.setFacility(getFacility(row.getFacilityCode()));
-      sample.setPlatform(getPlatform(row.getShipName()));
-      sample.setDevice(getDevice(row.getSamplingDeviceCode()));
-      // TODO what is this - ask Kelly?
-//      sample.setShipCode();
-      sample.setBeginDate(row.getDateCollected());
-      sample.setEndDate(row.getEndDate());
-
-      PositionDim beginningLat = getPositionDim(row.getBeginningLatitude(), true);
-      sample.setLat(beginningLat.getValue());
-      sample.setLatDeg(beginningLat.getDegrees());
-      sample.setLatMin(beginningLat.getMinutes());
-      sample.setNs(beginningLat.getDirection());
-
-      PositionDim endingLat = getPositionDim(row.getEndingLatitude(), true);
-      sample.setEndLon(endingLat.getValue());
-      sample.setEndLatDeg(endingLat.getDegrees());
-      sample.setEndLatMin(endingLat.getMinutes());
-      sample.setEndNs(endingLat.getDirection());
-
-      PositionDim beginningLon = getPositionDim(row.getBeginningLongitude(), false);
-      sample.setLon(beginningLon.getValue());
-      sample.setLonDeg(beginningLon.getDegrees());
-      sample.setLonMin(beginningLon.getMinutes());
-      sample.setEw(beginningLon.getDirection());
-
-      PositionDim endingLon = getPositionDim(row.getEndingLongitude(), false);
-      sample.setEndLon(endingLon.getValue());
-      sample.setEndLonDeg(endingLon.getDegrees());
-      sample.setEndLonMin(endingLon.getMinutes());
-      sample.setEndEw(endingLon.getDirection());
-
-      sample.setLatLonOrig("D");
-
-      sample.setWaterDepth(round(row.getBeginningWaterDepth()));
-      sample.setEndWaterDepth(round(row.getEndingWaterDepth()));
-
-      sample.setStorageMeth(getStorageMethod(row.getStorageMethodCode()));
-      sample.setCoredLength(round(row.getCoreLength()));
-
-      CmConverter coredLength = new CmConverter(row.getCoreLength());
-      sample.setCoredLength(coredLength.getCm());
-      sample.setCoredLengthMm(coredLength.getMm());
-
-      CmConverter coredDiam = new CmConverter(row.getCoreDiameter());
-      sample.setCoredDiam(coredDiam.getCm());
-      sample.setCoredDiamMm(coredDiam.getMm());
-
-      sample.setPi(row.getPrincipalInvestigator());
-      sample.setProvince(getProvince(row.getPhysiographicProvinceCode()));
-
-      sample.setIgsn(row.getIgsn());
-
-      // TODO add me ? - DOI per curator - pass in form?
-//      sample.setOtherLink();
-      sample.setLastUpdate(lastUpdated);
-      sample.setLeg(row.getAlternateCruise());
-
-      sample.setPublish("Y");
-
-
-      sample.setShape(getShape(row.getBeginningLongitude(), row.getBeginningLatitude()));
-
-      sample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + sample.getImlgs());
-
-
-      sample = tempQcSampleRepository.saveAndFlush(sample);
-
-
+      TempQcSampleEntity sample = resolveSample(potSample)
+          .orElseGet(() -> {
+            potSample.setObjectId(sampleDataUtils.getObjectId());
+            potSample.setImlgs(sampleDataUtils.getTempImlgs(potSample.getObjectId()));
+            potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
+            return tempQcSampleRepository.saveAndFlush(potSample);
+          });
 
 
       TempQcIntervalEntity interval = new TempQcIntervalEntity();
       interval.setParentEntity(sample);
-      /*
-          parentIsgn = parentEntity.getIsgn();
-    imlgs = parentEntity.getImlgs();
-    facility = parentEntity.getFacility();
-    shipCode = parentEntity.getShipCode();
-    platform = parentEntity.getPlatform();
-    cruise = parentEntity.getCruise();
-    sample = parentEntity.getSample();
-    device = parentEntity.getDevice();
-       */
+
       interval.setInterval(row.getIntervalNumber());
 
       CmConverter depthTop = new CmConverter(row.getDepthToTopOfInterval());
@@ -478,10 +257,10 @@ public class CuratorPreviewPersistenceService {
       interval.setDhCoreLength(coreLength.getCm());
       interval.setDhCoreLengthMm(coreLength.getMm());
 
-      interval.setLith1(getLithology(row.getPrimaryLithologicCompositionCode()));
-      interval.setText1(getTexture(row.getPrimaryTextureCode()));
-      interval.setLith2(getLithology(row.getSecondaryLithologicCompositionCode()));
-      interval.setText2(getTexture(row.getSecondaryTextureCode()));
+      interval.setLith1(sampleDataUtils.getLithology(row.getPrimaryLithologicCompositionCode()));
+      interval.setText1(sampleDataUtils.getTexture(row.getPrimaryTextureCode()));
+      interval.setLith2(sampleDataUtils.getLithology(row.getSecondaryLithologicCompositionCode()));
+      interval.setText2(sampleDataUtils.getTexture(row.getSecondaryTextureCode()));
 
 
       for (int i = 0; i < row.getOtherComponentCodes().size(); i++) {
@@ -508,22 +287,22 @@ public class CuratorPreviewPersistenceService {
           default:
             throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("A maximum of 6 other component codes is supported").build());
         }
-        setter.accept(getLithology(row.getOtherComponentCodes().get(i)));
+        setter.accept(sampleDataUtils.getLithology(row.getOtherComponentCodes().get(i)));
       }
 
       interval.setDescription(row.getDescription());
-      interval.setAge(getAge(row.getGeologicAgeCode()));
+      interval.setAge(sampleDataUtils.getAge(row.getGeologicAgeCode()));
 
       interval.setWeight(row.getBulkWeight());
-      interval.setRockLith(getRockLithology(row.getSampleLithologyCode()));
-      interval.setRockMin(getMineralogy(row.getSampleMineralogyCode()));
-      interval.setWeathMeta(getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
-      interval.setRemark(getGlassRemark(row.getGlassRemarksCode()));
+      interval.setRockLith(sampleDataUtils.getRockLithology(row.getSampleLithologyCode()));
+      interval.setRockMin(sampleDataUtils.getMineralogy(row.getSampleMineralogyCode()));
+      interval.setWeathMeta(sampleDataUtils.getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
+      interval.setRemark(sampleDataUtils.getGlassRemark(row.getGlassRemarksCode()));
 
       //TODO Munsell colors can be duplicated, should the spreadsheet use the code?
 
       interval.setMunsellCode(row.getMunsellColor());
-      CuratorsMunsellEntity munsell = getMunsell(row.getMunsellColor());
+      CuratorsMunsellEntity munsell = sampleDataUtils.getMunsell(row.getMunsellColor());
       if(munsell != null) {
         interval.setMunsell(munsell.getMunsell());
       }

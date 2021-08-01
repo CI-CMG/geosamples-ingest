@@ -1,11 +1,5 @@
 import { apiService } from '@/api';
 
-const defaultParams = {
-  cruise: '',
-  facilityCode: '',
-  platform: '',
-};
-
 export default {
 
   namespaced: true,
@@ -18,8 +12,11 @@ export default {
     totalPages: 1,
     totalItems: 0,
 
-    params: { ...defaultParams },
+    cruise: '',
+    facilityCode: '',
+    platform: '',
 
+    // TODO support imlgs
     sortBy: 'cruise',
     sortDesc: false,
 
@@ -69,16 +66,34 @@ export default {
       state.totalItems = 0;
     },
     setCruise(state, cruise) {
-      state.params.cruise = cruise;
+      state.cruise = cruise == null ? '' : cruise;
     },
     setFacilityCode(state, facilityCode) {
-      state.params.facilityCode = facilityCode;
+      state.facilityCode = facilityCode == null ? '' : facilityCode;
     },
     setPlatform(state, platform) {
-      state.params.platform = platform;
+      if (platform == null) {
+        state.platform = '';
+      } else {
+        state.platform = platform;
+      }
     },
     setPage(state, page) {
-      state.page = page;
+      if (page == null || page < 1) {
+        state.page = 1;
+      } else {
+        state.page = page;
+      }
+    },
+    setSort(state, sort) {
+      if (sort) {
+        const parts = sort.split(':');
+        state.sortBy = parts[0];
+        state.sortDesc = parts[1] === 'desc';
+      } else {
+        state.sortBy = 'cruise';
+        state.sortDesc = true;
+      }
     },
     setSortBy(state, sortBy) {
       state.sortBy = sortBy;
@@ -87,7 +102,9 @@ export default {
       state.sortDesc = sortDesc;
     },
     clearParams(state) {
-      state.params = { ...defaultParams };
+      state.cruise = '';
+      state.facilityCode = '';
+      state.platform = '';
     },
     searchRequest(state) {
       state.searching = true;
@@ -112,7 +129,9 @@ export default {
       state.searching = false;
     },
     clearAll(state) {
-      state.params = { ...defaultParams };
+      state.cruise = '';
+      state.facilityCode = '';
+      state.platform = '';
       state.items = [];
       state.searching = false;
       state.page = 1;
@@ -137,44 +156,28 @@ export default {
     // },
     searchPage({ commit, state }) {
       commit('searchRequest');
-      const keys = Object.keys(state.params);
-      const params = {};
-      keys.forEach((key) => {
-        const value = state.params[key];
-        if (value) {
-          params[key] = value;
-        }
-      });
-      return apiService.get('/temp-sample-interval', {
-        params:
-          {
-            ...params,
-            page: state.page,
-            order: `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`,
-          },
-      }).then(
-        (response) => {
-          commit('searchSuccess', response.data);
-          return response.data;
-        },
-        (error) => {
-          commit('searchFailure');
-          throw error;
-        },
-      );
-    },
-    accept({ commit, state }) {
-      commit('acceptRequest');
-      const intervals = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval }));
-      const body = { intervals };
-      return apiService.post('/temp-sample-interval/accept', body)
+      const params = {
+        page: state.page,
+        order: `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`,
+        itemsPerPage: 1000,
+      };
+      if (state.platform) {
+        params.platform = state.platform;
+      }
+      if (state.facilityCode) {
+        params.facilityCode = state.facilityCode;
+      }
+      if (state.cruise) {
+        params.cruise = state.cruise;
+      }
+      return apiService.get('/sample-interval', { params })
         .then(
           (response) => {
-            commit('acceptSuccess', response.data);
+            commit('searchSuccess', response.data);
             return response.data;
           },
           (error) => {
-            commit('acceptFailure');
+            commit('searchFailure');
             throw error;
           },
         );

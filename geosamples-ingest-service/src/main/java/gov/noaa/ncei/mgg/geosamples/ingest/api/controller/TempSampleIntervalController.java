@@ -2,11 +2,14 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleIntervalAcceptanceView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.TempSampleIntervalService;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +26,11 @@ public class TempSampleIntervalController {
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public PagedItemsView<CombinedSampleIntervalView> search(@Valid CombinedIntervalSampleSearchParameters searchParameters) {
     return tempSampleIntervalService.search(searchParameters);
+  }
+
+  @PostMapping(path = "/accept", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public SampleIntervalAcceptanceView search(@Valid @RequestBody SampleIntervalAcceptanceView acceptance) {
+    return tempSampleIntervalService.accept(acceptance);
   }
 
 }

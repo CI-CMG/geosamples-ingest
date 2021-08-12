@@ -54,7 +54,7 @@ export default {
             const { facilityCodes } = data;
             if (facilityCodes.length > 0) {
               // TODO support more specific query
-              router.push({ name: 'TempSampleList', query: { facilityCode: facilityCodes[0] } });
+              router.push({ name: 'IntervalList', query: { facilityCode: facilityCodes[0] } });
             }
             return response.data;
           },

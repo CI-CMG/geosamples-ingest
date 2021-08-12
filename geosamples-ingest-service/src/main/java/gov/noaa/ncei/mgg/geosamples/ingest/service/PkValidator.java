@@ -1,10 +1,8 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
-import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.NoDuplicateInterval;
 import java.util.Set;
 
-@NoDuplicateInterval
 public class PkValidator {
 
   private final int index;

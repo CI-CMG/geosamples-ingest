@@ -39,7 +39,7 @@ public class SampleView {
   private String igsn;
   private String leg;
   private String sampleComments;
-  private String publish;
+  private Boolean publish;
 
   public String getImlgs() {
     return imlgs;
@@ -249,11 +249,11 @@ public class SampleView {
     this.sampleComments = sampleComments;
   }
 
-  public String getPublish() {
+  public Boolean getPublish() {
     return publish;
   }
 
-  public void setPublish(String publish) {
+  public void setPublish(Boolean publish) {
     this.publish = publish;
   }
 

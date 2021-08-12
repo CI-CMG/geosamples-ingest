@@ -1,10 +1,8 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service.model;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.NoDuplicateIgsn;
 import java.util.List;
 import javax.validation.Valid;
 
-@NoDuplicateIgsn
 public class SampleRowHolder {
 
   @Valid

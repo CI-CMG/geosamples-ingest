@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Validated
 public abstract class ControllerBase<V, S extends PagingAndSortingParameters, I, T extends SearchServiceBase<?, I, S, V, ?>> {
 
-  public final T service;
+  protected final T service;
 
   public ControllerBase(T service) {
     this.service = service;

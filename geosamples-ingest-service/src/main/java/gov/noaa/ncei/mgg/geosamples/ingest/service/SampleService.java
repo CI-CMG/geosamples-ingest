@@ -154,7 +154,7 @@ public class SampleService extends
     view.setIgsn(entity.getIgsn());
     view.setLeg(entity.getLeg());
     view.setSampleComments(entity.getSampleComments());
-    view.setPublish(entity.getPublish());
+    view.setPublish("Y".equals(entity.getPublish()));
     return view;
   }
 
@@ -232,7 +232,7 @@ public class SampleService extends
 //      sample.setOtherLink();
     sample.setLastUpdate(LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF));
     sample.setLeg(view.getLeg());
-    sample.setPublish(view.getPublish());
+    sample.setPublish(view.getPublish() != null && view.getPublish() ? "Y" : "N");
     sample.setShape(sampleDataUtils.getShape(view.getLon(), view.getLat()));
 
   }

@@ -5,6 +5,8 @@ export default {
   namespaced: true,
 
   state: {
+    itemsPerPage: 200,
+
     items: [],
     searching: false,
 
@@ -25,9 +27,79 @@ export default {
     // saving: false,
     // deleting: false,
 
+    sampleItem: null,
+    sampleLoading: false,
+    sampleSaving: false,
+
+    intervalItem: null,
+    intervalLoading: false,
+    intervalSaving: false,
+
   },
 
   mutations: {
+    loadSampleRequest(state) {
+      state.sampleLoading = true;
+    },
+    loadSampleSuccess(state, item) {
+      state.sampleLoading = false;
+      state.sampleItem = item;
+    },
+    loadSampleFailure(state) {
+      state.sampleLoading = false;
+    },
+    saveSampleRequest(state) {
+      state.sampleSaving = true;
+    },
+    saveSampleSuccess(state, item) {
+      state.sampleSaving = false;
+      state.sampleItem = item;
+    },
+    saveSampleFailure(state) {
+      state.sampleSaving = false;
+    },
+
+    deleteSampleRequest(state) {
+      state.sampleSaving = true;
+    },
+    deleteSampleSuccess(state) {
+      state.sampleSaving = false;
+    },
+    deleteSampleFailure(state) {
+      state.sampleSaving = false;
+    },
+
+    loadIntervalRequest(state) {
+      state.intervalLoading = true;
+    },
+    loadIntervalSuccess(state, item) {
+      state.intervalLoading = false;
+      state.intervalItem = item;
+    },
+    loadIntervalFailure(state) {
+      state.intervalLoading = false;
+    },
+    saveIntervalRequest(state) {
+      state.intervalSaving = true;
+    },
+    saveIntervalSuccess(state, item) {
+      state.intervalSaving = false;
+      state.intervalItem = item;
+    },
+    saveIntervalFailure(state) {
+      state.intervalSaving = false;
+    },
+
+    deleteIntervalRequest(state) {
+      state.intervalSaving = true;
+    },
+    deleteIntervalSuccess(state) {
+      state.intervalSaving = false;
+    },
+    deleteIntervalFailure(state) {
+      state.intervalSaving = false;
+    },
+
     loadRequest(state) {
       state.loading = true;
     },
@@ -154,12 +226,28 @@ export default {
     //   commit('clearParams');
     //   return dispatch('searchPage');
     // },
+    accept({ commit, state }) {
+      commit('acceptRequest');
+      const items = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval, publish: true }));
+      const body = { items };
+      return apiService.patch('/sample-interval', body)
+        .then(
+          (response) => {
+            commit('acceptSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('acceptFailure');
+            throw error;
+          },
+        );
+    },
     searchPage({ commit, state }) {
       commit('searchRequest');
       const params = {
         page: state.page,
         order: `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`,
-        itemsPerPage: 1000,
+        itemsPerPage: state.itemsPerPage,
       };
       if (state.platform) {
         params.platform = state.platform;
@@ -182,6 +270,125 @@ export default {
           },
         );
     },
+
+    loadSample({ commit }, id) {
+      commit('loadSampleRequest');
+      return apiService.get(`/sample/${encodeURIComponent(id)}`)
+        .then(
+          (response) => {
+            commit('loadSampleSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('loadSampleFailure');
+            throw error;
+          },
+        );
+    },
+    saveSample({ commit }, { provider, id }) {
+      commit('saveSampleRequest');
+      const req = id ? () => apiService.put(`/sample/${encodeURIComponent(id)}`, provider) : () => apiService.post('/sample', provider);
+      return req()
+        .then(
+          (response) => {
+            commit('saveSampleSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('saveSampleFailure');
+            const { response } = error;
+            if (response) {
+              const { data } = response;
+              if (data) {
+                const { formErrors } = data;
+                if (formErrors) {
+                  const paths = Object.keys(formErrors);
+                  paths.forEach((path) => {
+                    const message = formErrors[path].join(', ');
+                    commit('sampleForm/setTouched', { path, touched: false }, { root: true });
+                    commit('sampleForm/setError', { path, error: message }, { root: true });
+                  });
+                }
+              }
+            }
+            throw error;
+          },
+        );
+    },
+    deleteSample({ commit }, id) {
+      commit('deleteSampleRequest');
+      return apiService.delete(`/sample/${encodeURIComponent(id)}`)
+        .then(
+          (response) => {
+            commit('deleteSampleSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('deleteSampleFailure');
+            throw error;
+          },
+        );
+    },
+
+    loadInterval({ commit }, { id, imlgs }) {
+      commit('loadSampleRequest');
+      return apiService.get(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`)
+        .then(
+          (response) => {
+            commit('loadSampleSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('loadSampleFailure');
+            throw error;
+          },
+        );
+    },
+    saveInterval({ commit }, { provider, id, imlgs }) {
+      commit('saveIntervalRequest');
+      const req = id ? () => apiService.put(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`, provider) : () => apiService.post('/interval', provider);
+      return req()
+        .then(
+          (response) => {
+            commit('saveIntervalSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('saveIntervalFailure');
+            const { response } = error;
+            if (response) {
+              const { data } = response;
+              if (data) {
+                const { formErrors } = data;
+                if (formErrors) {
+                  const paths = Object.keys(formErrors);
+                  paths.forEach((path) => {
+                    const message = formErrors[path].join(', ');
+                    commit('intervalForm/setTouched', { path, touched: false }, { root: true });
+                    commit('intervalForm/setError', { path, error: message }, { root: true });
+                  });
+                }
+              }
+            }
+            throw error;
+          },
+        );
+    },
+    deleteInterval({ commit }, { id, imlgs }) {
+      commit('deleteIntervalRequest');
+      return apiService.delete(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`)
+        .then(
+          (response) => {
+            commit('deleteIntervalSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('deleteIntervalFailure');
+            throw error;
+          },
+        );
+    },
+
     // load({ commit }, id) {
     //   commit('loadRequest');
     //   return apiService.get(`/texture/${encodeURIComponent(id)}`)

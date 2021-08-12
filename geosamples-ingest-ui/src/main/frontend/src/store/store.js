@@ -26,6 +26,8 @@ import weathering from '@/store/modules/weatheringModule';
 import weatheringForm from '@/store/modules/weatheringFormModule';
 import platform from '@/store/modules/platformModule';
 import platformForm from '@/store/modules/platformFormModule';
+import sampleForm from '@/store/modules/sampleFormModule';
+import intervalForm from '@/store/modules/intervalFormModule';
 import app from './modules/appModule';
 import user from './modules/userModule';
 import loginForm from './modules/loginFormModule';
@@ -71,5 +73,7 @@ export default new Vuex.Store({
     submissionForm,
     tempSampleInterval,
     interval,
+    sampleForm,
+    intervalForm,
   },
 });

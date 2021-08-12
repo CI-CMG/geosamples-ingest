@@ -47,12 +47,12 @@ import Submit from '@/views/view/main/submit/Submit.vue';
 import NewSubmission from '@/views/view/main/submit/new/NewSubmission.vue';
 import ErrorSubmission from '@/views/view/main/submit/error/ErrorSubmission.vue';
 import Login from '@/views/view/login/Login.vue';
-import TempSample from '@/views/view/main/temp-sample/TempSample.vue';
-import TempSampleList from '@/views/view/main/temp-sample/list/TempSampleList.vue';
 import Interval from '@/views/view/main/interval/Interval.vue';
 import IntervalList from '@/views/view/main/interval/list/IntervalList.vue';
 import { RAW_BASE_PATH } from '@/resourceBasePath';
 import store from '@/store/store';
+import SampleEdit from '@/views/view/main/interval/edit-sample/SampleEdit.vue';
+import IntervalEdit from '@/views/view/main/interval/edit-interval/IntervalEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -97,23 +97,6 @@ const routes = [
             ],
           },
           {
-            path: 'temp-sample',
-            component: TempSample,
-            name: 'TempSample',
-            redirect: { name: 'TempSampleList' },
-            children: [
-              {
-                path: 'list',
-                name: 'TempSampleList',
-                component: TempSampleList,
-              },
-              {
-                path: '*',
-                redirect: { name: 'TempSample' },
-              },
-            ],
-          },
-          {
             path: 'interval',
             component: Interval,
             name: 'Interval',
@@ -123,6 +106,18 @@ const routes = [
                 path: 'list',
                 name: 'IntervalList',
                 component: IntervalList,
+              },
+              {
+                path: 'edit-sample/:id',
+                name: 'SampleEdit',
+                component: SampleEdit,
+                props: true,
+              },
+              {
+                path: 'edit-interval/:imlgs/:id',
+                name: 'IntervalEdit',
+                component: IntervalEdit,
+                props: true,
               },
               {
                 path: '*',

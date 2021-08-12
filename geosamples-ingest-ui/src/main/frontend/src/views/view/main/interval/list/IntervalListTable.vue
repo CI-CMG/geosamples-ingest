@@ -1,5 +1,6 @@
 <template>
   <b-table
+    sticky-header="500px"
     head-variant="dark"
     striped
     bordered
@@ -20,12 +21,15 @@
       </span>
 
     </template>
-    <!--          <template #cell(imlgs)="data">-->
-    <!--            <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>-->
-    <!--          </template>-->
-    <!--          <template #cell(interval)="data">-->
-    <!--            <b-link :to="{ name: 'IntervalEdit', params: { id: data.item.interval }}">{{ data.item.interval }}</b-link>-->
-    <!--          </template>-->
+      <template #cell(publish)="data">
+        <b-form-checkbox :disabled="data.item.publish" plain :checked="data.item.publish || data.item.selected" @change="() => togglePublish(data.index)"/>
+      </template>
+      <template #cell(imlgs)="data">
+        <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>
+      </template>
+      <template #cell(interval)="data">
+        <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.interval }}">{{ data.item.interval }}</b-link>
+      </template>
   </b-table>
 </template>
 
@@ -38,6 +42,7 @@ export default {
     'items',
     'fields',
     'sortableColumns',
+    'togglePublish',
   ],
   computed: {
     sortable() {

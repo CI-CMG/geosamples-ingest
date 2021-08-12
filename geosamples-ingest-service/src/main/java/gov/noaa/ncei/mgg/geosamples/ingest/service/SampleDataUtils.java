@@ -30,8 +30,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsStorageMethRep
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsWeathMetaRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcIntervalRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcSampleRepository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,9 +56,7 @@ public class SampleDataUtils {
 
   private static final String sequenceName = "CURATORS_SEQ";
 
-  private final TempQcSampleRepository tempQcSampleRepository;
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
-  private final TempQcIntervalRepository tempQcIntervalRepository;
   private final CuratorsFacilityRepository curatorsFacilityRepository;
   private final PlatformMasterRepository platformMasterRepository;
   private final CuratorsDeviceRepository curatorsDeviceRepository;
@@ -79,9 +75,8 @@ public class SampleDataUtils {
   private final DataSource dataSource;
   private final String schema;
 
-  public SampleDataUtils(TempQcSampleRepository tempQcSampleRepository,
+  public SampleDataUtils(
       CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
-      TempQcIntervalRepository tempQcIntervalRepository,
       CuratorsFacilityRepository curatorsFacilityRepository,
       PlatformMasterRepository platformMasterRepository,
       CuratorsDeviceRepository curatorsDeviceRepository,
@@ -98,9 +93,7 @@ public class SampleDataUtils {
       ServiceProperties serviceProperties,
       DataSource dataSource,
       @Value("${spring.jpa.properties.hibernate.default_schema}") String schema) {
-    this.tempQcSampleRepository = tempQcSampleRepository;
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
-    this.tempQcIntervalRepository = tempQcIntervalRepository;
     this.curatorsFacilityRepository = curatorsFacilityRepository;
     this.platformMasterRepository = platformMasterRepository;
     this.curatorsDeviceRepository = curatorsDeviceRepository;
@@ -121,7 +114,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsFacilityEntity getFacility(String facility) {
-    if(facility == null) {
+    if (facility == null) {
       return null;
     }
     return curatorsFacilityRepository
@@ -130,7 +123,7 @@ public class SampleDataUtils {
   }
 
   public PlatformMasterEntity getPlatform(String platformName) {
-    if(platformName == null) {
+    if (platformName == null) {
       return null;
     }
     return platformMasterRepository
@@ -139,7 +132,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsDeviceEntity getDevice(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsDeviceRepository
@@ -148,7 +141,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsStorageMethEntity getStorageMethod(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsStorageMethRepository
@@ -157,7 +150,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsProvinceEntity getProvince(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsProvinceRepository
@@ -166,7 +159,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsLithologyEntity getLithology(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsLithologyRepository
@@ -175,7 +168,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsTextureEntity getTexture(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsTextureRepository
@@ -184,7 +177,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsAgeEntity getAge(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsAgeRepository
@@ -193,7 +186,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsWeathMetaEntity getWeathering(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsWeathMetaRepository
@@ -202,7 +195,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsRemarkEntity getGlassRemark(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsRemarkRepository
@@ -211,7 +204,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsMunsellEntity getMunsell(String munsellCode) {
-    if(munsellCode == null) {
+    if (munsellCode == null) {
       return null;
     }
     return curatorsMunsellRepository
@@ -220,7 +213,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsRockMinEntity getMineralogy(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsRockMinRepository
@@ -229,7 +222,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsRockLithEntity getRockLithology(String code) {
-    if(code == null) {
+    if (code == null) {
       return null;
     }
     return curatorsRockLithRepository
@@ -239,7 +232,7 @@ public class SampleDataUtils {
 
 
   private String resolveSeq() throws SQLException {
-    if(!StringUtils.hasText(schema)) {
+    if (!StringUtils.hasText(schema)) {
       return sequenceName;
     }
     return String.format("%s.%s", schema, sequenceName);
@@ -262,7 +255,7 @@ public class SampleDataUtils {
   }
 
   public Geometry getShape(Double lon, Double lat) {
-    if(lon == null || lat == null) {
+    if (lon == null || lat == null) {
       return null;
     }
     return geometryFactory.createPoint(new CoordinateXY(lon, lat));
@@ -272,18 +265,14 @@ public class SampleDataUtils {
     return String.format("imlgs%07d", objectId);
   }
 
-  public static String getTempImlgs(long objectId) {
-    return String.format("temp_imlgs%07d", objectId);
-  }
-
-  public static PositionDim getPositionDim(Double value, boolean lat){
-    if(value == null) {
+  public static PositionDim getPositionDim(Double value, boolean lat) {
+    if (value == null) {
       return new PositionDim();
     }
     int degrees = (int) Math.floor(value);
     double minutes = (value - degrees) * 60D;
     String dir;
-    if(lat) {
+    if (lat) {
       dir = value >= 0D ? "N" : "S";
     } else {
       dir = value >= 0D ? "E" : "W";
@@ -293,14 +282,14 @@ public class SampleDataUtils {
 
 
   public static Integer truncate(Double d) {
-    if(d == null) {
+    if (d == null) {
       return null;
     }
     return (int) Math.floor(d);
   }
 
   public static Integer round(Double d) {
-    if(d == null) {
+    if (d == null) {
       return null;
     }
     return (int) Math.round(d);

@@ -3,11 +3,11 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalBase;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.SampleBase;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity_;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public final class SampleIntervalUtils {
       specs.add((Specification<T>) (e, cq, cb) ->
           cb.or(cruise.stream().map(v ->
               cb.equal(
-                  cb.lower(e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.CRUISE)),
+                  cb.lower(e.get(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.CRUISE)),
                   v.toLowerCase(Locale.ENGLISH)))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -52,7 +52,7 @@ public final class SampleIntervalUtils {
       specs.add((Specification<T>) (e, cq, cb) ->
           cb.or(facilityCode.stream().map(v ->
               cb.equal(
-                  e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE),
+                  e.get(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE),
                   v))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -61,7 +61,7 @@ public final class SampleIntervalUtils {
       specs.add((Specification<T>) (e, cq, cb) ->
           cb.or(platform.stream().map(v ->
               cb.like(
-                  cb.lower(e.get(TempQcIntervalEntity_.PARENT_ENTITY).get(TempQcSampleEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
+                  cb.lower(e.get(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
                   SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -112,7 +112,6 @@ public final class SampleIntervalUtils {
     view.setIgsn(sampleEntity.getIgsn());
     view.setLeg(sampleEntity.getLeg());
     view.setSample(sampleEntity.getSampleComments());
-    view.setSamplePublish(sampleEntity.getPublish());
     view.setObjectId(sampleEntity.getObjectId());
     view.setShowSampl(sampleEntity.getShowSampl());
     view.setImlgs(sampleEntity.getImlgs());
@@ -161,10 +160,11 @@ public final class SampleIntervalUtils {
     view.setMmcdTop(entity.getMmcdTop());
     view.setCmcdBot(entity.getCmcdBot());
     view.setMmcdBot(entity.getMmcdBot());
-    view.setIntervalPublish(entity.getPublish());
     view.setIntervalIgsn(entity.getIgsn());
     view.setIntervalImlgs(entity.getImlgs());
     view.setIntervalParentIsgn(entity.getParentIgsn());
+
+    view.setPublish("Y".equals(sampleEntity.getPublish()) && "Y".equals(entity.getPublish()));
 
     return view;
   }

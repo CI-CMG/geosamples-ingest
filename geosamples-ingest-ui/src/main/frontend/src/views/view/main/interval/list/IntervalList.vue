@@ -30,101 +30,15 @@
   <b-card title="Results">
     <div v-if="searching"><b-spinner/></div>
     <div v-else>
-      <b-pagination :value="page" @change="changePage" :total-rows="totalItems" per-page="1000"></b-pagination>
+      <b-pagination :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
+      <b-card title="Publish">
+      <div class="mb-3">
+        <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(true)">Select All</b-button>
+        <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(false)">Deselect All</b-button>
+        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="doAccept">Publish Selected</b-button>
+      </div>
+      </b-card>
       <div class="geo-temp-samples-table">
-<!--        <div v-for="item in items" :key="`${item.imlgs}_${item.interval}`">-->
-<!--          <div style="display: inline-block;">{{item.imlgs}}</div>-->
-<!--          <div style="display: inline-block;">{{item.interval}}</div>-->
-<!--          <div style="display: inline-block;">{{item.cruise}}</div>-->
-<!--          <div style="display: inline-block;">{{item.sample}}</div>-->
-<!--          <div style="display: inline-block;">{{item.facility}}</div>-->
-<!--          <div style="display: inline-block;">{{item.platform}}</div>-->
-<!--          <div style="display: inline-block;">{{item.device}}</div>-->
-<!--          <div style="display: inline-block;">{{item.shipCode}}</div>-->
-<!--          <div style="display: inline-block;">{{item.beginDate}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endDate}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lat}}</div>-->
-<!--          <div style="display: inline-block;">{{item.latDeg}}</div>-->
-<!--          <div style="display: inline-block;">{{item.latMin}}</div>-->
-<!--          <div style="display: inline-block;">{{item.ns}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLat}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLatDeg}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLatMin}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endNs}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lon}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lonDeg}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lonMin}}</div>-->
-<!--          <div style="display: inline-block;">{{item.ew}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLon}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLonDeg}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endLonMin}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endEw}}</div>-->
-<!--          <div style="display: inline-block;">{{item.latLonOrig}}</div>-->
-<!--          <div style="display: inline-block;">{{item.waterDepth}}</div>-->
-<!--          <div style="display: inline-block;">{{item.endWaterDepth}}</div>-->
-<!--          <div style="display: inline-block;">{{item.storageMeth}}</div>-->
-<!--          <div style="display: inline-block;">{{item.coredLength}}</div>-->
-<!--          <div style="display: inline-block;">{{item.coredLengthMm}}</div>-->
-<!--          <div style="display: inline-block;">{{item.coredDiam}}</div>-->
-<!--          <div style="display: inline-block;">{{item.coredDiamMm}}</div>-->
-<!--          <div style="display: inline-block;">{{item.pi}}</div>-->
-<!--          <div style="display: inline-block;">{{item.province}}</div>-->
-<!--          <div style="display: inline-block;">{{item.sampleLake}}</div>-->
-<!--          <div style="display: inline-block;">{{item.otherLink}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lastUpdate}}</div>-->
-<!--          <div style="display: inline-block;">{{item.igsn}}</div>-->
-<!--          <div style="display: inline-block;">{{item.leg}}</div>-->
-<!--          <div style="display: inline-block;">{{item.sampleComments}}</div>-->
-<!--          <div style="display: inline-block;">{{item.samplePublish}}</div>-->
-<!--          <div style="display: inline-block;">{{item.objectId}}</div>-->
-<!--          <div style="display: inline-block;">{{item.sampleComments}}</div>-->
-<!--          <div style="display: inline-block;">{{item.showSampl}}</div>-->
-<!--          <div style="display: inline-block;">{{item.depthTop}}</div>-->
-<!--          <div style="display: inline-block;">{{item.depthTopMm}}</div>-->
-<!--          <div style="display: inline-block;">{{item.depthBot}}</div>-->
-<!--          <div style="display: inline-block;">{{item.depthBotMm}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dhCoreId}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dhCoreLength}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dhCoreLengthMm}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dhCoreInterval}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dTopInDhCore}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dTopMmInDhCore}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dBotInDhCore}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dBotMmInDhCore}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lith1}}</div>-->
-<!--          <div style="display: inline-block;">{{item.text1}}</div>-->
-<!--          <div style="display: inline-block;">{{item.lith2}}</div>-->
-<!--          <div style="display: inline-block;">{{item.text2}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp1}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp2}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp3}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp4}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp5}}</div>-->
-<!--          <div style="display: inline-block;">{{item.comp6}}</div>-->
-<!--          <div style="display: inline-block;">{{item.description}}</div>-->
-<!--          <div style="display: inline-block;">{{item.age}}</div>-->
-<!--          <div style="display: inline-block;">{{item.absoluteAgeTop}}</div>-->
-<!--          <div style="display: inline-block;">{{item.absoluteAgeBot}}</div>-->
-<!--          <div style="display: inline-block;">{{item.weight}}</div>-->
-<!--          <div style="display: inline-block;">{{item.rockLith}}</div>-->
-<!--          <div style="display: inline-block;">{{item.rockMin}}</div>-->
-<!--          <div style="display: inline-block;">{{item.weathMeta}}</div>-->
-<!--          <div style="display: inline-block;">{{item.remark}}</div>-->
-<!--          <div style="display: inline-block;">{{item.munsellCode}}</div>-->
-<!--          <div style="display: inline-block;">{{item.munsell}}</div>-->
-<!--          <div style="display: inline-block;">{{item.exhaustCode}}</div>-->
-<!--          <div style="display: inline-block;">{{item.photoLink}}</div>-->
-<!--          <div style="display: inline-block;">{{item.intervalLake}}</div>-->
-<!--          <div style="display: inline-block;">{{item.unitNumber}}</div>-->
-<!--          <div style="display: inline-block;">{{item.intComments}}</div>-->
-<!--          <div style="display: inline-block;">{{item.dhDevice}}</div>-->
-<!--          <div style="display: inline-block;">{{item.cmcdTop}}</div>-->
-<!--          <div style="display: inline-block;">{{item.mmcdTop}}</div>-->
-<!--          <div style="display: inline-block;">{{item.cmcdBot}}</div>-->
-<!--          <div style="display: inline-block;">{{item.mmcdBot}}</div>-->
-<!--          <div style="display: inline-block;">{{item.intervalPublish}}</div>-->
-<!--          <div style="display: inline-block;">{{item.intervalIgsn}}</div>-->
-<!--        </div>-->
         <IntervalListTable
           :sortChanged="sortChanged"
           :sortBy="sortBy"
@@ -132,9 +46,10 @@
           :items="items"
           :fields="fields"
           :sortableColumns="['cruise', 'sample', 'facility', 'platform']"
+          :togglePublish="togglePublish"
         />
       </div>
-      <b-pagination class="mt-3" :value="page" @change="changePage" :total-rows="totalItems" per-page="1000"></b-pagination>
+      <b-pagination class="mt-3" :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
     </div>
   </b-card>
 
@@ -184,7 +99,7 @@ export default {
 
   methods: {
     ...mapMutations('interval', ['setPlatform', 'setCruise', 'setFacilityCode', 'clearParams', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort']),
-    ...mapActions('interval', ['accept', 'searchPage']),
+    ...mapActions('interval', ['searchPage', 'accept']),
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
       this.setSortDesc(sortDesc);
@@ -208,6 +123,7 @@ export default {
       }
       query.page = this.page;
       query.sort = `${this.sortBy}:${this.sortDesc ? 'desc' : 'asc'}`;
+      query.t = Date.now(); // force refresh
       this.$router.push({ name: 'IntervalList', query });
     },
     doSearch() {
@@ -217,22 +133,22 @@ export default {
     reset() {
       this.clearParams();
     },
-    toggle(index) {
+    togglePublish(index) {
       this.items[index].selected = !this.items[index].selected;
     },
     selectAll(select) {
-      this.items.forEach((i) => { i.selected = select; });
+      this.items.filter((i) => !i.publish).forEach((i) => { i.selected = select; });
     },
     doAccept() {
       this.accept().then(() => {
         this.firstPage();
-        this.searchPage();
+        this.search();
       });
     },
   },
 
   computed: {
-    ...mapState('interval', ['platform', 'cruise', 'facilityCode', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy']),
+    ...mapState('interval', ['platform', 'cruise', 'facilityCode', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy', 'itemsPerPage']),
     // platform: {
     //   get() {
     //     return this.params.platform;
@@ -274,6 +190,10 @@ export default {
       platformId: null,
 
       fields: [
+        {
+          key: 'publish',
+          label: 'Publish',
+        },
         {
           key: 'imlgs',
           label: 'IMLGS',
@@ -445,10 +365,6 @@ export default {
         {
           key: 'sampleComments',
           label: 'Sample Comments',
-        },
-        {
-          key: 'samplePublish',
-          label: 'Sample Publish',
         },
         {
           key: 'objectId',
@@ -633,10 +549,6 @@ export default {
         {
           key: 'mmcdBot',
           label: 'mmcdBot',
-        },
-        {
-          key: 'intervalPublish',
-          label: 'Interval Publish',
         },
         {
           key: 'intervalIgsn',

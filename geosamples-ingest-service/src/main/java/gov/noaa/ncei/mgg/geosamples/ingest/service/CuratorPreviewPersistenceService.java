@@ -5,36 +5,26 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcIntervalEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.TempQcSampleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcIntervalRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TempQcSampleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
 import javax.validation.Validator;
-import javax.validation.metadata.ConstraintDescriptor;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,9 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CuratorPreviewPersistenceService {
 
-  private final TempQcSampleRepository tempQcSampleRepository;
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
-  private final TempQcIntervalRepository tempQcIntervalRepository;
   private final CuratorsIntervalRepository curatorsIntervalRepository;
   private final ServiceProperties serviceProperties;
   private final SampleDataUtils sampleDataUtils;
@@ -54,86 +42,33 @@ public class CuratorPreviewPersistenceService {
 
 
   @Autowired
-  public CuratorPreviewPersistenceService(TempQcSampleRepository tempQcSampleRepository,
+  public CuratorPreviewPersistenceService(
       CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
-      TempQcIntervalRepository tempQcIntervalRepository,
       CuratorsIntervalRepository curatorsIntervalRepository, ServiceProperties serviceProperties,
       SampleDataUtils sampleDataUtils, Validator validator) {
-    this.tempQcSampleRepository = tempQcSampleRepository;
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
-    this.tempQcIntervalRepository = tempQcIntervalRepository;
     this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.serviceProperties = serviceProperties;
     this.sampleDataUtils = sampleDataUtils;
     this.validator = validator;
   }
 
-  private TempQcSampleEntity saveCopy(CuratorsSampleTsqpEntity sample) {
-    TempQcSampleEntity entity = new TempQcSampleEntity();
-    entity.setCruise(sample.getCruise());
-    entity.setSample(sample.getSample());
-    entity.setFacility(sample.getFacility());
-    entity.setPlatform(sample.getPlatform());
-    entity.setDevice(sample.getDevice());
-    entity.setShipCode(sample.getShipCode());
-    entity.setBeginDate(sample.getBeginDate());
-    entity.setEndDate(sample.getEndDate());
-    entity.setLat(sample.getLat());
-    entity.setLatDeg(sample.getLatDeg());
-    entity.setLatMin(sample.getLatMin());
-    entity.setNs(sample.getNs());
-    entity.setEndLat(sample.getEndLat());
-    entity.setEndLatDeg(sample.getEndLatDeg());
-    entity.setEndLatMin(sample.getEndLatMin());
-    entity.setEndNs(sample.getEndNs());
-    entity.setLon(sample.getLon());
-    entity.setLonDeg(sample.getLonDeg());
-    entity.setLonMin(sample.getLonMin());
-    entity.setEw(sample.getEw());
-    entity.setEndLon(sample.getEndLon());
-    entity.setEndLonDeg(sample.getEndLonDeg());
-    entity.setEndLonMin(sample.getEndLonMin());
-    entity.setEndEw(sample.getEndEw());
-    entity.setLatLonOrig(sample.getLatLonOrig());
-    entity.setWaterDepth(sample.getWaterDepth());
-    entity.setEndWaterDepth(sample.getEndWaterDepth());
-    entity.setStorageMeth(sample.getStorageMeth());
-    entity.setCoredLength(sample.getCoredLength());
-    entity.setCoredLengthMm(sample.getCoredLengthMm());
-    entity.setCoredDiam(sample.getCoredDiam());
-    entity.setCoredDiamMm(sample.getCoredDiamMm());
-    entity.setPi(sample.getPi());
-    entity.setProvince(sample.getProvince());
-    entity.setLake(sample.getLake());
-    entity.setOtherLink(sample.getOtherLink());
-    entity.setLastUpdate(sample.getLastUpdate());
-    entity.setIgsn(sample.getIgsn());
-    entity.setLeg(sample.getLeg());
-    entity.setSampleComments(sample.getSampleComments());
-    entity.setPublish(sample.getPublish());
-    entity.setPreviousState(sample.getPreviousState());
-    entity.setObjectId(sample.getObjectId());
-    entity.setShape(sample.getShape());
-    entity.setShowSampl(sample.getShowSampl());
-    entity.setImlgs(sample.getImlgs());
-    return tempQcSampleRepository.saveAndFlush(entity);
+
+
+
+
+  private Optional<CuratorsSampleTsqpEntity> resolveSample(CuratorsSampleTsqpEntity potSample) {
+    return curatorsSampleTsqpRepository.findOne(SearchUtils.findExistingSample(potSample));
   }
 
-  private Optional<TempQcSampleEntity> resolveSample(TempQcSampleEntity potSample) {
-    Optional<TempQcSampleEntity> maybeTempSample = tempQcSampleRepository.findOne(SearchUtils.findExistingSample(potSample));
-    if (maybeTempSample.isPresent()) {
-      return maybeTempSample;
-    }
-
-    Optional<CuratorsSampleTsqpEntity> maybeSample = curatorsSampleTsqpRepository.findOne(SearchUtils.findExistingSample(potSample));
-    if (maybeSample.isPresent()) {
-      return Optional.of(saveCopy(maybeSample.get()));
-    }
-
-    return Optional.empty();
+  private Optional<CuratorsIntervalEntity> resolveInterval(CuratorsIntervalEntity potInterval) {
+    IntervalPk pk = new IntervalPk();
+    pk.setImlgs(potInterval.getImlgs());
+    pk.setInterval(potInterval.getInterval());
+    return curatorsIntervalRepository.findById(pk);
   }
 
-  private TempQcSampleEntity createSample(
+  private CuratorsSampleTsqpEntity createSample(
       CuratorsFacilityEntity facility,
       PlatformMasterEntity platform,
       CuratorsDeviceEntity device,
@@ -142,7 +77,7 @@ public class CuratorPreviewPersistenceService {
       SampleRow row,
       String lastUpdated) {
 
-    TempQcSampleEntity sample = new TempQcSampleEntity();
+    CuratorsSampleTsqpEntity sample = new CuratorsSampleTsqpEntity();
 
     sample.setCruise(cruiseId);
     sample.setSample(sampleId);
@@ -207,8 +142,7 @@ public class CuratorPreviewPersistenceService {
     sample.setLastUpdate(lastUpdated);
     sample.setLeg(row.getAlternateCruise());
 
-    sample.setPublish("Y");
-
+    sample.setPublish("N");
 
     sample.setShape(sampleDataUtils.getShape(row.getBeginningLongitude(), row.getBeginningLatitude()));
 
@@ -216,11 +150,86 @@ public class CuratorPreviewPersistenceService {
     return sample;
   }
 
+  private CuratorsIntervalEntity createInterval(
+      CuratorsSampleTsqpEntity sample,
+      SampleRow row) {
+    CuratorsIntervalEntity interval = new CuratorsIntervalEntity();
+    interval.setParentEntity(sample);
+
+    interval.setInterval(row.getIntervalNumber());
+
+    CmConverter depthTop = new CmConverter(row.getDepthToTopOfInterval());
+    interval.setDepthTop(depthTop.getCm());
+    interval.setDepthTopMm(depthTop.getMm());
+
+    CmConverter depthBottom = new CmConverter(row.getDepthToBottomOfInterval());
+    interval.setDepthBot(depthBottom.getCm());
+    interval.setDepthBotMm(depthBottom.getMm());
+
+    CmConverter coreLength = new CmConverter(row.getCoreLength());
+    interval.setDhCoreLength(coreLength.getCm());
+    interval.setDhCoreLengthMm(coreLength.getMm());
+
+    interval.setLith1(sampleDataUtils.getLithology(row.getPrimaryLithologicCompositionCode()));
+    interval.setText1(sampleDataUtils.getTexture(row.getPrimaryTextureCode()));
+    interval.setLith2(sampleDataUtils.getLithology(row.getSecondaryLithologicCompositionCode()));
+    interval.setText2(sampleDataUtils.getTexture(row.getSecondaryTextureCode()));
+
+    for (int i = 0; i < row.getOtherComponentCodes().size(); i++) {
+      Consumer<CuratorsLithologyEntity> setter;
+      switch (i) {
+        case 0:
+          setter = interval::setComp1;
+          break;
+        case 1:
+          setter = interval::setComp2;
+          break;
+        case 2:
+          setter = interval::setComp3;
+          break;
+        case 3:
+          setter = interval::setComp4;
+          break;
+        case 4:
+          setter = interval::setComp5;
+          break;
+        case 5:
+          setter = interval::setComp6;
+          break;
+        default:
+          throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("A maximum of 6 other component codes is supported").build());
+      }
+      setter.accept(sampleDataUtils.getLithology(row.getOtherComponentCodes().get(i)));
+    }
+
+    interval.setDescription(row.getDescription());
+    interval.setAge(sampleDataUtils.getAge(row.getGeologicAgeCode()));
+
+    interval.setWeight(row.getBulkWeight());
+    interval.setRockLith(sampleDataUtils.getRockLithology(row.getSampleLithologyCode()));
+    interval.setRockMin(sampleDataUtils.getMineralogy(row.getSampleMineralogyCode()));
+    interval.setWeathMeta(sampleDataUtils.getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
+    interval.setRemark(sampleDataUtils.getGlassRemark(row.getGlassRemarksCode()));
+
+    //TODO Munsell colors can be duplicated, should the spreadsheet use the code?
+
+    interval.setMunsellCode(row.getMunsellColor());
+    CuratorsMunsellEntity munsell = sampleDataUtils.getMunsell(row.getMunsellColor());
+    if (munsell != null) {
+      interval.setMunsell(munsell.getMunsell());
+    }
+
+    interval.setExhaustCode(row.getSampleNotAvailable());
+
+    interval.setIntComments(row.getComments());
+
+    interval.setPublish("N");
+    return interval;
+  }
 
   public void save(SampleRowHolder sampleRowHolder) {
 
     List<SampleRow> samples = sampleRowHolder.getRows();
-
 
     String lastUpdated = LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF);
 
@@ -236,15 +245,28 @@ public class CuratorPreviewPersistenceService {
       String cruiseId = row.getCruiseId();
       String sampleId = row.getSampleId();
 
-      TempQcSampleEntity potSample = createSample(facility, platform, device, cruiseId, sampleId, row, lastUpdated);
+      CuratorsSampleTsqpEntity potSample = createSample(facility, platform, device, cruiseId, sampleId, row, lastUpdated);
 
-      TempQcSampleEntity sample = resolveSample(potSample)
-          .orElseGet(() -> {
-            potSample.setObjectId(sampleDataUtils.getObjectId());
-            potSample.setImlgs(sampleDataUtils.getTempImlgs(potSample.getObjectId()));
-            potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
-            return tempQcSampleRepository.saveAndFlush(potSample);
-          });
+      Optional<CuratorsSampleTsqpEntity> maybeSample = resolveSample(potSample);
+
+      CuratorsSampleTsqpEntity sample;
+      if (!maybeSample.isPresent()) {
+        potSample.setObjectId(sampleDataUtils.getObjectId());
+        potSample.setImlgs(sampleDataUtils.getImlgs(potSample.getObjectId()));
+        potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
+        sample = curatorsSampleTsqpRepository.saveAndFlush(potSample);
+      } else {
+        CuratorsSampleTsqpEntity existing = maybeSample.get();
+        potSample.setObjectId(existing.getObjectId());
+        potSample.setImlgs(existing.getImlgs());
+        potSample.setShowSampl(existing.getShowSampl());
+        if ("Y".equals(existing.getPublish()) || EntitySignificantFields.equals(existing, potSample)) {
+          sample = existing;
+        } else {
+          EntitySignificantFields.copy(potSample, existing);
+          sample = curatorsSampleTsqpRepository.saveAndFlush(existing);
+        }
+      }
 
       PkValidator pkValidator = new PkValidator(index, sample.getImlgs(), row.getIntervalNumber(), intervalKeys);
 
@@ -255,81 +277,18 @@ public class CuratorPreviewPersistenceService {
         continue;
       }
 
+      CuratorsIntervalEntity potInterval = createInterval(sample, row);
+      Optional<CuratorsIntervalEntity> maybeInterval = resolveInterval(potInterval);
 
-      TempQcIntervalEntity interval = new TempQcIntervalEntity();
-      interval.setParentEntity(sample);
-
-      interval.setInterval(row.getIntervalNumber());
-
-      CmConverter depthTop = new CmConverter(row.getDepthToTopOfInterval());
-      interval.setDepthTop(depthTop.getCm());
-      interval.setDepthTopMm(depthTop.getMm());
-
-      CmConverter depthBottom = new CmConverter(row.getDepthToBottomOfInterval());
-      interval.setDepthBot(depthBottom.getCm());
-      interval.setDepthBotMm(depthBottom.getMm());
-
-      CmConverter coreLength = new CmConverter(row.getCoreLength());
-      interval.setDhCoreLength(coreLength.getCm());
-      interval.setDhCoreLengthMm(coreLength.getMm());
-
-      interval.setLith1(sampleDataUtils.getLithology(row.getPrimaryLithologicCompositionCode()));
-      interval.setText1(sampleDataUtils.getTexture(row.getPrimaryTextureCode()));
-      interval.setLith2(sampleDataUtils.getLithology(row.getSecondaryLithologicCompositionCode()));
-      interval.setText2(sampleDataUtils.getTexture(row.getSecondaryTextureCode()));
-
-
-      for (int i = 0; i < row.getOtherComponentCodes().size(); i++) {
-        Consumer<CuratorsLithologyEntity> setter;
-        switch (i) {
-          case 0:
-            setter = interval::setComp1;
-            break;
-            case 1:
-            setter = interval::setComp2;
-            break;
-          case 2:
-            setter = interval::setComp3;
-            break;
-          case 3:
-            setter = interval::setComp4;
-            break;
-          case 4:
-            setter = interval::setComp5;
-            break;
-          case 5:
-            setter = interval::setComp6;
-            break;
-          default:
-            throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("A maximum of 6 other component codes is supported").build());
+      if (!maybeInterval.isPresent()) {
+        curatorsIntervalRepository.saveAndFlush(potInterval);
+      } else {
+        CuratorsIntervalEntity existing = maybeInterval.get();
+        if ("N".equals(existing.getPublish()) && !EntitySignificantFields.equals(existing, potInterval)) {
+          EntitySignificantFields.copy(potInterval, existing);
+          curatorsIntervalRepository.saveAndFlush(existing);
         }
-        setter.accept(sampleDataUtils.getLithology(row.getOtherComponentCodes().get(i)));
       }
-
-      interval.setDescription(row.getDescription());
-      interval.setAge(sampleDataUtils.getAge(row.getGeologicAgeCode()));
-
-      interval.setWeight(row.getBulkWeight());
-      interval.setRockLith(sampleDataUtils.getRockLithology(row.getSampleLithologyCode()));
-      interval.setRockMin(sampleDataUtils.getMineralogy(row.getSampleMineralogyCode()));
-      interval.setWeathMeta(sampleDataUtils.getWeathering(row.getSampleWeatheringOrMetamorphismCode()));
-      interval.setRemark(sampleDataUtils.getGlassRemark(row.getGlassRemarksCode()));
-
-      //TODO Munsell colors can be duplicated, should the spreadsheet use the code?
-
-      interval.setMunsellCode(row.getMunsellColor());
-      CuratorsMunsellEntity munsell = sampleDataUtils.getMunsell(row.getMunsellColor());
-      if(munsell != null) {
-        interval.setMunsell(munsell.getMunsell());
-      }
-
-      interval.setExhaustCode(row.getSampleNotAvailable());
-
-      interval.setIntComments(row.getComments());
-
-      interval.setPublish("Y");
-
-      tempQcIntervalRepository.saveAndFlush(interval);
 
 
     }

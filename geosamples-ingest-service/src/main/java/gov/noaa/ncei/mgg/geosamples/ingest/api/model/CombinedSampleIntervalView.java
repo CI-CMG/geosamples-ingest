@@ -50,7 +50,6 @@ public class CombinedSampleIntervalView {
   private String igsn;
   private String leg;
   private String sampleComments;
-  private String samplePublish;
   private Long objectId;
 
   // TODO
@@ -139,10 +138,10 @@ public class CombinedSampleIntervalView {
   private Integer mmcdTop;
   private Integer cmcdBot;
   private Integer mmcdBot;
-  private String intervalPublish;
   private String intervalIgsn;
   private String intervalImlgs;
   private String intervalParentIsgn;
+  private Boolean publish;
 
   public String getCruise() {
     return cruise;
@@ -464,13 +463,6 @@ public class CombinedSampleIntervalView {
     this.sampleComments = sampleComments;
   }
 
-  public String getSamplePublish() {
-    return samplePublish;
-  }
-
-  public void setSamplePublish(String samplePublish) {
-    this.samplePublish = samplePublish;
-  }
 
   public Long getObjectId() {
     return objectId;
@@ -848,14 +840,6 @@ public class CombinedSampleIntervalView {
     this.mmcdBot = mmcdBot;
   }
 
-  public String getIntervalPublish() {
-    return intervalPublish;
-  }
-
-  public void setIntervalPublish(String intervalPublish) {
-    this.intervalPublish = intervalPublish;
-  }
-
   public String getIntervalIgsn() {
     return intervalIgsn;
   }
@@ -878,5 +862,13 @@ public class CombinedSampleIntervalView {
 
   public void setIntervalParentIsgn(String intervalParentIsgn) {
     this.intervalParentIsgn = intervalParentIsgn;
+  }
+
+  public Boolean isPublish() {
+    return publish;
+  }
+
+  public void setPublish(Boolean publish) {
+    this.publish = publish;
   }
 }

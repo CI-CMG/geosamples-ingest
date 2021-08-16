@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Province" :label-for="provinceId">
+          <b-form-group label="Physiographic Province" :label-for="provinceId">
             <b-form-input :id="provinceId" v-model="province"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Province Code" :label-for="provinceCodeId">
+          <b-form-group label="Physiographic Province Code" :label-for="provinceCodeId">
             <b-form-input :id="provinceCodeId" v-model="provinceCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'ProvinceAdd' }" variant="secondary" class="m-3">Add New Platform</b-button>
+  <b-button :to="{ name: 'ProvinceAdd' }" variant="secondary" class="m-3">Add New Physiographic Province</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'province',
-          label: 'Province',
+          label: 'Physiographic Province',
           sortable: true,
         },
         {
           key: 'provinceCode',
-          label: 'Province Code',
+          label: 'Physiographic Province Code',
           sortable: true,
         },
       ],

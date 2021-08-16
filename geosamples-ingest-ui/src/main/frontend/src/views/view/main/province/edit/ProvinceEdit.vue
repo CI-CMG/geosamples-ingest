@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Province - {{ getValue('province') }}</h1>
-      <h1 v-else class="text-primary">Add New Province</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Physiographic Province - {{ getValue('province') }}</h1>
+      <h1 v-else class="text-primary">Add New Physiographic Province</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Province" :label-for="provinceId">
+        <b-form-group v-if="!isEdit" label="Physiographic Province" :label-for="provinceId">
           <b-form-input
             :id="provinceId"
             type="text" @blur="() => setTouched({path: 'province', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('province') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Province Code" :label-for="provinceCodeId">
+        <b-form-group label="Physiographic Province Code" :label-for="provinceCodeId">
           <b-form-input
             :id="provinceCodeId"
             type="text" @blur="() => setTouched({path: 'provinceCode', touched: true})"

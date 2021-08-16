@@ -51,8 +51,6 @@ public class IntervalService extends
   private final CuratorsWeathMetaRepository curatorsWeathMetaRepository;
   private final CuratorsRemarkRepository curatorsRemarkRepository;
   private final CuratorsMunsellRepository curatorsMunsellRepository;
-  private final SampleDataUtils sampleDataUtils;
-  private final ServiceProperties serviceProperties;
 
   @Autowired
   public IntervalService(CuratorsIntervalRepository curatorsIntervalRepository,
@@ -64,8 +62,7 @@ public class IntervalService extends
       CuratorsRockMinRepository curatorsRockMinRepository,
       CuratorsWeathMetaRepository curatorsWeathMetaRepository,
       CuratorsRemarkRepository curatorsRemarkRepository,
-      CuratorsMunsellRepository curatorsMunsellRepository, SampleDataUtils sampleDataUtils,
-      ServiceProperties serviceProperties) {
+      CuratorsMunsellRepository curatorsMunsellRepository) {
     this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.curatorsLithologyRepository = curatorsLithologyRepository;
@@ -76,8 +73,6 @@ public class IntervalService extends
     this.curatorsWeathMetaRepository = curatorsWeathMetaRepository;
     this.curatorsRemarkRepository = curatorsRemarkRepository;
     this.curatorsMunsellRepository = curatorsMunsellRepository;
-    this.sampleDataUtils = sampleDataUtils;
-    this.serviceProperties = serviceProperties;
   }
 
   @Override

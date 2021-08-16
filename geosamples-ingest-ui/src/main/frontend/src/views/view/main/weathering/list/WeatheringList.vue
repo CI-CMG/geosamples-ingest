@@ -23,6 +23,8 @@
   </b-form>
   <b-button :to="{ name: 'WeatheringAdd' }" variant="secondary" class="m-3">Add New Weathering/Metamorphism</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small

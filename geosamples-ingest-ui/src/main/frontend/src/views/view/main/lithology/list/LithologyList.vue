@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Lithology" :label-for="lithologyId">
+          <b-form-group label="Lithologic Composition" :label-for="lithologyId">
             <b-form-input :id="lithologyId" v-model="lithology"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Lithology Code" :label-for="lithologyCodeId">
+          <b-form-group label="Lithologic Composition Code" :label-for="lithologyCodeId">
             <b-form-input :id="lithologyCodeId" v-model="lithologyCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'LithologyAdd' }" variant="secondary" class="m-3">Add New Lithology</b-button>
+  <b-button :to="{ name: 'LithologyAdd' }" variant="secondary" class="m-3">Add New Lithologic Composition</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'lithology',
-          label: 'Lithology',
+          label: 'Lithologic Composition',
           sortable: true,
         },
         {
           key: 'lithologyCode',
-          label: 'Lithology Code',
+          label: 'Lithologic Composition Code',
           sortable: true,
         },
       ],

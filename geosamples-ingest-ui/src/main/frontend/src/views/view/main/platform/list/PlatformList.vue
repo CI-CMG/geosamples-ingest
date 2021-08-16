@@ -4,7 +4,7 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Platform" :label-for="platformId">
+          <b-form-group label="Ship/Platform" :label-for="platformId">
             <b-form-input :id="platformId" v-model="platform"/>
           </b-form-group>
         </b-col>
@@ -26,8 +26,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'PlatformAdd' }" variant="secondary" class="m-3">Add New Platform</b-button>
+  <b-button :to="{ name: 'PlatformAdd' }" variant="secondary" class="m-3">Add New Ship/Platform</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small

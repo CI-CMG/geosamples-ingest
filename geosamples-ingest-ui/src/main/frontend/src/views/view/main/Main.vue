@@ -5,17 +5,17 @@
       <b-collapse :id="navbarId" is-nav>
         <b-navbar-nav>
           <b-nav-item :to="{ name: 'Home'}">Home</b-nav-item>
-          <b-nav-item-dropdown text="Supporting Data">
-            <b-dropdown-item :to="{ name: 'Age'}">Age</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Device'}">Device</b-dropdown-item>
+          <b-nav-item-dropdown text="Controlled Vocabulary">
+            <b-dropdown-item :to="{ name: 'Age'}">Geologic Age</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Device'}">Sampling Device</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Facility'}">Facility</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Lithology'}">Lithology</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Munsell'}">Munsell</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Platform'}">Platforms</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Province'}">Province</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'Remark'}">Remark</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Lithology'}">Lithologic Composition</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Munsell'}">Munsell Color Code</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Platform'}">Ship/Platform</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Province'}">Physiographic Province</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'Remark'}">Rock Glass Remarks & Mn/Fe Oxide</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'RockLithology'}">Rock Lithology</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'RockMineral'}">Rock Mineral</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'RockMineral'}">Rock Mineralogy</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'StorageMethod'}">Storage Method</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Texture'}">Texture</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Weathering'}">Weathering/Metamorphism</b-dropdown-item>

@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Remark - {{ getValue('remark') }}</h1>
-      <h1 v-else class="text-primary">Add New Remark</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Rock Glass Remarks & Mn/Fe Oxide - {{ getValue('remark') }}</h1>
+      <h1 v-else class="text-primary">Add New Rock Glass Remarks & Mn/Fe Oxide</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Remark" :label-for="remarkId">
+        <b-form-group v-if="!isEdit" label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkId">
           <b-form-input
             :id="remarkId"
             type="text" @blur="() => setTouched({path: 'remark', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('remark') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Remark Code" :label-for="remarkCodeId">
+        <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide Code" :label-for="remarkCodeId">
           <b-form-input
             :id="remarkCodeId"
             type="text" @blur="() => setTouched({path: 'remarkCode', touched: true})"

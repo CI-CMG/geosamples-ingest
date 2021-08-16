@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Device" :label-for="deviceId">
+          <b-form-group label="Sampling Device" :label-for="deviceId">
             <b-form-input :id="deviceId" v-model="device"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Device Code" :label-for="deviceCodeId">
+          <b-form-group label="Sampling Device Code" :label-for="deviceCodeId">
             <b-form-input :id="deviceCodeId" v-model="deviceCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'DeviceAdd' }" variant="secondary" class="m-3">Add New Device</b-button>
+  <b-button :to="{ name: 'DeviceAdd' }" variant="secondary" class="m-3">Add New Sampling Device</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'device',
-          label: 'Device',
+          label: 'Sampling Device',
           sortable: true,
         },
         {
           key: 'deviceCode',
-          label: 'Device Code',
+          label: 'Sampling Device Code',
           sortable: true,
         },
       ],

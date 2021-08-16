@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 public class CombinedIntervalSampleSearchParameters implements PagingAndSortingParameters {
 
-  private static final List<String> DEFAULT_SORT = Arrays.asList("cruise:asc", "sample:asc");
+  private static final List<String> DEFAULT_SORT = Arrays.asList("cruise:asc", "sample:asc", "interval:asc");
 
   @Min(1)
   private int page = 1;

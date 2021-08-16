@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Remark" :label-for="remarkId">
+          <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkId">
             <b-form-input :id="remarkId" v-model="remark"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Remark Code" :label-for="remarkCodeId">
+          <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide Code" :label-for="remarkCodeId">
             <b-form-input :id="remarkCodeId" v-model="remarkCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'RemarkAdd' }" variant="secondary" class="m-3">Add New Remark</b-button>
+  <b-button :to="{ name: 'RemarkAdd' }" variant="secondary" class="m-3">Add New Rock Glass Remarks & Mn/Fe Oxide</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'remark',
-          label: 'Remark',
+          label: 'Rock Glass Remarks & Mn/Fe Oxide',
           sortable: true,
         },
         {
           key: 'remarkCode',
-          label: 'Remark Code',
+          label: 'Rock Glass Remarks & Mn/Fe Oxide Code',
           sortable: true,
         },
       ],

@@ -1,6 +1,8 @@
 <template>
   <b-card title="Submission Errors - Correct And Resubmit">
     <b-table
+      sticky-header="500px"
+      head-variant="dark"
       striped
       bordered
       small

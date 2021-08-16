@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit StorageMethod - {{ getValue('storageMethod') }}</h1>
-      <h1 v-else class="text-primary">Add New StorageMethod</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Storage Method - {{ getValue('storageMethod') }}</h1>
+      <h1 v-else class="text-primary">Add New Storage Method</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="StorageMethod" :label-for="storageMethodId">
+        <b-form-group v-if="!isEdit" label="Storage Method" :label-for="storageMethodId">
           <b-form-input
             :id="storageMethodId"
             type="text" @blur="() => setTouched({path: 'storageMethod', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('storageMethod') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="StorageMethod Code" :label-for="storageMethodCodeId">
+        <b-form-group label="Storage Method Code" :label-for="storageMethodCodeId">
           <b-form-input
             :id="storageMethodCodeId"
             type="text" @blur="() => setTouched({path: 'storageMethodCode', touched: true})"

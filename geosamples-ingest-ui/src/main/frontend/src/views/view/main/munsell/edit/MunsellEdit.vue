@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Munsell - {{ getValue('munsellCode') }}</h1>
-      <h1 v-else class="text-primary">Add New Munsell</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Munsell Color Code - {{ getValue('munsellCode') }}</h1>
+      <h1 v-else class="text-primary">Add New Munsell Color Code</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Munsell Code" :label-for="munsellCodeId">
+        <b-form-group v-if="!isEdit" label="Munsell Color Code" :label-for="munsellCodeId">
           <b-form-input
             :id="munsellCodeId"
             type="text" @blur="() => setTouched({path: 'munsellCode', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('munsellCode') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Munsell" :label-for="munsellId">
+        <b-form-group label="Munsell Color" :label-for="munsellId">
           <b-form-input
             :id="munsellId"
             type="text" @blur="() => setTouched({path: 'munsell', touched: true})"

@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Munsell" :label-for="munsellId">
+          <b-form-group label="Munsell Color" :label-for="munsellId">
             <b-form-input :id="munsellId" v-model="munsell"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Munsell Code" :label-for="munsellCodeId">
+          <b-form-group label="Munsell Color Code" :label-for="munsellCodeId">
             <b-form-input :id="munsellCodeId" v-model="munsellCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'MunsellAdd' }" variant="secondary" class="m-3">Add New Munsell</b-button>
+  <b-button :to="{ name: 'MunsellAdd' }" variant="secondary" class="m-3">Add New Munsell Color Code</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'munsellCode',
-          label: 'Munsell Code',
+          label: 'Munsell Color Code',
           sortable: true,
         },
         {
           key: 'munsell',
-          label: 'Munsell',
+          label: 'Munsell Color',
           sortable: true,
         },
       ],

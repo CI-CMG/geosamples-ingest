@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Device - {{ getValue('device') }}</h1>
-      <h1 v-else class="text-primary">Add New Device</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Sampling Device - {{ getValue('device') }}</h1>
+      <h1 v-else class="text-primary">Add New Sampling Device</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Device" :label-for="deviceId">
+        <b-form-group v-if="!isEdit" label="Sampling Device" :label-for="deviceId">
           <b-form-input
             :id="deviceId"
             type="text" @blur="() => setTouched({path: 'device', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('device') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Device Code" :label-for="deviceCodeId">
+        <b-form-group label="Sampling Device Code" :label-for="deviceCodeId">
           <b-form-input
             :id="deviceCodeId"
             type="text" @blur="() => setTouched({path: 'deviceCode', touched: true})"

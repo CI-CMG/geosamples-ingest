@@ -44,7 +44,7 @@
           <b-form-invalid-feedback>{{ getError('facilityCode') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Platform" :label-for="platformId">
+        <b-form-group label="Ship/Platform" :label-for="platformId">
           <b-form-input
             :id="platformId"
             type="text" @blur="() => setTouched({path: 'platform', touched: true})"
@@ -55,7 +55,7 @@
           <b-form-invalid-feedback>{{ getError('platform') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Device Code" :label-for="deviceCodeId">
+        <b-form-group label="Sampling Device Code" :label-for="deviceCodeId">
           <b-form-input
             :id="deviceCodeId"
             type="text" @blur="() => setTouched({path: 'deviceCode', touched: true})"

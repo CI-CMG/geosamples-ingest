@@ -100,7 +100,7 @@ public class CuratorPreviewPersistenceService {
     sample.setNs(beginningLat.getDirection());
 
     PositionDim endingLat = SampleDataUtils.getPositionDim(row.getEndingLatitude(), true);
-    sample.setEndLon(endingLat.getValue());
+    sample.setEndLat(endingLat.getValue());
     sample.setEndLatDeg(endingLat.getDegrees());
     sample.setEndLatMin(endingLat.getMinutes());
     sample.setEndNs(endingLat.getDirection());
@@ -165,10 +165,6 @@ public class CuratorPreviewPersistenceService {
     CmConverter depthBottom = new CmConverter(row.getDepthToBottomOfInterval());
     interval.setDepthBot(depthBottom.getCm());
     interval.setDepthBotMm(depthBottom.getMm());
-
-    CmConverter coreLength = new CmConverter(row.getCoreLength());
-    interval.setDhCoreLength(coreLength.getCm());
-    interval.setDhCoreLengthMm(coreLength.getMm());
 
     interval.setLith1(sampleDataUtils.getLithology(row.getPrimaryLithologicCompositionCode()));
     interval.setText1(sampleDataUtils.getTexture(row.getPrimaryTextureCode()));

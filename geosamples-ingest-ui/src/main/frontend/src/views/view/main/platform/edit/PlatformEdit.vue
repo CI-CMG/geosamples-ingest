@@ -7,14 +7,14 @@ private String sourceUri;
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Platform - {{ getValue('platform') }}</h1>
-      <h1 v-else class="text-primary">Add New Platform</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Ship/Platform - {{ getValue('platform') }}</h1>
+      <h1 v-else class="text-primary">Add New Ship/Platform</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Platform" :label-for="platformId">
+        <b-form-group v-if="!isEdit" label="Ship/Platform" :label-for="platformId">
           <b-form-input
             :id="platformId"
             type="text" @blur="() => setTouched({path: 'platform', touched: true})"

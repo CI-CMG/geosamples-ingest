@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="Age" :label-for="ageId">
+          <b-form-group label="Geologic Age" :label-for="ageId">
             <b-form-input :id="ageId" v-model="age"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="Age Code" :label-for="ageCodeId">
+          <b-form-group label="Geologic Age Code" :label-for="ageCodeId">
             <b-form-input :id="ageCodeId" v-model="ageCode"/>
           </b-form-group>
         </b-col>
@@ -21,8 +21,10 @@
       <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
     </div>
   </b-form>
-  <b-button :to="{ name: 'AgeAdd' }" variant="secondary" class="m-3">Add New Age</b-button>
+  <b-button :to="{ name: 'AgeAdd' }" variant="secondary" class="m-3">Add New Geologic Age</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'age',
-          label: 'Age',
+          label: 'Geologic Age',
           sortable: true,
         },
         {
           key: 'ageCode',
-          label: 'Age Code',
+          label: 'Geologic Age Code',
           sortable: true,
         },
       ],

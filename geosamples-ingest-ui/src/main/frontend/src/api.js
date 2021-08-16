@@ -3,13 +3,10 @@ import {
   BASE_PATH, BASE_API,
 } from '@/basePath';
 
-const defaultTimeout = 600000;
-
 const apiService = axios.create();
 
 const initialize = () => {
   apiService.defaults.baseURL = `${BASE_PATH}${BASE_API}`;
-  apiService.defaults.timeout = defaultTimeout;
 };
 
 initialize();

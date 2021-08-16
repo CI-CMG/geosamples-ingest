@@ -15,7 +15,7 @@
             </b-form-group>
           </b-col>
           <b-col>
-            <b-form-group label="Platform" :label-for="platformId">
+            <b-form-group label="Ship/Platform" :label-for="platformId">
               <b-form-input :id="platformId" :value="platform" @change="setPlatform"/>
             </b-form-group>
           </b-col>
@@ -224,7 +224,7 @@ export default {
         },
         {
           key: 'device',
-          label: 'Device',
+          label: 'Sampling Device',
         },
         {
           key: 'shipCode',
@@ -428,7 +428,7 @@ export default {
         },
         {
           key: 'lith1',
-          label: 'Lith. 1',
+          label: 'Primary Lithologic Composition',
         },
         {
           key: 'text1',
@@ -436,7 +436,7 @@ export default {
         },
         {
           key: 'lith2',
-          label: 'Lith. 2',
+          label: 'Secondary Lithologic Composition',
         },
         {
           key: 'text2',
@@ -444,27 +444,27 @@ export default {
         },
         {
           key: 'comp1',
-          label: 'Comp. 1',
+          label: 'Other Component 1',
         },
         {
           key: 'comp2',
-          label: 'Comp. 2',
+          label: 'Other Component 2',
         },
         {
           key: 'comp3',
-          label: 'Comp. 3',
+          label: 'Other Component 3',
         },
         {
           key: 'comp4',
-          label: 'Comp. 4',
+          label: 'Other Component 4',
         },
         {
           key: 'comp5',
-          label: 'Comp. 5',
+          label: 'Other Component 5',
         },
         {
           key: 'comp6',
-          label: 'Comp. 6',
+          label: 'Other Component 6',
         },
         {
           key: 'description',
@@ -472,7 +472,7 @@ export default {
         },
         {
           key: 'age',
-          label: 'Age',
+          label: 'Geologic Age',
         },
         {
           key: 'absoluteAgeTop',
@@ -500,15 +500,15 @@ export default {
         },
         {
           key: 'remark',
-          label: 'Remark',
+          label: 'Rock Glass Remarks & Mn/Fe Oxide',
         },
         {
           key: 'munsellCode',
-          label: 'Munsell Code',
+          label: 'Munsell Color Code',
         },
         {
           key: 'munsell',
-          label: 'Munsell',
+          label: 'Munsell Color',
         },
         {
           key: 'exhaustCode',

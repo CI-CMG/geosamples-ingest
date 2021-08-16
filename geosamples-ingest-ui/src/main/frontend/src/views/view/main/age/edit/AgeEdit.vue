@@ -5,14 +5,14 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Age - {{ getValue('age') }}</h1>
-      <h1 v-else class="text-primary">Add New Age</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Geologic Age - {{ getValue('age') }}</h1>
+      <h1 v-else class="text-primary">Add New Geologic Age</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Age" :label-for="ageId">
+        <b-form-group v-if="!isEdit" label="Geologic Age" :label-for="ageId">
           <b-form-input
             :id="ageId"
             type="text" @blur="() => setTouched({path: 'age', touched: true})"
@@ -23,7 +23,7 @@
           <b-form-invalid-feedback>{{ getError('age') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Age Code" :label-for="ageCodeId">
+        <b-form-group label="Geologic Age Code" :label-for="ageCodeId">
           <b-form-input
             :id="ageCodeId"
             type="text" @blur="() => setTouched({path: 'ageCode', touched: true})"

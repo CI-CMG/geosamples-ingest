@@ -7,7 +7,6 @@ spring:
     properties:
       hibernate:
         default_schema: CROWBAR_OTHER_3
-    open-in-view: false
   datasource:
     url: jdbc:oracle:thin:@localhost:15215/XEPDB1
     username: CROWBAR_OTHER_3

@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 @Sortable({
     "cruise",
     "sample",
+    "interval",
     "facility",
     "platform",
 })
@@ -139,7 +140,6 @@ public class CombinedSampleIntervalView {
   private Integer cmcdBot;
   private Integer mmcdBot;
   private String intervalIgsn;
-  private String intervalImlgs;
   private String intervalParentIsgn;
   private Boolean publish;
 
@@ -846,14 +846,6 @@ public class CombinedSampleIntervalView {
 
   public void setIntervalIgsn(String intervalIgsn) {
     this.intervalIgsn = intervalIgsn;
-  }
-
-  public String getIntervalImlgs() {
-    return intervalImlgs;
-  }
-
-  public void setIntervalImlgs(String intervalImlgs) {
-    this.intervalImlgs = intervalImlgs;
   }
 
   public String getIntervalParentIsgn() {

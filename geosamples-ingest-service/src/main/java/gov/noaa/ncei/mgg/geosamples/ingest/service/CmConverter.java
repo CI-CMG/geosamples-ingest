@@ -16,6 +16,6 @@ public class CmConverter {
     if (cm == null) {
       return null;
     }
-    return SampleDataUtils.round((cm - getCm()) * 10D);
+    return SampleDataUtils.truncate((cm - getCm()) * 10D);
   }
 }

@@ -88,7 +88,7 @@
           <b-form-invalid-feedback>{{ getError('dBotInDhCore') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithology Code 1" :label-for="lithCode1Id">
+        <b-form-group label="Primary Lithologic Composition Code" :label-for="lithCode1Id">
           <b-form-input
             :id="lithCode1Id"
             type="text" @blur="() => setTouched({path: 'lithCode1', touched: true})"
@@ -110,7 +110,7 @@
           <b-form-invalid-feedback>{{ getError('textCode1') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithology Code 2" :label-for="lithCode2Id">
+        <b-form-group label="Secondary Lithologic Composition Code" :label-for="lithCode2Id">
           <b-form-input
             :id="lithCode2Id"
             type="text" @blur="() => setTouched({path: 'lithCode2', touched: true})"
@@ -132,7 +132,7 @@
           <b-form-invalid-feedback>{{ getError('textCode2') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 1" :label-for="compCode1Id">
+        <b-form-group label="Other Component Code 1" :label-for="compCode1Id">
           <b-form-input
             :id="compCode1Id"
             type="text" @blur="() => setTouched({path: 'compCode1', touched: true})"
@@ -143,7 +143,7 @@
           <b-form-invalid-feedback>{{ getError('compCode1') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 2" :label-for="compCode2Id">
+        <b-form-group label="Other Component Code 2" :label-for="compCode2Id">
           <b-form-input
             :id="compCode2Id"
             type="text" @blur="() => setTouched({path: 'compCode2', touched: true})"
@@ -154,7 +154,7 @@
           <b-form-invalid-feedback>{{ getError('compCode2') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 3" :label-for="compCode3Id">
+        <b-form-group label="Other Component Code 3" :label-for="compCode3Id">
           <b-form-input
             :id="compCode3Id"
             type="text" @blur="() => setTouched({path: 'compCode3', touched: true})"
@@ -165,7 +165,7 @@
           <b-form-invalid-feedback>{{ getError('compCode3') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 4" :label-for="compCode4Id">
+        <b-form-group label="Other Component Code 4" :label-for="compCode4Id">
           <b-form-input
             :id="compCode4Id"
             type="text" @blur="() => setTouched({path: 'compCode4', touched: true})"
@@ -176,7 +176,7 @@
           <b-form-invalid-feedback>{{ getError('compCode4') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 5" :label-for="compCode5Id">
+        <b-form-group label="Other Component Code 5" :label-for="compCode5Id">
           <b-form-input
             :id="compCode5Id"
             type="text" @blur="() => setTouched({path: 'compCode5', touched: true})"
@@ -187,7 +187,7 @@
           <b-form-invalid-feedback>{{ getError('compCode5') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lithologic Composition Code 6" :label-for="compCode6Id">
+        <b-form-group label="Other Component Code 6" :label-for="compCode6Id">
           <b-form-input
             :id="compCode6Id"
             type="text" @blur="() => setTouched({path: 'compCode6', touched: true})"
@@ -209,7 +209,7 @@
           <b-form-invalid-feedback>{{ getError('description') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Age Code" :label-for="ageCodeId">
+        <b-form-group label="Geologic Age Code" :label-for="ageCodeId">
           <b-form-input
             :id="ageCodeId"
             type="text" @blur="() => setTouched({path: 'ageCode', touched: true})"
@@ -297,7 +297,7 @@
           <b-form-invalid-feedback>{{ getError('remarkCode') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Munsell Code" :label-for="munsellCodeId">
+        <b-form-group label="Munsell Color Code" :label-for="munsellCodeId">
           <b-form-input
             :id="munsellCodeId"
             type="text" @blur="() => setTouched({path: 'munsellCode', touched: true})"

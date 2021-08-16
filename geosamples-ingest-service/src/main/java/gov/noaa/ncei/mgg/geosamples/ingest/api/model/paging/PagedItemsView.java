@@ -1,10 +1,12 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@JsonDeserialize(builder = PagedItemsView.Builder.class)
 public class PagedItemsView<T> {
 
   private final List<T> items;

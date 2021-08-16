@@ -10,7 +10,7 @@ public class CmConverterTest {
   public void test() {
     CmConverter cmConverter = new CmConverter(25.66);
     assertEquals(25, cmConverter.getCm());
-    assertEquals(7, cmConverter.getMm());
+    assertEquals(6, cmConverter.getMm());
   }
 
 }

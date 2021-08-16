@@ -23,6 +23,8 @@
   </b-form>
   <b-button :to="{ name: 'FacilityAdd' }" variant="secondary" class="m-3">Add New Facility</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small

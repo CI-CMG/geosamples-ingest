@@ -15,8 +15,16 @@ public class PositionDim {
 
   public PositionDim(Double value, Integer degrees, Double minutes, String direction) {
     this.value = value;
+    String min = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros2Decimal(minutes);
+    double rounded = min == null ? 0D : Double.parseDouble(min);
+    if (rounded > 59.99) {
+      if(degrees != null) {
+        degrees = degrees + 1;
+      }
+      min = "00.00";
+    }
+    this.minutes = min;
     this.degrees = degrees;
-    this.minutes = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros2Decimal(minutes);
     this.direction = direction;
   }
 

@@ -4,12 +4,12 @@
     <b-container fluid>
       <b-row>
         <b-col>
-          <b-form-group label="StorageMethod" :label-for="storageMethodId">
+          <b-form-group label="Storage Method" :label-for="storageMethodId">
             <b-form-input :id="storageMethodId" v-model="storageMethod"/>
           </b-form-group>
         </b-col>
         <b-col>
-          <b-form-group label="StorageMethod Code" :label-for="storageMethodCodeId">
+          <b-form-group label="Storage Method Code" :label-for="storageMethodCodeId">
             <b-form-input :id="storageMethodCodeId" v-model="storageMethodCode"/>
           </b-form-group>
         </b-col>
@@ -23,6 +23,8 @@
   </b-form>
   <b-button :to="{ name: 'StorageMethodAdd' }" variant="secondary" class="m-3">Add New Storage Method</b-button>
   <b-table
+    sticky-header="500px"
+    head-variant="dark"
     striped
     bordered
     small
@@ -113,12 +115,12 @@ export default {
       fields: [
         {
           key: 'storageMethod',
-          label: 'StorageMethod',
+          label: 'Storage Method',
           sortable: true,
         },
         {
           key: 'storageMethodCode',
-          label: 'StorageMethod Code',
+          label: 'Storage Method Code',
           sortable: true,
         },
       ],

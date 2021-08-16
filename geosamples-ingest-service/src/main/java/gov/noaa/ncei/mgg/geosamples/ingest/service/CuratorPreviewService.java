@@ -20,16 +20,13 @@ public class CuratorPreviewService {
   private final ExcelService excelService;
   private final ValidationService validationService;
   private final CuratorPreviewPersistenceService curatorPreviewPersistenceService;
-  private final CuratorsFacilityRepository curatorsFacilityRepository;
 
   @Autowired
   public CuratorPreviewService(ExcelService excelService, ValidationService validationService,
-      CuratorPreviewPersistenceService curatorPreviewPersistenceService,
-      CuratorsFacilityRepository curatorsFacilityRepository) {
+      CuratorPreviewPersistenceService curatorPreviewPersistenceService) {
     this.excelService = excelService;
     this.validationService = validationService;
     this.curatorPreviewPersistenceService = curatorPreviewPersistenceService;
-    this.curatorsFacilityRepository = curatorsFacilityRepository;
   }
 
   public CuratorDataResponse upload(MultipartFile file) {

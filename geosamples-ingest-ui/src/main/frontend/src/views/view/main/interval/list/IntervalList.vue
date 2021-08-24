@@ -31,11 +31,13 @@
     <div v-if="searching"><b-spinner/></div>
     <div v-else>
       <b-pagination :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
-      <b-card title="Publish">
+      <b-card>
       <div class="mb-3">
         <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(true)">Select All</b-button>
         <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(false)">Deselect All</b-button>
-        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="doAccept">Publish Selected</b-button>
+        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(true)">Publish Selected</b-button>
+        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(false)">Unpublish Selected</b-button>
+        <b-button variant="danger" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="doDelete">Delete Selected</b-button>
       </div>
       </b-card>
       <div class="geo-temp-samples-table">
@@ -46,7 +48,7 @@
           :items="items"
           :fields="fields"
           :sortableColumns="['cruise', 'sample', 'facility', 'platform']"
-          :togglePublish="togglePublish"
+          :toggleSelect="toggleSelect"
         />
       </div>
       <b-pagination class="mt-3" :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
@@ -99,7 +101,7 @@ export default {
 
   methods: {
     ...mapMutations('interval', ['setPlatform', 'setCruise', 'setFacilityCode', 'clearParams', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort']),
-    ...mapActions('interval', ['searchPage', 'accept']),
+    ...mapActions('interval', ['searchPage', 'accept', 'delete']),
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
       this.setSortDesc(sortDesc);
@@ -133,15 +135,23 @@ export default {
     reset() {
       this.clearParams();
     },
-    togglePublish(index) {
+    toggleSelect(index) {
       this.items[index].selected = !this.items[index].selected;
     },
     selectAll(select) {
-      this.items.filter((i) => !i.publish).forEach((i) => { i.selected = select; });
+      this.items.forEach((i) => { i.selected = select; });
     },
-    doAccept() {
-      this.accept().then(() => {
-        this.firstPage();
+    doAccept(publish) {
+      this.accept({ publish }).then(() => {
+        // TODO test page out of bounds
+        // this.firstPage();
+        this.search();
+      });
+    },
+    doDelete() {
+      this.delete().then(() => {
+        // TODO test page out of bounds
+        // this.firstPage();
         this.search();
       });
     },
@@ -190,6 +200,10 @@ export default {
       platformId: null,
 
       fields: [
+        {
+          key: 'selected',
+          label: 'Selected',
+        },
         {
           key: 'publish',
           label: 'Publish',

@@ -226,10 +226,26 @@ export default {
     //   commit('clearParams');
     //   return dispatch('searchPage');
     // },
-    accept({ commit, state }) {
+    accept({ commit, state }, { publish }) {
       commit('acceptRequest');
-      const items = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval, publish: true }));
+      const items = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval, publish }));
       const body = { items };
+      return apiService.patch('/sample-interval', body)
+        .then(
+          (response) => {
+            commit('acceptSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('acceptFailure');
+            throw error;
+          },
+        );
+    },
+    delete({ commit, state }) {
+      commit('acceptRequest');
+      const del = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval }));
+      const body = { delete: del };
       return apiService.patch('/sample-interval', body)
         .then(
           (response) => {

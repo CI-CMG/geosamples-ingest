@@ -11,6 +11,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,18 @@ public class SampleIntervalService extends
 
   public SimpleItemsView<CombinedSampleIntervalView> patch(SimpleItemsView<CombinedSampleIntervalView> patch) {
     List<CombinedSampleIntervalView> items = new ArrayList<>(patch.getItems().size());
+
+    for (CombinedSampleIntervalView del : patch.getDelete()) {
+      IntervalPk pk = new IntervalPk();
+      pk.setInterval(del.getInterval());
+      pk.setImlgs(del.getImlgs());
+      curatorsIntervalRepository.findById(pk)
+          .ifPresent(entity -> {
+            curatorsIntervalRepository.delete(entity);
+            curatorsIntervalRepository.flush();
+            items.removeIf(view -> del.getImlgs().equals(view.getImlgs()) && del.getInterval().equals(view.getInterval()));
+          });
+    }
     for (CombinedSampleIntervalView item : patch.getItems()) {
       IntervalPk pk = new IntervalPk();
       pk.setInterval(item.getInterval());
@@ -82,16 +95,19 @@ public class SampleIntervalService extends
         interval.setPublish(item.isPublish() ? "Y" : "N");
         interval = curatorsIntervalRepository.saveAndFlush(interval);
         CuratorsSampleTsqpEntity sample = interval.getParentEntity();
-        if((!"Y".equals(sample.getPublish()) && item.isPublish()) || (!"N".equals(sample.getPublish()) && !item.isPublish())) {
-          sample.setPublish(item.isPublish() ? "Y" : "N");
-          sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
-          interval.setParentEntity(sample);
+        // Since a sample can have multiple intervals, only allow setting the sample publish to Y as setting this to N
+        // would effectively make all sibling intervals unpublished
+        if(item.isPublish() && !"Y".equals(sample.getPublish())) {
+            sample.setPublish("Y");
+            sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
+            interval.setParentEntity(sample);
         }
       }
       items.add(toView(interval));
     }
     SimpleItemsView<CombinedSampleIntervalView> result = new SimpleItemsView<>();
     result.setItems(items);
+    result.setDelete(patch.getDelete());
     return result;
   }
 

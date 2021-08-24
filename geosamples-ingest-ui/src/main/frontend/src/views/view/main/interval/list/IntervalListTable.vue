@@ -21,8 +21,11 @@
       </span>
 
     </template>
+    <template #cell(selected)="data">
+      <b-form-checkbox plain :checked="data.item.selected" @change="() => toggleSelect(data.index)"/>
+    </template>
       <template #cell(publish)="data">
-        <b-form-checkbox :disabled="data.item.publish" plain :checked="data.item.publish || data.item.selected" @change="() => togglePublish(data.index)"/>
+        <b-form-checkbox :disabled="true" plain :checked="data.item.publish"/>
       </template>
       <template #cell(imlgs)="data">
         <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>
@@ -42,7 +45,7 @@ export default {
     'items',
     'fields',
     'sortableColumns',
-    'togglePublish',
+    'toggleSelect',
   ],
   computed: {
     sortable() {

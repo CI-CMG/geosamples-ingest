@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   device: '',
@@ -153,7 +154,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/device/${encodeURIComponent(id)}`)
+      return apiService.get(`/device/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -167,7 +168,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/device/${encodeURIComponent(id)}`, provider) : () => apiService.post('/device', provider);
+      const req = id ? () => apiService.put(`/device/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/device', provider);
       return req()
         .then(
           (response) => {
@@ -197,7 +198,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/device/${encodeURIComponent(id)}`)
+      return apiService.delete(`/device/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   province: '',
@@ -153,7 +154,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/province/${encodeURIComponent(id)}`)
+      return apiService.get(`/province/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -167,7 +168,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/province/${encodeURIComponent(id)}`, provider) : () => apiService.post('/province', provider);
+      const req = id ? () => apiService.put(`/province/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/province', provider);
       return req()
         .then(
           (response) => {
@@ -197,7 +198,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/province/${encodeURIComponent(id)}`)
+      return apiService.delete(`/province/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

@@ -35,8 +35,8 @@
     @sort-changed="sortChanged"
     :sort-by="sortBy"
     :sort-desc="sortDesc">
-    <template #cell(facility)="data">
-      <b-link :to="{ name: 'FacilityEdit', params: { id: data.item.facility }}">{{ data.item.facility }}</b-link>
+    <template #cell(facilityCode)="data">
+      <b-link :to="{ name: 'FacilityEdit', params: { id: data.item.facilityCode }}">{{ data.item.facilityCode }}</b-link>
     </template>
   </b-table>
   <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>
@@ -114,13 +114,13 @@ export default {
 
       fields: [
         {
-          key: 'facility',
-          label: 'Facility',
+          key: 'facilityCode',
+          label: 'Facility Code',
           sortable: true,
         },
         {
-          key: 'facilityCode',
-          label: 'Facility Code',
+          key: 'facility',
+          label: 'Facility',
           sortable: true,
         },
       ],

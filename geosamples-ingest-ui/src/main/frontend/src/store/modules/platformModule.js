@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   platform: '',
@@ -157,7 +158,7 @@ export default {
     },
     load({ commit }, id) {
       commit('platformRequest');
-      return apiService.get(`/platform/${encodeURIComponent(id)}`)
+      return apiService.get(`/platform/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('platformSuccess', response.data);
@@ -171,7 +172,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('platformSaveRequest');
-      const req = id ? () => apiService.put(`/platform/${encodeURIComponent(id)}`, provider) : () => apiService.post('/platform', provider);
+      const req = id ? () => apiService.put(`/platform/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/platform', provider);
       return req()
         .then(
           (response) => {
@@ -201,7 +202,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('platformDeleteRequest');
-      return apiService.delete(`/platform/${encodeURIComponent(id)}`)
+      return apiService.delete(`/platform/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('platformDeleteSuccess', response.data);

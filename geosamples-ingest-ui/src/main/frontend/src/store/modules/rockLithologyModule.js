@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   rockLithology: '',
@@ -153,7 +154,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/rock-lithology/${encodeURIComponent(id)}`)
+      return apiService.get(`/rock-lithology/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -167,7 +168,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/rock-lithology/${encodeURIComponent(id)}`, provider) : () => apiService.post('/rock-lithology', provider);
+      const req = id ? () => apiService.put(`/rock-lithology/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/rock-lithology', provider);
       return req()
         .then(
           (response) => {
@@ -197,7 +198,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/rock-lithology/${encodeURIComponent(id)}`)
+      return apiService.delete(`/rock-lithology/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

@@ -28,9 +28,17 @@ public abstract class ControllerBase<V, S extends PagingAndSortingParameters, I,
     return service.search(searchParameters);
   }
 
+  private I replaceSlash(I id) {
+    if(id instanceof String) {
+      return (I) ((String) id).replaceAll("\\*\\|\\*", "/");
+    }
+    return id;
+  }
+
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public V get(@PathVariable("id") I id) {
-    return service.get(id);
+
+    return service.get(replaceSlash(id));
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -40,12 +48,12 @@ public abstract class ControllerBase<V, S extends PagingAndSortingParameters, I,
 
   @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   public V update(@Valid @RequestBody V platform, @PathVariable("id") I id) {
-    return service.update(platform, id);
+    return service.update(platform, replaceSlash(id));
   }
 
   @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public V delete(@PathVariable("id") I id) {
-    return service.delete(id);
+    return service.delete(replaceSlash(id));
   }
 
 }

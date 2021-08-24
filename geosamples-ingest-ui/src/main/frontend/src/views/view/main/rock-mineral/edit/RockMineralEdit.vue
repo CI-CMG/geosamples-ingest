@@ -5,14 +5,17 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit RockMineral - {{ getValue('rockMineral') }}</h1>
-      <h1 v-else class="text-primary">Add New RockMineral</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Rock Mineralogy - {{ getValue('rockMineral') }}</h1>
+      <h1 v-else class="text-primary">Add New Rock Mineralogy</h1>
 
-      <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
+      <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
+      <b-modal ref="delete-modal" title="Delete Rock Mineralogy" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+        <p class="my-4">Are you sure you want to delete this rock M=mineralogy?</p>
+      </b-modal>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="RockMineral" :label-for="rockMineralId">
+        <b-form-group v-if="!isEdit" label="Rock Mineralogy" :label-for="rockMineralId">
           <b-form-input
             :id="rockMineralId"
             type="text" @blur="() => setTouched({path: 'rockMineral', touched: true})"
@@ -23,7 +26,7 @@
           <b-form-invalid-feedback>{{ getError('rockMineral') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="RockMineral Code" :label-for="rockMineralCodeId">
+        <b-form-group label="Rock Mineralogy Code" :label-for="rockMineralCodeId">
           <b-form-input
             :id="rockMineralCodeId"
             type="text" @blur="() => setTouched({path: 'rockMineralCode', touched: true})"
@@ -90,7 +93,12 @@ export default {
       ]),
     ...mapActions('rockMineral', ['load', 'save', 'delete']),
     ...mapActions('rockMineralForm', ['submit', 'reset']),
-
+    showModal() {
+      this.$refs['delete-modal'].show();
+    },
+    hideModal() {
+      this.$refs['delete-modal'].hide();
+    },
     saveForm() {
       this.submit()
         .then((provider) => this.save({ provider, id: this.id }))

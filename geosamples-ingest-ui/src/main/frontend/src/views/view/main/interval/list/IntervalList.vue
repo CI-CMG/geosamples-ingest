@@ -1,5 +1,8 @@
 <template>
 <div>
+  <b-modal ref="delete-modal" title="Delete Intervals" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+    <p class="my-4">Are you sure you want to delete the selected intervals?</p>
+  </b-modal>
   <b-card title="Search">
     <b-form @submit.prevent="doSearch" @reset.prevent="reset">
       <b-container fluid>
@@ -37,7 +40,7 @@
         <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(false)">Deselect All</b-button>
         <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(true)">Publish Selected</b-button>
         <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(false)">Unpublish Selected</b-button>
-        <b-button variant="danger" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="doDelete">Delete Selected</b-button>
+        <b-button variant="danger" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showModal">Delete Selected</b-button>
       </div>
       </b-card>
       <div class="geo-temp-samples-table">
@@ -102,6 +105,12 @@ export default {
   methods: {
     ...mapMutations('interval', ['setPlatform', 'setCruise', 'setFacilityCode', 'clearParams', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort']),
     ...mapActions('interval', ['searchPage', 'accept', 'delete']),
+    showModal() {
+      this.$refs['delete-modal'].show();
+    },
+    hideModal() {
+      this.$refs['delete-modal'].hide();
+    },
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
       this.setSortDesc(sortDesc);

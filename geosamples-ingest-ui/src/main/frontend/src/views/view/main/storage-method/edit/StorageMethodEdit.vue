@@ -8,7 +8,10 @@
       <h1 v-if="isEdit" class="text-primary">Edit Storage Method - {{ getValue('storageMethod') }}</h1>
       <h1 v-else class="text-primary">Add New Storage Method</h1>
 
-      <b-button v-if="isEdit" type="button" variant="danger" @click="doDelete" >Delete</b-button>
+      <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
+      <b-modal ref="delete-modal" title="Delete Storage Method" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+        <p class="my-4">Are you sure you want to delete this storage method?</p>
+      </b-modal>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
@@ -90,7 +93,12 @@ export default {
       ]),
     ...mapActions('storageMethod', ['load', 'save', 'delete']),
     ...mapActions('storageMethodForm', ['submit', 'reset']),
-
+    showModal() {
+      this.$refs['delete-modal'].show();
+    },
+    hideModal() {
+      this.$refs['delete-modal'].hide();
+    },
     saveForm() {
       this.submit()
         .then((provider) => this.save({ provider, id: this.id }))

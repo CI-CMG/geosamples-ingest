@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   facilityCode: '',
@@ -157,7 +158,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/facility/${encodeURIComponent(id)}`)
+      return apiService.get(`/facility/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -171,7 +172,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/facility/${encodeURIComponent(id)}`, provider) : () => apiService.post('/facility', provider);
+      const req = id ? () => apiService.put(`/facility/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/facility', provider);
       return req()
         .then(
           (response) => {
@@ -201,7 +202,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/facility/${encodeURIComponent(id)}`)
+      return apiService.delete(`/facility/${encodeURIComponent(encodeSlash(id))}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

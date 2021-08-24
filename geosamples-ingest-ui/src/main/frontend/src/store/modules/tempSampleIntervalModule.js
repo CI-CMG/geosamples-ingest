@@ -181,7 +181,7 @@ export default {
     },
     // load({ commit }, id) {
     //   commit('loadRequest');
-    //   return apiService.get(`/texture/${encodeURIComponent(id)}`)
+    //   return apiService.get(`/texture/${encodeURIComponent(encodeSlash(id))}`)
     //   .then(
     //     (response) => {
     //       commit('loadSuccess', response.data);
@@ -195,7 +195,7 @@ export default {
     // },
     // save({ commit }, { provider, id }) {
     //   commit('saveRequest');
-    //   const req = id ? () => apiService.put(`/texture/${encodeURIComponent(id)}`, provider) : () => apiService.post('/texture', provider);
+    //   const req = id ? () => apiService.put(`/texture/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/texture', provider);
     //   return req()
     //   .then(
     //     (response) => {
@@ -225,7 +225,7 @@ export default {
     // },
     // delete({ commit }, id) {
     //   commit('deleteRequest');
-    //   return apiService.delete(`/texture/${encodeURIComponent(id)}`)
+    //   return apiService.delete(`/texture/${encodeURIComponent(encodeSlash(id))}`)
     //   .then(
     //     (response) => {
     //       commit('deleteSuccess', response.data);

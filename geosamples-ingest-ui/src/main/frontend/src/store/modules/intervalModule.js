@@ -1,10 +1,50 @@
 import { apiService } from '@/api';
 
+const fields = [
+  'cruiseContains',
+  'sampleContains',
+  'facilityCode',
+  'platformContains',
+  'deviceCode',
+  'date',
+  'storageMethodCode',
+  'piContains',
+  'provinceCode',
+  'igsn',
+  'imlgs',
+  'interval',
+  'publish',
+  'lithCode',
+  'textCode',
+  'ageCode',
+  'rockLithCode',
+  'rockMinCode',
+  'weathMetaCode',
+  'remarkCode',
+  'munsellCode',
+];
+
+const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
+  params: { page },
+}).then(
+  (response) => {
+    const { items, totalPages } = response.data;
+    items.forEach((item) => result.push(transform(item)));
+    if (page < totalPages) {
+      return loadAll(endpoint, transform, result, page + 1);
+    }
+    return result;
+  },
+);
+
 export default {
 
   namespaced: true,
 
   state: {
+
+    options: {},
+
     itemsPerPage: 200,
 
     items: [],
@@ -14,18 +54,11 @@ export default {
     totalPages: 1,
     totalItems: 0,
 
-    cruise: '',
-    facilityCode: '',
-    platform: '',
+    searchParameters: null,
 
     // TODO support imlgs
     sortBy: 'cruise',
     sortDesc: false,
-
-    // item: null,
-    // loading: false,
-    // saving: false,
-    // deleting: false,
 
     sampleItem: null,
     sampleLoading: false,
@@ -38,6 +71,26 @@ export default {
   },
 
   mutations: {
+    updateOptions(state, options) {
+      state.options = options;
+    },
+    updateSearchParameters(state, searchParameters) {
+      const params = {};
+      fields.forEach((f) => {
+        const value = searchParameters[f];
+        if (value != null) {
+          if (f === 'publish') {
+            if (value) {
+              params.publish = value;
+            }
+          } else {
+            params[f] = Array.isArray(value) ? value : [value];
+          }
+        }
+      });
+      state.searchParameters = params;
+    },
+
     loadSampleRequest(state) {
       state.sampleLoading = true;
     },
@@ -111,45 +164,12 @@ export default {
       state.loading = false;
     },
 
-    // saveRequest(state) {
-    //   state.saving = true;
-    // },
-    // saveSuccess(state, item) {
-    //   state.saving = false;
-    //   state.item = item;
-    // },
-    // saveFailure(state) {
-    //   state.saving = false;
-    // },
-    //
-    // deleteRequest(state) {
-    //   state.saving = true;
-    // },
-    // deleteSuccess(state) {
-    //   state.saving = false;
-    // },
-    // deleteFailure(state) {
-    //   state.saving = false;
-    // },
-
     firstPage(state) {
       state.page = 1;
       state.totalPages = 1;
       state.totalItems = 0;
     },
-    setCruise(state, cruise) {
-      state.cruise = cruise == null ? '' : cruise;
-    },
-    setFacilityCode(state, facilityCode) {
-      state.facilityCode = facilityCode == null ? '' : facilityCode;
-    },
-    setPlatform(state, platform) {
-      if (platform == null) {
-        state.platform = '';
-      } else {
-        state.platform = platform;
-      }
-    },
+
     setPage(state, page) {
       if (page == null || page < 1) {
         state.page = 1;
@@ -172,11 +192,6 @@ export default {
     },
     setSortDesc(state, sortDesc) {
       state.sortDesc = sortDesc;
-    },
-    clearParams(state) {
-      state.cruise = '';
-      state.facilityCode = '';
-      state.platform = '';
     },
     searchRequest(state) {
       state.searching = true;
@@ -201,9 +216,6 @@ export default {
       state.searching = false;
     },
     clearAll(state) {
-      state.cruise = '';
-      state.facilityCode = '';
-      state.platform = '';
       state.items = [];
       state.searching = false;
       state.page = 1;
@@ -213,19 +225,27 @@ export default {
   },
 
   actions: {
-    // changePage({ dispatch, commit }, page) {
-    //   commit('setPage', page);
-    //   return dispatch('searchPage');
-    // },
-    // search({ commit, dispatch }) {
-    //   commit('firstPage');
-    //   return dispatch('searchPage');
-    // },
-    // reset({ commit, dispatch }) {
-    //   commit('firstPage');
-    //   commit('clearParams');
-    //   return dispatch('searchPage');
-    // },
+    loadOptions({ commit }) {
+      commit('updateOptions', {});
+      const nextOpts = {};
+
+      Promise.all([
+        loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: `${ageCode} - ${age}` })).then((options) => { nextOpts.ageCode = options; return options; }),
+        loadAll('/device', ({ device, deviceCode }) => ({ value: deviceCode, text: `${deviceCode} - ${device}` })).then((options) => { nextOpts.deviceCode = options; return options; }),
+        loadAll('/facility', ({ facility, facilityCode }) => ({ value: facilityCode, text: `${facilityCode} - ${facility}` })).then((options) => { nextOpts.facilityCode = options; return options; }),
+        loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: `${lithologyCode} - ${lithology}` })).then((options) => { nextOpts.lithCode = options; return options; }),
+        loadAll('/munsell', ({ munsellCode }) => ({ value: munsellCode, text: munsellCode })).then((options) => { nextOpts.munsellCode = options; return options; }),
+        loadAll('/province', ({ province, provinceCode }) => ({ value: provinceCode, text: `${provinceCode} - ${province}` })).then((options) => { nextOpts.provinceCode = options; return options; }),
+        loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: `${remarkCode} - ${remark}` })).then((options) => { nextOpts.remarkCode = options; return options; }),
+        loadAll('/rock-lithology', ({ rockLithology, rockLithologyCode }) => ({ value: rockLithologyCode, text: `${rockLithologyCode} - ${rockLithology}` })).then((options) => { nextOpts.rockLithCode = options; return options; }),
+        loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: `${rockMineralCode} - ${rockMineral}` })).then((options) => { nextOpts.rockMinCode = options; return options; }),
+        loadAll('/storage-method', ({ storageMethod, storageMethodCode }) => ({ value: storageMethodCode, text: `${storageMethodCode} - ${storageMethod}` })).then((options) => { nextOpts.storageMethodCode = options; return options; }),
+        loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: `${textureCode} - ${texture}` })).then((options) => { nextOpts.textCode = options; return options; }),
+        loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: `${weatheringCode} - ${weathering}` })).then((options) => { nextOpts.weathMetaCode = options; return options; }),
+      ]).then(() => {
+        commit('updateOptions', nextOpts);
+      });
+    },
     accept({ commit, state }, { publish }) {
       commit('acceptRequest');
       const items = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval, publish }));
@@ -260,20 +280,32 @@ export default {
     },
     searchPage({ commit, state }) {
       commit('searchRequest');
-      const params = {
-        page: state.page,
-        order: `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`,
-        itemsPerPage: state.itemsPerPage,
-      };
-      if (state.platform) {
-        params.platform = state.platform;
+
+      const params = new URLSearchParams();
+      params.append('page', state.page);
+      params.append('order', `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`);
+      params.append('itemsPerPage', state.itemsPerPage);
+
+      if (state.searchParameters) {
+        if (state.searchParameters.publish != null) {
+          params.append('publish', state.searchParameters.publish);
+        }
+        fields.forEach((f) => {
+          const field = state.searchParameters[f];
+          if (field) {
+            if (Array.isArray(field)) {
+              field.forEach((v) => {
+                // noinspection JSDeepBugsSwappedArgs
+                params.append(f, v);
+              });
+            } else {
+              // noinspection JSDeepBugsSwappedArgs
+              params.append(f, field);
+            }
+          }
+        });
       }
-      if (state.facilityCode) {
-        params.facilityCode = state.facilityCode;
-      }
-      if (state.cruise) {
-        params.cruise = state.cruise;
-      }
+
       return apiService.get('/sample-interval', { params })
         .then(
           (response) => {

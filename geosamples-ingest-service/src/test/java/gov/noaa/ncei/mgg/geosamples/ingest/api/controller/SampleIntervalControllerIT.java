@@ -21,4 +21,9 @@ public class SampleIntervalControllerIT {
   public void testUploadValidationError () throws Exception {
 
   }
+
+  @Test
+  public void testSearch () throws Exception {
+
+  }
 }

@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
@@ -58,15 +61,33 @@ public class SearchUtils {
   }
 
   public static <E> Specification<E> contains(List<String> searchValues, String columnAlias) {
+    return contains(searchValues, e -> e.get(columnAlias));
+  }
+
+  public static <E> Specification<E> contains(List<String> searchValues, Function<Root<E>, Expression<String>> columnAlias) {
     return (e, cq, cb) ->
         cb.or(
-            searchValues.stream().map(v -> cb.like(cb.lower(e.get(columnAlias)), contains(v.toLowerCase(Locale.ENGLISH)), '/'))
+            searchValues.stream().map(v -> cb.like(cb.lower(columnAlias.apply(e)), contains(v.toLowerCase(Locale.ENGLISH)), '/'))
                 .collect(Collectors.toList()).toArray(new Predicate[0]));
   }
 
-  public static <E> Specification<E> equal(List<?> searchValues, String columnAlias) {
+  public static <E> Specification<E> equal(List<?> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {
     return (e, cq, cb) ->
-        cb.or(searchValues.stream().map(v -> cb.equal(e.get(columnAlias), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
+        cb.or(searchValues.stream().map(v -> cb.equal(columnAlias.apply(e), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
+  }
+
+//  public static <E> Specification<E> greaterThanOrEqual(List<String> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {
+//    return (e, cq, cb) ->
+//        cb.or(searchValues.stream().map(v -> cb.greaterThanOrEqualTo(columnAlias.apply(e), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
+//  }
+//
+//  public static <E> Specification<E> lessThanOrEq(List<String> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {
+//    return (e, cq, cb) ->
+//        cb.or(searchValues.stream().map(v -> cb.greaterThanOrEqualTo(columnAlias.apply(e), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
+//  }
+
+  public static <E> Specification<E> equal(List<?> searchValues, String columnAlias) {
+    return equal(searchValues, e -> e.get(columnAlias));
   }
 
   public static <T extends SampleBase> Specification<T> findExistingSample(SampleBase sample) {

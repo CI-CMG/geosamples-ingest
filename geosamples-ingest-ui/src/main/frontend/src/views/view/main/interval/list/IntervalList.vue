@@ -3,33 +3,7 @@
   <b-modal ref="delete-modal" title="Delete Intervals" ok-variant="danger" ok-title="Delete" @ok="doDelete">
     <p class="my-4">Are you sure you want to delete the selected intervals?</p>
   </b-modal>
-  <b-card title="Search">
-    <b-form @submit.prevent="doSearch" @reset.prevent="reset">
-      <b-container fluid>
-        <b-row>
-          <b-col>
-            <b-form-group label="Cruise" :label-for="cruiseId">
-              <b-form-input :id="cruiseId" :value="cruise" @change="setCruise"/>
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group label="Facility Code" :label-for="facilityCodeId">
-              <b-form-input :id="facilityCodeId" :value="facilityCode" @change="setFacilityCode"/>
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group label="Ship/Platform" :label-for="platformId">
-              <b-form-input :id="platformId" :value="platform" @change="setPlatform"/>
-            </b-form-group>
-          </b-col>
-        </b-row>
-      </b-container>
-      <div v-if="!searching">
-        <b-button type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">Search</b-button>
-        <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
-      </div>
-    </b-form>
-  </b-card>
+  <IntervalSearchControl :onSearch="routeSearch"/>
   <b-card title="Results">
     <div v-if="searching"><b-spinner/></div>
     <div v-else>
@@ -68,11 +42,10 @@ import {
   mapActions, mapMutations, mapState,
 } from 'vuex';
 import IntervalListTable from './IntervalListTable.vue';
+import IntervalSearchControl from './IntervalSearchControl.vue';
 
 const route = (self, to) => {
-  self.setPlatform(to.query.platform);
-  self.setCruise(to.query.cruise);
-  self.setFacilityCode(to.query.facilityCode);
+  self.updateSearchParameters(to.query);
   self.setPage(to.query.page);
   self.setSort(to.query.sort);
   self.searchPage();
@@ -81,11 +54,7 @@ const route = (self, to) => {
 export default {
   components: {
     IntervalListTable,
-  },
-  beforeMount() {
-    this.cruiseId = genId();
-    this.facilityCodeId = genId();
-    this.platformId = genId();
+    IntervalSearchControl,
   },
   beforeRouteEnter(to, from, next) {
     next((self) => {
@@ -103,7 +72,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('interval', ['setPlatform', 'setCruise', 'setFacilityCode', 'clearParams', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort']),
+    ...mapMutations('interval', ['firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort', 'updateSearchParameters']),
     ...mapActions('interval', ['searchPage', 'accept', 'delete']),
     showModal() {
       this.$refs['delete-modal'].show();
@@ -121,17 +90,12 @@ export default {
       this.setPage(page);
       this.search();
     },
+    routeSearch(searchParameters) {
+      this.updateSearchParameters(searchParameters);
+      this.search();
+    },
     search() {
-      const query = {};
-      if (this.platform) {
-        query.platform = this.platform;
-      }
-      if (this.cruise) {
-        query.cruise = this.cruise;
-      }
-      if (this.facilityCode) {
-        query.facilityCode = this.facilityCode;
-      }
+      const query = this.searchParameters ? this.searchParameters : {};
       query.page = this.page;
       query.sort = `${this.sortBy}:${this.sortDesc ? 'desc' : 'asc'}`;
       query.t = Date.now(); // force refresh
@@ -167,47 +131,11 @@ export default {
   },
 
   computed: {
-    ...mapState('interval', ['platform', 'cruise', 'facilityCode', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy', 'itemsPerPage']),
-    // platform: {
-    //   get() {
-    //     return this.params.platform;
-    //   },
-    //   set(value) {
-    //     this.setPlatform(value);
-    //   },
-    // },
-    // cruise2: {
-    //   get() {
-    //     return this.cruise;
-    //   },
-    //   set(value) {
-    //     this.setCruise(value);
-    //   },
-    // },
-    // facilityCode2: {
-    //   get() {
-    //     return this.facilityCode;
-    //   },
-    //   set(value) {
-    //     this.setFacilityCode(value);
-    //   },
-    // },
-    // currentPage: {
-    //   get() {
-    //     return this.page;
-    //   },
-    //   set(value) {
-    //     this.setPage(value);
-    //   },
-    // },
+    ...mapState('interval', ['searchParameters', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy', 'itemsPerPage']),
   },
 
   data() {
     return {
-      cruiseId: null,
-      facilityCodeId: null,
-      platformId: null,
-
       fields: [
         {
           key: 'selected',
@@ -224,6 +152,14 @@ export default {
         {
           key: 'interval',
           label: 'Interval',
+        },
+        {
+          key: 'igsn',
+          label: 'Sample IGSN',
+        },
+        {
+          key: 'intervalIgsn',
+          label: 'Interval IGSN',
         },
         {
           key: 'cruise',
@@ -376,10 +312,6 @@ export default {
         {
           key: 'lastUpdate',
           label: 'Sample Last Update',
-        },
-        {
-          key: 'igsn',
-          label: 'Sample IGSN',
         },
         {
           key: 'leg',
@@ -572,10 +504,6 @@ export default {
         {
           key: 'mmcdBot',
           label: 'mmcdBot',
-        },
-        {
-          key: 'intervalIgsn',
-          label: 'Interval IGSN',
         },
       ],
     };

@@ -32,13 +32,19 @@ public final class SampleIntervalUtils {
 
   public static final Map<String, String> SORT_MAPPING;
 
+
   static {
     Map<String, String> map = new HashMap<>();
+    map.put("publish", "publish");
+    map.put("imlgs", "parentEntity.imlgs");
+    map.put("interval", "interval");
+    map.put("igsn", "parentEntity.igsn");
+    map.put("intervalIgsn", "igsn");
     map.put("cruise", "parentEntity.cruise");
     map.put("sample", "parentEntity.sample");
-    map.put("interval", "interval");
     map.put("facility", "parentEntity.facility");
     map.put("platform", "parentEntity.platform");
+    map.put("beginDate", "parentEntity.beginDate");
     SORT_MAPPING = Collections.unmodifiableMap(map);
   }
 
@@ -48,7 +54,7 @@ public final class SampleIntervalUtils {
 
     List<String> munsellCode = searchParameters.getMunsellCode();
     if (!munsellCode.isEmpty()) {
-      specs.add(SearchUtils.equal(munsellCode, e -> e.join(CuratorsIntervalEntity_.MUNSELL).get(CuratorsMunsellEntity_.MUNSELL_CODE)));
+      specs.add(SearchUtils.equal(munsellCode, e -> e.get(CuratorsMunsellEntity_.MUNSELL_CODE)));
     }
 
     List<String> remarkCode = searchParameters.getRemarkCode();

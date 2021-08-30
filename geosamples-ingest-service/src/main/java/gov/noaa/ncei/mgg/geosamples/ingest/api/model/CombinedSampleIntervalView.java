@@ -3,11 +3,16 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 
 @Sortable({
+    "publish",
+    "imlgs",
+    "interval",
+    "igsn",
+    "intervalIgsn",
     "cruise",
     "sample",
-    "interval",
     "facility",
     "platform",
+    "beginDate",
 })
 public class CombinedSampleIntervalView {
 
@@ -61,41 +66,7 @@ public class CombinedSampleIntervalView {
 
   private String imlgs;
 
-  ////// Interval ////////
-
-  //TODO points to IMLGS above
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
-//  private TempQcSampleEntity parentEntity;
-
-//  @Column(name = "CRUISE", nullable = false, length = 30)
-//  private String cruise;
-//
-//  @Column(name = "SAMPLE", nullable = false, length = 30)
-//  private String sample;
-
   private Integer interval;
-
-  //TODO duplicate from sample
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "FACILITY_CODE", nullable = false)
-//  private CuratorsFacilityEntity facility;
-//
-  //TODO duplicate from sample
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "PLATFORM", nullable = false)
-//  private PlatformMasterEntity platform;
-//
-  //TODO duplicate from sample
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "DEVICE", nullable = false)
-//  private CuratorsDeviceEntity device;
-//
-  //TODO duplicate from sample
-//  @Column(name = "SHIP_CODE", length = 4)
-//  private String shipCode;
-
-
   private Integer depthTop;
   private Integer depthTopMm;
   private Integer depthBot;

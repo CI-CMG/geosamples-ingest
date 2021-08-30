@@ -37,11 +37,70 @@ const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(e
   },
 );
 
+const sortOptions = (options) => {
+  options.sort((a, b) => {
+    const atxt = a.text.toLowerCase();
+    const btxt = b.text.toLowerCase();
+    if (atxt === btxt) {
+      return 0;
+    } if (atxt > btxt) {
+      return 1;
+    }
+    return -1;
+  });
+  return options;
+};
+
+const sortColumns = {
+  publish: 'Publish',
+  imlgs: 'IMLGS',
+  igsn: 'Sample IGSN',
+  intervalIgsn: 'Interval IGSN',
+  platform: 'Platform',
+  beginDate: 'Begin Date',
+  facility: 'Facility',
+  cruise: 'Cruise',
+  sample: 'Sample',
+  interval: 'Interval',
+};
+
+const parseSortParameters = (sort) => {
+  let sorts = [];
+  if (sort) {
+    sorts = sort.split(',');
+  }
+  const all = Object.keys(sortColumns);
+  const available = [];
+  const selected = [];
+  sorts.forEach((s) => {
+    if (s) {
+      const parts = s.split(':');
+      const key = parts[0];
+      const column = sortColumns[key];
+      if (column) {
+        selected.push({ key: parts[0], asc: parts[1] === 'asc', column });
+        const index = all.indexOf(key);
+        if (index > -1) {
+          all.splice(index, 1);
+        }
+      }
+    }
+  });
+  all.forEach((key) => {
+    available.push({ key, column: sortColumns[key] });
+  });
+  return { available, selected };
+};
+
+const defaultSortParameters = 'facility:asc,cruise:asc,sample:asc,interval:asc';
+
 export default {
 
   namespaced: true,
 
   state: {
+
+    sortParameters: parseSortParameters(defaultSortParameters),
 
     options: {},
 
@@ -89,6 +148,11 @@ export default {
         }
       });
       state.searchParameters = params;
+    },
+
+    updateSortParameters(state, query) {
+      const { sort } = query;
+      state.sortParameters = parseSortParameters(sort);
     },
 
     loadSampleRequest(state) {
@@ -230,18 +294,18 @@ export default {
       const nextOpts = {};
 
       Promise.all([
-        loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: `${ageCode} - ${age}` })).then((options) => { nextOpts.ageCode = options; return options; }),
-        loadAll('/device', ({ device, deviceCode }) => ({ value: deviceCode, text: `${deviceCode} - ${device}` })).then((options) => { nextOpts.deviceCode = options; return options; }),
-        loadAll('/facility', ({ facility, facilityCode }) => ({ value: facilityCode, text: `${facilityCode} - ${facility}` })).then((options) => { nextOpts.facilityCode = options; return options; }),
-        loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: `${lithologyCode} - ${lithology}` })).then((options) => { nextOpts.lithCode = options; return options; }),
-        loadAll('/munsell', ({ munsellCode }) => ({ value: munsellCode, text: munsellCode })).then((options) => { nextOpts.munsellCode = options; return options; }),
-        loadAll('/province', ({ province, provinceCode }) => ({ value: provinceCode, text: `${provinceCode} - ${province}` })).then((options) => { nextOpts.provinceCode = options; return options; }),
-        loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: `${remarkCode} - ${remark}` })).then((options) => { nextOpts.remarkCode = options; return options; }),
-        loadAll('/rock-lithology', ({ rockLithology, rockLithologyCode }) => ({ value: rockLithologyCode, text: `${rockLithologyCode} - ${rockLithology}` })).then((options) => { nextOpts.rockLithCode = options; return options; }),
-        loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: `${rockMineralCode} - ${rockMineral}` })).then((options) => { nextOpts.rockMinCode = options; return options; }),
-        loadAll('/storage-method', ({ storageMethod, storageMethodCode }) => ({ value: storageMethodCode, text: `${storageMethodCode} - ${storageMethod}` })).then((options) => { nextOpts.storageMethodCode = options; return options; }),
-        loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: `${textureCode} - ${texture}` })).then((options) => { nextOpts.textCode = options; return options; }),
-        loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: `${weatheringCode} - ${weathering}` })).then((options) => { nextOpts.weathMetaCode = options; return options; }),
+        loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: `${ageCode} - ${age}` })).then(sortOptions).then((options) => { nextOpts.ageCode = options; return options; }),
+        loadAll('/device', ({ device, deviceCode }) => ({ value: deviceCode, text: `${deviceCode} - ${device}` })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
+        loadAll('/facility', ({ facility, facilityCode }) => ({ value: facilityCode, text: `${facilityCode} - ${facility}` })).then(sortOptions).then((options) => { nextOpts.facilityCode = options; return options; }),
+        loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: `${lithologyCode} - ${lithology}` })).then(sortOptions).then((options) => { nextOpts.lithCode = options; return options; }),
+        loadAll('/munsell', ({ munsellCode }) => ({ value: munsellCode, text: munsellCode })).then(sortOptions).then((options) => { nextOpts.munsellCode = options; return options; }),
+        loadAll('/province', ({ province, provinceCode }) => ({ value: provinceCode, text: `${provinceCode} - ${province}` })).then(sortOptions).then((options) => { nextOpts.provinceCode = options; return options; }),
+        loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: `${remarkCode} - ${remark}` })).then(sortOptions).then((options) => { nextOpts.remarkCode = options; return options; }),
+        loadAll('/rock-lithology', ({ rockLithology, rockLithologyCode }) => ({ value: rockLithologyCode, text: `${rockLithologyCode} - ${rockLithology}` })).then(sortOptions).then((options) => { nextOpts.rockLithCode = options; return options; }),
+        loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: `${rockMineralCode} - ${rockMineral}` })).then(sortOptions).then((options) => { nextOpts.rockMinCode = options; return options; }),
+        loadAll('/storage-method', ({ storageMethod, storageMethodCode }) => ({ value: storageMethodCode, text: `${storageMethodCode} - ${storageMethod}` })).then(sortOptions).then((options) => { nextOpts.storageMethodCode = options; return options; }),
+        loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: `${textureCode} - ${texture}` })).then(sortOptions).then((options) => { nextOpts.textCode = options; return options; }),
+        loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: `${weatheringCode} - ${weathering}` })).then(sortOptions).then((options) => { nextOpts.weathMetaCode = options; return options; }),
       ]).then(() => {
         commit('updateOptions', nextOpts);
       });

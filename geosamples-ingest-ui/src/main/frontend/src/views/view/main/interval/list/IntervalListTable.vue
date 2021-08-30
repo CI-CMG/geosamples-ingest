@@ -7,17 +7,15 @@
     small
     hover
     :items="items"
-    :fields="fields"
-    no-sort-reset
-    no-local-sorting
-    :sort-by="sortBy"
-    :sort-desc="sortDesc">
+    :fields="fields">
     <template #head()="data">
-      <span @click="() => sortChangedInt(data)" :style="headerStyle(data)">
+      <span :style="{
+        width: '100%',
+      }">
         <span>{{ data.label }}</span>
-        <b-icon-arrow-up v-if="sortBy === data.column && !sortDesc"></b-icon-arrow-up>
-        <b-icon-arrow-down v-if="sortBy === data.column && sortDesc"></b-icon-arrow-down>
-        <b-icon-arrow-down-up variant="secondary" v-if="sortable[data.column] && sortBy !== data.column"></b-icon-arrow-down-up>
+        <b-icon-caret-up-fill class="ml-2" v-if="sorted(data.column).sorted === 'asc'"></b-icon-caret-up-fill>
+        <b-icon-caret-down-fill class="ml-2" v-if="sorted(data.column).sorted === 'desc'"></b-icon-caret-down-fill>
+        <span v-if="sorted(data.column).index >= 0">{{ sorted(data.column).index }}</span>
       </span>
 
     </template>
@@ -40,39 +38,38 @@
 export default {
   props: [
     'sortChanged',
-    'sortBy',
+    'sortedColumns',
     'sortDesc',
     'items',
     'fields',
-    'sortableColumns',
     'toggleSelect',
   ],
   computed: {
-    sortable() {
-      const sortable = {};
-      this.sortableColumns.forEach((s) => {
-        sortable[s] = true;
+    indexes() {
+      const indexMap = {};
+      this.sortedColumns.forEach(({ key }, index) => {
+        indexMap[key] = index;
       });
-      return sortable;
+      return indexMap;
+    },
+    sorted() {
+      return (key) => {
+        if (!this.sortedColumns) {
+          return { sorted: '', index: -1 };
+        }
+        const index = this.indexes[key];
+        if (index != null) {
+          const selected = this.sortedColumns[index];
+          if (selected.asc) {
+            return { sorted: 'asc', index };
+          }
+          return { sorted: 'desc', index };
+        }
+        return { sorted: '', index: -1 };
+      };
     },
   },
   methods: {
-    sortChangedInt({ column }) {
-      let sortDesc = false;
-      if (column === this.sortBy) {
-        sortDesc = !this.sortDesc;
-      }
-      this.sortChanged({ sortBy: column, sortDesc });
-    },
-    headerStyle({ column }) {
-      const style = {
-        width: '100%',
-      };
-      if (this.sortable[column]) {
-        style.cursor = 'pointer';
-      }
-      return style;
-    },
 
   },
 };

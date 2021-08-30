@@ -3,7 +3,7 @@
   <b-modal ref="delete-modal" title="Delete Intervals" ok-variant="danger" ok-title="Delete" @ok="doDelete">
     <p class="my-4">Are you sure you want to delete the selected intervals?</p>
   </b-modal>
-  <IntervalSearchControl :onSearch="routeSearch"/>
+  <IntervalSearchControl :onSearch="routeSearch" :onSort="routeSort" />
   <b-card title="Results">
     <div v-if="searching"><b-spinner/></div>
     <div v-else>
@@ -19,13 +19,10 @@
       </b-card>
       <div class="geo-temp-samples-table">
         <IntervalListTable
-          :sortChanged="sortChanged"
-          :sortBy="sortBy"
-          :sortDesc="sortDesc"
           :items="items"
           :fields="fields"
-          :sortableColumns="['cruise', 'sample', 'facility', 'platform']"
           :toggleSelect="toggleSelect"
+          :sortedColumns="sortParameters.selected"
         />
       </div>
       <b-pagination class="mt-3" :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
@@ -36,8 +33,6 @@
 </template>
 
 <script>
-
-import genId from '@/components/idGenerator';
 import {
   mapActions, mapMutations, mapState,
 } from 'vuex';
@@ -46,6 +41,7 @@ import IntervalSearchControl from './IntervalSearchControl.vue';
 
 const route = (self, to) => {
   self.updateSearchParameters(to.query);
+  self.updateSortParameters(to.query);
   self.setPage(to.query.page);
   self.setSort(to.query.sort);
   self.searchPage();
@@ -72,7 +68,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('interval', ['firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort', 'updateSearchParameters']),
+    ...mapMutations('interval', ['updateSortParameters', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort', 'updateSearchParameters', 'updateSortParameters']),
     ...mapActions('interval', ['searchPage', 'accept', 'delete']),
     showModal() {
       this.$refs['delete-modal'].show();
@@ -80,24 +76,36 @@ export default {
     hideModal() {
       this.$refs['delete-modal'].hide();
     },
-    sortChanged({ sortBy, sortDesc }) {
-      this.setSortBy(sortBy);
-      this.setSortDesc(sortDesc);
-      this.firstPage();
-      this.search();
-    },
     changePage(page) {
       this.setPage(page);
       this.search();
     },
+    routeSort(sortParameters) {
+      const sort = [];
+      const { selected } = sortParameters;
+      if (selected) {
+        selected.forEach(({ key, asc }) => {
+          sort.push(`${key}:${asc ? 'asc' : 'desc'}`);
+        });
+      }
+      this.updateSortParameters({ sort: sort.join(',') });
+      this.search();
+    },
     routeSearch(searchParameters) {
+      this.firstPage();
       this.updateSearchParameters(searchParameters);
       this.search();
     },
     search() {
       const query = this.searchParameters ? this.searchParameters : {};
       query.page = this.page;
-      query.sort = `${this.sortBy}:${this.sortDesc ? 'desc' : 'asc'}`;
+      const sorts = [];
+      this.sortParameters.selected.forEach(({ key, asc }) => {
+        sorts.push(`${key}:${asc ? 'asc' : 'desc'}`);
+      });
+      if (sorts.length) {
+        query.sort = sorts.join(',');
+      }
       query.t = Date.now(); // force refresh
       this.$router.push({ name: 'IntervalList', query });
     },
@@ -116,22 +124,20 @@ export default {
     },
     doAccept(publish) {
       this.accept({ publish }).then(() => {
-        // TODO test page out of bounds
-        // this.firstPage();
+        this.firstPage();
         this.search();
       });
     },
     doDelete() {
       this.delete().then(() => {
-        // TODO test page out of bounds
-        // this.firstPage();
+        this.firstPage();
         this.search();
       });
     },
   },
 
   computed: {
-    ...mapState('interval', ['searchParameters', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy', 'itemsPerPage']),
+    ...mapState('interval', ['searchParameters', 'sortParameters', 'searching', 'page', 'totalItems', 'totalPages', 'items', 'sortDesc', 'sortBy', 'itemsPerPage']),
   },
 
   data() {

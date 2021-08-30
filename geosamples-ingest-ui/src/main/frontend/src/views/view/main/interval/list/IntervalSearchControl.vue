@@ -24,8 +24,7 @@
             <SearchCardCol title="Interval" field="interval"/>
           </b-row>
           <b-row>
-            <SearchCardCol title="Interval" field="interval"/>
-<!--            <SearchCardCol title="Publish" field="publish"/>-->
+            <SearchCardColSingleSelect title="Publish" field="publish" :options="['', 'true', 'false']"/>
             <SearchCardColSelect title="Lithologic Composition" field="lithCode" :options="optionsLithologyCode"/>
             <SearchCardColSelect title="Texture" field="textCode" :options="optionsTextureCode"/>
           </b-row>
@@ -48,8 +47,11 @@
 
       </b-form>
     </b-modal>
-    <b-modal ref="sort-modal" title="Sort"  hide-footer >
-      <p class="my-4">Are you sure you want to delete the selected intervals?</p>
+    <b-modal ref="sort-modal" title="Sort"  hide-footer size="xl">
+      <SortModal
+      :hideSort="hideSort"
+      :onSort="onSort"
+      />
     </b-modal>
     <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSearch">Search</b-button>
     <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSort">Sort</b-button>
@@ -63,6 +65,8 @@ import {
 } from 'vuex';
 import SearchCardCol from './SearchCardCol.vue';
 import SearchCardColSelect from './SearchCardColSelect.vue';
+import SearchCardColSingleSelect from './SearchCardColSingleSelect.vue';
+import SortModal from './SortModal.vue';
 
 const concatQuoted = (list) => list.map((v) => `'${v}'`).join(',');
 const concat = (list) => list.join(',');
@@ -74,8 +78,10 @@ export default {
   components: {
     SearchCardCol,
     SearchCardColSelect,
+    SearchCardColSingleSelect,
+    SortModal,
   },
-  props: ['onSearch'],
+  props: ['onSearch', 'onSort'],
   computed: {
     ...mapGetters('intervalSearchForm',
       [
@@ -85,7 +91,7 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
-    ...mapState('interval', ['searchParameters', 'options']),
+    ...mapState('interval', ['searchParameters', 'sortParameters', 'options', 'sortParameters']),
     optionsAgeCode() {
       const { ageCode: field } = this.options;
       return field || [];
@@ -287,6 +293,9 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
+    ...mapMutations({
+      sortInitialize: 'intervalSortForm/initialize',
+    }),
     ...mapActions('intervalSearchForm', ['submit', 'reset']),
     ...mapActions('interval', ['loadOptions']),
     showSearch() {
@@ -298,9 +307,25 @@ export default {
       this.$refs['search-modal'].hide();
     },
     showSort() {
+      /*
+    "publish",
+    "imlgs",
+    "interval",
+    "igsn",
+    "intervalIgsn",
+    "cruise",
+    "sample",
+    "interval",
+    "facility",
+    "platform",
+    "beginDate",
+ */
+      this.sortInitialize(this.sortParameters);
       this.$refs['sort-modal'].show();
     },
-
+    hideSort() {
+      this.$refs['sort-modal'].hide();
+    },
     saveForm() {
       this.submit()
         .then((searchParameters) => {

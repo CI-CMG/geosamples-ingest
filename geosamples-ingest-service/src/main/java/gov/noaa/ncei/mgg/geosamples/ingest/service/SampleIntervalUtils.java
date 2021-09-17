@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 public final class SampleIntervalUtils {
@@ -84,27 +82,37 @@ public final class SampleIntervalUtils {
 
     List<String> textCode = searchParameters.getTextCode();
     if (!textCode.isEmpty()) {
-      specs.add(SearchUtils.equal(textCode, e -> e.join(CuratorsIntervalEntity_.TEXT1).get(CuratorsTextureEntity_.TEXTURE_CODE)));
-      specs.add(SearchUtils.equal(textCode, e -> e.join(CuratorsIntervalEntity_.TEXT2).get(CuratorsTextureEntity_.TEXTURE_CODE)));
+      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+          SearchUtils.equalOne(e1, cb, textCode, e -> e.join(CuratorsIntervalEntity_.TEXT1).get(CuratorsTextureEntity_.TEXTURE_CODE)),
+          SearchUtils.equalOne(e1, cb, textCode, e -> e.join(CuratorsIntervalEntity_.TEXT2).get(CuratorsTextureEntity_.TEXTURE_CODE))
+      ));
     }
 
     List<String> lithCode = searchParameters.getLithCode();
     if (!lithCode.isEmpty()) {
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.LITH1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.LITH2).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP2).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP3).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP4).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP5).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
-      specs.add(SearchUtils.equal(lithCode, e -> e.join(CuratorsIntervalEntity_.COMP6).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)));
+      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.LITH1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.LITH2).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP2).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP3).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP4).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP5).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
+          SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP6).get(CuratorsLithologyEntity_.LITHOLOGY_CODE))
+      ));
     }
 
     Boolean publish = searchParameters.getPublish();
-    if(publish != null) {
-      specs.add((Specification<T>) (e, cq, cb) -> cb.and(
-          cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), publish ? "Y" : "N"),
-          cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), publish ? "Y" : "N")));
+    if (publish != null) {
+      if (publish) {
+        specs.add((Specification<T>) (e, cq, cb) -> cb.and(
+            cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y"),
+            cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y")));
+      } else {
+        specs.add((Specification<T>) (e, cq, cb) -> cb.or(
+            cb.not(cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y")),
+            cb.not(cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y"))));
+      }
     }
 
     List<Integer> interval = searchParameters.getInterval();
@@ -119,8 +127,10 @@ public final class SampleIntervalUtils {
 
     List<String> igsn = searchParameters.getIgsn();
     if (!igsn.isEmpty()) {
-      specs.add(SearchUtils.equal(igsn, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.IGSN)));
-      specs.add(SearchUtils.equal(igsn, CuratorsIntervalEntity_.IGSN));
+      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+          SearchUtils.equalOne(e1, cb, igsn, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.IGSN)),
+          SearchUtils.equalOne(e1, cb, igsn, e -> e.get(CuratorsIntervalEntity_.IGSN))
+      ));
     }
 
     List<String> provinceCode = searchParameters.getProvinceCode();
@@ -145,22 +155,8 @@ public final class SampleIntervalUtils {
     List<String> date = searchParameters.getDate();
     if (!date.isEmpty()) {
 
-      specs.add((Specification<T>) (e, cq, cb) -> {
+      specs.add(SearchUtils.contains(date, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.BEGIN_DATE)));
 
-        List<Predicate> pairs = new ArrayList<>();
-        for (String dateStr : date) {
-          Expression<Boolean> start = cb.greaterThanOrEqualTo(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.BEGIN_DATE), dateStr);
-          Expression<Boolean> end =
-              cb.or(
-                  cb.isNull(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.END_DATE)),
-                  cb.lessThanOrEqualTo(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.END_DATE), dateStr)
-              );
-          Predicate pair = cb.and(start, end);
-          pairs.add(pair);
-        }
-
-        return cb.or(pairs.toArray(new Predicate[0]));
-      });
     }
 
     List<String> deviceCode = searchParameters.getDeviceCode();
@@ -188,7 +184,6 @@ public final class SampleIntervalUtils {
     if (!sampleContains.isEmpty()) {
       specs.add(SearchUtils.contains(sampleContains, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.SAMPLE)));
     }
-
 
     List<String> cruise = searchParameters.getCruiseContains();
     if (!cruise.isEmpty()) {

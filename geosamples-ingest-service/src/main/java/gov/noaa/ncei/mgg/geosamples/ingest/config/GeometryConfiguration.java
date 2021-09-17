@@ -10,7 +10,7 @@ public class GeometryConfiguration {
 
   @Bean
   public GeometryFactory geometryFactory() {
-    return new GeometryFactory(new PrecisionModel(), 4326);
+    return new GeometryFactory(new PrecisionModel(), 8307);
   }
 
 }

@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -72,8 +73,11 @@ public class SearchUtils {
   }
 
   public static <E> Specification<E> equal(List<?> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {
-    return (e, cq, cb) ->
-        cb.or(searchValues.stream().map(v -> cb.equal(columnAlias.apply(e), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
+    return (e, cq, cb) -> equalOne(e, cb, searchValues, columnAlias);
+  }
+
+  public static <E> Predicate equalOne(Root<E> e, CriteriaBuilder cb, List<?> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {
+    return cb.or(searchValues.stream().map(v -> cb.equal(columnAlias.apply(e), v)).collect(Collectors.toList()).toArray(new Predicate[0]));
   }
 
 //  public static <E> Specification<E> greaterThanOrEqual(List<String> searchValues,  Function<Root<E>, Expression<String>> columnAlias) {

@@ -1392,7 +1392,7 @@ create table ${schema_name}.CURATORS_INTERVAL
 
 insert into MDSYS.USER_SDO_GEOM_METADATA (table_name, column_name, diminfo, srid)
 values ('CURATORS_SAMPLE_TSQP', 'SHAPE',
-        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 8307);
+        MDSYS.SDO_DIM_ARRAY(MDSYS.SDO_DIM_ELEMENT('Longitude', -180, 180, 0.05), MDSYS.SDO_DIM_ELEMENT('Latitude', -90, 90, 0.05)), 4326);
 
 
 create index ${schema_name}.CURATORS_SAMPLE_TSQP_SPX

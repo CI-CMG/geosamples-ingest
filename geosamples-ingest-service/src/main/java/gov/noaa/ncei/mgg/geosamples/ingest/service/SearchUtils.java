@@ -2,7 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.SortDirection;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.SampleBase;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +94,7 @@ public class SearchUtils {
     return equal(searchValues, e -> e.get(columnAlias));
   }
 
-  public static <T extends SampleBase> Specification<T> findExistingSample(SampleBase sample) {
+  public static Specification<CuratorsSampleTsqpEntity> findExistingSample(CuratorsSampleTsqpEntity sample) {
     return (e, cq, cb) -> cb.and(
         cb.equal(e.get("cruise"), sample.getCruise()),
         cb.equal(e.get("sample"), sample.getSample()),

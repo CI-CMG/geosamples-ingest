@@ -4,39 +4,39 @@
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
         <b-container>
           <b-row>
-            <SearchCardCol title="Cruise Contains" field="cruiseContains"/>
-            <SearchCardCol title="Sample Contains" field="sampleContains"/>
-            <SearchCardColSelect title="Facility" field="facilityCode" :options="optionsFacilityCode"/>
+            <SearchCardCol title="Cruise Contains" field="cruiseContains" module="intervalSearchForm"/>
+            <SearchCardCol title="Sample Contains" field="sampleContains" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Facility" field="facilityCode" :options="optionsFacilityCode" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardCol title="Platform Contains" field="platformContains"/>
-            <SearchCardColSelect title="Device" field="deviceCode" :options="optionsDeviceCode"/>
-            <SearchCardCol title="Date" field="date"/>
+            <SearchCardCol title="Platform Contains" field="platformContains" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Device" field="deviceCode" :options="optionsDeviceCode" module="intervalSearchForm"/>
+            <SearchCardCol title="Date" field="date" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardColSelect title="Storage Method" field="storageMethodCode" :options="optionsStorageMethodCode"/>
-            <SearchCardCol title="Principal Investigator Contains" field="piContains"/>
-            <SearchCardColSelect title="Physiographic Province" field="provinceCode" :options="optionsProvinceCode"/>
+            <SearchCardColSelect title="Storage Method" field="storageMethodCode" :options="optionsStorageMethodCode" module="intervalSearchForm"/>
+            <SearchCardCol title="Principal Investigator Contains" field="piContains" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Physiographic Province" field="provinceCode" :options="optionsProvinceCode" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardCol title="IGSN" field="igsn"/>
-            <SearchCardCol title="IMLGS" field="imlgs"/>
-            <SearchCardCol title="Interval" field="interval"/>
+            <SearchCardCol title="IGSN" field="igsn" module="intervalSearchForm"/>
+            <SearchCardCol title="IMLGS" field="imlgs" module="intervalSearchForm"/>
+            <SearchCardCol title="Interval" field="interval" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardColSingleSelect title="Publish" field="publish" :options="['', 'true', 'false']"/>
-            <SearchCardColSelect title="Lithologic Composition" field="lithCode" :options="optionsLithologyCode"/>
-            <SearchCardColSelect title="Texture" field="textCode" :options="optionsTextureCode"/>
+            <SearchCardColSingleSelect title="Publish" field="publish" :options="['', 'true', 'false']" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Lithologic Composition" field="lithCode" :options="optionsLithologyCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Texture" field="textCode" :options="optionsTextureCode" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardColSelect title="Age" field="ageCode" :options="optionsAgeCode"/>
-            <SearchCardColSelect title="Rock Lithology" field="rockLithCode" :options="optionsRockLithologyCode"/>
-            <SearchCardColSelect title="Rock Mineralogy" field="rockMinCode" :options="optionsRockMineralCode"/>
+            <SearchCardColSelect title="Age" field="ageCode" :options="optionsAgeCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Rock Lithology" field="rockLithCode" :options="optionsRockLithologyCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Rock Mineralogy" field="rockMinCode" :options="optionsRockMineralCode" module="intervalSearchForm"/>
           </b-row>
           <b-row>
-            <SearchCardColSelect title="Weathering/Metamorphism" field="weathMetaCode" :options="optionsWeatheringCode"/>
-            <SearchCardColSelect title="Rock Glass Remarks & Mn/Fe Oxide" field="remarkCode" :options="optionsRemarkCode"/>
-            <SearchCardColSelect title="Munsell Color" field="munsellCode" :options="optionsMunsellCode"/>
+            <SearchCardColSelect title="Weathering/Metamorphism" field="weathMetaCode" :options="optionsWeatheringCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Rock Glass Remarks & Mn/Fe Oxide" field="remarkCode" :options="optionsRemarkCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Munsell Color" field="munsellCode" :options="optionsMunsellCode" module="intervalSearchForm"/>
           </b-row>
         </b-container>
 
@@ -51,6 +51,7 @@
       <SortModal
       :hideSort="hideSort"
       :onSort="onSort"
+       module="intervalSortForm"
       />
     </b-modal>
     <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSearch">Search</b-button>
@@ -63,15 +64,14 @@
 import {
   mapActions, mapGetters, mapMutations, mapState,
 } from 'vuex';
-import SearchCardCol from './SearchCardCol.vue';
-import SearchCardColSelect from './SearchCardColSelect.vue';
-import SearchCardColSingleSelect from './SearchCardColSingleSelect.vue';
-import SortModal from './SortModal.vue';
+import SearchCardCol from '@/components/SearchCardCol.vue';
+import SearchCardColSelect from '@/components/SearchCardColSelect.vue';
+import SearchCardColSingleSelect from '@/components/SearchCardColSingleSelect.vue';
+import SortModal from '@/components/SortModal.vue';
 
 const concatQuoted = (list) => list.map((v) => `'${v}'`).join(',');
 const concat = (list) => list.join(',');
 const eq = (prefix, list) => (list && list.length ? `${prefix} = ${concat(list)}` : null);
-// const eqQuoted = (prefix, list) => (list && list.length ? `${prefix} = ${concatQuoted(list)}` : null);
 const contains = (prefix, list) => (list && list.length ? `${prefix} Contains ${concatQuoted(list)}` : null);
 
 export default {
@@ -307,19 +307,6 @@ export default {
       this.$refs['search-modal'].hide();
     },
     showSort() {
-      /*
-    "publish",
-    "imlgs",
-    "interval",
-    "igsn",
-    "intervalIgsn",
-    "cruise",
-    "sample",
-    "interval",
-    "facility",
-    "platform",
-    "beginDate",
- */
       this.sortInitialize(this.sortParameters);
       this.$refs['sort-modal'].show();
     },

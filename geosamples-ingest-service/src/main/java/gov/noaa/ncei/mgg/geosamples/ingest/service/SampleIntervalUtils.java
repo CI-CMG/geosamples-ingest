@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity_;
@@ -12,13 +13,12 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRemarkEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockLithEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockMinEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsStorageMethEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsTextureEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsWeathMetaEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalBase;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.SampleBase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,9 +46,9 @@ public final class SampleIntervalUtils {
     SORT_MAPPING = Collections.unmodifiableMap(map);
   }
 
-  public static <T extends IntervalBase<? extends SampleBase>> List<Specification<T>> getBaseSpecs(
+  public static List<Specification<CuratorsIntervalEntity>> getBaseSpecs(
       CombinedIntervalSampleSearchParameters searchParameters) {
-    List<Specification<T>> specs = new ArrayList<>();
+    List<Specification<CuratorsIntervalEntity>> specs = new ArrayList<>();
 
     List<String> munsellCode = searchParameters.getMunsellCode();
     if (!munsellCode.isEmpty()) {
@@ -82,7 +82,7 @@ public final class SampleIntervalUtils {
 
     List<String> textCode = searchParameters.getTextCode();
     if (!textCode.isEmpty()) {
-      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+      specs.add((Specification<CuratorsIntervalEntity>) (e1, cq, cb) -> cb.or(
           SearchUtils.equalOne(e1, cb, textCode, e -> e.join(CuratorsIntervalEntity_.TEXT1).get(CuratorsTextureEntity_.TEXTURE_CODE)),
           SearchUtils.equalOne(e1, cb, textCode, e -> e.join(CuratorsIntervalEntity_.TEXT2).get(CuratorsTextureEntity_.TEXTURE_CODE))
       ));
@@ -90,7 +90,7 @@ public final class SampleIntervalUtils {
 
     List<String> lithCode = searchParameters.getLithCode();
     if (!lithCode.isEmpty()) {
-      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+      specs.add((Specification<CuratorsIntervalEntity>) (e1, cq, cb) -> cb.or(
           SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.LITH1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
           SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.LITH2).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
           SearchUtils.equalOne(e1, cb, lithCode, e -> e.join(CuratorsIntervalEntity_.COMP1).get(CuratorsLithologyEntity_.LITHOLOGY_CODE)),
@@ -105,11 +105,11 @@ public final class SampleIntervalUtils {
     Boolean publish = searchParameters.getPublish();
     if (publish != null) {
       if (publish) {
-        specs.add((Specification<T>) (e, cq, cb) -> cb.and(
+        specs.add((Specification<CuratorsIntervalEntity>) (e, cq, cb) -> cb.and(
             cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y"),
             cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y")));
       } else {
-        specs.add((Specification<T>) (e, cq, cb) -> cb.or(
+        specs.add((Specification<CuratorsIntervalEntity>) (e, cq, cb) -> cb.or(
             cb.not(cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y")),
             cb.not(cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y"))));
       }
@@ -127,7 +127,7 @@ public final class SampleIntervalUtils {
 
     List<String> igsn = searchParameters.getIgsn();
     if (!igsn.isEmpty()) {
-      specs.add((Specification<T>) (e1, cq, cb) -> cb.or(
+      specs.add((Specification<CuratorsIntervalEntity>) (e1, cq, cb) -> cb.or(
           SearchUtils.equalOne(e1, cb, igsn, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.IGSN)),
           SearchUtils.equalOne(e1, cb, igsn, e -> e.get(CuratorsIntervalEntity_.IGSN))
       ));
@@ -194,9 +194,9 @@ public final class SampleIntervalUtils {
   }
 
 
-  public static <S extends SampleBase, T extends IntervalBase<S>> CombinedSampleIntervalView toViewBase(T entity) {
+  public static CombinedSampleIntervalView toViewBase(CuratorsIntervalEntity entity) {
     CombinedSampleIntervalView view = new CombinedSampleIntervalView();
-    S sampleEntity = entity.getParentEntity();
+    CuratorsSampleTsqpEntity sampleEntity = entity.getParentEntity();
     view.setCruise(sampleEntity.getCruise());
     view.setSample(sampleEntity.getSample());
     view.setFacility(sampleEntity.getFacility().getFacilityCode());

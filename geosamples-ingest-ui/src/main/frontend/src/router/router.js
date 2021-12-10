@@ -53,6 +53,8 @@ import { RAW_BASE_PATH } from '@/resourceBasePath';
 import store from '@/store/store';
 import SampleEdit from '@/views/view/main/interval/edit-sample/SampleEdit.vue';
 import IntervalEdit from '@/views/view/main/interval/edit-interval/IntervalEdit.vue';
+import SampleList from '@/views/view/main/sample/list/SampleList.vue';
+import Sample from '@/views/view/main/sample/Sample.vue';
 
 Vue.use(VueRouter);
 
@@ -93,6 +95,23 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'Submit' },
+              },
+            ],
+          },
+          {
+            path: 'sample',
+            component: Sample,
+            name: 'Sample',
+            redirect: { name: 'SampleList' },
+            children: [
+              {
+                path: 'list',
+                name: 'SampleList',
+                component: SampleList,
+              },
+              {
+                path: '*',
+                redirect: { name: 'Sample' },
               },
             ],
           },

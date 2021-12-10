@@ -39,9 +39,6 @@
 </template>
 
 <script>
-import {
-  mapActions, mapGetters, mapMutations,
-} from 'vuex';
 import ColumnSelector from './ColumnSelector.vue';
 import ColumnOrderer from './ColumnOrderer.vue';
 
@@ -50,16 +47,23 @@ export default {
     ColumnSelector,
     ColumnOrderer,
   },
-  props: ['hideSort', 'onSort'],
+  props: ['hideSort', 'onSort', 'module'],
   computed: {
-    ...mapGetters('intervalSortForm',
-      [
-        'getValue',
-        'formDirty',
-        'getError',
-        'isTouched',
-        'formHasUntouchedErrors',
-      ]),
+    getValue() {
+      return this.$store.getters[`${this.module}/getValue`];
+    },
+    formDirty() {
+      return this.$store.getters[`${this.module}/formDirty`];
+    },
+    getError() {
+      return this.$store.getters[`${this.module}/getError`];
+    },
+    isTouched() {
+      return this.$store.getters[`${this.module}/isTouched`];
+    },
+    formHasUntouchedErrors() {
+      return this.$store.getters[`${this.module}/formHasUntouchedErrors`];
+    },
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
     },
@@ -68,16 +72,30 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('intervalSortForm',
-      [
-        'initialize',
-        'setValue',
-        'setTouched',
-        'setError',
-        'deleteFromArray',
-        'addToArray',
-      ]),
-    ...mapActions('intervalSortForm', ['submit', 'reset']),
+    initialize(value) {
+      this.$store.commit(`${this.module}/initialize`, value);
+    },
+    setValue(value) {
+      this.$store.commit(`${this.module}/setValue`, value);
+    },
+    setTouched(value) {
+      this.$store.commit(`${this.module}/setTouched`, value);
+    },
+    setError(value) {
+      this.$store.commit(`${this.module}/setError`, value);
+    },
+    deleteFromArray(value) {
+      this.$store.commit(`${this.module}/deleteFromArray`, value);
+    },
+    addToArray(value) {
+      this.$store.commit(`${this.module}/addToArray`, value);
+    },
+    submit(value) {
+      return this.$store.dispatch(`${this.module}/submit`, value);
+    },
+    reset(value) {
+      return this.$store.dispatch(`${this.module}/reset`, value);
+    },
     onAdd(index) {
       const column = this.getValue(`available[${index}].column`);
       const key = this.getValue(`available[${index}].key`);

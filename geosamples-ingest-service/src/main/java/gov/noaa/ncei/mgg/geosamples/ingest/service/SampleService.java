@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity_;
@@ -11,6 +12,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -44,15 +46,39 @@ public class SampleService extends
   }
 
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
+  private final CuratorsIntervalRepository curatorsIntervalRepository;
   private final SampleDataUtils sampleDataUtils;
   private final ServiceProperties serviceProperties;
 
   @Autowired
   public SampleService(CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
-      SampleDataUtils sampleDataUtils, ServiceProperties serviceProperties) {
+      CuratorsIntervalRepository curatorsIntervalRepository, SampleDataUtils sampleDataUtils,
+      ServiceProperties serviceProperties) {
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
+    this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.sampleDataUtils = sampleDataUtils;
     this.serviceProperties = serviceProperties;
+  }
+
+  public SimpleItemsView<SampleView> patch(SimpleItemsView<SampleView> patch) {
+    List<SampleView> items = new ArrayList<>(patch.getItems().size());
+
+    //TODO only delete is supported
+    for (SampleView del : patch.getDelete()) {
+      String imlgs = del.getImlgs();
+      curatorsSampleTsqpRepository.findById(imlgs)
+          .ifPresent(entity -> {
+            curatorsIntervalRepository.deleteAll(curatorsIntervalRepository.findByImlgs(imlgs));
+            curatorsIntervalRepository.flush();
+            curatorsSampleTsqpRepository.delete(entity);
+            curatorsSampleTsqpRepository.flush();
+            items.removeIf(view -> del.getImlgs().equals(view.getImlgs()));
+          });
+    }
+    SimpleItemsView<SampleView> result = new SimpleItemsView<>();
+    result.setItems(items);
+    result.setDelete(patch.getDelete());
+    return result;
   }
 
   @Override

@@ -29,6 +29,9 @@ import platformForm from '@/store/modules/platformFormModule';
 import sampleForm from '@/store/modules/sampleFormModule';
 import intervalForm from '@/store/modules/intervalFormModule';
 import intervalSearchForm from '@/store/modules/intervalSearchFormModule';
+import sample from '@/store/modules/sampleModule';
+import sampleSearchForm from '@/store/modules/sampleSearchFormModule';
+import sampleSortForm from '@/store/modules/sampleSortFormModule';
 import app from './modules/appModule';
 import user from './modules/userModule';
 import loginForm from './modules/loginFormModule';
@@ -79,5 +82,8 @@ export default new Vuex.Store({
     intervalForm,
     intervalSearchForm,
     intervalSortForm,
+    sample,
+    sampleSearchForm,
+    sampleSortForm,
   },
 });

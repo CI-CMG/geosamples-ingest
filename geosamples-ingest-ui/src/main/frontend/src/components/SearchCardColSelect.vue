@@ -22,38 +22,52 @@
 </template>
 
 <script>
-import RemovableSelectField from '@/views/view/main/interval/list/RemovableSelectField.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import RemovableSelectField from './RemovableSelectField.vue';
 
 export default {
-  props: ['title', 'field', 'options'],
+  props: ['title', 'field', 'options', 'module'],
   components: {
     RemovableSelectField,
   },
   computed: {
-    ...mapGetters('intervalSearchForm',
-      [
-        'getValue',
-        'formDirty',
-        'getError',
-        'isTouched',
-        'formHasUntouchedErrors',
-      ]),
+    getValue() {
+      return this.$store.getters[`${this.module}/getValue`];
+    },
+    formDirty() {
+      return this.$store.getters[`${this.module}/formDirty`];
+    },
+    getError() {
+      return this.$store.getters[`${this.module}/getError`];
+    },
+    isTouched() {
+      return this.$store.getters[`${this.module}/isTouched`];
+    },
+    formHasUntouchedErrors() {
+      return this.$store.getters[`${this.module}/formHasUntouchedErrors`];
+    },
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
     },
   },
   methods: {
-    ...mapMutations('intervalSearchForm',
-      [
-        'initialize',
-        'setValue',
-        'setTouched',
-        'setError',
-        'deleteFromArray',
-        'addToArray',
-      ]),
-
+    initialize(value) {
+      this.$store.commit(`${this.module}/initialize`, value);
+    },
+    setValue(value) {
+      this.$store.commit(`${this.module}/setValue`, value);
+    },
+    setTouched(value) {
+      this.$store.commit(`${this.module}/setTouched`, value);
+    },
+    setError(value) {
+      this.$store.commit(`${this.module}/setError`, value);
+    },
+    deleteFromArray(value) {
+      this.$store.commit(`${this.module}/deleteFromArray`, value);
+    },
+    addToArray(value) {
+      this.$store.commit(`${this.module}/addToArray`, value);
+    },
   },
 };
 </script>

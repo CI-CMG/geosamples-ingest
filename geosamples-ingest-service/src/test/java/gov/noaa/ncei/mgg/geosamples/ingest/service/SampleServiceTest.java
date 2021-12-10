@@ -16,13 +16,15 @@ public class SampleServiceTest {
   @Mock
   private CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   @Mock
+  private CuratorsIntervalRepository curatorsIntervalRepository;
+  @Mock
   private SampleDataUtils sampleDataUtils;
   @Mock
   private ServiceProperties serviceProperties;
 
   @BeforeEach
   public void before() {
-    sampleService = new SampleService(curatorsSampleTsqpRepository, sampleDataUtils, serviceProperties);
+    sampleService = new SampleService(curatorsSampleTsqpRepository, curatorsIntervalRepository, sampleDataUtils, serviceProperties);
   }
 
 

@@ -7,7 +7,7 @@
   <parent>
     <artifactId>geosamples-ingest-parent</artifactId>
     <groupId>gov.noaa.ncei.mgg.geology</groupId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.2</version>
   </parent>
 
   <artifactId>geosamples-ingest-service</artifactId>

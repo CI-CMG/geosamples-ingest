@@ -24,6 +24,7 @@ server:
     #key-store-password: ''
     key-store-type: PKCS12
     #key-alias: ''
+  address: 127.0.0.1
 
 spring:
   mvc:

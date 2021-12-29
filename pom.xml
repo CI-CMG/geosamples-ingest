@@ -26,7 +26,7 @@
   <properties>
     <java.version>1.8</java.version>
     <camel.version>3.9.0</camel.version>
-    <log4j2.version>2.16.0</log4j2.version><!-- Security Vulnerability Update -->
+    <log4j2.version>2.17.1</log4j2.version><!-- Security Vulnerability Update -->
     <netty.version>4.1.72.Final</netty.version><!-- Security Vulnerability Update -->
   </properties>
 

@@ -5,7 +5,7 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Facility - {{ getValue('facility') }}</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Facility - {{ getValue('facilityCode') }} : {{ getValue('facility') }}</h1>
       <h1 v-else class="text-primary">Add New Facility</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
@@ -15,18 +15,7 @@
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Facility" :label-for="facilityId">
-          <b-form-input
-            :id="facilityId"
-            type="text" @blur="() => setTouched({path: 'facility', touched: true})"
-            :value="getValue('facility')"
-            @update="(value) => setValue({ path: 'facility', value })"
-            :state="showError('facility')"
-          />
-          <b-form-invalid-feedback>{{ getError('facility') }}</b-form-invalid-feedback>
-        </b-form-group>
-
-        <b-form-group label="Facility Code" :label-for="facilityCodeId">
+        <b-form-group v-if="!isEdit" label="Facility Code" :label-for="facilityCodeId">
           <b-form-input
             :id="facilityCodeId"
             type="text" @blur="() => setTouched({path: 'facilityCode', touched: true})"
@@ -35,6 +24,17 @@
             :state="showError('facilityCode')"
           />
           <b-form-invalid-feedback>{{ getError('facilityCode') }}</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label="Facility" :label-for="facilityId">
+          <b-form-input
+            :id="facilityId"
+            type="text" @blur="() => setTouched({path: 'facility', touched: true})"
+            :value="getValue('facility')"
+            @update="(value) => setValue({ path: 'facility', value })"
+            :state="showError('facility')"
+          />
+          <b-form-invalid-feedback>{{ getError('facility') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Institution Code" :label-for="instCodeId">

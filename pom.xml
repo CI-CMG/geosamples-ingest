@@ -14,7 +14,7 @@
   <groupId>gov.noaa.ncei.mgg.geology</groupId>
   <artifactId>geosamples-ingest-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.1.4</version>
+  <version>1.1.5-SNAPSHOT</version>
 
   <modules>
     <module>geosamples-ingest-jpa</module>

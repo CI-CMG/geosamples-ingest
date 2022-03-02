@@ -4,9 +4,9 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -89,7 +89,16 @@ public class ExcelService {
     }
   }
 
-  public final static DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
+  public final static DateTimeFormatter DTF_YMD = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.US);
+  public final static DateTimeFormatter DTF_Y = new DateTimeFormatterBuilder()
+      .appendPattern("yyyy")
+      .parseDefaulting(ChronoField.MONTH_OF_YEAR, 1)
+      .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+      .toFormatter();
+  public final static DateTimeFormatter DTF_YM = new DateTimeFormatterBuilder()
+      .appendPattern("yyyyMM")
+      .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+      .toFormatter();
 
   private static String parseString(DataFormatter dataFormatter, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     String value = getValue(dataFormatter, headers, row, headerName);
@@ -106,23 +115,6 @@ public class ExcelService {
   private static Double parseDouble(DataFormatter df, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     return parseDouble(getValue(df, headers, row, headerName), row.getRowNum(), headerName, headers.get(headerName).get(0));
   }
-
-  private static LocalDate parseLocalDate(String value, int rowIndex, HeaderNames headerName, int columnIndex) {
-    value = parseString(value);
-    if (value == null) {
-      return null;
-    }
-    try {
-      return LocalDate.parse(value.replaceAll("\\D", ""), DTF);
-    } catch (DateTimeParseException e) {
-      throw new ApiException(HttpStatus.BAD_REQUEST,
-          ApiError.builder()
-              .error("Value at " + headerName + ":" + (rowIndex + 1) + " was unable to be parsed: " + e.getMessage())
-              .fieldError("excel[" + rowIndex + "][" + columnIndex + "]", e.getMessage())
-              .build());
-    }
-  }
-
 
   private static String getValue(DataFormatter dataFormatter, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     List<String> values = getValues(dataFormatter, headers, row, headerName);
@@ -233,7 +225,7 @@ public class ExcelService {
       Row row = rowIterator.next();
       if (row.getRowNum() == 0) {
         headers = parseHeader(row);
-      } else if(!isRowEmpty(row)) {
+      } else if (!isRowEmpty(row)) {
         sampleRows.add(parseSampleRow(df, headers, row));
       }
     }

@@ -9,6 +9,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -35,8 +36,22 @@ public @interface ValidDate {
       if (value == null) {
         return true;
       }
+      DateTimeFormatter dtf;
+      switch (value.length()) {
+        case 8:
+          dtf = ExcelService.DTF_YMD;
+          break;
+        case 6:
+          dtf = ExcelService.DTF_YM;
+          break;
+        case 4:
+          dtf = ExcelService.DTF_Y;
+          break;
+        default:
+          return false;
+      }
       try {
-        LocalDate.parse(value, ExcelService.DTF);
+        LocalDate.parse(value, dtf);
       } catch (DateTimeParseException e) {
         return false;
       }

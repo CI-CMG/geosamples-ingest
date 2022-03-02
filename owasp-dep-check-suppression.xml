@@ -129,4 +129,12 @@
     <vulnerabilityName>CWE-300: Channel Accessible by Non-Endpoint ('Man-in-the-Middle')</vulnerabilityName>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+      file name: spring-security-core-5.5.5.jar
+      ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-core@.*$</packageUrl>
+    <vulnerabilityName>CWE-862: Missing Authorization</vulnerabilityName>
+  </suppress>
+
 </suppressions>

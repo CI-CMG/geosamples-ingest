@@ -41,10 +41,10 @@ public class SampleRow {
   @NotBlank(message = "Sample ID is required")
   @Size(max = 30, message = "Sample ID must be at most 30 characters")
   private String sampleId;
-  @Pattern(regexp = "\\d\\d\\d\\d\\d\\d\\d\\d", message = "Date Collected must be YYYYMMDD")
+  @Pattern(regexp = "(\\d{8})|(\\d{4})|(\\d{6})", message = "Date Collected must be YYYYMMDD, YYYY, or YYYYMM")
   @ValidDate(message = "Invalid Date Collected")
   private String dateCollected;
-  @Pattern(regexp = "\\d\\d\\d\\d\\d\\d\\d\\d", message = "End Date must be YYYYMMDD")
+  @Pattern(regexp = "(\\d{8})|(\\d{4})|(\\d{6})", message = "End Date must be YYYYMMDD, YYYY, or YYYYMM")
   @ValidDate(message = "Invalid End Date")
   private String endDate;
   @ValidLatitude

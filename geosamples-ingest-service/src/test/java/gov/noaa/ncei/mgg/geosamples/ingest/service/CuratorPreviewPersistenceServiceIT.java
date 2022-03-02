@@ -69,9 +69,9 @@ public class CuratorPreviewPersistenceServiceIT {
     before();
   }
 
-  private void uploadFile() {
+  private void uploadFile(String file) {
     LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-    parameters.add("file", new ClassPathResource("imlgs_sample_good_full.xlsm"));
+    parameters.add("file", new ClassPathResource(file));
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -121,7 +121,7 @@ public class CuratorPreviewPersistenceServiceIT {
   @Test
   public void testSaveHappyPath() throws Exception {
 
-    uploadFile();
+    uploadFile("imlgs_sample_good_full.xlsm");
     List<CombinedSampleIntervalView> sampleIntervals = getAll();
 
     assertEquals(5, sampleIntervals.size());
@@ -313,6 +313,31 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getIntervalIgsn());
     assertEquals("aasw32111", view.getIntervalParentIsgn());
     assertEquals(false, view.isPublish());
+
+  }
+
+  @Test
+  public void testSaveAlternateDateFormat() throws Exception {
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+    List<CombinedSampleIntervalView> sampleIntervals = getAll();
+
+    assertEquals(5, sampleIntervals.size());
+
+    CombinedSampleIntervalView view = sampleIntervals.get(0);
+
+    assertEquals("AQ-01", view.getCruise());
+    assertEquals("AQ-01-01", view.getSample());
+    assertEquals("202107", view.getBeginDate());
+    assertEquals("202107", view.getEndDate());
+
+    view = sampleIntervals.get(2);
+
+
+    assertEquals("AQ-10", view.getCruise());
+    assertEquals("AQ-001", view.getSample());
+    assertEquals("2021", view.getBeginDate());
+    assertEquals("2021", view.getEndDate());
 
   }
 

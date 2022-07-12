@@ -2,11 +2,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,22 +20,31 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParameters, V, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> {
 
   protected abstract Map<String, String> getViewToEntitySortMapping();
+
   protected abstract List<Specification<E>> getSpecs(S searchParameters);
+
   protected abstract R getRepository();
+
   protected abstract V toView(E entity);
+
   protected abstract E newEntityWithDefaultValues(V view);
+
   protected abstract void updateEntity(E entity, V view);
+
+  protected I normalizeId(I id) {
+    return id;
+  }
 
   private E getRequiredEntity(I id) {
     return getRepository()
-        .findById(id)
-        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error(HttpStatus.NOT_FOUND.getReasonPhrase()).build()));
+        .findById(normalizeId(id))
+        .orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN, ApiError.builder().error(HttpStatus.NOT_FOUND.getReasonPhrase()).build()));
   }
 
 
   private E toEntity(V view, I id) {
     E entity;
-    if(id == null) {
+    if (id == null) {
       entity = newEntityWithDefaultValues(view);
     } else {
       entity = getRequiredEntity(id);

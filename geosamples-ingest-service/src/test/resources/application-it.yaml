@@ -1,6 +1,5 @@
 geosamples:
-  username: geo
-  password: samples
+  jwt-issuer: 'test'
 
 spring:
   jpa:
@@ -13,6 +12,12 @@ spring:
     password: letmein
   flyway:
     enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:20158
+          jwk-set-uri: http://localhost:20158/jwks
 
 server:
   tomcat:

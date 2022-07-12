@@ -20,6 +20,11 @@ public class ApiErrorController implements ErrorController {
     if (exObj instanceof Exception) {
       LOGGER.debug("Web Exception", (Exception) exObj);
     }
+
+    if (exObj instanceof ApiException) {
+      throw (ApiException) exObj;
+    }
+
     if (exObj instanceof Exception && ((Exception) exObj).getCause() instanceof ApiException) {
       throw (ApiException) ((Exception) exObj).getCause();
     }

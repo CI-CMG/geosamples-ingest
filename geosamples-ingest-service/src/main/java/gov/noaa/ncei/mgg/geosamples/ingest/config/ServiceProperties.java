@@ -14,10 +14,8 @@ import org.springframework.validation.annotation.Validated;
 public class ServiceProperties {
 
   @NotBlank
-  private String username;
+  private String jwtIssuer;
 
-  @NotBlank
-  private String password;
 
   @NotBlank
   private String showSampleBaseUrl;
@@ -30,19 +28,11 @@ public class ServiceProperties {
     this.showSampleBaseUrl = showSampleBaseUrl;
   }
 
-  public String getUsername() {
-    return username;
+  public String getJwtIssuer() {
+    return jwtIssuer;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
+  public void setJwtIssuer(String jwtIssuer) {
+    this.jwtIssuer = jwtIssuer;
   }
 }

@@ -1,28 +1,41 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
-import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
-import java.lang.reflect.Type;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.validation.Validator;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import org.apache.commons.io.FileUtils;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -33,7 +46,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
@@ -42,12 +54,18 @@ import org.springframework.util.LinkedMultiValueMap;
 @ActiveProfiles("it")
 public class CuratorPreviewPersistenceServiceIT {
 
+  private static MockWebServer mockCas;
+
   @Autowired
   private CuratorsIntervalRepository curatorsIntervalRepository;
   @Autowired
   private CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   @Autowired
   private TransactionTemplate txTemplate;
+  @Autowired
+  private GeosamplesUserRepository geosamplesUserRepository;
+  @Autowired
+  private GeosamplesAuthorityRepository geosamplesAuthorityRepository;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -55,27 +73,83 @@ public class CuratorPreviewPersistenceServiceIT {
   @Autowired
   private TestRestTemplate restTemplate;
 
+  public static String createJwt(String subject) throws IOException, JoseException {
+    JwtClaims claims = new JwtClaims();
+    claims.setIssuer("http://localhost:20158");
+    claims.setSubject(subject);
+    JsonWebSignature jws = new JsonWebSignature();
+    jws.setPayload(claims.toJson());
+    JsonWebKeySet jwks = new JsonWebKeySet(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
+    RsaJsonWebKey jwk = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+    jws.setKey(jwk.getPrivateKey());
+    jws.setKeyIdHeaderValue(jwk.getKeyId());
+    jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+    return jws.getCompactSerialization();
+  }
+
+  @BeforeAll
+  public static void setUpAll() throws IOException {
+    mockCas = new MockWebServer();
+    mockCas.start(20158);
+
+    mockCas.setDispatcher(new Dispatcher() {
+      @Override
+      public MockResponse dispatch(RecordedRequest request) {
+        if ("/jwks".equals(request.getPath())) {
+          try {
+            return new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+        return new MockResponse().setResponseCode(404);
+      }
+    });
+  }
+
+  @AfterAll
+  public static void tearDownAll() throws IOException {
+    mockCas.shutdown();
+  }
+
   @BeforeEach
   private void before() {
     txTemplate.executeWithoutResult(s -> {
       curatorsIntervalRepository.deleteAll();
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
+      GeosamplesUserEntity martin = new GeosamplesUserEntity();
+      martin.setDisplayName("Marty McPharty");
+      martin.setUserName("martin");
+      for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
+        GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
+        userAuthorityEntity.setAuthority(authorityEntity);
+        martin.addUserAuthority(userAuthorityEntity);
+      }
+      geosamplesUserRepository.save(martin);
     });
   }
 
   @AfterEach
   private void after() {
-    before();
+    txTemplate.executeWithoutResult(s -> {
+      curatorsIntervalRepository.deleteAll();
+      curatorsIntervalRepository.flush();
+      curatorsSampleTsqpRepository.deleteAll();
+      geosamplesUserRepository.deleteById("martin");
+    });
   }
 
-  private void uploadFile(String file) {
+  private void uploadFile(String file) throws Exception {
     LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("file", new ClassPathResource(file));
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-    headers.setBasicAuth("geo", "samples");
+    headers.setBearerAuth(createJwt("martin"));
 
     HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
 
@@ -87,17 +161,17 @@ public class CuratorPreviewPersistenceServiceIT {
   private static final TypeReference<PagedItemsView<CombinedSampleIntervalView>> ITEMS_VIEW = new TypeReference<PagedItemsView<CombinedSampleIntervalView>>() {
   };
 
-  private List<CombinedSampleIntervalView> getAll() throws JsonProcessingException {
+  private List<CombinedSampleIntervalView> getAll() throws Exception {
 
     List<CombinedSampleIntervalView> views = new ArrayList<>();
 
     int page = 1;
     int maxPage = 1;
-    while (page <=  maxPage) {
+    while (page <= maxPage) {
 
       HttpHeaders headers = new HttpHeaders();
       headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-      headers.setBasicAuth("geo", "samples");
+      headers.setBearerAuth(createJwt("martin"));
       headers.put("page", Arrays.asList("1"));
 
       HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(headers);
@@ -112,7 +186,6 @@ public class CuratorPreviewPersistenceServiceIT {
       page++;
       maxPage = itemsView.getTotalPages();
     }
-
 
     return views;
 
@@ -220,7 +293,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(false, view.isPublish());
 
     view = sampleIntervals.get(2);
-
 
     assertEquals("AQ-10", view.getCruise());
     assertEquals("AQ-001", view.getSample());
@@ -332,7 +404,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("202107", view.getEndDate());
 
     view = sampleIntervals.get(2);
-
 
     assertEquals("AQ-10", view.getCruise());
     assertEquals("AQ-001", view.getSample());

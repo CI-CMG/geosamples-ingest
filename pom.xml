@@ -79,6 +79,11 @@
         <artifactId>cmg-jpa-entity-utils</artifactId>
         <version>1.3.0</version>
       </dependency>
+      <dependency>
+        <groupId>org.bitbucket.b_c</groupId>
+        <artifactId>jose4j</artifactId>
+        <version>0.7.6</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

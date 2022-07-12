@@ -18,14 +18,14 @@ public class GeosamplesUserAuthorityEntity implements EntityWithId<GeosamplesUse
 
 
   @Id
-  @Column(name = "USERNAME", nullable = false, length = 200)
-  private String username;
+  @Column(name = "USER_NAME", nullable = false, length = 200)
+  private String userName;
   @Id
   @Column(name = "AUTHORITY_NAME", nullable = false, length = 100)
   private String authorityName;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "USERNAME", nullable = false, insertable = false, updatable = false)
+  @JoinColumn(name = "USER_NAME", nullable = false, insertable = false, updatable = false)
   private GeosamplesUserEntity user;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -45,7 +45,7 @@ public class GeosamplesUserAuthorityEntity implements EntityWithId<GeosamplesUse
   @Override
   public GeosamplesUserAuthorityEntityPk getId() {
     GeosamplesUserAuthorityEntityPk id = new GeosamplesUserAuthorityEntityPk();
-    id.setUsername(username);
+    id.setUserName(userName);
     id.setAuthorityName(authorityName);
     return id;
   }
@@ -57,9 +57,9 @@ public class GeosamplesUserAuthorityEntity implements EntityWithId<GeosamplesUse
   public void setUser(GeosamplesUserEntity user) {
     this.user = user;
     if (user == null) {
-      this.username = null;
+      this.userName = null;
     } else {
-      this.username = user.getUsername();
+      this.userName = user.getUserName();
     }
   }
 
@@ -76,8 +76,8 @@ public class GeosamplesUserAuthorityEntity implements EntityWithId<GeosamplesUse
     }
   }
 
-  public String getUsername() {
-    return username;
+  public String getUserName() {
+    return userName;
   }
 
   public String getAuthorityName() {

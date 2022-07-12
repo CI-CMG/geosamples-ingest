@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import edu.colorado.cires.cmg.jpa.model.EntityWithId;
 import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,8 +18,8 @@ import javax.persistence.Version;
 public class GeosamplesUserEntity implements EntityWithId<String> {
 
   @Id
-  @Column(name = "USERNAME", nullable = false, length = 200)
-  private String username;
+  @Column(name = "USER_NAME", nullable = false, length = 200)
+  private String userName;
 
   @Version
   @Column(name = "VERSION", nullable = false)
@@ -43,6 +44,10 @@ public class GeosamplesUserEntity implements EntityWithId<String> {
     EntityUtil.clearAndOrphan(userAuthorities, GeosamplesUserAuthorityEntity::setUser);
   }
 
+  public List<GeosamplesUserAuthorityEntity> getUserAuthorities() {
+    return Collections.unmodifiableList(userAuthorities);
+  }
+
   @Override
   public boolean equals(Object o) {
     return EntityUtil.equals(this, o);
@@ -55,15 +60,15 @@ public class GeosamplesUserEntity implements EntityWithId<String> {
 
   @Override
   public String getId() {
-    return username;
+    return userName;
   }
 
-  public String getUsername() {
-    return username;
+  public String getUserName() {
+    return userName;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserName(String username) {
+    this.userName = username;
   }
 
   public int getVersion() {

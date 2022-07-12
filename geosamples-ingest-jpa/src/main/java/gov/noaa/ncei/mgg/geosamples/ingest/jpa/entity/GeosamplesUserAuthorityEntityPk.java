@@ -10,18 +10,18 @@ public class GeosamplesUserAuthorityEntityPk implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @Column(name = "USERNAME", nullable = false, length = 200)
-  private String username;
+  @Column(name = "USER_NAME", nullable = false, length = 200)
+  private String userName;
   @Id
   @Column(name = "AUTHORITY_NAME", nullable = false, length = 100)
   private String authorityName;
 
-  public String getUsername() {
-    return username;
+  public String getUserName() {
+    return userName;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserName(String username) {
+    this.userName = username;
   }
 
   public String getAuthorityName() {
@@ -41,11 +41,11 @@ public class GeosamplesUserAuthorityEntityPk implements Serializable {
       return false;
     }
     GeosamplesUserAuthorityEntityPk that = (GeosamplesUserAuthorityEntityPk) o;
-    return Objects.equals(username, that.username) && Objects.equals(authorityName, that.authorityName);
+    return Objects.equals(userName, that.userName) && Objects.equals(authorityName, that.authorityName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(username, authorityName);
+    return Objects.hash(userName, authorityName);
   }
 }

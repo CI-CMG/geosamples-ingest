@@ -1,14 +1,43 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import java.util.ArrayList;
+import java.util.List;
+
+@Sortable({
+    "userName",
+    "displayName",
+})
 public class UserView {
 
-  private String username;
+  private String userName;
+  private String displayName;
+  private List<String> authorities = new ArrayList<>(0);
 
-  public String getUsername() {
-    return username;
+  public String getUserName() {
+    return userName;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
+
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
+
+  public List<String> getAuthorities() {
+    return authorities;
+  }
+
+  public void setAuthorities(List<String> authorities) {
+    if(authorities == null) {
+      authorities = new ArrayList<>(0);
+    }
+    this.authorities = authorities;
   }
 }

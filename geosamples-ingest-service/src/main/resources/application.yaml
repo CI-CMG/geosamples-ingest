@@ -1,7 +1,6 @@
 geosamples:
   show-sample-base-url: https://www.ngdc.noaa.gov/geosamples/showsample.jsp
-  username: ''
-  password: ''
+  jwt-issuer: ''
 
 server:
   compression:
@@ -27,6 +26,11 @@ server:
   address: 127.0.0.1
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: '${geosamples.jwt-issuer}'
   mvc:
     throw-exception-if-no-handler-found: true
   jmx:

@@ -53,6 +53,7 @@ import SampleEdit from '@/views/view/main/interval/edit-sample/SampleEdit.vue';
 import IntervalEdit from '@/views/view/main/interval/edit-interval/IntervalEdit.vue';
 import SampleList from '@/views/view/main/sample/list/SampleList.vue';
 import Sample from '@/views/view/main/sample/Sample.vue';
+import UserList from '@/views/view/main/user/list/UserList.vue';
 
 Vue.use(VueRouter);
 
@@ -498,6 +499,34 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'Weathering' },
+              },
+            ],
+          },
+          {
+            path: 'user',
+            component: Remark,
+            name: 'User',
+            redirect: { name: 'UserList' },
+            children: [
+              {
+                path: 'list',
+                name: 'UserList',
+                component: UserList,
+              },
+              // {
+              //   path: 'add',
+              //   name: 'UserAdd',
+              //   component: RemarkEdit,
+              // },
+              // {
+              //   path: 'edit/:id',
+              //   name: 'UserEdit',
+              //   component: RemarkEdit,
+              //   props: true,
+              // },
+              {
+                path: '*',
+                redirect: { name: 'User' },
               },
             ],
           },

@@ -20,6 +20,9 @@
             <b-dropdown-item :to="{ name: 'Texture'}">Texture</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'Weathering'}">Weathering/Metamorphism</b-dropdown-item>
           </b-nav-item-dropdown>
+          <b-nav-item-dropdown text="Administration">
+            <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>
+          </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Curator Data">
             <b-dropdown-item :to="{ name: 'NewSubmission'}">New Submission</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'IntervalList'}">Sample + Interval</b-dropdown-item>
@@ -30,8 +33,8 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-form @submit.stop.prevent="submit">
-          <span v-if="user.username">Username: <b>{{user.username}}</b></span>
-          <b-button size="sm" type="submit">{{user.username ? 'Log Out' : 'Log In'}}</b-button>
+<!--          <span v-if="user.username">Username: <b>{{user.username}}</b></span>-->
+<!--          <b-button size="sm" type="submit">{{user.username ? 'Log Out' : 'Log In'}}</b-button>-->
         </b-nav-form>
       </b-navbar-nav>
     </b-navbar>
@@ -43,8 +46,8 @@
 
 <script>
 import genId from '@/components/idGenerator';
-import { mapState } from 'vuex';
-import { logout } from '@/sessionMonster';
+// import { mapState } from 'vuex';
+// import { logout } from '@/sessionMonster';
 
 export default {
   data() {
@@ -55,16 +58,16 @@ export default {
   beforeMount() {
     this.navbarId = genId();
   },
-  computed: {
-    ...mapState('user', ['user']),
-  },
+  // computed: {
+  //   ...mapState('user', ['user']),
+  // },
   methods: {
     submit() {
-      if (this.user.username) {
-        logout(this.$router, this.$store);
-      } else {
-        this.$router.push({ name: 'Login' });
-      }
+      // if (this.user.username) {
+      //   logout(this.$router, this.$store);
+      // } else {
+      //   this.$router.push({ name: 'Login' });
+      // }
     },
   },
 };

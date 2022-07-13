@@ -70,7 +70,7 @@ public class FacilityService extends
     view.setEmailLink(entity.getEmailLink());
     view.setUrlLink(entity.getUrlLink());
     view.setFtpLink(entity.getFtpLink());
-    view.setOtherLink(entity.getOtherLink());
+    view.setDoiLink(entity.getDoiLink());
     view.setFacilityComment(entity.getFacilityComment());
     return view;
   }
@@ -94,7 +94,7 @@ public class FacilityService extends
     entity.setEmailLink(view.getEmailLink());
     entity.setUrlLink(view.getUrlLink());
     entity.setFtpLink(view.getFtpLink());
-    entity.setOtherLink(view.getOtherLink());
+    entity.setDoiLink(view.getDoiLink());
     entity.setFacilityComment(view.getFacilityComment());
     entity.setLastUpdate(Integer.parseInt(LocalDate.now(ZoneId.of("UTC")).format(DTF)));
   }

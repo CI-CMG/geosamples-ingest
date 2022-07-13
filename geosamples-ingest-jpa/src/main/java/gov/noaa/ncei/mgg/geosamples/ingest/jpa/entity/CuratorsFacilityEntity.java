@@ -44,10 +44,10 @@ public class CuratorsFacilityEntity {
   @Column(name = "INST_CODE", length = 3)
   private String instCode;
 
-  @Column(name = "FACILITY", length = 50)
+  @Column(name = "FACILITY", length = 100)
   private String facility;
 
-  @Column(name = "ADDR_1", length = 45)
+  @Column(name = "ADDR_1", length = 100)
   private String addr1;
 
   @Column(name = "ADDR_2", length = 45)
@@ -68,8 +68,8 @@ public class CuratorsFacilityEntity {
   @Column(name = "FTP_LINK", length = 45)
   private String ftpLink;
 
-  @Column(name = "OTHER_LINK", length = 45)
-  private String otherLink;
+  @Column(name = "DOI_LINK", length = 45)
+  private String doiLink;
 
   @Column(name = "FACILITY_COMMENT", length = 2000)
   private String facilityComment;
@@ -180,12 +180,12 @@ public class CuratorsFacilityEntity {
     this.ftpLink = ftpLink;
   }
 
-  public String getOtherLink() {
-    return otherLink;
+  public String getDoiLink() {
+    return doiLink;
   }
 
-  public void setOtherLink(String otherLink) {
-    this.otherLink = otherLink;
+  public void setDoiLink(String doiLink) {
+    this.doiLink = doiLink;
   }
 
   public String getFacilityComment() {

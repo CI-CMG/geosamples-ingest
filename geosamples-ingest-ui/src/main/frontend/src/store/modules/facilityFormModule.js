@@ -29,7 +29,7 @@ const model = {
   emailLink: 'string',
   urlLink: 'string',
   ftpLink: 'string',
-  otherLink: 'string',
+  doiLink: 'string',
   facilityComment: 'string',
 };
 

@@ -125,15 +125,15 @@
           <b-form-invalid-feedback>{{ getError('ftpLink') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Other Link" :label-for="otherLinkId">
+        <b-form-group label="DOI Link" :label-for="doiLinkId">
           <b-form-input
-            :id="otherLinkId"
-            type="text" @blur="() => setTouched({path: 'otherLink', touched: true})"
-            :value="getValue('otherLink')"
-            @update="(value) => setValue({ path: 'otherLink', value })"
-            :state="showError('otherLink')"
+            :id="doiLinkId"
+            type="text" @blur="() => setTouched({path: 'doiLink', touched: true})"
+            :value="getValue('doiLink')"
+            @update="(value) => setValue({ path: 'doiLink', value })"
+            :state="showError('doiLink')"
           />
-          <b-form-invalid-feedback>{{ getError('otherLink') }}</b-form-invalid-feedback>
+          <b-form-invalid-feedback>{{ getError('doiLink') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Comment" :label-for="facilityCommentId">
@@ -180,7 +180,7 @@ export default {
       emailLinkId: '',
       urlLinkId: '',
       ftpLinkId: '',
-      otherLinkId: '',
+      doiLinkId: '',
       facilityCommentId: '',
     };
   },
@@ -195,7 +195,7 @@ export default {
     this.emailLinkId = genId();
     this.urlLinkId = genId();
     this.ftpLinkId = genId();
-    this.otherLinkId = genId();
+    this.doiLinkId = genId();
     this.facilityCommentId = genId();
   },
   methods: {

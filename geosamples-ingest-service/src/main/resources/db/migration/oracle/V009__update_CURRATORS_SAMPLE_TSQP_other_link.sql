@@ -1,3 +1,0 @@
-UPDATE CURATORS_SAMPLE_TSQP
-SET OTHER_LINK = REPLACE(OTHER_LINK, 'http:', 'https:')
-WHERE regexp_like(OTHER_LINK, '^http:');

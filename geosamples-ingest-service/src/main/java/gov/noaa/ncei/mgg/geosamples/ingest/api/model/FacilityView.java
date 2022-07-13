@@ -21,10 +21,10 @@ public class FacilityView {
   private String instCode;
 
   @NotBlank
-  @Size(max = 50)
+  @Size(max = 100)
   private String facility;
 
-  @Size(max = 45)
+  @Size(max = 100)
   private String addr1;
 
   @Size(max = 45)
@@ -46,7 +46,7 @@ public class FacilityView {
   private String ftpLink;
 
   @Size(max = 45)
-  private String otherLink;
+  private String doiLink;
 
   @Size(max = 2000)
   private String facilityComment;
@@ -132,12 +132,12 @@ public class FacilityView {
     this.ftpLink = ftpLink;
   }
 
-  public String getOtherLink() {
-    return otherLink;
+  public String getDoiLink() {
+    return doiLink;
   }
 
-  public void setOtherLink(String otherLink) {
-    this.otherLink = otherLink;
+  public void setDoiLink(String doiLink) {
+    this.doiLink = doiLink;
   }
 
   public String getFacilityComment() {

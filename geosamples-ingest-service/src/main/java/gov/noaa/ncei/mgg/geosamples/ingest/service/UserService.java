@@ -2,6 +2,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.DescriptorView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ReadOnlySimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
@@ -149,6 +151,18 @@ public class UserService extends
       }
     }
 
+  }
+
+  public ReadOnlySimpleItemsView<DescriptorView> getAllAuthorities() {
+    ReadOnlySimpleItemsView<DescriptorView> result = new ReadOnlySimpleItemsView<>();
+    result.setItems(geosamplesAuthorityRepository.findAll().stream()
+        .map(GeosamplesAuthorityEntity::getAuthorityName)
+        .sorted()
+        .collect(Collectors.toList())
+        .stream().map(a -> new DescriptorView(a, a))
+        .collect(Collectors.toList())
+    );
+    return result;
   }
 
 }

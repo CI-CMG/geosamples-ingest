@@ -120,6 +120,13 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_DELETE.toString())
 
+        .antMatchers(HttpMethod.GET, "/api/v1/descriptor/authority").hasAnyAuthority(
+            Authorities.ROLE_USER_READ.toString(),
+            Authorities.ROLE_USER_CREATE.toString(),
+            Authorities.ROLE_USER_UPDATE.toString(),
+            Authorities.ROLE_USER_DELETE.toString()
+        )
+
         .anyRequest().denyAll()
         .and()
       .sessionManagement()

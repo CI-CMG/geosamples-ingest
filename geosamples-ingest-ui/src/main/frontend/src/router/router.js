@@ -54,6 +54,7 @@ import IntervalEdit from '@/views/view/main/interval/edit-interval/IntervalEdit.
 import SampleList from '@/views/view/main/sample/list/SampleList.vue';
 import Sample from '@/views/view/main/sample/Sample.vue';
 import UserList from '@/views/view/main/user/list/UserList.vue';
+import UserEdit from '@/views/view/main/user/edit/UserEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -513,17 +514,17 @@ const routes = [
                 name: 'UserList',
                 component: UserList,
               },
-              // {
-              //   path: 'add',
-              //   name: 'UserAdd',
-              //   component: RemarkEdit,
-              // },
-              // {
-              //   path: 'edit/:id',
-              //   name: 'UserEdit',
-              //   component: RemarkEdit,
-              //   props: true,
-              // },
+              {
+                path: 'add',
+                name: 'UserAdd',
+                component: UserEdit,
+              },
+              {
+                path: 'edit/:id',
+                name: 'UserEdit',
+                component: UserEdit,
+                props: true,
+              },
               {
                 path: '*',
                 redirect: { name: 'User' },

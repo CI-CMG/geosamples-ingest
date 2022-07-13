@@ -32,6 +32,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     http
       .antMatcher("/api/**")
       .authorizeRequests()
+        .antMatchers("/api/v1/**").permitAll()
         .antMatchers(HttpMethod.GET, "/api/v1/age", "/api/v1/age/*").hasAuthority(Authorities.ROLE_AGE_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/age").hasAuthority(Authorities.ROLE_AGE_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/age/*").hasAuthority(Authorities.ROLE_AGE_UPDATE.toString())

@@ -46,11 +46,9 @@ import MunsellEdit from '@/views/view/main/munsell/edit/MunsellEdit.vue';
 import Submit from '@/views/view/main/submit/Submit.vue';
 import NewSubmission from '@/views/view/main/submit/new/NewSubmission.vue';
 import ErrorSubmission from '@/views/view/main/submit/error/ErrorSubmission.vue';
-import Login from '@/views/view/login/Login.vue';
 import Interval from '@/views/view/main/interval/Interval.vue';
 import IntervalList from '@/views/view/main/interval/list/IntervalList.vue';
 import { RAW_BASE_PATH } from '@/resourceBasePath';
-import store from '@/store/store';
 import SampleEdit from '@/views/view/main/interval/edit-sample/SampleEdit.vue';
 import IntervalEdit from '@/views/view/main/interval/edit-interval/IntervalEdit.vue';
 import SampleList from '@/views/view/main/sample/list/SampleList.vue';
@@ -65,11 +63,6 @@ const routes = [
     name: 'View',
     redirect: { name: 'Home' },
     children: [
-      {
-        path: 'login',
-        name: 'Login',
-        component: Login,
-      },
       {
         path: 'main',
         name: 'Main',
@@ -536,17 +529,6 @@ const router = new VueRouter({
   base: RAW_BASE_PATH,
   routes,
   linkActiveClass: 'active',
-});
-
-router.beforeEach((to, from, next) => {
-  const loggedIn = !!store.state.user.user.username;
-  if (to.name === 'Login') {
-    next(!loggedIn);
-  } else if (loggedIn) {
-    next();
-  } else {
-    next({ name: 'Login' });
-  }
 });
 
 register(router);

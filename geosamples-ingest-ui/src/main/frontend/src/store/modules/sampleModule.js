@@ -361,6 +361,22 @@ export default {
     //     );
     // },
 
+    accept({ commit, state }, { publish }) {
+      commit('acceptRequest');
+      const items = state.items.filter((i) => i.selected).map((i) => ({ imlgs: i.imlgs, interval: i.interval, publish }));
+      const body = { items };
+      return apiService.patch('/sample', body)
+        .then(
+          (response) => {
+            commit('acceptSuccess', response.data);
+            return response.data;
+          },
+          (error) => {
+            commit('acceptFailure');
+            throw error;
+          },
+        );
+    },
     delete({ commit, state }) {
       commit('acceptRequest');
       const del = state.items

@@ -12,6 +12,8 @@
       <div class="mb-3">
         <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(true)">Select All</b-button>
         <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => selectAll(false)">Deselect All</b-button>
+        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(true)">Publish Selected</b-button>
+        <b-button variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="() => doAccept(false)">Unpublish Selected</b-button>
         <b-button variant="danger" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showModal">Delete Selected Samples and Intervals</b-button>
       </div>
       </b-card>

@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +77,19 @@ public class SampleService extends
             curatorsSampleTsqpRepository.flush();
             items.removeIf(view -> del.getImlgs().equals(view.getImlgs()));
           });
+    }
+
+    for (SampleView item : patch.getItems()) {
+      String imlgs = item.getImlgs();
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findById(imlgs).orElseThrow(() -> new ApiException(
+          HttpStatus.NOT_FOUND,
+          ApiError.builder().error("Sample " + item.getImlgs() + "-" + item.getSample() + " was not found.")
+              .build()));
+      if (item.getPublish() != null) {
+        sample.setPublish(item.getPublish() ? "Y" : "N");
+        sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
+      }
+      items.add(toView(sample));
     }
     SimpleItemsView<SampleView> result = new SimpleItemsView<>();
     result.setItems(items);

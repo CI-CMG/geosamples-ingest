@@ -1,5 +1,5 @@
 geosamples:
-  show-sample-base-url: https://www.ngdc.noaa.gov/geosamples/showsample.jsp
+  show-sample-base-url: https://maps.ngdc.noaa.gov/viewers/imlgs/samples/
   jwt-issuer: ''
   auth-service-url: ''
   client-id: ''

@@ -1,3 +1,7 @@
+UPDATE ${schema_name}.CURATORS_SAMPLE_TSQP
+SET SHOW_SAMPL = REPLACE(SHOW_SAMPL, 'www.ngdc.noaa.gov/geosamples/showsample.jsp?', 'maps.ngdc.noaa.gov/viewers/imlgs/samples/')
+WHERE regexp_like(SHOW_SAMPL, '^http');
+
 ALTER TABLE ${schema_name}.CURATORS_FACILITY MODIFY FACILITY varchar(100);
 ALTER TABLE ${schema_name}.CURATORS_FACILITY MODIFY ADDR_1 varchar(100);
 ALTER TABLE ${schema_name}.CURATORS_FACILITY RENAME COLUMN OTHER_LINK TO DOI_LINK;

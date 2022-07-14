@@ -201,6 +201,7 @@ public class CuratorPreviewPersistenceServiceIT {
 
     CombinedSampleIntervalView view = sampleIntervals.get(0);
 
+    String baseShowSamplUrl = "https://maps.ngdc.noaa.gov/viewers/imlgs/samples/";
     assertEquals("AQ-01", view.getCruise());
     assertEquals("AQ-01-01", view.getSample());
     assertEquals("GEOMAR", view.getFacility());
@@ -242,7 +243,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getLeg());
     assertEquals(null, view.getSampleComments());
     assertNotNull(view.getObjectId());
-    assertEquals("https://www.ngdc.noaa.gov/geosamples/showsample.jsp?" + view.getImlgs(), view.getShowSampl());
+    assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());
     assertEquals(1, view.getDepthTop());
@@ -336,7 +337,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("AQ-LEFT-LEG", view.getLeg());
     assertEquals(null, view.getSampleComments());
     assertNotNull(view.getObjectId());
-    assertEquals("https://www.ngdc.noaa.gov/geosamples/showsample.jsp?" + view.getImlgs(), view.getShowSampl());
+    assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());
     assertEquals(11, view.getDepthTop());

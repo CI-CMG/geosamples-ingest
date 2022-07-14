@@ -1,5 +1,7 @@
 geosamples:
   jwt-issuer: 'test'
+  auth-service-url: 'test'
+  client-id: 'test'
 
 spring:
   jpa:

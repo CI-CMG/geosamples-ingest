@@ -33,8 +33,8 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-form @submit.stop.prevent="submit">
-<!--          <span v-if="user.username">Username: <b>{{user.username}}</b></span>-->
-<!--          <b-button size="sm" type="submit">{{user.username ? 'Log Out' : 'Log In'}}</b-button>-->
+          <span v-if="loggedIn">User: <b>{{user.displayName}}</b></span>
+          <b-button size="sm" type="submit" class="ml-2">{{loggedIn ? 'Log Out' : 'Log In'}}</b-button>
         </b-nav-form>
       </b-navbar-nav>
     </b-navbar>
@@ -46,8 +46,8 @@
 
 <script>
 import genId from '@/components/idGenerator';
-// import { mapState } from 'vuex';
-// import { logout } from '@/sessionMonster';
+import { mapState } from 'vuex';
+import { logout, redirectLogin } from '@/sessionMonster';
 
 export default {
   data() {
@@ -58,16 +58,19 @@ export default {
   beforeMount() {
     this.navbarId = genId();
   },
-  // computed: {
-  //   ...mapState('user', ['user']),
-  // },
+  computed: {
+    ...mapState('userAuth', ['user']),
+    loggedIn() {
+      return !!this.user.userName;
+    },
+  },
   methods: {
     submit() {
-      // if (this.user.username) {
-      //   logout(this.$router, this.$store);
-      // } else {
-      //   this.$router.push({ name: 'Login' });
-      // }
+      if (this.loggedIn) {
+        logout(this.$router, this.$store);
+      } else {
+        redirectLogin(this.$router);
+      }
     },
   },
 };

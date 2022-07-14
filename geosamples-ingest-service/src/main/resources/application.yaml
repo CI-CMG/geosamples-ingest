@@ -1,8 +1,12 @@
 geosamples:
   show-sample-base-url: https://www.ngdc.noaa.gov/geosamples/showsample.jsp
   jwt-issuer: ''
+  auth-service-url: ''
+  client-id: ''
 
 server:
+  servlet:
+    context-path: /geosamples-ingest
   compression:
     enabled: true
   tomcat:

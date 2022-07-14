@@ -15,8 +15,10 @@ public class ServiceProperties {
 
   @NotBlank
   private String jwtIssuer;
-
-
+  @NotBlank
+  private String authServiceUrl;
+  @NotBlank
+  private String clientId;
   @NotBlank
   private String showSampleBaseUrl;
 
@@ -34,5 +36,21 @@ public class ServiceProperties {
 
   public void setJwtIssuer(String jwtIssuer) {
     this.jwtIssuer = jwtIssuer;
+  }
+
+  public String getAuthServiceUrl() {
+    return authServiceUrl;
+  }
+
+  public void setAuthServiceUrl(String authServiceUrl) {
+    this.authServiceUrl = authServiceUrl;
+  }
+
+  public String getClientId() {
+    return clientId;
+  }
+
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
   }
 }

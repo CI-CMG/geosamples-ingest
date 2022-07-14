@@ -33,10 +33,10 @@ import sample from '@/store/modules/sampleModule';
 import sampleSearchForm from '@/store/modules/sampleSearchFormModule';
 import sampleSortForm from '@/store/modules/sampleSortFormModule';
 import authority from '@/store/modules/authorityModule';
+import userAuth from '@/store/modules/userAuthModule';
 import app from './modules/appModule';
 import user from './modules/userModule';
 import userForm from './modules/userFormModule';
-import loginForm from './modules/loginFormModule';
 import submission from './modules/submissionModule';
 import submissionForm from './modules/submissionFormModule';
 import tempSampleInterval from './modules/tempSampleIntervalModule';
@@ -50,7 +50,6 @@ export default new Vuex.Store({
     app,
     user,
     userForm,
-    loginForm,
     platform,
     platformForm,
     age,
@@ -89,5 +88,6 @@ export default new Vuex.Store({
     sampleSearchForm,
     sampleSortForm,
     authority,
+    userAuth,
   },
 });

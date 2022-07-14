@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -23,11 +24,13 @@ public class SpaController {
   @Autowired
   public SpaController(
       @Value("classpath:static/index.html") Resource indexHtmlFile,
-      @Value("#{servletContext.contextPath}") String servletContextPath
-  ) {
+      @Value("#{servletContext.contextPath}") String servletContextPath,
+      ServiceProperties properties) {
     try (InputStream in = indexHtmlFile.getInputStream()) {
       indexHtml = StreamUtils.copyToString(in, StandardCharsets.UTF_8)
-          .replaceAll("@contextRoot@", servletContextPath);
+          .replaceAll("@contextRoot@", servletContextPath)
+          .replaceAll("@authServiceUrl@", properties.getAuthServiceUrl().trim())
+          .replaceAll("@clientId@", properties.getClientId().trim());
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read index.html", e);
     }

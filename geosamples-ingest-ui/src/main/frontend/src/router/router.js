@@ -55,6 +55,7 @@ import SampleList from '@/views/view/main/sample/list/SampleList.vue';
 import Sample from '@/views/view/main/sample/Sample.vue';
 import UserList from '@/views/view/main/user/list/UserList.vue';
 import UserEdit from '@/views/view/main/user/edit/UserEdit.vue';
+import Callback from '@/views/view/callback/Callback.vue';
 
 Vue.use(VueRouter);
 
@@ -65,6 +66,11 @@ const routes = [
     name: 'View',
     redirect: { name: 'Home' },
     children: [
+      {
+        path: 'callback',
+        name: 'Callback',
+        component: Callback,
+      },
       {
         path: 'main',
         name: 'Main',

@@ -197,6 +197,7 @@ public class SampleService extends
     view.setLeg(entity.getLeg());
     view.setSampleComments(entity.getSampleComments());
     view.setPublish("Y".equals(entity.getPublish()));
+    view.setShowSampl(entity.getShowSampl());
     return view;
   }
 
@@ -270,8 +271,10 @@ public class SampleService extends
     sample.setPi(view.getPi());
     sample.setProvince(sampleDataUtils.getProvince(view.getProvinceCode()));
     sample.setIgsn(view.getIgsn());
-    // TODO add me ? - DOI per curator - pass in form?
-//      sample.setOtherLink();
+    sample.setLake(view.getLake());
+    sample.setOtherLink(view.getOtherLink());
+    sample.setShowSampl(view.getShowSampl());
+    sample.setSampleComments(view.getSampleComments());
     sample.setLastUpdate(LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF));
     sample.setLeg(view.getLeg());
     sample.setPublish(view.getPublish() != null && view.getPublish() ? "Y" : "N");

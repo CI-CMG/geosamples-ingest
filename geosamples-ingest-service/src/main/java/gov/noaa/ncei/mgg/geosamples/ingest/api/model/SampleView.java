@@ -40,6 +40,7 @@ public class SampleView {
   private String leg;
   private String sampleComments;
   private Boolean publish;
+  private String showSampl;
 
   public String getImlgs() {
     return imlgs;
@@ -257,4 +258,11 @@ public class SampleView {
     this.publish = publish;
   }
 
+  public String getShowSampl() {
+    return showSampl;
+  }
+
+  public void setShowSampl(String showSampl) {
+    this.showSampl = showSampl;
+  }
 }

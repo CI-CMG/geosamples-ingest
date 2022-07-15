@@ -264,6 +264,17 @@
           <b-form-invalid-feedback>{{ getError('igsn') }}</b-form-invalid-feedback>
         </b-form-group>
 
+        <b-form-group label="Show Sample" :label-for="showSamplId">
+          <b-form-input
+            :id="showSamplId"
+            type="text" @blur="() => setTouched({path: 'showSampl', touched: true})"
+            :value="getValue('showSampl')"
+            @update="(value) => setValue({ path: 'showSampl', value })"
+            :state="showError('showSampl')"
+          />
+          <b-form-invalid-feedback>{{ getError('showSampl') }}</b-form-invalid-feedback>
+        </b-form-group>
+
         <b-form-group label="Leg" :label-for="legId">
           <b-form-input
             :id="legId"
@@ -345,6 +356,7 @@ export default {
       legId: '',
       sampleCommentsId: '',
       publishId: '',
+      showSamplId: '',
     };
   },
   beforeMount() {
@@ -374,6 +386,7 @@ export default {
     this.legId = genId();
     this.sampleCommentsId = genId();
     this.publishId = genId();
+    this.showSamplId = genId();
   },
   methods: {
     ...mapMutations('sampleForm',

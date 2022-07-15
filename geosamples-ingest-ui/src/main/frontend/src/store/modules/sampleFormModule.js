@@ -46,6 +46,7 @@ const model = {
   leg: 'string',
   sampleComments: 'string',
   publish: 'boolean',
+  showSampl: 'string',
 };
 
 export default {

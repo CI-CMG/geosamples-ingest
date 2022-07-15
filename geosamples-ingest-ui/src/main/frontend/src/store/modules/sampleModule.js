@@ -28,6 +28,7 @@ const fields = [
   'leg',
   'sampleComments',
   'publish',
+  'showSampl',
 ];
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {

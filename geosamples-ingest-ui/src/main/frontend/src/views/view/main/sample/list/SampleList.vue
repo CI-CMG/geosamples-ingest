@@ -259,6 +259,10 @@ export default {
           key: 'sampleComments',
           label: 'Sample Comments',
         },
+        {
+          key: 'showSampl',
+          label: 'Show Sample',
+        },
       ],
     };
   },

@@ -4,7 +4,10 @@ import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /*
@@ -24,7 +27,6 @@ import javax.persistence.Table;
 @Table(name = "PLATFORM_MASTER")
 public class PlatformMasterEntity {
 
-  @Id
   @Column(name = "PLATFORM", nullable = false, length = 50)
   private String platform;
 
@@ -49,6 +51,12 @@ public class PlatformMasterEntity {
   @Column(name = "SOURCE_URI", length = 255)
   private String sourceUri;
 
+  @Id
+  @Column(name = "ID", nullable = false, precision = 0)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PLATFORM_MASTER_SEQ")
+  @SequenceGenerator(name = "PLATFORM_MASTER_SEQ", sequenceName = "PLATFORM_MASTER_SEQ", allocationSize = 1)
+  private Long id;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -58,7 +66,7 @@ public class PlatformMasterEntity {
       return false;
     }
     PlatformMasterEntity that = (PlatformMasterEntity) o;
-    return Objects.equals(platform, that.platform);
+    return Objects.equals(id, that.id);
   }
 
   @Override
@@ -128,5 +136,13 @@ public class PlatformMasterEntity {
 
   public void setSourceUri(String sourceUri) {
     this.sourceUri = sourceUri;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 }

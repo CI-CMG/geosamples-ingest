@@ -15,30 +15,13 @@ import javax.persistence.Table;
 @IdClass(IntervalPk.class)
 public class CuratorsIntervalEntity {
 
-  @Column(name = "CRUISE", nullable = false, length = 30)
-  private String cruise;
-
-  @Column(name = "SAMPLE", nullable = false, length = 30)
-  private String sample;
-
   @Id
   @Column(name = "INTERVAL", nullable = false)
   private Integer interval;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "FACILITY_CODE", nullable = false)
-  private CuratorsFacilityEntity facility;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PLATFORM", nullable = false)
-  private PlatformMasterEntity platform;
-
-  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "DEVICE", nullable = false)
   private CuratorsDeviceEntity device;
-
-  @Column(name = "SHIP_CODE", length = 4)
-  private String shipCode;
 
   @Column(name = "DEPTH_TOP")
   private Integer depthTop;
@@ -197,8 +180,6 @@ public class CuratorsIntervalEntity {
   @Column(name = "IMLGS", length = 15, nullable = false)
   private String imlgs;
 
-  @Column(name = "PARENT_IGSN", length = 9)
-  private String parentIgsn;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
@@ -206,13 +187,13 @@ public class CuratorsIntervalEntity {
 
 
   public void setParentEntity(CuratorsSampleTsqpEntity parentEntity) {
-    parentIgsn = parentEntity.getIgsn();
-    imlgs = parentEntity.getImlgs();
-    facility = parentEntity.getFacility();
-    shipCode = parentEntity.getShipCode();
-    platform = parentEntity.getPlatform();
-    cruise = parentEntity.getCruise();
-    sample = parentEntity.getSample();
+//    parentIgsn = parentEntity.getIgsn();
+//    imlgs = parentEntity.getImlgs();
+//    facility = parentEntity.getFacility();
+//    shipCode = parentEntity.getShipCode();
+//    platform = parentEntity.getPlatform();
+//    cruise = parentEntity.getCruise();
+//    sample = parentEntity.getSample();
     device = parentEntity.getDevice();
     this.parentEntity = parentEntity;
   }
@@ -241,15 +222,6 @@ public class CuratorsIntervalEntity {
     return Objects.hash(getPk());
   }
 
-
-  public String getCruise() {
-    return cruise;
-  }
-
-  public String getSample() {
-    return sample;
-  }
-
   public Integer getInterval() {
     return interval;
   }
@@ -258,20 +230,8 @@ public class CuratorsIntervalEntity {
     this.interval = interval;
   }
 
-  public CuratorsFacilityEntity getFacility() {
-    return facility;
-  }
-
-  public PlatformMasterEntity getPlatform() {
-    return platform;
-  }
-
   public CuratorsDeviceEntity getDevice() {
     return device;
-  }
-
-  public String getShipCode() {
-    return shipCode;
   }
 
   public Integer getDepthTop() {
@@ -646,8 +606,8 @@ public class CuratorsIntervalEntity {
     return imlgs;
   }
 
-  public String getParentIgsn() {
-    return parentIgsn;
+  public void setImlgs(String imlgs) {
+    this.imlgs = imlgs;
   }
 
   public CuratorsSampleTsqpEntity getParentEntity() {

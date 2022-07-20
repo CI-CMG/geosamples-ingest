@@ -40,6 +40,8 @@ alter table ${schema_name}.PLATFORM_MASTER
 alter table ${schema_name}.PLATFORM_MASTER
     modify (ID number(19) constraint PLATFORM_MASTER_PK primary key);
 
+alter table ${schema_name}.PLATFORM_MASTER
+    modify (PUBLISH varchar2(1) constraint PLATFORM_MASTER_PUBLISH_NN not null);
 
 -- facility --
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop constraint CURATORS_SAMPTSQP_FACILITY_FK;
@@ -51,6 +53,9 @@ alter table ${schema_name}.CURATORS_FACILITY add (ID number(19));
 
 alter table ${schema_name}.CURATORS_FACILITY
     modify (INST_CODE varchar2(3) constraint CURATORS_FACILITY_INST_CODE_NN not null);
+
+alter table ${schema_name}.CURATORS_FACILITY
+    modify (PUBLISH varchar2(1) constraint CURATORS_FACILITY_PUBLISH_NN not null);
 
 -- DB contains duplicates, is this expected?
 -- alter table ${schema_name}.CURATORS_FACILITY
@@ -143,7 +148,8 @@ create table ${schema_name}.CURATORS_LEG (
     CRUISE_ID number(19)
         constraint CURATORS_LEG_CRUISE_ID_FK references ${schema_name}.CURATORS_CRUISE
         constraint CURATORS_LEG_CRUISE_ID_NN not null,
-    LEG_NAME varchar2(30),
+    LEG_NAME varchar2(30)
+        constraint CURATORS_LEG_LEG_NAME_NN not null,
     PUBLISH VARCHAR2(1) constraint CURATORS_LEG_PUBLISH_NN not null,
     constraint CURATORS_LEG_CRUISE_ID_LEG_NAME_UK unique (CRUISE_ID, LEG_NAME)
 );
@@ -205,6 +211,27 @@ alter table ${schema_name}.CURATORS_SAMPLE_LINKS drop column SAMPLE;
 alter table ${schema_name}.CURATORS_SAMPLE_LINKS drop column DEVICE;
 alter table ${schema_name}.CURATORS_SAMPLE_LINKS drop column IGSN;
 
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (IMLGS varchar2(15)
+        constraint CURATORS_SAMPLE_LINKS_IMLGS_FK references ${schema_name}.CURATORS_SAMPLE_TSQP
+        constraint CURATORS_SAMPLE_LINKS_IMLGS_NN not null
+        );
+
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (DATALINK varchar2(500) constraint CURATORS_SAMPLE_LINKS_DATALINK_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (LINK_LEVEL varchar2(30) constraint CURATORS_SAMPLE_LINKS_LINK_LEVEL_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (LINK_SOURCE varchar2(30) constraint CURATORS_SAMPLE_LINKS_LINK_SOURCE_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (LINK_TYPE varchar2(30) constraint CURATORS_SAMPLE_LINKS_LINK_TYPE_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_LINKS
+    modify (PUBLISH varchar2(1) constraint CURATORS_SAMPLE_LINKS_PUBLISH_NN not null);
+
 -- sample --
 
 
@@ -243,11 +270,42 @@ alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column PLATFORM;
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column CRUISE;
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LEG;
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LAST_UPDATE;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column OBJECTID;
+
+-- todo verify that all lat and lon are set
+-- todo verify that end_lat / end_lon have values if deg is set
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LATDEG;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LATMIN;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column NS;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LONDEG;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column LONMIN;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column EW;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_LATDEG;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_LATMIN;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_NS;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_LONDEG;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_LONMIN;
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP drop column END_EW;
+
+
 alter table  ${schema_name}.CURATORS_SAMPLE_TSQP add (LAST_UPDATE timestamp);
 update ${schema_name}.CURATORS_SAMPLE_TSQP set LAST_UPDATE = current_timestamp;
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     modify (LAST_UPDATE timestamp constraint CURATORS_SAMPLE_TSQP_LAST_UPDATE_NN not null);
 
+alter table  ${schema_name}.CURATORS_SAMPLE_TSQP
+    add constraint CURATORS_SAMPLE_TSQP_SAMPLE_CRUISE_ID unique (SAMPLE, CRUISE_ID);
+
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP
+    modify (LAT number(9, 5) constraint CURATORS_SAMPLE_LAT_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP
+    modify (LON number(9, 5) constraint CURATORS_SAMPLE_LON_NN not null);
+
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP
+    modify (PUBLISH varchar2(1) constraint CURATORS_SAMPLE_TSQP_PUBLISH_NN not null);
+
+-- todo combine cored_length and cored_diam to a single floating point number
 
 create or replace trigger ${schema_name}.CURATORS_SAMPLE_TSQP_BI BEFORE
     INSERT ON ${schema_name}.CURATORS_SAMPLE_TSQP FOR EACH ROW
@@ -313,6 +371,21 @@ update ${schema_name}.CURATORS_CRUISE_LINKS set ID = ${schema_name}.CURATORS_CRU
 alter table ${schema_name}.CURATORS_CRUISE_LINKS
     modify (ID number(19) constraint CURATORS_CRUISE_LINKS_PK primary key);
 
+alter table ${schema_name}.CURATORS_CRUISE_LINKS
+    modify (DATALINK varchar2(500) constraint CURATORS_CRUISE_LINKS_DATALINK_NN not null);
+
+alter table ${schema_name}.CURATORS_CRUISE_LINKS
+    modify (LINK_LEVEL varchar2(30) constraint CURATORS_CRUISE_LINKS_LINK_LEVEL_NN not null);
+
+alter table ${schema_name}.CURATORS_CRUISE_LINKS
+    modify (LINK_SOURCE varchar2(30) constraint CURATORS_CRUISE_LINKS_LINK_SOURCE_NN not null);
+
+alter table ${schema_name}.CURATORS_CRUISE_LINKS
+    modify (LINK_TYPE varchar2(30) constraint CURATORS_CRUISE_LINKS_LINK_TYPE_NN not null);
+
+alter table ${schema_name}.CURATORS_CRUISE_LINKS
+    modify (PUBLISH varchar2(1) constraint CURATORS_CRUISE_LINKS_PUBLISH_NN not null);
+
 create or replace trigger ${schema_name}.CURATORS_CRUISE_LINKS_bi
     before insert
     on ${schema_name}.CURATORS_CRUISE_LINKS
@@ -332,10 +405,10 @@ end;
 -- todo validate cruise and leg are globally unique
 
 update ${schema_name}.CURATORS_CRUISE_LINKS LINK set CRUISE_ID =
-                                                         (select C.ID from ${schema_name}.CURATORS_CRUISE C where LINK.CRUISE = C.CRUISE_NAME);
+     (select C.ID from ${schema_name}.CURATORS_CRUISE C where LINK.CRUISE = C.CRUISE_NAME);
 
 update ${schema_name}.CURATORS_CRUISE_LINKS LINK set LEG_ID =
-                                                         (select L.ID from ${schema_name}.CURATORS_LEG L where LINK.LEG = L.LEG_NAME);
+     (select L.ID from ${schema_name}.CURATORS_LEG L where LINK.LEG = L.LEG_NAME);
 
 alter table ${schema_name}.CURATORS_CRUISE_LINKS drop column PLATFORM;
 alter table ${schema_name}.CURATORS_CRUISE_LINKS drop column CRUISE;
@@ -357,6 +430,11 @@ update ${schema_name}.CURATORS_INTERVAL set LAST_UPDATE = current_timestamp;
 alter table ${schema_name}.CURATORS_INTERVAL
     modify (LAST_UPDATE timestamp constraint CURATORS_INTERVAL_LAST_UPDATE_NN not null);
 
+alter table ${schema_name}.CURATORS_INTERVAL
+    modify (PUBLISH varchar2(1) constraint CURATORS_INTERVAL_PUBLISH_NN not null);
+
+-- todo combine CM + MM values into single floating point fields
+-- todo drop redundant munsell columns and create foreign key
 
 create or replace trigger ${schema_name}.CURATORS_INTERVAL_bi
     before insert

@@ -62,3 +62,7 @@ insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_U
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_CREATE');
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_UPDATE');
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_DELETE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_SAMPLE_LINK_READ');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_SAMPLE_LINK_CREATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_SAMPLE_LINK_UPDATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_SAMPLE_LINK_DELETE');

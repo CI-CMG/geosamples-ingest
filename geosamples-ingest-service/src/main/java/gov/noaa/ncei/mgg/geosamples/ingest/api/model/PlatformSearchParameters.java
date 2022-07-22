@@ -29,6 +29,7 @@ public class PlatformSearchParameters implements PagingAndSortingParameters {
   private List<String> platform = new ArrayList<>(0);
   private List<Integer> masterId = new ArrayList<>(0);
   private List<String> icesCode = new ArrayList<>(0);
+  private List<Long> id = new ArrayList<>(0);
 
   public List<String> getPlatform() {
     return platform;
@@ -61,6 +62,17 @@ public class PlatformSearchParameters implements PagingAndSortingParameters {
       icesCode = new ArrayList<>(0);
     }
     this.icesCode = icesCode;
+  }
+
+  public List<Long> getId() {
+    return id;
+  }
+
+  public void setId(List<Long> id) {
+    if(id == null) {
+      id = new ArrayList<>(0);
+    }
+    this.id = id;
   }
 
   @Override

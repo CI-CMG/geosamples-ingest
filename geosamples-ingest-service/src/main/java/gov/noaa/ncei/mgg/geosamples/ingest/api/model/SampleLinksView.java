@@ -1,0 +1,81 @@
+package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
+
+
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+@Sortable({
+    "imlgs",
+    "linkType",
+    "linkLevel"
+})
+public class SampleLinksView {
+
+  @Size(max = 500)
+  private String dataLink;
+
+  @Size(max = 30)
+  private String linkLevel;
+
+  @Size(max = 30)
+  private String linkSource;
+
+  @Size(max = 30)
+  private String linkType;
+
+  @NotBlank
+  private Boolean publish;
+
+  @NotBlank
+  @Size(max = 15)
+  private String imlgs;
+
+  public String getDataLink() {
+    return dataLink;
+  }
+
+  public void setDataLink(String dataLink) {
+    this.dataLink = dataLink;
+  }
+
+  public String getLinkLevel() {
+    return linkLevel;
+  }
+
+  public void setLinkLevel(String linkLevel) {
+    this.linkLevel = linkLevel;
+  }
+
+  public String getLinkSource() {
+    return linkSource;
+  }
+
+  public void setLinkSource(String linkSource) {
+    this.linkSource = linkSource;
+  }
+
+  public String getLinkType() {
+    return linkType;
+  }
+
+  public void setLinkType(String linkType) {
+    this.linkType = linkType;
+  }
+
+  public Boolean getPublish() {
+    return publish;
+  }
+
+  public void setPublish(Boolean publish) {
+    this.publish = publish;
+  }
+
+  public String getImlgs() {
+    return imlgs;
+  }
+
+  public void setImlgs(String imlgs) {
+    this.imlgs = imlgs;
+  }
+}

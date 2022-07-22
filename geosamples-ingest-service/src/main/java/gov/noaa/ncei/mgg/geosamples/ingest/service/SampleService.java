@@ -6,10 +6,13 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
@@ -44,7 +47,6 @@ public class SampleService extends
     map.put("imlgs", "imlgs");
     map.put("sample", "sample");
     map.put("facilityCode", "facility.facilityCode");
-    map.put("platform", "platform");
     viewToEntitySortMapping = Collections.unmodifiableMap(map);
   }
 
@@ -114,7 +116,13 @@ public class SampleService extends
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
     }
     if (!cruise.isEmpty()) {
-      specs.add(SearchUtils.contains(cruise, CuratorsSampleTsqpEntity_.CRUISE));
+//      specs.add(SearchUtils.contains(cruiseId, CuratorsSampleTsqpEntity_.CRUISE_ID));
+      specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
+          cb.or(cruise.stream().map(v ->
+                  cb.equal(
+                      e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.ID),
+                      v))
+              .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
     if (!sample.isEmpty()) {
       specs.add(SearchUtils.contains(sample, CuratorsSampleTsqpEntity_.SAMPLE));
@@ -126,7 +134,7 @@ public class SampleService extends
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
           cb.or(facilityCode.stream().map(v ->
               cb.equal(
-                  e.get(CuratorsSampleTsqpEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE),
+                  e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE),
                   v))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -142,7 +150,7 @@ public class SampleService extends
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
           cb.or(platform.stream().map(v ->
               cb.like(
-                  cb.lower(e.get(CuratorsSampleTsqpEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
+                  cb.lower(e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
                   SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -154,12 +162,12 @@ public class SampleService extends
   protected SampleView toView(CuratorsSampleTsqpEntity entity) {
     SampleView view = new SampleView();
     view.setImlgs(entity.getImlgs());
-    view.setCruise(entity.getCruise());
+    view.setCruise(entity.getCruise()== null ? null : entity.getCruise().getCruiseName());
     view.setSample(entity.getSample());
-    view.setFacilityCode(entity.getFacility() == null ? null : entity.getFacility().getFacilityCode());
-    view.setPlatform(entity.getPlatform() == null ? null : entity.getPlatform().getPlatform());
+    view.setFacilityCode(entity.getCruise().getFacility() == null ? null : entity.getCruise().getFacility().getFacilityCode());
+    view.setPlatform(entity.getCruise().getPlatform() == null ? null : entity.getCruise().getPlatform().getPlatform());
     view.setDeviceCode(entity.getDevice() == null ? null : entity.getDevice().getDeviceCode());
-    view.setShipCode(entity.getShipCode());
+//    view.setShipCode(entity.getShipCode());
     view.setBeginDate(entity.getBeginDate());
     view.setEndDate(entity.getEndDate());
     view.setLat(entity.getLat());
@@ -175,18 +183,18 @@ public class SampleService extends
     if(entity.getCoredLength() != null) {
       coredLength = Double.valueOf(entity.getCoredLength());
     }
-    if(coredLength != null && entity.getCoredLengthMm() != null) {
-      coredLength = coredLength + entity.getCoredLengthMm() / 10D;
-    }
+//    if(coredLength != null && entity.getCoredLengthMm() != null) {
+//      coredLength = coredLength + entity.getCoredLengthMm() / 10D;
+//    }
     view.setCoredLength(coredLength);
 
     Double coredDiam = null;
     if(entity.getCoredDiam() != null) {
       coredDiam = Double.valueOf(entity.getCoredDiam());
     }
-    if(coredDiam != null && entity.getCoredDiamMm() != null) {
-      coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
-    }
+//    if(coredDiam != null && entity.getCoredDiamMm() != null) {
+//      coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
+//    }
     view.setCoredDiam(coredDiam);
 
     view.setPi(entity.getPi());
@@ -194,7 +202,7 @@ public class SampleService extends
     view.setLake(entity.getLake());
     view.setOtherLink(entity.getOtherLink());
     view.setIgsn(entity.getIgsn());
-    view.setLeg(entity.getLeg());
+    view.setLeg(entity.getLeg().getLegName() == null ? null : entity.getLeg().getLegName());
     view.setSampleComments(entity.getSampleComments());
     view.setPublish("Y".equals(entity.getPublish()));
     view.setShowSampl(entity.getShowSampl());
@@ -204,8 +212,8 @@ public class SampleService extends
   @Override
   protected CuratorsSampleTsqpEntity newEntityWithDefaultValues(SampleView view) {
     CuratorsSampleTsqpEntity entity = new CuratorsSampleTsqpEntity();
-    entity.setObjectId(sampleDataUtils.getObjectId());
-    entity.setImlgs(sampleDataUtils.getImlgs(entity.getObjectId()));
+//    entity.setObjectId(sampleDataUtils.getObjectId());
+    entity.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
     entity.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + entity.getImlgs());
     entity.setPublish("Y");
     return entity;
@@ -217,11 +225,13 @@ public class SampleService extends
     CuratorsFacilityEntity facility = sampleDataUtils.getFacility(view.getFacilityCode());
     PlatformMasterEntity platform = sampleDataUtils.getPlatform(view.getPlatform());
     CuratorsDeviceEntity device = sampleDataUtils.getDevice(view.getDeviceCode());
-
-    sample.setCruise(view.getCruise());
+    CuratorsCruiseEntity cruise = sampleDataUtils.getCruise(view.getCruise(), platform,facility);
+    CuratorsLegEntity leg = sampleDataUtils.getLeg(view.getLeg(), cruise);
+    sample.setCruise(cruise);
     sample.setSample(view.getSample());
-    sample.setFacility(facility);
-    sample.setPlatform(platform);
+//    sample.setFacility(facility);
+//    sample.setPlatform(platform);
+    sample.setLeg(leg);
     sample.setDevice(device);
 
     // TODO what is this - ask Kelly?
@@ -231,27 +241,27 @@ public class SampleService extends
 
     PositionDim beginningLat = SampleDataUtils.getPositionDim(view.getLat(), true);
     sample.setLat(beginningLat.getValue());
-    sample.setLatDeg(beginningLat.getDegrees());
-    sample.setLatMin(beginningLat.getMinutes());
-    sample.setNs(beginningLat.getDirection());
+//    sample.setLatDeg(beginningLat.getDegrees());
+//    sample.setLatMin(beginningLat.getMinutes());
+//    sample.setNs(beginningLat.getDirection());
 
     PositionDim endingLat = SampleDataUtils.getPositionDim(view.getEndLat(), true);
     sample.setEndLon(endingLat.getValue());
-    sample.setEndLatDeg(endingLat.getDegrees());
-    sample.setEndLatMin(endingLat.getMinutes());
-    sample.setEndNs(endingLat.getDirection());
+//    sample.setEndLatDeg(endingLat.getDegrees());
+//    sample.setEndLatMin(endingLat.getMinutes());
+//    sample.setEndNs(endingLat.getDirection());
 
     PositionDim beginningLon = SampleDataUtils.getPositionDim(view.getLon(), false);
     sample.setLon(beginningLon.getValue());
-    sample.setLonDeg(beginningLon.getDegrees());
-    sample.setLonMin(beginningLon.getMinutes());
-    sample.setEw(beginningLon.getDirection());
+//    sample.setLonDeg(beginningLon.getDegrees());
+//    sample.setLonMin(beginningLon.getMinutes());
+//    sample.setEw(beginningLon.getDirection());
 
     PositionDim endingLon = SampleDataUtils.getPositionDim(view.getEndLon(), false);
     sample.setEndLon(endingLon.getValue());
-    sample.setEndLonDeg(endingLon.getDegrees());
-    sample.setEndLonMin(endingLon.getMinutes());
-    sample.setEndEw(endingLon.getDirection());
+//    sample.setEndLonDeg(endingLon.getDegrees());
+//    sample.setEndLonMin(endingLon.getMinutes());
+//    sample.setEndEw(endingLon.getDirection());
 
     sample.setLatLonOrig("D");
 
@@ -262,11 +272,11 @@ public class SampleService extends
 
     CmConverter coredLength = new CmConverter(view.getCoredLength());
     sample.setCoredLength(coredLength.getCm());
-    sample.setCoredLengthMm(coredLength.getMm());
+//    sample.setCoredLengthMm(coredLength.getMm());
 
     CmConverter coredDiam = new CmConverter(view.getCoredDiam());
     sample.setCoredDiam(coredDiam.getCm());
-    sample.setCoredDiamMm(coredDiam.getMm());
+//    sample.setCoredDiamMm(coredDiam.getMm());
 
     sample.setPi(view.getPi());
     sample.setProvince(sampleDataUtils.getProvince(view.getProvinceCode()));
@@ -276,7 +286,7 @@ public class SampleService extends
     sample.setShowSampl(view.getShowSampl());
     sample.setSampleComments(view.getSampleComments());
     sample.setLastUpdate(LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF));
-    sample.setLeg(view.getLeg());
+    sample.setLeg(leg);
     sample.setPublish(view.getPublish() != null && view.getPublish() ? "Y" : "N");
     sample.setShape(sampleDataUtils.getShape(view.getLon(), view.getLat()));
 

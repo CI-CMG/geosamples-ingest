@@ -96,10 +96,10 @@ public class SearchUtils {
 
   public static Specification<CuratorsSampleTsqpEntity> findExistingSample(CuratorsSampleTsqpEntity sample) {
     return (e, cq, cb) -> cb.and(
-        cb.equal(e.get("cruise"), sample.getCruise()),
+        cb.equal(e.get("cruise"), sample.getCruise().getCruiseName()),
         cb.equal(e.get("sample"), sample.getSample()),
-        cb.equal(e.get("facility"), sample.getFacility()),
-        cb.equal(e.get("platform"), sample.getPlatform()),
+        cb.equal(e.get("facility"), sample.getCruise().getFacility().getFacilityCode()),
+        cb.equal(e.get("platform"), sample.getCruise().getPlatform().getPlatform()),
         cb.equal(e.get("device"), sample.getDevice())
         );
   }

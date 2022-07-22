@@ -1,6 +1,5 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
-
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 
 @Sortable({

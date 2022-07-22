@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRemarkEntity;
@@ -37,6 +39,15 @@ public class EntitySignificantFieldsTest {
     PlatformMasterEntity platform = new PlatformMasterEntity();
     platform.setPlatform("platform");
 
+    CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+    cruise.setCruiseName("cruise");
+    cruise.setFacility(facility);
+    cruise.setPlatform(platform);
+
+    CuratorsLegEntity leg = new CuratorsLegEntity();
+    leg.setLegName("leg");
+    leg.setCruise(cruise);
+
     CuratorsDeviceEntity device = new CuratorsDeviceEntity();
     device.setDevice("device");
 
@@ -49,49 +60,49 @@ public class EntitySignificantFieldsTest {
     Geometry shape = new GeometryFactory().createPoint();
 
     CuratorsSampleTsqpEntity src = new CuratorsSampleTsqpEntity();
-    src.setCruise("cruise");
+    src.setCruise(cruise);
     src.setSample("sample");
-    src.setFacility(facility);
-    src.setPlatform(platform);
+//    src.setFacility(facility);
+//    src.setPlatform(platform);
     src.setDevice(device);
-    src.setShipCode("shipCode");
+//    src.setShipCode("shipCode");
     src.setBeginDate("beginDate");
     src.setEndDate("endDate");
     src.setLat(1.1);
-    src.setLatDeg(1);
-    src.setLatMin("latMin");
-    src.setNs("ns");
+//    src.setLatDeg(1);
+//    src.setLatMin("latMin");
+//    src.setNs("ns");
     src.setEndLat(2.2);
-    src.setEndLatDeg(2);
-    src.setEndLatMin("endLatMin");
-    src.setEndNs("endNs");
+//    src.setEndLatDeg(2);
+//    src.setEndLatMin("endLatMin");
+//    src.setEndNs("endNs");
     src.setLon(3.3);
-    src.setLonDeg(3);
-    src.setLonMin("lonMin");
-    src.setEw("ew");
+//    src.setLonDeg(3);
+//    src.setLonMin("lonMin");
+//    src.setEw("ew");
     src.setEndLon(4.4);
-    src.setEndLonDeg(4);
-    src.setEndLonMin("endLonMin");
-    src.setEndEw("ew");
+//    src.setEndLonDeg(4);
+//    src.setEndLonMin("endLonMin");
+//    src.setEndEw("ew");
     src.setLatLonOrig("latLonOrig");
     src.setWaterDepth(5);
     src.setEndWaterDepth(6);
     src.setStorageMeth(storageMeth);
     src.setCoredLength(7);
-    src.setCoredLengthMm(8);
+//    src.setCoredLengthMm(8);
     src.setCoredDiam(9);
-    src.setCoredDiamMm(10);
+//    src.setCoredDiamMm(10);
     src.setPi("pi");
     src.setProvince(province);
     src.setLake("lake");
     src.setOtherLink("otherLink");
     src.setLastUpdate("lastUpdate");
     src.setIgsn("igsn");
-    src.setLeg("leg");
+    src.setLeg(leg);
     src.setSampleComments("sampleComments");
     src.setPublish("publish");
     src.setPreviousState("previousState");
-    src.setObjectId(11L);
+//    src.setObjectId(11L);
     src.setShape(shape);
     src.setShowSampl("showSample");
     src.setImlgs("imlgs");
@@ -102,49 +113,49 @@ public class EntitySignificantFieldsTest {
     EntitySignificantFields.copy(src, dest);
     assertTrue(EntitySignificantFields.equals(src, dest));
 
-    assertEquals("cruise", dest.getCruise());
+    assertEquals("cruise", dest.getCruise().getCruiseName());
     assertEquals("sample", dest.getSample());
-    assertEquals(facility, dest.getFacility());
-    assertEquals(platform, dest.getPlatform());
+    assertEquals(facility, dest.getCruise().getFacility());
+    assertEquals(platform, dest.getCruise().getPlatform());
     assertEquals(device, dest.getDevice());
-    assertEquals("shipCode", dest.getShipCode());
+//    assertEquals("shipCode", dest.getShipCode());
     assertEquals("beginDate", dest.getBeginDate());
     assertEquals("endDate", dest.getEndDate());
     assertEquals(1.1, dest.getLat());
-    assertEquals(1, dest.getLatDeg());
-    assertEquals("latMin", dest.getLatMin());
-    assertEquals("ns", dest.getNs());
+//    assertEquals(1, dest.getLatDeg());
+//    assertEquals("latMin", dest.getLatMin());
+//    assertEquals("ns", dest.getNs());
     assertEquals(2.2, dest.getEndLat());
-    assertEquals(2, dest.getEndLatDeg());
-    assertEquals("endLatMin", dest.getEndLatMin());
-    assertEquals("endNs", dest.getEndNs());
+//    assertEquals(2, dest.getEndLatDeg());
+//    assertEquals("endLatMin", dest.getEndLatMin());
+//    assertEquals("endNs", dest.getEndNs());
     assertEquals(3.3, dest.getLon());
-    assertEquals(3, dest.getLonDeg());
-    assertEquals("lonMin", dest.getLonMin());
-    assertEquals("ew", dest.getEw());
+//    assertEquals(3, dest.getLonDeg());
+//    assertEquals("lonMin", dest.getLonMin());
+//    assertEquals("ew", dest.getEw());
     assertEquals(4.4, dest.getEndLon());
-    assertEquals(4, dest.getEndLonDeg());
-    assertEquals("endLonMin", dest.getEndLonMin());
-    assertEquals("ew", dest.getEndEw());
+//    assertEquals(4, dest.getEndLonDeg());
+//    assertEquals("endLonMin", dest.getEndLonMin());
+//    assertEquals("ew", dest.getEndEw());
     assertEquals("latLonOrig", dest.getLatLonOrig());
     assertEquals(5, dest.getWaterDepth());
     assertEquals(6, dest.getEndWaterDepth());
     assertEquals(storageMeth, dest.getStorageMeth());
     assertEquals(7, dest.getCoredLength());
-    assertEquals(8, dest.getCoredLengthMm());
+//    assertEquals(8, dest.getCoredLengthMm());
     assertEquals(9, dest.getCoredDiam());
-    assertEquals(10, dest.getCoredDiamMm());
+//    assertEquals(10, dest.getCoredDiamMm());
     assertEquals("pi", dest.getPi());
     assertEquals(province, dest.getProvince());
     assertEquals("lake", dest.getLake());
     assertEquals("otherLink", dest.getOtherLink());
     assertEquals("lastUpdate", dest.getLastUpdate());
     assertEquals("igsn", dest.getIgsn());
-    assertEquals("leg", dest.getLeg());
+    assertEquals("leg", dest.getLeg().getLegName());
     assertEquals("sampleComments", dest.getSampleComments());
     assertEquals("publish", dest.getPublish());
     assertEquals("previousState", dest.getPreviousState());
-    assertEquals(11L, dest.getObjectId());
+//    assertEquals(11L, dest.getObjectId());
     assertEquals(shape, dest.getShape());
     assertEquals("showSample", dest.getShowSampl());
     assertEquals("imlgs", dest.getImlgs());
@@ -159,23 +170,33 @@ public class EntitySignificantFieldsTest {
     PlatformMasterEntity platform = new PlatformMasterEntity();
     platform.setPlatform("platform");
 
+    CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+    cruise.setCruiseName("cruise");
+    cruise.setFacility(facility);
+    cruise.setPlatform(platform);
+
+    CuratorsLegEntity leg = new CuratorsLegEntity();
+    leg.setLegName("leg");
+    leg.setCruise(cruise);
+
     CuratorsDeviceEntity device = new CuratorsDeviceEntity();
     device.setDevice("device");
 
     CuratorsSampleTsqpEntity parent = new CuratorsSampleTsqpEntity();
 
-    parent.setCruise("cruise");
+    parent.setCruise(cruise);
     parent.setSample("sample");
-    parent.setFacility(facility);
-    parent.setPlatform(platform);
+//    parent.setFacility(facility);
+//    parent.setPlatform(platform);
     parent.setDevice(device);
-    parent.setShipCode("shipCode");
+//    parent.setShipCode("shipCode");
     parent.setIgsn("igsn");
     parent.setImlgs("imlgs");
 
 
     CuratorsIntervalEntity src = new CuratorsIntervalEntity();
     src.setParentEntity(parent);
+    src.setImlgs(parent.getImlgs());
 
     CuratorsLithologyEntity lith1 = new CuratorsLithologyEntity();
     lith1.setLithology("lith1");
@@ -323,14 +344,14 @@ public class EntitySignificantFieldsTest {
 
     assertEquals(parent, dest.getParentEntity());
     assertEquals(device, dest.getDevice());
-    assertEquals("sample", dest.getSample());
-    assertEquals("cruise", dest.getCruise());
-    assertEquals(platform, dest.getPlatform());
-    assertEquals("shipCode", dest.getShipCode());
-    assertEquals(facility, dest.getFacility());
+    assertEquals("sample", dest.getParentEntity().getSample());
+    assertEquals("cruise", dest.getParentEntity().getCruise().getCruiseName());
+    assertEquals(platform, dest.getParentEntity().getCruise().getPlatform());
+//    assertEquals("shipCode", dest.getShipCode());
+    assertEquals(facility, dest.getParentEntity().getCruise().getFacility());
     assertEquals("imlgs", dest.getImlgs());
     assertEquals("igsn2", dest.getIgsn());
-    assertEquals("igsn", dest.getParentIgsn());
+    assertEquals("igsn", dest.getParentEntity().getIgsn());
 
   }
 

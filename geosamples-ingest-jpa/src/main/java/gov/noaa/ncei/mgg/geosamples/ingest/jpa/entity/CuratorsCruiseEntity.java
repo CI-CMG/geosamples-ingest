@@ -3,9 +3,12 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -22,11 +25,13 @@ public class CuratorsCruiseEntity {
   @Column(name = "CRUISE_NAME", length = 30)
   private String cruiseName;
 
-  @Column(name = "PLATFORM_ID", nullable = false)
-  private Long platformId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "PLATFORM_ID", nullable = false)
+  private PlatformMasterEntity platform;
 
-  @Column(name = "FACILITY_ID", nullable = false)
-  private Long facilityId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "FACILITY_ID", nullable = false)
+  private CuratorsFacilityEntity facility;
 
   @Column(name = "PUBLISH", nullable = false, length = 1)
   private String publish;
@@ -64,20 +69,20 @@ public class CuratorsCruiseEntity {
     this.cruiseName = cruiseName;
   }
 
-  public Long getPlatformId() {
-    return platformId;
+  public PlatformMasterEntity getPlatform() {
+    return platform;
   }
 
-  public void setPlatformId(Long platformId) {
-    this.platformId = platformId;
+  public void setPlatform(PlatformMasterEntity platform) {
+    this.platform = platform;
   }
 
-  public Long getFacilityId() {
-    return facilityId;
+  public CuratorsFacilityEntity getFacility() {
+    return facility;
   }
 
-  public void setFacilityId(Long facilityId) {
-    this.facilityId = facilityId;
+  public void setFacility(CuratorsFacilityEntity facility) {
+    this.facility = facility;
   }
 
   public String getPublish() {

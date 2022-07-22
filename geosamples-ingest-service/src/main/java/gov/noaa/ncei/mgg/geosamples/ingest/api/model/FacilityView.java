@@ -12,6 +12,8 @@ import javax.validation.constraints.Size;
 })
 public class FacilityView {
 
+  @NotBlank
+  private Long id;
 
   @NotBlank
   @Size(max = 10)
@@ -51,6 +53,13 @@ public class FacilityView {
   @Size(max = 2000)
   private String facilityComment;
 
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getFacilityCode() {
     return facilityCode;

@@ -72,7 +72,6 @@ public class ExcelService {
   private static Integer parseInteger(String value, int rowIndex, HeaderNames headerName, int columnIndex) {
     return parseNumber(value, rowIndex, headerName, columnIndex, Integer::parseInt);
   }
-
   private static <N extends Number> N parseNumber(String value, int rowIndex, HeaderNames headerName, int columnIndex, Function<String, N> parse) {
     value = parseString(value);
     if (value == null) {
@@ -111,7 +110,6 @@ public class ExcelService {
   private static Integer parseInteger(DataFormatter df, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     return parseInteger(getValue(df, headers, row, headerName), row.getRowNum(), headerName, headers.get(headerName).get(0));
   }
-
   private static Double parseDouble(DataFormatter df, Map<HeaderNames, List<Integer>> headers, Row row, HeaderNames headerName) {
     return parseDouble(getValue(df, headers, row, headerName), row.getRowNum(), headerName, headers.get(headerName).get(0));
   }

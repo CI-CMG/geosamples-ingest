@@ -29,6 +29,7 @@ public class FacilitySearchParameters implements PagingAndSortingParameters {
   private List<String> instCode = new ArrayList<>(0);
   private List<String> facility = new ArrayList<>(0);
   private List<String> facilityComment = new ArrayList<>(0);
+  private List<Long> id = new ArrayList<>(0);
 
   public List<String> getFacilityCode() {
     return facilityCode;
@@ -72,6 +73,17 @@ public class FacilitySearchParameters implements PagingAndSortingParameters {
       facilityComment = new ArrayList<>(0);
     }
     this.facilityComment = facilityComment;
+  }
+
+  public List<Long> getId() {
+    return id;
+  }
+
+  public void setId(List<Long> id) {
+    if(id == null) {
+      id = new ArrayList<>(0);
+    }
+    this.id = id;
   }
 
   @Override

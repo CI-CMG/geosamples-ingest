@@ -115,6 +115,11 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_READ.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
 
+        .antMatchers(HttpMethod.GET, "/api/v1/sample-link", "/api/v1/sample-link/*").hasAuthority(Authorities.ROLE_SAMPLE_LINK_READ.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/sample-link").hasAuthority(Authorities.ROLE_SAMPLE_LINK_CREATE.toString())
+        .antMatchers(HttpMethod.PUT, "/api/v1/sample-link/*").hasAuthority(Authorities.ROLE_SAMPLE_LINK_UPDATE.toString())
+        .antMatchers(HttpMethod.DELETE, "/api/v1/sample-link/*").hasAuthority(Authorities.ROLE_SAMPLE_LINK_DELETE.toString())
+
         .antMatchers(HttpMethod.GET, "/api/v1/user", "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/user").hasAuthority(Authorities.ROLE_USER_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_UPDATE.toString())

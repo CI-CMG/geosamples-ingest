@@ -13,6 +13,9 @@ import javax.validation.constraints.Size;
 public class PlatformView {
 
   @NotBlank
+  private Long id;
+
+  @NotBlank
   @Size(max = 50)
   private String platform;
   private Integer masterId;
@@ -22,6 +25,14 @@ public class PlatformView {
   private String icesCode;
   @Size(max = 255)
   private String sourceUri;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getPlatform() {
     return platform;

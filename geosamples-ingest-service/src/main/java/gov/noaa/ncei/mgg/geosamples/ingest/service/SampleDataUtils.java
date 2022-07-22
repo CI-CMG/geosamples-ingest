@@ -4,8 +4,10 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity;
@@ -17,8 +19,10 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsTextureEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsWeathMetaEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsDeviceRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLegRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsMunsellRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsProvinceRepository;
@@ -60,6 +64,8 @@ public class SampleDataUtils {
   private final CuratorsFacilityRepository curatorsFacilityRepository;
   private final PlatformMasterRepository platformMasterRepository;
   private final CuratorsDeviceRepository curatorsDeviceRepository;
+  private final CuratorsCruiseRepository curatorsCruiseRepository;
+  private final CuratorsLegRepository curatorsLegRepository;
   private final CuratorsStorageMethRepository curatorsStorageMethRepository;
   private final CuratorsProvinceRepository curatorsProvinceRepository;
   private final CuratorsLithologyRepository curatorsLithologyRepository;
@@ -80,6 +86,8 @@ public class SampleDataUtils {
       CuratorsFacilityRepository curatorsFacilityRepository,
       PlatformMasterRepository platformMasterRepository,
       CuratorsDeviceRepository curatorsDeviceRepository,
+      CuratorsCruiseRepository curatorsCruiseRepository,
+      CuratorsLegRepository curatorsLegRepository,
       CuratorsStorageMethRepository curatorsStorageMethRepository,
       CuratorsProvinceRepository curatorsProvinceRepository,
       CuratorsLithologyRepository curatorsLithologyRepository,
@@ -97,6 +105,8 @@ public class SampleDataUtils {
     this.curatorsFacilityRepository = curatorsFacilityRepository;
     this.platformMasterRepository = platformMasterRepository;
     this.curatorsDeviceRepository = curatorsDeviceRepository;
+    this.curatorsCruiseRepository = curatorsCruiseRepository;
+    this.curatorsLegRepository = curatorsLegRepository;
     this.curatorsStorageMethRepository = curatorsStorageMethRepository;
     this.curatorsProvinceRepository = curatorsProvinceRepository;
     this.curatorsLithologyRepository = curatorsLithologyRepository;
@@ -138,6 +148,18 @@ public class SampleDataUtils {
     return curatorsDeviceRepository
         .findByDeviceCode(code)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find device code: " + code).build()));
+  }
+
+  public CuratorsCruiseEntity getCruise(String cruiseName, PlatformMasterEntity platform, CuratorsFacilityEntity facilityName) {
+    return curatorsCruiseRepository
+        .findByCruiseNameAndPlatformAndFacility(cruiseName,platform,facilityName)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise: " + cruiseName).build()));
+  }
+
+  public CuratorsLegEntity getLeg(String legName, CuratorsCruiseEntity cruise) {
+    return curatorsLegRepository
+        .findByLegNameAndCruise(legName,cruise)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find leg: " + legName).build()));
   }
 
   public CuratorsStorageMethEntity getStorageMethod(String code) {

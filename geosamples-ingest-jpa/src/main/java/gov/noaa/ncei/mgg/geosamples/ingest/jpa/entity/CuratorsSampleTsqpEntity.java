@@ -102,11 +102,13 @@ public class CuratorsSampleTsqpEntity {
   @Column(name = "IMLGS", length = 20, nullable = false)
   private String imlgs;
 
-  @Column(name = "CRUISE_ID", nullable = false)
-  private Long cruiseId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CRUISE_ID")
+  private CuratorsCruiseEntity cruise;
 
-  @Column(name = "LEG_ID")
-  private Long legId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "LEG_ID")
+  private CuratorsLegEntity leg;
 
   @Override
   public boolean equals(Object o) {
@@ -349,19 +351,19 @@ public class CuratorsSampleTsqpEntity {
     this.imlgs = imlgs;
   }
 
-  public Long getCruiseId() {
-    return cruiseId;
+  public CuratorsCruiseEntity getCruise() {
+    return cruise;
   }
 
-  public void setCruiseId(Long cruiseId) {
-    this.cruiseId = cruiseId;
+  public void setCruise(CuratorsCruiseEntity cruise) {
+    this.cruise = cruise;
   }
 
-  public Long getLegId() {
-    return legId;
+  public CuratorsLegEntity getLeg() {
+    return leg;
   }
 
-  public void setLegId(Long legId) {
-    this.legId = legId;
+  public void setLeg(CuratorsLegEntity leg) {
+    this.leg = leg;
   }
 }

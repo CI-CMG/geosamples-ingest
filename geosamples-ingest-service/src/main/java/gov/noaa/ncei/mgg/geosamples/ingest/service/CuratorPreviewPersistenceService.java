@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import org.apache.xmlbeans.impl.store.Cur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -69,20 +71,18 @@ public class CuratorPreviewPersistenceService {
   }
 
   private CuratorsSampleTsqpEntity createSample(
-      CuratorsFacilityEntity facility,
-      PlatformMasterEntity platform,
+//      CuratorsFacilityEntity facility,
+//      PlatformMasterEntity platform,
       CuratorsDeviceEntity device,
-      String cruiseId,
+      CuratorsCruiseEntity cruise,
       String sampleId,
       SampleRow row,
       String lastUpdated) {
 
     CuratorsSampleTsqpEntity sample = new CuratorsSampleTsqpEntity();
 
-    sample.setCruise(cruiseId);
+    sample.setCruise(cruise);
     sample.setSample(sampleId);
-    sample.setFacility(facility);
-    sample.setPlatform(platform);
     sample.setDevice(device);
 
 //    sample.setObjectId(getObjectId());
@@ -95,27 +95,15 @@ public class CuratorPreviewPersistenceService {
 
     PositionDim beginningLat = SampleDataUtils.getPositionDim(row.getBeginningLatitude(), true);
     sample.setLat(beginningLat.getValue());
-    sample.setLatDeg(beginningLat.getDegrees());
-    sample.setLatMin(beginningLat.getMinutes());
-    sample.setNs(beginningLat.getDirection());
 
     PositionDim endingLat = SampleDataUtils.getPositionDim(row.getEndingLatitude(), true);
     sample.setEndLat(endingLat.getValue());
-    sample.setEndLatDeg(endingLat.getDegrees());
-    sample.setEndLatMin(endingLat.getMinutes());
-    sample.setEndNs(endingLat.getDirection());
 
     PositionDim beginningLon = SampleDataUtils.getPositionDim(row.getBeginningLongitude(), false);
     sample.setLon(beginningLon.getValue());
-    sample.setLonDeg(beginningLon.getDegrees());
-    sample.setLonMin(beginningLon.getMinutes());
-    sample.setEw(beginningLon.getDirection());
 
     PositionDim endingLon = SampleDataUtils.getPositionDim(row.getEndingLongitude(), false);
     sample.setEndLon(endingLon.getValue());
-    sample.setEndLonDeg(endingLon.getDegrees());
-    sample.setEndLonMin(endingLon.getMinutes());
-    sample.setEndEw(endingLon.getDirection());
 
     sample.setLatLonOrig("D");
 
@@ -126,11 +114,11 @@ public class CuratorPreviewPersistenceService {
 
     CmConverter coredLength = new CmConverter(row.getCoreLength());
     sample.setCoredLength(coredLength.getCm());
-    sample.setCoredLengthMm(coredLength.getMm());
+//    sample.setCoredLengthMm(coredLength.getMm());
 
     CmConverter coredDiam = new CmConverter(row.getCoreDiameter());
     sample.setCoredDiam(coredDiam.getCm());
-    sample.setCoredDiamMm(coredDiam.getMm());
+//    sample.setCoredDiamMm(coredDiam.getMm());
 
     sample.setPi(row.getPrincipalInvestigator());
     sample.setProvince(sampleDataUtils.getProvince(row.getPhysiographicProvinceCode()));
@@ -140,7 +128,7 @@ public class CuratorPreviewPersistenceService {
     // TODO add me ? - DOI per curator - pass in form?
 //      sample.setOtherLink();
     sample.setLastUpdate(lastUpdated);
-    sample.setLeg(row.getAlternateCruise());
+//    sample.setLeg(row.getAlternateCruise());
 
     sample.setPublish("N");
 
@@ -238,22 +226,23 @@ public class CuratorPreviewPersistenceService {
       CuratorsFacilityEntity facility = sampleDataUtils.getFacility(row.getFacilityCode());
       PlatformMasterEntity platform = sampleDataUtils.getPlatform(row.getShipName());
       CuratorsDeviceEntity device = sampleDataUtils.getDevice(row.getSamplingDeviceCode());
-      String cruiseId = row.getCruiseId();
+      CuratorsCruiseEntity cruise = sampleDataUtils.getCruise(row.getCruiseId(), platform, facility);
+//      Long cruiseId = row.getCruiseId();
       String sampleId = row.getSampleId();
 
-      CuratorsSampleTsqpEntity potSample = createSample(facility, platform, device, cruiseId, sampleId, row, lastUpdated);
+      CuratorsSampleTsqpEntity potSample = createSample(device, cruise, sampleId, row, lastUpdated);
 
       Optional<CuratorsSampleTsqpEntity> maybeSample = resolveSample(potSample);
 
       CuratorsSampleTsqpEntity sample;
       if (!maybeSample.isPresent()) {
-        potSample.setObjectId(sampleDataUtils.getObjectId());
-        potSample.setImlgs(sampleDataUtils.getImlgs(potSample.getObjectId()));
+//        potSample.setObjectId(sampleDataUtils.getObjectId());
+        potSample.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
         potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
         sample = curatorsSampleTsqpRepository.saveAndFlush(potSample);
       } else {
         CuratorsSampleTsqpEntity existing = maybeSample.get();
-        potSample.setObjectId(existing.getObjectId());
+//        potSample.setObjectId(existing.getObjectId());
         potSample.setImlgs(existing.getImlgs());
         potSample.setShowSampl(existing.getShowSampl());
         if ("Y".equals(existing.getPublish()) || EntitySignificantFields.equals(existing, potSample)) {

@@ -36,8 +36,9 @@ public class CuratorsSampleLinksEntity {
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
 
-  @Column(name = "IMLGS", length = 15, nullable = false)
-  private String imlgs;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
+  private CuratorsSampleTsqpEntity sample;
 
   @Id
   @Column(name = "ID", nullable = false, precision = 0)
@@ -110,13 +111,12 @@ public class CuratorsSampleLinksEntity {
     this.previousState = previousState;
   }
 
-
-  public String getImlgs() {
-    return imlgs;
+  public CuratorsSampleTsqpEntity getSample() {
+    return sample;
   }
 
-  public void setImlgs(String imlgs) {
-    this.imlgs = imlgs;
+  public void setSample(CuratorsSampleTsqpEntity sample) {
+    this.sample = sample;
   }
 
   public Long getId() {

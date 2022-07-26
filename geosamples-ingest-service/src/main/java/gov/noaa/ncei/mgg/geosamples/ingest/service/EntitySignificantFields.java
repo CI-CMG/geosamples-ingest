@@ -109,7 +109,7 @@ public class EntitySignificantFields {
     fields.add(new SignificantField<>(source::getPublish, source::setPublish, dest::getPublish, dest::setPublish));
     fields.add(new SignificantField<>(source::getPreviousState, source::setPreviousState, dest::getPreviousState, dest::setPreviousState));
     fields.add(new SignificantField<>(source::getIgsn, source::setIgsn, dest::getIgsn, dest::setIgsn));
-    fields.add(new SignificantField<>(source::getImlgs, source::setImlgs, dest::getImlgs, dest::setImlgs));
+//    fields.add(new SignificantField<>(source::getImlgs, source::setImlgs, dest::getImlgs, dest::setImlgs));
     return fields;
   }
 

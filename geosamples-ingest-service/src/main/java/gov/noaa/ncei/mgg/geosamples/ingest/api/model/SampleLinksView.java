@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
     "linkLevel"
 })
 public class SampleLinksView {
+  private Long id;
 
   @Size(max = 500)
   private String dataLink;
@@ -30,6 +32,14 @@ public class SampleLinksView {
   @NotBlank
   @Size(max = 15)
   private String imlgs;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getDataLink() {
     return dataLink;

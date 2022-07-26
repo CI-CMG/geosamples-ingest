@@ -14,6 +14,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsProvinceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRemarkEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockLithEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsRockMinEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsStorageMethEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsTextureEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsWeathMetaEntity;
@@ -139,6 +140,15 @@ public class SampleDataUtils {
     return platformMasterRepository
         .findById(platformName)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
+  }
+
+  public CuratorsSampleTsqpEntity getSample(String imlgs) {
+    if (imlgs == null) {
+      return null;
+    }
+    return curatorsSampleTsqpRepository
+        .findByImlgs(imlgs)
+        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find imlgs: " + imlgs).build()));
   }
 
   public CuratorsDeviceEntity getDevice(String code) {

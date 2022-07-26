@@ -19,9 +19,9 @@ public class CuratorsIntervalEntity {
   @Column(name = "INTERVAL", nullable = false)
   private Integer interval;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "DEVICE", nullable = false)
-  private CuratorsDeviceEntity device;
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "DEVICE", nullable = false)
+//  private CuratorsDeviceEntity device;
 
   @Column(name = "DEPTH_TOP")
   private Integer depthTop;
@@ -180,22 +180,18 @@ public class CuratorsIntervalEntity {
   @Column(name = "IMLGS", length = 15, nullable = false)
   private String imlgs;
 
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
   private CuratorsSampleTsqpEntity parentEntity;
 
 
   public void setParentEntity(CuratorsSampleTsqpEntity parentEntity) {
-//    parentIgsn = parentEntity.getIgsn();
-//    imlgs = parentEntity.getImlgs();
-//    facility = parentEntity.getFacility();
-//    shipCode = parentEntity.getShipCode();
-//    platform = parentEntity.getPlatform();
-//    cruise = parentEntity.getCruise();
-//    sample = parentEntity.getSample();
-    device = parentEntity.getDevice();
     this.parentEntity = parentEntity;
+    if (parentEntity == null){
+      this.imlgs = null;
+    } else {
+      this.imlgs = parentEntity.getImlgs();
+    }
   }
 
   private IntervalPk getPk() {
@@ -228,10 +224,6 @@ public class CuratorsIntervalEntity {
 
   public void setInterval(Integer interval) {
     this.interval = interval;
-  }
-
-  public CuratorsDeviceEntity getDevice() {
-    return device;
   }
 
   public Integer getDepthTop() {
@@ -604,10 +596,6 @@ public class CuratorsIntervalEntity {
 
   public String getImlgs() {
     return imlgs;
-  }
-
-  public void setImlgs(String imlgs) {
-    this.imlgs = imlgs;
   }
 
   public CuratorsSampleTsqpEntity getParentEntity() {

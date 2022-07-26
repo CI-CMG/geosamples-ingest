@@ -42,6 +42,8 @@ import submissionForm from './modules/submissionFormModule';
 import tempSampleInterval from './modules/tempSampleIntervalModule';
 import interval from './modules/intervalModule';
 import intervalSortForm from './modules/intervalSortFormModule';
+import sampleLink from './modules/sampleLinkModule';
+import sampleLinkForm from './modules/sampleLinkFormModule';
 
 Vue.use(Vuex);
 
@@ -89,5 +91,7 @@ export default new Vuex.Store({
     sampleSortForm,
     authority,
     userAuth,
+    sampleLink,
+    sampleLinkForm,
   },
 });

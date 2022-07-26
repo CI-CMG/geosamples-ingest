@@ -56,6 +56,9 @@ import Sample from '@/views/view/main/sample/Sample.vue';
 import UserList from '@/views/view/main/user/list/UserList.vue';
 import UserEdit from '@/views/view/main/user/edit/UserEdit.vue';
 import Callback from '@/views/view/callback/Callback.vue';
+import SampleLink from '@/views/view/main/sample-link/SampleLink.vue';
+import SampleLinkList from '@/views/view/main/sample-link/list/SampleLinkList.vue';
+import SampleLinkEdit from '@/views/view/main/sample-link/edit/SampleLinkEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -506,6 +509,34 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'Weathering' },
+              },
+            ],
+          },
+          {
+            path: 'sample-link',
+            component: SampleLink,
+            name: 'SampleLink',
+            redirect: { name: 'SampleLinkList' },
+            children: [
+              {
+                path: 'list',
+                name: 'SampleLinkList',
+                component: SampleLinkList,
+              },
+              {
+                path: 'add',
+                name: 'SampleLinkAdd',
+                component: SampleLinkEdit,
+              },
+              {
+                path: 'edit/:id',
+                name: 'SampleLinkEdit',
+                component: SampleLinkEdit,
+                props: true,
+              },
+              {
+                path: '*',
+                redirect: { name: 'SampleLink' },
               },
             ],
           },

@@ -3,9 +3,12 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -37,11 +40,13 @@ public class CuratorsCruiseLinksEntity {
   @SequenceGenerator(name = "CURATORS_CRUISE_LINKS_SEQ", sequenceName = "CURATORS_CRUISE_LINKS_SEQ", allocationSize = 1)
   private Long id;
 
-  @Column(name = "CRUISE_ID", nullable = false)
-  private Long cruiseId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CRUISE_ID", nullable = false)
+  private CuratorsCruiseEntity cruise;
 
-  @Column(name = "LEG_ID")
-  private Long legId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "LEG_ID", nullable = false)
+  private CuratorsLegEntity leg;
 
   @Override
   public boolean equals(Object o) {
@@ -116,19 +121,19 @@ public class CuratorsCruiseLinksEntity {
     this.id = id;
   }
 
-  public Long getCruiseId() {
-    return cruiseId;
+  public CuratorsCruiseEntity getCruise() {
+    return cruise;
   }
 
-  public void setCruiseId(Long cruiseId) {
-    this.cruiseId = cruiseId;
+  public void setCruise(CuratorsCruiseEntity cruise) {
+    this.cruise = cruise;
   }
 
-  public Long getLegId() {
-    return legId;
+  public CuratorsLegEntity getLeg() {
+    return leg;
   }
 
-  public void setLegId(Long legId) {
-    this.legId = legId;
+  public void setLeg(CuratorsLegEntity leg) {
+    this.leg = leg;
   }
 }

@@ -196,7 +196,6 @@ public class EntitySignificantFieldsTest {
 
     CuratorsIntervalEntity src = new CuratorsIntervalEntity();
     src.setParentEntity(parent);
-    src.setImlgs(parent.getImlgs());
 
     CuratorsLithologyEntity lith1 = new CuratorsLithologyEntity();
     lith1.setLithology("lith1");
@@ -343,7 +342,7 @@ public class EntitySignificantFieldsTest {
     assertEquals("previousState", dest.getPreviousState());
 
     assertEquals(parent, dest.getParentEntity());
-    assertEquals(device, dest.getDevice());
+    assertEquals(device, dest.getParentEntity().getDevice());
     assertEquals("sample", dest.getParentEntity().getSample());
     assertEquals("cruise", dest.getParentEntity().getCruise().getCruiseName());
     assertEquals(platform, dest.getParentEntity().getCruise().getPlatform());

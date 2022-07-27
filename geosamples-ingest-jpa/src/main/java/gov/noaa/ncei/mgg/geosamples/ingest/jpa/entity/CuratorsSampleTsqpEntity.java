@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -77,8 +78,8 @@ public class CuratorsSampleTsqpEntity {
   @Column(name = "OTHER_LINK", length = 500)
   private String otherLink;
 
-  @Column(name = "LAST_UPDATE", nullable = false, length = 8)
-  private String lastUpdate;
+  @Column(name = "LAST_UPDATE", nullable = false)
+  private Instant lastUpdate;
 
   @Column(name = "IGSN", length = 9, unique = true)
   private String igsn;
@@ -287,11 +288,11 @@ public class CuratorsSampleTsqpEntity {
     this.otherLink = otherLink;
   }
 
-  public String getLastUpdate() {
+  public Instant getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(String lastUpdate) {
+  public void setLastUpdate(Instant lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 

@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -76,8 +77,8 @@ public class CuratorsFacilityEntity {
   @Column(name = "FACILITY_COMMENT", length = 2000)
   private String facilityComment;
 
-  @Column(name = "LAST_UPDATE", nullable = false, length = 2000)
-  private Integer lastUpdate;
+  @Column(name = "LAST_UPDATE", nullable = false)
+  private Instant lastUpdate;
 
   @Column(name = "PUBLISH", length = 1)
   private String publish;
@@ -100,6 +101,7 @@ public class CuratorsFacilityEntity {
       return false;
     }
     CuratorsFacilityEntity that = (CuratorsFacilityEntity) o;
+//    return Objects.equals(facilityCode, that.facilityCode);
     return Objects.equals(facilityCode, that.facilityCode);
   }
 
@@ -204,11 +206,11 @@ public class CuratorsFacilityEntity {
     this.facilityComment = facilityComment;
   }
 
-  public Integer getLastUpdate() {
+  public Instant getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(Integer lastUpdate) {
+  public void setLastUpdate(Instant lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 

@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface CuratorsSampleLinksRepository extends JpaRepository<CuratorsSampleLinksEntity, String>, JpaSpecificationExecutor<CuratorsSampleLinksEntity> {
+public interface CuratorsSampleLinksRepository extends JpaRepository<CuratorsSampleLinksEntity, Long>, JpaSpecificationExecutor<CuratorsSampleLinksEntity> {
 
   Optional<CuratorsSampleLinksEntity> findBySample(CuratorsSampleTsqpEntity sample);
 }

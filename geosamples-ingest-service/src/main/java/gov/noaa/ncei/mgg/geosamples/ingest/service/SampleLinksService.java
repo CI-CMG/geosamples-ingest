@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SampleLinksService extends
-    SearchServiceBase<CuratorsSampleLinksEntity, String, SampleLinksSearchParameters, SampleLinksView, CuratorsSampleLinksRepository> {
+    SearchServiceBase<CuratorsSampleLinksEntity, Long, SampleLinksSearchParameters, SampleLinksView, CuratorsSampleLinksRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping;
 

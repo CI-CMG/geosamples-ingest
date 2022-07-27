@@ -43,8 +43,8 @@ public class CuratorsCruiseLinksEntity implements EntityWithId<Long> {
   private String previousState;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "CRUISE_ID", nullable = false)
-  private CuratorsCruiseEntity cruise;
+  @JoinColumn(name = "CRUISE_PLATFORM_ID", nullable = false)
+  private CuratorsCruisePlatformEntity cruisePlatform;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "LEG_ID", nullable = false)
@@ -117,12 +117,12 @@ public class CuratorsCruiseLinksEntity implements EntityWithId<Long> {
     this.id = id;
   }
 
-  public CuratorsCruiseEntity getCruise() {
-    return cruise;
+  public CuratorsCruisePlatformEntity getCruisePlatform() {
+    return cruisePlatform;
   }
 
-  public void setCruise(CuratorsCruiseEntity cruise) {
-    this.cruise = cruise;
+  public void setCruisePlatform(CuratorsCruisePlatformEntity cruisePlatform) {
+    this.cruisePlatform = cruisePlatform;
   }
 
   public CuratorsLegEntity getLeg() {

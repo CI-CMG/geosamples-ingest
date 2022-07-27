@@ -11,17 +11,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface CuratorsCruiseRepository extends JpaRepository<CuratorsCruiseEntity, String>, JpaSpecificationExecutor<CuratorsCruiseEntity> {
 
-//  @Query("select c from CuratorsCruiseEntity c "
-//      + "join PlatformMasterEntity p "
-//      + "join CuratorsFacilityEntity f "
-//      + "where c.cruiseName = :cruiseName "
-//      + "and p.platform = :platformName "
-//      + "and f.facility = :facilityName " )
-//  Optional<CuratorsCruiseEntity> findByCruisePlatformFacility(
-//      @Param("cruiseName") String cruiseName,
-//      @Param("platformName") String platformName,
-//      @Param("facilityName") String facilityName);
-//
-  Optional<CuratorsCruiseEntity> findByCruiseNameAndPlatformAndFacility(String cruiseName, PlatformMasterEntity platform, CuratorsFacilityEntity facility);
+  @Query("select c from CuratorsCruiseEntity c "
+      + "join CuratorsCruisePlatformEntity cp on cp.cruise = c "
+      + "join CuratorsCruiseFacilityEntity cf on cf.cruise = c "
+      + "where c.cruiseName = :cruiseName "
+      + "and cp.platform = :platform "
+      + "and cf.facility = :facility")
+  Optional<CuratorsCruiseEntity> findByCruiseNameAndPlatformAndFacility(
+      @Param("cruiseName") String cruiseName,
+      @Param("platform") PlatformMasterEntity platform,
+      @Param("facility") CuratorsFacilityEntity facility);
 
 }

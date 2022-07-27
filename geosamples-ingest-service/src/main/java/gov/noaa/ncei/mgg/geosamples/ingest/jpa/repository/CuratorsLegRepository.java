@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface CuratorsLegRepository extends JpaRepository<CuratorsLegEntity, String>, JpaSpecificationExecutor<CuratorsLegEntity> {
+public interface CuratorsLegRepository extends JpaRepository<CuratorsLegEntity, Long>, JpaSpecificationExecutor<CuratorsLegEntity> {
 
   Optional<CuratorsLegEntity> findByLegNameAndCruise(String legName, CuratorsCruiseEntity cruise);
 

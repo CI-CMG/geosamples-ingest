@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class FacilityService extends
-    SearchServiceBase<CuratorsFacilityEntity, String, FacilitySearchParameters, FacilityView, CuratorsFacilityRepository> {
+    SearchServiceBase<CuratorsFacilityEntity, Long, FacilitySearchParameters, FacilityView, CuratorsFacilityRepository> {
 
   private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyyMMdd");
 

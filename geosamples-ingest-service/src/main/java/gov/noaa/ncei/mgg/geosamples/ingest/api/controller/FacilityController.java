@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/facility")
-public class FacilityController extends ControllerBase<FacilityView, FacilitySearchParameters, String, FacilityService> {
+public class FacilityController extends ControllerBase<FacilityView, FacilitySearchParameters, Long, FacilityService> {
 
   @Autowired
   public FacilityController(FacilityService service) {

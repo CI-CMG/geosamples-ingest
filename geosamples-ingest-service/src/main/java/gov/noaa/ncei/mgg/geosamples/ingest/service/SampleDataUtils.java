@@ -129,7 +129,7 @@ public class SampleDataUtils {
       return null;
     }
     return curatorsFacilityRepository
-        .findById(facility)
+        .findByFacilityCode(facility)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find facility: " + facility).build()));
   }
 
@@ -138,7 +138,7 @@ public class SampleDataUtils {
       return null;
     }
     return platformMasterRepository
-        .findById(platformName)
+        .findByPlatform(platformName)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
   }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/sample-link")
-public class SampleLinksController extends ControllerBase<SampleLinksView, SampleLinksSearchParameters, String, SampleLinksService> {
+public class SampleLinksController extends ControllerBase<SampleLinksView, SampleLinksSearchParameters, Long, SampleLinksService> {
 
   @Autowired
   public SampleLinksController(SampleLinksService service) {

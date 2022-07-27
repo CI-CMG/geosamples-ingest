@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class PlatformService extends
-    SearchServiceBase<PlatformMasterEntity, String, PlatformSearchParameters, PlatformView, PlatformMasterRepository> {
+    SearchServiceBase<PlatformMasterEntity, Long, PlatformSearchParameters, PlatformView, PlatformMasterRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(PlatformView.class);
 

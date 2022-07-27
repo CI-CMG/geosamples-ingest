@@ -40,7 +40,7 @@ public @interface ValidFacilityCode {
       if (value == null) {
         return true;
       }
-      return repository.existsById(value);
+      return repository.existsByFacilityCode(value);
     }
   }
 

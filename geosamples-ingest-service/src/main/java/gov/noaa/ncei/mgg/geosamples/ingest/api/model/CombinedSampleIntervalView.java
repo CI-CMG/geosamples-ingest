@@ -1,6 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import java.time.Instant;
 
 @Sortable({
     "publish",
@@ -52,7 +53,7 @@ public class CombinedSampleIntervalView {
   private String province;
   private String sampleLake;
   private String otherLink;
-  private String lastUpdate;
+  private Instant lastUpdate;
   private String igsn;
   private String leg;
   private String sampleComments;
@@ -402,11 +403,11 @@ public class CombinedSampleIntervalView {
     this.otherLink = otherLink;
   }
 
-  public String getLastUpdate() {
+  public Instant getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(String lastUpdate) {
+  public void setLastUpdate(Instant lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 

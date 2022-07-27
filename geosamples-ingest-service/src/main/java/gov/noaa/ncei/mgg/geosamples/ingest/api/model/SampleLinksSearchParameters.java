@@ -25,12 +25,24 @@ public class SampleLinksSearchParameters implements PagingAndSortingParameters {
   @Size(min = 1)
   private List<@ValidSort(SampleLinksView.class) String> order = DEFAULT_SORT;
 
-
+  private List<Long> id = new ArrayList<>(0);
   private List<String> imlgs = new ArrayList<>(0);
   private List<String> dataLink = new ArrayList<>(0);
   private List<String> linkLevel = new ArrayList<>(0);
   private List<String> linkSource = new ArrayList<>(0);
   private List<String> linkType = new ArrayList<>(0);
+
+
+  public List<Long> getId() {
+    return id;
+  }
+
+  public void setId(List<Long> id) {
+    if(id == null) {
+      id = new ArrayList<>(0);
+    }
+    this.id = id;
+  }
 
   public List<String> getImlgs() {
     return imlgs;

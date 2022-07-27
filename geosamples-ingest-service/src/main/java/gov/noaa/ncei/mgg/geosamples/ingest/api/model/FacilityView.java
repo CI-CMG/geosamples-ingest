@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 })
 public class FacilityView {
 
-  @NotBlank
   private Long id;
 
   @NotBlank

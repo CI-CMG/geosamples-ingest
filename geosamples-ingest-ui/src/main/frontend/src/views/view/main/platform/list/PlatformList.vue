@@ -41,7 +41,7 @@
     :sort-by="sortBy"
     :sort-desc="sortDesc">
     <template #cell(platform)="data">
-      <b-link :to="{ name: 'PlatformEdit', params: { id: data.item.platform }}">{{ data.item.platform }}</b-link>
+      <b-link :to="{ name: 'PlatformEdit', params: { id: data.item.id }}">{{ data.item.platform }}</b-link>
     </template>
   </b-table>
   <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>

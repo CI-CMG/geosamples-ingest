@@ -245,7 +245,7 @@ public final class SampleIntervalUtils {
     view.setProvince(sampleEntity.getProvince() == null ? null : sampleEntity.getProvince().getProvinceCode());
     view.setSampleLake(sampleEntity.getLake());
     view.setOtherLink(sampleEntity.getOtherLink());
-    view.setLastUpdate(sampleEntity.getLastUpdate().toString());
+    view.setLastUpdate(sampleEntity.getLastUpdate());
     view.setIgsn(sampleEntity.getIgsn());
     view.setLeg(sampleEntity.getLeg().getLegName());
     view.setSampleComments(sampleEntity.getSampleComments());

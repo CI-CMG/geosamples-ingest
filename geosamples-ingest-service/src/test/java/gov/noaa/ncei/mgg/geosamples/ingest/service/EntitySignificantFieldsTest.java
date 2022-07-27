@@ -139,7 +139,7 @@ public class EntitySignificantFieldsTest {
     assertEquals(province, dest.getProvince());
     assertEquals("lake", dest.getLake());
     assertEquals("otherLink", dest.getOtherLink());
-    assertEquals("lastUpdate", dest.getLastUpdate());
+    assertEquals(now, dest.getLastUpdate());
     assertEquals("igsn", dest.getIgsn());
     assertEquals("leg", dest.getLeg().getLegName());
     assertEquals("sampleComments", dest.getSampleComments());

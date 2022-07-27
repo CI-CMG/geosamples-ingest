@@ -1,6 +1,5 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;

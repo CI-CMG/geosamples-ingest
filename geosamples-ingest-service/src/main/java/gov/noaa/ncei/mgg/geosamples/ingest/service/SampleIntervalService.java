@@ -7,11 +7,9 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SampleIntervalService extends
-    SearchServiceBase<CuratorsIntervalEntity, IntervalPk, CombinedIntervalSampleSearchParameters, CombinedSampleIntervalView, CuratorsIntervalRepository> {
-
+    SearchServiceBase<CuratorsIntervalEntity, Long, CombinedIntervalSampleSearchParameters, CombinedSampleIntervalView, CuratorsIntervalRepository> {
 
 
   private final CuratorsIntervalRepository curatorsIntervalRepository;
@@ -72,10 +69,12 @@ public class SampleIntervalService extends
     List<CombinedSampleIntervalView> items = new ArrayList<>(patch.getItems().size());
 
     for (CombinedSampleIntervalView del : patch.getDelete()) {
-      IntervalPk pk = new IntervalPk();
-      pk.setInterval(del.getInterval());
-      pk.setImlgs(del.getImlgs());
-      curatorsIntervalRepository.findById(pk)
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findById(del.getImlgs())
+          .orElseThrow(() -> new ApiException(
+          HttpStatus.NOT_FOUND,
+          ApiError.builder().error("Sample " + del.getImlgs() + " was not found.")
+              .build()));
+      curatorsIntervalRepository.findBySampleAndInterval(sample, del.getInterval())
           .ifPresent(entity -> {
             curatorsIntervalRepository.delete(entity);
             curatorsIntervalRepository.flush();
@@ -83,24 +82,26 @@ public class SampleIntervalService extends
           });
     }
     for (CombinedSampleIntervalView item : patch.getItems()) {
-      IntervalPk pk = new IntervalPk();
-      pk.setInterval(item.getInterval());
-      pk.setImlgs(item.getImlgs());
-      CuratorsIntervalEntity interval = curatorsIntervalRepository.findById(pk).orElseThrow(() -> new ApiException(
+      CuratorsSampleTsqpEntity s = curatorsSampleTsqpRepository.findById(item.getImlgs())
+          .orElseThrow(() -> new ApiException(
+              HttpStatus.NOT_FOUND,
+              ApiError.builder().error("Sample " + item.getImlgs() + " was not found.")
+                  .build()));
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(s, item.getInterval()).orElseThrow(() -> new ApiException(
           HttpStatus.NOT_FOUND,
           ApiError.builder().error("Sample Interval " + item.getImlgs() + "-" + item.getInterval() + " was not found.")
               .build()));
       //TODO only publish is supported
       if (item.isPublish() != null) {
-        interval.setPublish(item.isPublish() ? "Y" : "N");
+        interval.setPublish(item.isPublish());
         interval = curatorsIntervalRepository.saveAndFlush(interval);
-        CuratorsSampleTsqpEntity sample = interval.getParentEntity();
+        CuratorsSampleTsqpEntity sample = interval.getSample();
         // Since a sample can have multiple intervals, only allow setting the sample publish to Y as setting this to N
         // would effectively make all sibling intervals unpublished
-        if(item.isPublish() && !"Y".equals(sample.getPublish())) {
-            sample.setPublish("Y");
-            sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
-            interval.setParentEntity(sample);
+        if (item.isPublish() && !sample.isPublish()) {
+          sample.setPublish(true);
+          sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
+          interval.setSample(sample);
         }
       }
       items.add(toView(interval));

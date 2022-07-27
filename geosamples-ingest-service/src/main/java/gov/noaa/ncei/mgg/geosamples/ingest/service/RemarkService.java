@@ -58,7 +58,7 @@ public class RemarkService extends
   protected CuratorsRemarkEntity newEntityWithDefaultValues(RemarkView view) {
     CuratorsRemarkEntity entity = new CuratorsRemarkEntity();
     entity.setRemark(view.getRemark());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

@@ -4,11 +4,9 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
-import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
@@ -36,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class IntervalService extends
-    SearchServiceBase<CuratorsIntervalEntity, IntervalPk, IntervalSearchParameters, IntervalView, CuratorsIntervalRepository> {
+    SearchServiceBase<CuratorsIntervalEntity, Long, IntervalSearchParameters, IntervalView, CuratorsIntervalRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(IntervalView.class);
 
@@ -147,9 +145,9 @@ public class IntervalService extends
     setCombinedCmMm(entity::getCmcdTop, entity::getMmcdTop, view::setCdTop);
     setCombinedCmMm(entity::getCmcdBot, entity::getMmcdBot, view::setCdBot);
 
-    view.setPublish("Y".equals(entity.getPublish()));
+    view.setPublish(entity.isPublish());
     view.setIgsn(entity.getIgsn());
-    view.setImlgs(entity.getParentEntity().getImlgs());
+    view.setImlgs(entity.getSample().getImlgs());
 
     return view;
   }
@@ -160,8 +158,8 @@ public class IntervalService extends
         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find sample parent sample").build()));
     CuratorsIntervalEntity entity = new CuratorsIntervalEntity();
     entity.setInterval(view.getInterval());
-    entity.setParentEntity(sample);
-    entity.setPublish("N");
+    entity.setSample(sample);
+    entity.setPublish(false);
     return entity;
   }
 
@@ -184,9 +182,7 @@ public class IntervalService extends
   @Override
   protected void updateEntity(CuratorsIntervalEntity entity, IntervalView view) {
 
-    CuratorsSampleTsqpEntity sample = entity.getParentEntity();
-
-    entity.setParentEntity(sample);
+    CuratorsSampleTsqpEntity sample = entity.getSample();
 
     setCmMm(view::getDepthTop, entity::setDepthTop, entity::setDepthTopMm);
     setCmMm(view::getDepthBot, entity::setDepthBot, entity::setDepthBotMm);
@@ -250,8 +246,8 @@ public class IntervalService extends
     setCmMm(view::getCdBot, entity::setCmcdBot, entity::setMmcdBot);
 
 
-    String publish = view.getPublish() == null || !view.getPublish() ? "N" : "Y";
-    if (view.getPublish() && !publish.equals(sample.getPublish())) {
+    boolean publish = view.getPublish() != null && view.getPublish();
+    if (view.getPublish() && publish != sample.isPublish()) {
       sample.setPublish(publish);
       curatorsSampleTsqpRepository.saveAndFlush(sample);
     }

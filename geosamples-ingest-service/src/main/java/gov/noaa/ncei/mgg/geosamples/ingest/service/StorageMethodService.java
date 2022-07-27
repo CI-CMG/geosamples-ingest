@@ -66,7 +66,7 @@ public class StorageMethodService extends
   protected CuratorsStorageMethEntity newEntityWithDefaultValues(StorageMethodView view) {
     CuratorsStorageMethEntity entity = new CuratorsStorageMethEntity();
     entity.setStorageMeth(view.getStorageMethod());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

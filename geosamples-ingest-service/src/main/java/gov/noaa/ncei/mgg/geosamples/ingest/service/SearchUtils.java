@@ -2,7 +2,13 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.SortDirection;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -96,11 +102,11 @@ public class SearchUtils {
 
   public static Specification<CuratorsSampleTsqpEntity> findExistingSample(CuratorsSampleTsqpEntity sample) {
     return (e, cq, cb) -> cb.and(
-        cb.equal(e.get("cruise"), sample.getCruise().getCruiseName()),
-        cb.equal(e.get("sample"), sample.getSample()),
-        cb.equal(e.get("facility"), sample.getCruise().getFacility().getFacilityCode()),
-        cb.equal(e.get("platform"), sample.getCruise().getPlatform().getPlatform()),
-        cb.equal(e.get("device"), sample.getDevice())
+        cb.equal(e.join(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.CRUISE_NAME), sample.getCruise().getCruiseName()),
+        cb.equal(e.get(CuratorsSampleTsqpEntity_.SAMPLE), sample.getSample()),
+        cb.equal(e.join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY).join(CuratorsCruiseFacilityEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE), sample.getCruiseFacility().getFacility().getFacilityCode()),
+        cb.equal(e.join(CuratorsSampleTsqpEntity_.CRUISE_PLATFORM).join(CuratorsCruisePlatformEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM), sample.getCruisePlatform().getPlatform().getPlatform()),
+        cb.equal(e.get(CuratorsSampleTsqpEntity_.DEVICE), sample.getDevice())
         );
   }
 

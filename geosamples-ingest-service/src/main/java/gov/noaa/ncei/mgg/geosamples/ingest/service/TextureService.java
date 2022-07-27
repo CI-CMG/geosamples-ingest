@@ -57,7 +57,7 @@ public class TextureService extends
   protected CuratorsTextureEntity newEntityWithDefaultValues(TextureView view) {
     CuratorsTextureEntity entity = new CuratorsTextureEntity();
     entity.setTexture(view.getTexture());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

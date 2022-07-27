@@ -73,7 +73,7 @@ public class SampleLinksService extends
   protected CuratorsSampleLinksEntity newEntityWithDefaultValues(SampleLinksView view) {
     CuratorsSampleLinksEntity entity = new CuratorsSampleLinksEntity();
     entity.setId(view.getId());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

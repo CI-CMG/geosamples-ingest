@@ -3,7 +3,6 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.IntervalService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/interval")
 @Validated
-public class IntervalController  {
+public class IntervalController {
 
   private final IntervalService service;
 
@@ -35,12 +34,9 @@ public class IntervalController  {
     return service.search(searchParameters);
   }
 
-  @GetMapping(path = "{imlgs}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView get(@PathVariable("imlgs") String imlgs, @PathVariable("id") int id) {
-    IntervalPk pk = new IntervalPk();
-    pk.setInterval(id);
-    pk.setImlgs(imlgs);
-    return service.get(pk);
+  @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public IntervalView get(@PathVariable("id") long id) {
+    return service.get(id);
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -48,19 +44,13 @@ public class IntervalController  {
     return service.create(view);
   }
 
-  @PutMapping(path = "{imlgs}/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView update(@Valid @RequestBody IntervalView view, @PathVariable("imlgs") String imlgs, @PathVariable("id") int id) {
-    IntervalPk pk = new IntervalPk();
-    pk.setInterval(id);
-    pk.setImlgs(imlgs);
-    return service.update(view, pk);
+  @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public IntervalView update(@Valid @RequestBody IntervalView view, @PathVariable("id") long id) {
+    return service.update(view, id);
   }
 
-  @DeleteMapping(path = "{imlgs}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView delete(@PathVariable("imlgs") String imlgs, @PathVariable("id") int id) {
-    IntervalPk pk = new IntervalPk();
-    pk.setInterval(id);
-    pk.setImlgs(imlgs);
-    return service.delete(pk);
+  @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public IntervalView delete(@PathVariable("id") long id) {
+    return service.delete(id);
   }
 }

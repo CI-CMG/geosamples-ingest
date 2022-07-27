@@ -66,7 +66,7 @@ public class RockLithologyService extends
   protected CuratorsRockLithEntity newEntityWithDefaultValues(RockLithologyView view) {
     CuratorsRockLithEntity entity = new CuratorsRockLithEntity();
     entity.setRockLith(view.getRockLithology());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

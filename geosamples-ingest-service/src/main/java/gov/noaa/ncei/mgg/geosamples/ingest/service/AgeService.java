@@ -57,7 +57,7 @@ public class AgeService extends
   protected CuratorsAgeEntity newEntityWithDefaultValues(AgeView view) {
     CuratorsAgeEntity entity = new CuratorsAgeEntity();
     entity.setAge(view.getAge());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

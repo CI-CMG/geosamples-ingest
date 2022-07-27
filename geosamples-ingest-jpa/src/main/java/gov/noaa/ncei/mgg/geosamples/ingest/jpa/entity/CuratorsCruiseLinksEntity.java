@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +16,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "CURATORS_CRUISE_LINKS")
-public class CuratorsCruiseLinksEntity {
+public class CuratorsCruiseLinksEntity implements EntityWithId<Long> {
+
+  @Id
+  @Column(name = "ID", nullable = false, precision = 0)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_CRUISE_LINKS_SEQ")
+  @SequenceGenerator(name = "CURATORS_CRUISE_LINKS_SEQ", sequenceName = "CURATORS_CRUISE_LINKS_SEQ", allocationSize = 1)
+  private Long id;
 
   @Column(name = "DATALINK", nullable = false, length = 500)
   private String datalink;
@@ -29,16 +37,10 @@ public class CuratorsCruiseLinksEntity {
   private String linkType;
 
   @Column(name = "PUBLISH", nullable = false, length = 1)
-  private String publish;
+  private String publish = "Y";
 
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
-
-  @Id
-  @Column(name = "ID", nullable = false, precision = 0)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_CRUISE_LINKS_SEQ")
-  @SequenceGenerator(name = "CURATORS_CRUISE_LINKS_SEQ", sequenceName = "CURATORS_CRUISE_LINKS_SEQ", allocationSize = 1)
-  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "CRUISE_ID", nullable = false)
@@ -50,19 +52,12 @@ public class CuratorsCruiseLinksEntity {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsCruiseLinksEntity that = (CuratorsCruiseLinksEntity) o;
-    return Objects.equals(id, that.id);
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return 1;
+    return EntityUtil.hashCodeGeneratedId();
   }
 
   public String getDatalink() {
@@ -97,12 +92,12 @@ public class CuratorsCruiseLinksEntity {
     this.linkType = linkType;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {
@@ -113,6 +108,7 @@ public class CuratorsCruiseLinksEntity {
     this.previousState = previousState;
   }
 
+  @Override
   public Long getId() {
     return id;
   }

@@ -67,7 +67,7 @@ public class ProvinceService extends
   protected CuratorsProvinceEntity newEntityWithDefaultValues(ProvinceView view) {
     CuratorsProvinceEntity entity = new CuratorsProvinceEntity();
     entity.setProvince(view.getProvince());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

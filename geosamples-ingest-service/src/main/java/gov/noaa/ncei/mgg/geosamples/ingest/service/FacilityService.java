@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.FacilityView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -79,7 +80,7 @@ public class FacilityService extends
   protected CuratorsFacilityEntity newEntityWithDefaultValues(FacilityView view) {
     CuratorsFacilityEntity entity = new CuratorsFacilityEntity();
     entity.setFacilityCode(view.getFacilityCode());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 
@@ -96,7 +97,7 @@ public class FacilityService extends
     entity.setFtpLink(view.getFtpLink());
     entity.setDoiLink(view.getDoiLink());
     entity.setFacilityComment(view.getFacilityComment());
-    entity.setLastUpdate(Integer.parseInt(LocalDate.now(ZoneId.of("UTC")).format(DTF)));
+    entity.setLastUpdate(Instant.now());
   }
 
 

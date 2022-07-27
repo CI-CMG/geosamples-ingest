@@ -57,7 +57,7 @@ public class DeviceService extends
   protected CuratorsDeviceEntity newEntityWithDefaultValues(DeviceView view) {
     CuratorsDeviceEntity entity = new CuratorsDeviceEntity();
     entity.setDevice(view.getDevice());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

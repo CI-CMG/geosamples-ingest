@@ -65,7 +65,7 @@ public class PlatformService extends
     PlatformMasterEntity entity = new PlatformMasterEntity();
     entity.setPlatform(view.getPlatform());
     entity.setDateAdded(Instant.now());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

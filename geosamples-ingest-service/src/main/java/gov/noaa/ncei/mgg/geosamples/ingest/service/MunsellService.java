@@ -56,7 +56,7 @@ public class MunsellService extends
   protected CuratorsMunsellEntity newEntityWithDefaultValues(MunsellView view) {
     CuratorsMunsellEntity entity = new CuratorsMunsellEntity();
     entity.setMunsellCode(view.getMunsellCode());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

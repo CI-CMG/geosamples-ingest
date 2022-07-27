@@ -10,13 +10,13 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLithologyEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.IntervalPk;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashSet;
@@ -64,10 +64,7 @@ public class CuratorPreviewPersistenceService {
   }
 
   private Optional<CuratorsIntervalEntity> resolveInterval(CuratorsIntervalEntity potInterval) {
-    IntervalPk pk = new IntervalPk();
-    pk.setImlgs(potInterval.getImlgs());
-    pk.setInterval(potInterval.getInterval());
-    return curatorsIntervalRepository.findById(pk);
+    return curatorsIntervalRepository.findBySampleAndInterval(potInterval.getSample(), potInterval.getInterval());
   }
 
   private CuratorsSampleTsqpEntity createSample(
@@ -76,8 +73,7 @@ public class CuratorPreviewPersistenceService {
       CuratorsDeviceEntity device,
       CuratorsCruiseEntity cruise,
       String sampleId,
-      SampleRow row,
-      String lastUpdated) {
+      SampleRow row) {
 
     CuratorsSampleTsqpEntity sample = new CuratorsSampleTsqpEntity();
 
@@ -114,11 +110,11 @@ public class CuratorPreviewPersistenceService {
 
     CmConverter coredLength = new CmConverter(row.getCoreLength());
     sample.setCoredLength(coredLength.getCm());
-//    sample.setCoredLengthMm(coredLength.getMm());
+    sample.setCoredLengthMm(coredLength.getMm());
 
     CmConverter coredDiam = new CmConverter(row.getCoreDiameter());
     sample.setCoredDiam(coredDiam.getCm());
-//    sample.setCoredDiamMm(coredDiam.getMm());
+    sample.setCoredDiamMm(coredDiam.getMm());
 
     sample.setPi(row.getPrincipalInvestigator());
     sample.setProvince(sampleDataUtils.getProvince(row.getPhysiographicProvinceCode()));
@@ -127,10 +123,10 @@ public class CuratorPreviewPersistenceService {
 
     // TODO add me ? - DOI per curator - pass in form?
 //      sample.setOtherLink();
-    sample.setLastUpdate(lastUpdated);
+    sample.setLastUpdate(Instant.now());
 //    sample.setLeg(row.getAlternateCruise());
 
-    sample.setPublish("N");
+    sample.setPublish(false);
 
     sample.setShape(sampleDataUtils.getShape(row.getBeginningLongitude(), row.getBeginningLatitude()));
 
@@ -142,7 +138,7 @@ public class CuratorPreviewPersistenceService {
       CuratorsSampleTsqpEntity sample,
       SampleRow row) {
     CuratorsIntervalEntity interval = new CuratorsIntervalEntity();
-    interval.setParentEntity(sample);
+    interval.setSample(sample);
 
     interval.setInterval(row.getIntervalNumber());
 
@@ -207,7 +203,7 @@ public class CuratorPreviewPersistenceService {
 
     interval.setIntComments(row.getComments());
 
-    interval.setPublish("N");
+    interval.setPublish(false);
     return interval;
   }
 
@@ -215,9 +211,6 @@ public class CuratorPreviewPersistenceService {
 
     List<SampleRow> samples = sampleRowHolder.getRows();
 
-    String lastUpdated = LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF);
-
-    Set<IntervalPk> intervalKeys = new HashSet<>();
     Set<ConstraintViolation<?>> violations = new HashSet<>();
     for (int index = 0; index < samples.size(); index++) {
 
@@ -230,7 +223,7 @@ public class CuratorPreviewPersistenceService {
 //      Long cruiseId = row.getCruiseId();
       String sampleId = row.getSampleId();
 
-      CuratorsSampleTsqpEntity potSample = createSample(device, cruise, sampleId, row, lastUpdated);
+      CuratorsSampleTsqpEntity potSample = createSample(device, cruise, sampleId, row);
 
       Optional<CuratorsSampleTsqpEntity> maybeSample = resolveSample(potSample);
 
@@ -245,21 +238,12 @@ public class CuratorPreviewPersistenceService {
 //        potSample.setObjectId(existing.getObjectId());
         potSample.setImlgs(existing.getImlgs());
         potSample.setShowSampl(existing.getShowSampl());
-        if ("Y".equals(existing.getPublish()) || EntitySignificantFields.equals(existing, potSample)) {
+        if (existing.isPublish() || EntitySignificantFields.equals(existing, potSample)) {
           sample = existing;
         } else {
           EntitySignificantFields.copy(potSample, existing);
           sample = curatorsSampleTsqpRepository.saveAndFlush(existing);
         }
-      }
-
-      PkValidator pkValidator = new PkValidator(index, sample.getImlgs(), row.getIntervalNumber(), intervalKeys);
-
-      Set<ConstraintViolation<PkValidator>> violationSet = validator.validate(pkValidator);
-      violations.addAll(violationSet);
-
-      if (!violations.isEmpty()) {
-        continue;
       }
 
       CuratorsIntervalEntity potInterval = createInterval(sample, row);
@@ -269,7 +253,7 @@ public class CuratorPreviewPersistenceService {
         curatorsIntervalRepository.saveAndFlush(potInterval);
       } else {
         CuratorsIntervalEntity existing = maybeInterval.get();
-        if ("N".equals(existing.getPublish()) && !EntitySignificantFields.equals(existing, potInterval)) {
+        if (!existing.isPublish() && !EntitySignificantFields.equals(existing, potInterval)) {
           EntitySignificantFields.copy(potInterval, existing);
           curatorsIntervalRepository.saveAndFlush(existing);
         }

@@ -1,23 +1,26 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
-import java.util.Objects;
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "CURATORS_CRUISE")
-public class CuratorsCruiseEntity {
+public class CuratorsCruiseEntity implements EntityWithId<Long> {
 
   @Id
-  @Column(name = "ID", nullable = false, precision = 0)
+  @Column(name = "ID", nullable = false)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_CRUISE_SEQ")
   @SequenceGenerator(name = "CURATORS_CRUISE_SEQ", sequenceName = "CURATORS_CRUISE_SEQ", allocationSize = 1)
   private Long id;
@@ -25,34 +28,61 @@ public class CuratorsCruiseEntity {
   @Column(name = "CRUISE_NAME", length = 30)
   private String cruiseName;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PLATFORM_ID", nullable = false)
-  private PlatformMasterEntity platform;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "FACILITY_ID", nullable = false)
-  private CuratorsFacilityEntity facility;
-
   @Column(name = "PUBLISH", nullable = false, length = 1)
-  private String publish;
+  private String publish = "Y";
+
+  @Column(name = "YEAR", nullable = false)
+  private Short year;
+
+  @OneToMany(mappedBy = "cruise", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsCruisePlatformEntity> platformMappings = new ArrayList<>();
+
+  @OneToMany(mappedBy = "cruise", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsCruiseFacilityEntity> facilityMappings = new ArrayList<>();
+
+  public void addPlatformMapping(CuratorsCruisePlatformEntity platformMapping) {
+    EntityUtil.addAndParent(this, platformMappings, platformMapping, this::removePlatformMapping, platformMapping::setCruise);
+  }
+
+  public void removePlatformMapping(CuratorsCruisePlatformEntity platformMapping) {
+    EntityUtil.removeAndOrphan(platformMappings, platformMapping, platformMapping::setCruise);
+  }
+
+  public void clearPlatformMappings() {
+    EntityUtil.clearAndOrphan(platformMappings, CuratorsCruisePlatformEntity::setCruise);
+  }
+
+  public List<CuratorsCruisePlatformEntity> getPlatformMappings() {
+    return Collections.unmodifiableList(platformMappings);
+  }
+
+  public void addFacilityMapping(CuratorsCruiseFacilityEntity facilityMapping) {
+    EntityUtil.addAndParent(this, facilityMappings, facilityMapping, this::removeFacilityMapping, facilityMapping::setCruise);
+  }
+
+  public void removeFacilityMapping(CuratorsCruiseFacilityEntity facilityMapping) {
+    EntityUtil.removeAndOrphan(facilityMappings, facilityMapping, facilityMapping::setCruise);
+  }
+
+  public void clearFacilityMappings() {
+    EntityUtil.clearAndOrphan(facilityMappings, CuratorsCruiseFacilityEntity::setCruise);
+  }
+
+  public List<CuratorsCruiseFacilityEntity> getFacilityMappings() {
+    return Collections.unmodifiableList(facilityMappings);
+  }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsCruiseEntity that = (CuratorsCruiseEntity) o;
-    return Objects.equals(id, that.id);
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return 1;
+    return EntityUtil.hashCodeGeneratedId();
   }
 
+  @Override
   public Long getId() {
     return id;
   }
@@ -69,27 +99,19 @@ public class CuratorsCruiseEntity {
     this.cruiseName = cruiseName;
   }
 
-  public PlatformMasterEntity getPlatform() {
-    return platform;
+  public Short getYear() {
+    return year;
   }
 
-  public void setPlatform(PlatformMasterEntity platform) {
-    this.platform = platform;
+  public void setYear(Short year) {
+    this.year = year;
   }
 
-  public CuratorsFacilityEntity getFacility() {
-    return facility;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setFacility(CuratorsFacilityEntity facility) {
-    this.facility = facility;
-  }
-
-  public String getPublish() {
-    return publish;
-  }
-
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 }

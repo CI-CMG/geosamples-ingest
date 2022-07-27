@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,30 +17,7 @@ import org.locationtech.jts.geom.Geometry;
 
 @Entity
 @Table(name = "CURATORS_SAMPLE_LINKS")
-public class CuratorsSampleLinksEntity {
-
-
-  @Column(name = "DATALINK", length = 500)
-  private String datalink;
-
-  @Column(name = "LINK_LEVEL", length = 30)
-  private String linkLevel;
-
-  @Column(name = "LINK_SOURCE", length = 30)
-  private String linkSource;
-
-  @Column(name = "LINK_TYPE", length = 30)
-  private String linkType;
-
-  @Column(name = "PUBLISH", length = 1)
-  private String publish;
-
-  @Column(name = "PREVIOUS_STATE", length = 1)
-  private String previousState;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
-  private CuratorsSampleTsqpEntity sample;
+public class CuratorsSampleLinksEntity implements EntityWithId<Long> {
 
   @Id
   @Column(name = "ID", nullable = false, precision = 0)
@@ -46,21 +25,36 @@ public class CuratorsSampleLinksEntity {
   @SequenceGenerator(name = "CURATORS_SAMPLE_LINKS_SEQ", sequenceName = "CURATORS_SAMPLE_LINKS_SEQ", allocationSize = 1)
   private Long id;
 
+  @Column(name = "DATALINK", length = 500, nullable = false)
+  private String datalink;
+
+  @Column(name = "LINK_LEVEL", length = 30, nullable = false)
+  private String linkLevel;
+
+  @Column(name = "LINK_SOURCE", length = 30, nullable = false)
+  private String linkSource;
+
+  @Column(name = "LINK_TYPE", length = 30, nullable = false)
+  private String linkType;
+
+  @Column(name = "PUBLISH", length = 1, nullable = false)
+  private String publish = "Y";
+
+  @Column(name = "PREVIOUS_STATE", length = 1)
+  private String previousState;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "IMLGS", nullable = false)
+  private CuratorsSampleTsqpEntity sample;
+
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsSampleLinksEntity that = (CuratorsSampleLinksEntity) o;
-    return Objects.equals(id, that.id);
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return 1;
+    return EntityUtil.hashCodeGeneratedId();
   }
 
   public String getDatalink() {
@@ -95,12 +89,12 @@ public class CuratorsSampleLinksEntity {
     this.linkType = linkType;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {
@@ -119,6 +113,7 @@ public class CuratorsSampleLinksEntity {
     this.sample = sample;
   }
 
+  @Override
   public Long getId() {
     return id;
   }

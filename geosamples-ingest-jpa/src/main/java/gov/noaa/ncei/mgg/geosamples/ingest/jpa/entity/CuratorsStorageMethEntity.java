@@ -29,7 +29,7 @@ public class CuratorsStorageMethEntity {
   private String storageMethCode;
 
   @Column(name = "PUBLISH", length = 1)
-  private String publish;
+  private String publish = "Y";
 
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
@@ -70,12 +70,12 @@ public class CuratorsStorageMethEntity {
     this.storageMethCode = storageMethCode;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {

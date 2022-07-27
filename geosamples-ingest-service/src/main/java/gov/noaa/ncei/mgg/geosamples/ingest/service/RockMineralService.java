@@ -66,7 +66,7 @@ public class RockMineralService extends
   protected CuratorsRockMinEntity newEntityWithDefaultValues(RockMineralView view) {
     CuratorsRockMinEntity entity = new CuratorsRockMinEntity();
     entity.setRockMin(view.getRockMineral());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 

@@ -5,6 +5,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
@@ -109,11 +111,11 @@ public final class SampleIntervalUtils {
       if (publish) {
         specs.add((Specification<CuratorsIntervalEntity>) (e, cq, cb) -> cb.and(
             cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y"),
-            cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y")));
+            cb.equal(e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y")));
       } else {
         specs.add((Specification<CuratorsIntervalEntity>) (e, cq, cb) -> cb.or(
             cb.not(cb.equal(e.get(CuratorsIntervalEntity_.PUBLISH), "Y")),
-            cb.not(cb.equal(e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y"))));
+            cb.not(cb.equal(e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.PUBLISH), "Y"))));
       }
     }
 
@@ -124,32 +126,32 @@ public final class SampleIntervalUtils {
 
     List<String> imlgs = searchParameters.getImlgs();
     if (!imlgs.isEmpty()) {
-      specs.add(SearchUtils.equal(imlgs, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.IMLGS)));
+      specs.add(SearchUtils.equal(imlgs, e -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.IMLGS)));
     }
 
     List<String> igsn = searchParameters.getIgsn();
     if (!igsn.isEmpty()) {
       specs.add((Specification<CuratorsIntervalEntity>) (e1, cq, cb) -> cb.or(
-          SearchUtils.equalOne(e1, cb, igsn, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.IGSN)),
+          SearchUtils.equalOne(e1, cb, igsn, e -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.IGSN)),
           SearchUtils.equalOne(e1, cb, igsn, e -> e.get(CuratorsIntervalEntity_.IGSN))
       ));
     }
 
     List<String> provinceCode = searchParameters.getProvinceCode();
     if (!provinceCode.isEmpty()) {
-      specs.add(SearchUtils.equal(provinceCode, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
+      specs.add(SearchUtils.equal(provinceCode, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
           .join(CuratorsSampleTsqpEntity_.PROVINCE)
           .get(CuratorsProvinceEntity_.PROVINCE_CODE)));
     }
 
     List<String> piContains = searchParameters.getPiContains();
     if (!piContains.isEmpty()) {
-      specs.add(SearchUtils.contains(piContains, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.PI)));
+      specs.add(SearchUtils.contains(piContains, e -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.PI)));
     }
 
     List<String> storageMethodCode = searchParameters.getStorageMethodCode();
     if (!storageMethodCode.isEmpty()) {
-      specs.add(SearchUtils.equal(storageMethodCode, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
+      specs.add(SearchUtils.equal(storageMethodCode, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
           .join(CuratorsSampleTsqpEntity_.STORAGE_METH)
           .get(CuratorsStorageMethEntity_.STORAGE_METH_CODE)));
     }
@@ -157,13 +159,13 @@ public final class SampleIntervalUtils {
     List<String> date = searchParameters.getDate();
     if (!date.isEmpty()) {
 
-      specs.add(SearchUtils.contains(date, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.BEGIN_DATE)));
+      specs.add(SearchUtils.contains(date, e -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.BEGIN_DATE)));
 
     }
 
     List<String> deviceCode = searchParameters.getDeviceCode();
     if (!deviceCode.isEmpty()) {
-      specs.add(SearchUtils.equal(deviceCode, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
+      specs.add(SearchUtils.equal(deviceCode, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
           .join(CuratorsSampleTsqpEntity_.DEVICE)
           .get(CuratorsDeviceEntity_.DEVICE_CODE)));
     }
@@ -173,29 +175,29 @@ public final class SampleIntervalUtils {
 //      specs.add(SearchUtils.contains(platform, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
 //          .join(CuratorsSampleTsqpEntity_.PLATFORM)
 //          .get(PlatformMasterEntity_.PLATFORM)));
-      specs.add(SearchUtils.contains(platform, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
-          .join(CuratorsSampleTsqpEntity_.CRUISE)
-          .join(CuratorsCruiseEntity_.PLATFORM)
+      specs.add(SearchUtils.contains(platform, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
+          .join(CuratorsSampleTsqpEntity_.CRUISE_PLATFORM)
+          .join(CuratorsCruisePlatformEntity_.PLATFORM)
           .get(PlatformMasterEntity_.PLATFORM)));
     }
 
     List<String> facilityCode = searchParameters.getFacilityCode();
     if (!facilityCode.isEmpty()) {
-      specs.add(SearchUtils.equal(facilityCode, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
+      specs.add(SearchUtils.equal(facilityCode, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
 //          .join(CuratorsSampleTsqpEntity_.FACILITY)
-          .join(CuratorsSampleTsqpEntity_.CRUISE)
-          .join(CuratorsCruiseEntity_.FACILITY)
+          .join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
+          .join(CuratorsCruiseFacilityEntity_.FACILITY)
           .get(CuratorsFacilityEntity_.FACILITY_CODE)));
     }
 
     List<String> sampleContains = searchParameters.getSampleContains();
     if (!sampleContains.isEmpty()) {
-      specs.add(SearchUtils.contains(sampleContains, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY).get(CuratorsSampleTsqpEntity_.SAMPLE)));
+      specs.add(SearchUtils.contains(sampleContains, e -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.SAMPLE)));
     }
 
     List<String> cruise = searchParameters.getCruiseContains();
     if (!cruise.isEmpty()) {
-      specs.add(SearchUtils.contains(cruise, e -> e.join(CuratorsIntervalEntity_.PARENT_ENTITY)
+      specs.add(SearchUtils.contains(cruise, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
           .join(CuratorsSampleTsqpEntity_.CRUISE)
           .get(CuratorsCruiseEntity_.CRUISE_NAME)));
     }
@@ -206,11 +208,11 @@ public final class SampleIntervalUtils {
 
   public static CombinedSampleIntervalView toViewBase(CuratorsIntervalEntity entity) {
     CombinedSampleIntervalView view = new CombinedSampleIntervalView();
-    CuratorsSampleTsqpEntity sampleEntity = entity.getParentEntity();
+    CuratorsSampleTsqpEntity sampleEntity = entity.getSample();
     view.setCruise(sampleEntity.getCruise().getCruiseName());
     view.setSample(sampleEntity.getSample());
-    view.setFacility(sampleEntity.getCruise().getFacility().getFacilityCode());
-    view.setPlatform(sampleEntity.getCruise().getPlatform().getPlatform());
+    view.setFacility(sampleEntity.getCruiseFacility().getFacility().getFacilityCode());
+    view.setPlatform(sampleEntity.getCruisePlatform().getPlatform().getPlatform());
     view.setDevice(sampleEntity.getDevice().getDeviceCode());
 //    view.setShipCode(sampleEntity.getShipCode());
     view.setBeginDate(sampleEntity.getBeginDate());
@@ -236,14 +238,14 @@ public final class SampleIntervalUtils {
     view.setEndWaterDepth(sampleEntity.getEndWaterDepth());
     view.setStorageMeth(sampleEntity.getStorageMeth() == null ? null : sampleEntity.getStorageMeth().getStorageMethCode());
     view.setCoredLength(sampleEntity.getCoredLength());
-//    view.setCoredLengthMm(sampleEntity.getCoredLengthMm());
+    view.setCoredLengthMm(sampleEntity.getCoredLengthMm());
     view.setCoredDiam(sampleEntity.getCoredDiam());
-//    view.setCoredDiamMm(sampleEntity.getCoredDiamMm());
+    view.setCoredDiamMm(sampleEntity.getCoredDiamMm());
     view.setPi(sampleEntity.getPi());
     view.setProvince(sampleEntity.getProvince() == null ? null : sampleEntity.getProvince().getProvinceCode());
     view.setSampleLake(sampleEntity.getLake());
     view.setOtherLink(sampleEntity.getOtherLink());
-    view.setLastUpdate(sampleEntity.getLastUpdate());
+    view.setLastUpdate(sampleEntity.getLastUpdate().toString());
     view.setIgsn(sampleEntity.getIgsn());
     view.setLeg(sampleEntity.getLeg().getLegName());
     view.setSampleComments(sampleEntity.getSampleComments());
@@ -298,7 +300,7 @@ public final class SampleIntervalUtils {
     view.setIntervalIgsn(entity.getIgsn());
 //    view.setIntervalParentIsgn(entity.getParentIgsn());
 
-    view.setPublish("Y".equals(sampleEntity.getPublish()) && "Y".equals(entity.getPublish()));
+    view.setPublish(sampleEntity.isPublish() && entity.isPublish());
 
     return view;
   }

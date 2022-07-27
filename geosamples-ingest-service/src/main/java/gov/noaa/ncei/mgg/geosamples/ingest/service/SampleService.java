@@ -8,6 +8,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
@@ -19,6 +21,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -71,9 +74,15 @@ public class SampleService extends
     //TODO only delete is supported
     for (SampleView del : patch.getDelete()) {
       String imlgs = del.getImlgs();
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findById(imlgs)
+          .orElseThrow(() -> new ApiException(
+              HttpStatus.NOT_FOUND,
+              ApiError.builder().error("Sample " + imlgs + " was not found.")
+                  .build()));
+
       curatorsSampleTsqpRepository.findById(imlgs)
           .ifPresent(entity -> {
-            curatorsIntervalRepository.deleteAll(curatorsIntervalRepository.findByImlgs(imlgs));
+            curatorsIntervalRepository.deleteAll(curatorsIntervalRepository.findBySample(sample));
             curatorsIntervalRepository.flush();
             curatorsSampleTsqpRepository.delete(entity);
             curatorsSampleTsqpRepository.flush();
@@ -88,7 +97,7 @@ public class SampleService extends
           ApiError.builder().error("Sample " + item.getImlgs() + "-" + item.getSample() + " was not found.")
               .build()));
       if (item.getPublish() != null) {
-        sample.setPublish(item.getPublish() ? "Y" : "N");
+        sample.setPublish(item.getPublish());
         sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
       }
       items.add(toView(sample));
@@ -116,13 +125,7 @@ public class SampleService extends
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
     }
     if (!cruise.isEmpty()) {
-//      specs.add(SearchUtils.contains(cruiseId, CuratorsSampleTsqpEntity_.CRUISE_ID));
-      specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
-          cb.or(cruise.stream().map(v ->
-                  cb.equal(
-                      e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.ID),
-                      v))
-              .collect(Collectors.toList()).toArray(new Predicate[0])));
+      specs.add(SearchUtils.contains(cruise, e -> e.join(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.CRUISE_NAME)));
     }
     if (!sample.isEmpty()) {
       specs.add(SearchUtils.contains(sample, CuratorsSampleTsqpEntity_.SAMPLE));
@@ -131,12 +134,10 @@ public class SampleService extends
       specs.add(SearchUtils.contains(igsn, CuratorsSampleTsqpEntity_.IGSN));
     }
     if (!facilityCode.isEmpty()) {
-      specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
-          cb.or(facilityCode.stream().map(v ->
-              cb.equal(
-                  e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE),
-                  v))
-              .collect(Collectors.toList()).toArray(new Predicate[0])));
+      specs.add(SearchUtils.equal(cruise, e ->
+          e.join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
+          .join(CuratorsCruiseFacilityEntity_.FACILITY)
+          .get(CuratorsFacilityEntity_.FACILITY_CODE)));
     }
     if (!deviceCode.isEmpty()) {
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
@@ -150,7 +151,7 @@ public class SampleService extends
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
           cb.or(platform.stream().map(v ->
               cb.like(
-                  cb.lower(e.get(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
+                  cb.lower(e.join(CuratorsSampleTsqpEntity_.CRUISE_PLATFORM).join(CuratorsCruisePlatformEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
                   SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
@@ -164,10 +165,9 @@ public class SampleService extends
     view.setImlgs(entity.getImlgs());
     view.setCruise(entity.getCruise()== null ? null : entity.getCruise().getCruiseName());
     view.setSample(entity.getSample());
-    view.setFacilityCode(entity.getCruise().getFacility() == null ? null : entity.getCruise().getFacility().getFacilityCode());
-    view.setPlatform(entity.getCruise().getPlatform() == null ? null : entity.getCruise().getPlatform().getPlatform());
+    view.setFacilityCode(entity.getCruiseFacility().getFacility().getFacilityCode());
+    view.setPlatform(entity.getCruisePlatform().getPlatform().getPlatform());
     view.setDeviceCode(entity.getDevice() == null ? null : entity.getDevice().getDeviceCode());
-//    view.setShipCode(entity.getShipCode());
     view.setBeginDate(entity.getBeginDate());
     view.setEndDate(entity.getEndDate());
     view.setLat(entity.getLat());
@@ -183,18 +183,18 @@ public class SampleService extends
     if(entity.getCoredLength() != null) {
       coredLength = Double.valueOf(entity.getCoredLength());
     }
-//    if(coredLength != null && entity.getCoredLengthMm() != null) {
-//      coredLength = coredLength + entity.getCoredLengthMm() / 10D;
-//    }
+    if(coredLength != null && entity.getCoredLengthMm() != null) {
+      coredLength = coredLength + entity.getCoredLengthMm() / 10D;
+    }
     view.setCoredLength(coredLength);
 
     Double coredDiam = null;
     if(entity.getCoredDiam() != null) {
       coredDiam = Double.valueOf(entity.getCoredDiam());
     }
-//    if(coredDiam != null && entity.getCoredDiamMm() != null) {
-//      coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
-//    }
+    if(coredDiam != null && entity.getCoredDiamMm() != null) {
+      coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
+    }
     view.setCoredDiam(coredDiam);
 
     view.setPi(entity.getPi());
@@ -204,7 +204,7 @@ public class SampleService extends
     view.setIgsn(entity.getIgsn());
     view.setLeg(entity.getLeg().getLegName() == null ? null : entity.getLeg().getLegName());
     view.setSampleComments(entity.getSampleComments());
-    view.setPublish("Y".equals(entity.getPublish()));
+    view.setPublish(entity.isPublish());
     view.setShowSampl(entity.getShowSampl());
     return view;
   }
@@ -215,7 +215,7 @@ public class SampleService extends
 //    entity.setObjectId(sampleDataUtils.getObjectId());
     entity.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
     entity.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + entity.getImlgs());
-    entity.setPublish("Y");
+    entity.setPublish(true);
     return entity;
   }
 
@@ -241,27 +241,15 @@ public class SampleService extends
 
     PositionDim beginningLat = SampleDataUtils.getPositionDim(view.getLat(), true);
     sample.setLat(beginningLat.getValue());
-//    sample.setLatDeg(beginningLat.getDegrees());
-//    sample.setLatMin(beginningLat.getMinutes());
-//    sample.setNs(beginningLat.getDirection());
 
     PositionDim endingLat = SampleDataUtils.getPositionDim(view.getEndLat(), true);
     sample.setEndLon(endingLat.getValue());
-//    sample.setEndLatDeg(endingLat.getDegrees());
-//    sample.setEndLatMin(endingLat.getMinutes());
-//    sample.setEndNs(endingLat.getDirection());
 
     PositionDim beginningLon = SampleDataUtils.getPositionDim(view.getLon(), false);
     sample.setLon(beginningLon.getValue());
-//    sample.setLonDeg(beginningLon.getDegrees());
-//    sample.setLonMin(beginningLon.getMinutes());
-//    sample.setEw(beginningLon.getDirection());
 
     PositionDim endingLon = SampleDataUtils.getPositionDim(view.getEndLon(), false);
     sample.setEndLon(endingLon.getValue());
-//    sample.setEndLonDeg(endingLon.getDegrees());
-//    sample.setEndLonMin(endingLon.getMinutes());
-//    sample.setEndEw(endingLon.getDirection());
 
     sample.setLatLonOrig("D");
 
@@ -272,11 +260,11 @@ public class SampleService extends
 
     CmConverter coredLength = new CmConverter(view.getCoredLength());
     sample.setCoredLength(coredLength.getCm());
-//    sample.setCoredLengthMm(coredLength.getMm());
+    sample.setCoredLengthMm(coredLength.getMm());
 
     CmConverter coredDiam = new CmConverter(view.getCoredDiam());
     sample.setCoredDiam(coredDiam.getCm());
-//    sample.setCoredDiamMm(coredDiam.getMm());
+    sample.setCoredDiamMm(coredDiam.getMm());
 
     sample.setPi(view.getPi());
     sample.setProvince(sampleDataUtils.getProvince(view.getProvinceCode()));
@@ -285,9 +273,9 @@ public class SampleService extends
     sample.setOtherLink(view.getOtherLink());
     sample.setShowSampl(view.getShowSampl());
     sample.setSampleComments(view.getSampleComments());
-    sample.setLastUpdate(LocalDate.now(ZoneId.of("UTC")).format(SampleDataUtils.DTF));
+    sample.setLastUpdate(Instant.now());
     sample.setLeg(leg);
-    sample.setPublish(view.getPublish() != null && view.getPublish() ? "Y" : "N");
+    sample.setPublish(view.getPublish() != null && view.getPublish());
     sample.setShape(sampleDataUtils.getShape(view.getLon(), view.getLat()));
 
   }

@@ -1,27 +1,30 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
-import java.util.Objects;
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "CURATORS_INTERVAL")
-@IdClass(IntervalPk.class)
-public class CuratorsIntervalEntity {
+public class CuratorsIntervalEntity implements EntityWithId<Long> {
 
   @Id
+  @Column(name = "ID", nullable = false)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_INTERVAL_SEQ")
+  @SequenceGenerator(name = "CURATORS_INTERVAL_SEQ", sequenceName = "CURATORS_INTERVAL_SEQ", allocationSize = 1)
+  private Long id;
+
   @Column(name = "INTERVAL", nullable = false)
   private Integer interval;
-
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "DEVICE", nullable = false)
-//  private CuratorsDeviceEntity device;
 
   @Column(name = "DEPTH_TOP")
   private Integer depthTop;
@@ -168,7 +171,7 @@ public class CuratorsIntervalEntity {
   private Integer mmcdBot;
 
   @Column(name = "PUBLISH", length = 1)
-  private String publish;
+  private String publish = "Y";
 
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
@@ -176,46 +179,19 @@ public class CuratorsIntervalEntity {
   @Column(name = "IGSN", length = 9)
   private String igsn;
 
-  @Id
-  @Column(name = "IMLGS", length = 15, nullable = false)
-  private String imlgs;
-
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "IMLGS", nullable = false, insertable = false, updatable = false)
-  private CuratorsSampleTsqpEntity parentEntity;
+  @JoinColumn(name = "IMLGS", nullable = false)
+  private CuratorsSampleTsqpEntity sample;
 
-
-  public void setParentEntity(CuratorsSampleTsqpEntity parentEntity) {
-    this.parentEntity = parentEntity;
-    if (parentEntity == null){
-      this.imlgs = null;
-    } else {
-      this.imlgs = parentEntity.getImlgs();
-    }
-  }
-
-  private IntervalPk getPk() {
-    IntervalPk pk = new IntervalPk();
-    pk.setImlgs(imlgs);
-    pk.setInterval(interval);
-    return pk;
-  }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsIntervalEntity that = (CuratorsIntervalEntity) o;
-    return Objects.equals(getPk(), that.getPk());
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getPk());
+    return EntityUtil.hashCodeGeneratedId();
   }
 
   public Integer getInterval() {
@@ -570,12 +546,12 @@ public class CuratorsIntervalEntity {
     this.mmcdBot = mmcdBot;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {
@@ -594,12 +570,20 @@ public class CuratorsIntervalEntity {
     this.igsn = isgn;
   }
 
-  public String getImlgs() {
-    return imlgs;
+  @Override
+  public Long getId() {
+    return id;
   }
 
-  public CuratorsSampleTsqpEntity getParentEntity() {
-    return parentEntity;
+  public void setId(Long id) {
+    this.id = id;
   }
 
+  public CuratorsSampleTsqpEntity getSample() {
+    return sample;
+  }
+
+  public void setSample(CuratorsSampleTsqpEntity sample) {
+    this.sample = sample;
+  }
 }

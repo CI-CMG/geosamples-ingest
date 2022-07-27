@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -13,7 +15,11 @@ import org.locationtech.jts.geom.Geometry;
 
 @Entity
 @Table(name = "CURATORS_SAMPLE_TSQP")
-public class CuratorsSampleTsqpEntity {
+public class CuratorsSampleTsqpEntity implements EntityWithId<String> {
+
+  @Id
+  @Column(name = "IMLGS", length = 20, nullable = false)
+  private String imlgs;
 
   @Column(name = "SAMPLE", nullable = false, length = 30)
   private String sample;
@@ -56,14 +62,14 @@ public class CuratorsSampleTsqpEntity {
   @Column(name = "CORED_LENGTH")
   private Integer coredLength;
 
-//  @Column(name = "CORED_LENGTH_MM")
-//  private Integer coredLengthMm;
+  @Column(name = "CORED_LENGTH_MM")
+  private Integer coredLengthMm;
 
   @Column(name = "CORED_DIAM")
   private Integer coredDiam;
 
-//  @Column(name = "CORED_DIAM_MM")
-//  private Integer coredDiamMm;
+  @Column(name = "CORED_DIAM_MM")
+  private Integer coredDiamMm;
 
   @Column(name = "PI", length = 255)
   private String pi;
@@ -88,7 +94,7 @@ public class CuratorsSampleTsqpEntity {
   private String sampleComments;
 
   @Column(name = "PUBLISH", nullable = false, length = 1)
-  private String publish;
+  private String publish = "Y";
 
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
@@ -99,13 +105,17 @@ public class CuratorsSampleTsqpEntity {
   @Column(name = "SHOW_SAMPL", length = 254)
   private String showSampl;
 
-  @Id
-  @Column(name = "IMLGS", length = 20, nullable = false)
-  private String imlgs;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CRUISE_ID", nullable = false)
+  private CuratorsCruiseEntity cruise;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "CRUISE_ID")
-  private CuratorsCruiseEntity cruise;
+  @JoinColumn(name = "CRUISE_PLATFORM_ID", nullable = false)
+  private CuratorsCruisePlatformEntity cruisePlatform;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "CRUISE_FACILITY_ID", nullable = false)
+  private CuratorsCruiseFacilityEntity cruiseFacility;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "LEG_ID")
@@ -113,19 +123,17 @@ public class CuratorsSampleTsqpEntity {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsSampleTsqpEntity that = (CuratorsSampleTsqpEntity) o;
-    return Objects.equals(imlgs, that.imlgs);
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return 1;
+    return EntityUtil.hashCodeGeneratedId();
+  }
+
+  @Override
+  public String getId() {
+    return imlgs;
   }
 
   public String getSample() {
@@ -231,14 +239,14 @@ public class CuratorsSampleTsqpEntity {
   public void setCoredLength(Integer coredLength) {
     this.coredLength = coredLength;
   }
-//
-//  public Integer getCoredLengthMm() {
-//    return coredLengthMm;
-//  }
-//
-//  public void setCoredLengthMm(Integer coredLengthMm) {
-//    this.coredLengthMm = coredLengthMm;
-//  }
+
+  public Integer getCoredLengthMm() {
+    return coredLengthMm;
+  }
+
+  public void setCoredLengthMm(Integer coredLengthMm) {
+    this.coredLengthMm = coredLengthMm;
+  }
 
   public Integer getCoredDiam() {
     return coredDiam;
@@ -247,14 +255,14 @@ public class CuratorsSampleTsqpEntity {
   public void setCoredDiam(Integer coredDiam) {
     this.coredDiam = coredDiam;
   }
-//
-//  public Integer getCoredDiamMm() {
-//    return coredDiamMm;
-//  }
-//
-//  public void setCoredDiamMm(Integer coredDiamMm) {
-//    this.coredDiamMm = coredDiamMm;
-//  }
+
+  public Integer getCoredDiamMm() {
+    return coredDiamMm;
+  }
+
+  public void setCoredDiamMm(Integer coredDiamMm) {
+    this.coredDiamMm = coredDiamMm;
+  }
 
   public String getPi() {
     return pi;
@@ -312,12 +320,12 @@ public class CuratorsSampleTsqpEntity {
     this.sampleComments = sampleComments;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {
@@ -366,5 +374,21 @@ public class CuratorsSampleTsqpEntity {
 
   public void setLeg(CuratorsLegEntity leg) {
     this.leg = leg;
+  }
+
+  public CuratorsCruisePlatformEntity getCruisePlatform() {
+    return cruisePlatform;
+  }
+
+  public void setCruisePlatform(CuratorsCruisePlatformEntity cruisePlatform) {
+    this.cruisePlatform = cruisePlatform;
+  }
+
+  public CuratorsCruiseFacilityEntity getCruiseFacility() {
+    return cruiseFacility;
+  }
+
+  public void setCruiseFacility(CuratorsCruiseFacilityEntity cruiseFacility) {
+    this.cruiseFacility = cruiseFacility;
   }
 }

@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
+import edu.colorado.cires.cmg.jpa.model.EntityWithId;
+import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -10,36 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-
-
-
-/*
-	INST_CODE VARCHAR2(3),
-	FACILITY_CODE VARCHAR2(10) not null
-		constraint CURATORS_FACILITY_PK
-			primary key,
-	FACILITY VARCHAR2(50),
-	ADDR_1 VARCHAR2(45),
-	ADDR_2 VARCHAR2(45),
-	ADDR_3 VARCHAR2(45),
-	ADDR_4 VARCHAR2(45),
-	CONTACT_1 VARCHAR2(45),
-	CONTACT_2 VARCHAR2(45),
-	CONTACT_3 VARCHAR2(45),
-	EMAIL_LINK VARCHAR2(45),
-	URL_LINK VARCHAR2(45),
-	FTP_LINK VARCHAR2(45),
-	OTHER_LINK VARCHAR2(45),
-	FACILITY_COMMENT VARCHAR2(2000),
-	LAST_UPDATE NUMBER(8),
-	PUBLISH VARCHAR2(1) default 'Y',
-	PREVIOUS_STATE VARCHAR2(1)
-
-
- */
 @Entity
 @Table(name = "CURATORS_FACILITY")
-public class CuratorsFacilityEntity {
+public class CuratorsFacilityEntity implements EntityWithId<Long> {
+
+  @Id
+  @Column(name = "ID", nullable = false, precision = 0)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_FACILITY_SEQ")
+  @SequenceGenerator(name = "CURATORS_FACILITY_SEQ", sequenceName = "CURATORS_FACILITY_SEQ", allocationSize = 1)
+  private Long id;
 
   @Column(name = "FACILITY_CODE", nullable = false, length = 10)
   private String facilityCode;
@@ -81,33 +62,21 @@ public class CuratorsFacilityEntity {
   private Instant lastUpdate;
 
   @Column(name = "PUBLISH", length = 1)
-  private String publish;
+  private String publish = "Y";
 
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
 
-  @Id
-  @Column(name = "ID", nullable = false, precision = 0)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CURATORS_FACILITY_SEQ")
-  @SequenceGenerator(name = "CURATORS_FACILITY_SEQ", sequenceName = "CURATORS_FACILITY_SEQ", allocationSize = 1)
-  private Long id;
+
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CuratorsFacilityEntity that = (CuratorsFacilityEntity) o;
-//    return Objects.equals(facilityCode, that.facilityCode);
-    return Objects.equals(facilityCode, that.facilityCode);
+    return EntityUtil.equals(this, o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(facilityCode);
+    return EntityUtil.hashCodeGeneratedId();
   }
 
   public String getFacilityCode() {
@@ -214,12 +183,12 @@ public class CuratorsFacilityEntity {
     this.lastUpdate = lastUpdate;
   }
 
-  public String getPublish() {
-    return publish;
+  public boolean isPublish() {
+    return publish.equals("Y");
   }
 
-  public void setPublish(String publish) {
-    this.publish = publish;
+  public void setPublish(boolean publish) {
+    this.publish = publish ? "Y" : "N";
   }
 
   public String getPreviousState() {
@@ -230,6 +199,7 @@ public class CuratorsFacilityEntity {
     this.previousState = previousState;
   }
 
+  @Override
   public Long getId() {
     return id;
   }

@@ -37,11 +37,15 @@ public class FacilityService extends
   protected List<Specification<CuratorsFacilityEntity>> getSpecs(FacilitySearchParameters searchParameters) {
     List<Specification<CuratorsFacilityEntity>> specs = new ArrayList<>();
 
+    List<Long> id = searchParameters.getId();
     List<String> facility = searchParameters.getFacility();
     List<String> facilityCode = searchParameters.getFacilityCode();
     List<String> instCode = searchParameters.getInstCode();
     List<String> facilityComment = searchParameters.getFacilityComment();
 
+    if (!id.isEmpty()){
+      specs.add(SearchUtils.equal(id, CuratorsFacilityEntity_.ID));
+    }
     if (!facility.isEmpty()) {
       specs.add(SearchUtils.contains(facility, CuratorsFacilityEntity_.FACILITY));
     }
@@ -61,6 +65,7 @@ public class FacilityService extends
   @Override
   protected FacilityView toView(CuratorsFacilityEntity entity) {
     FacilityView view = new FacilityView();
+    view.setId(entity.getId());
     view.setFacilityCode(entity.getFacilityCode());
     view.setInstCode(entity.getInstCode());
     view.setFacility(entity.getFacility());
@@ -86,6 +91,7 @@ public class FacilityService extends
 
   @Override
   protected void updateEntity(CuratorsFacilityEntity entity, FacilityView view) {
+    entity.setId(view.getId());
     entity.setInstCode(view.getInstCode());
     entity.setFacility(view.getFacility());
     entity.setAddr1(view.getAddr1());

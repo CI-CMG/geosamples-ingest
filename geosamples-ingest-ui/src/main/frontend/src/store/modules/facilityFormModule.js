@@ -19,6 +19,7 @@ import {
 } from '@/store/form/vuexForm';
 
 const model = {
+  id: 'int',
   facilityCode: 'string',
   instCode: 'string',
   facility: 'string',

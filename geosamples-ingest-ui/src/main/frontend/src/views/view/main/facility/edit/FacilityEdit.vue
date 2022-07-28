@@ -15,7 +15,7 @@
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Facility Code" :label-for="facilityCodeId">
+        <b-form-group label="Facility Code" :label-for="facilityCodeId">
           <b-form-input
             :id="facilityCodeId"
             type="text" @blur="() => setTouched({path: 'facilityCode', touched: true})"

@@ -70,7 +70,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('facility', ['setFacility', 'clearParams', 'setFacilityCode', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
+    ...mapMutations('facility', ['setFacility', 'clearParams', 'setId', 'setFacilityCode', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
     ...mapActions('facility', ['search', 'reset', 'changePage']),
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
@@ -81,6 +81,14 @@ export default {
 
   computed: {
     ...mapState('facility', ['searching', 'page', 'totalItems', 'totalPages', 'items', 'params', 'sortDesc', 'sortBy']),
+    id: {
+      get() {
+        return this.params.id;
+      },
+      set(value) {
+        this.setId(value);
+      },
+    },
     facility: {
       get() {
         return this.params.facility;

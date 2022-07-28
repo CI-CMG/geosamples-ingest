@@ -1,7 +1,7 @@
 import { apiService } from '@/api';
-import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
+  int: '',
   facilityCode: '',
   instCode: '',
   facility: '',
@@ -68,6 +68,9 @@ export default {
       state.page = 1;
       state.totalPages = 1;
       state.totalItems = 0;
+    },
+    setId(state, id) {
+      state.params.id = id;
     },
     setFacility(state, facility) {
       state.params.facility = facility;
@@ -158,7 +161,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/facility/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.get(`/facility/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -172,7 +175,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/facility/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/facility', provider);
+      const req = id ? () => apiService.put(`/facility/${id}`, provider) : () => apiService.post('/facility', provider);
       return req()
         .then(
           (response) => {
@@ -202,7 +205,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/facility/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.delete(`/facility/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

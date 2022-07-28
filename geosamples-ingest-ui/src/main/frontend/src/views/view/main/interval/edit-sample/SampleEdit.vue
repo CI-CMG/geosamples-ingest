@@ -66,17 +66,6 @@
           <b-form-invalid-feedback>{{ getError('deviceCode') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Ship Code" :label-for="shipCodeId">
-          <b-form-input
-            :id="shipCodeId"
-            type="text" @blur="() => setTouched({path: 'shipCode', touched: true})"
-            :value="getValue('shipCode')"
-            @update="(value) => setValue({ path: 'shipCode', value })"
-            :state="showError('shipCode')"
-          />
-          <b-form-invalid-feedback>{{ getError('shipCode') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Begin Date" :label-for="beginDateId">
           <b-form-input
             :id="beginDateId"
@@ -335,7 +324,6 @@ export default {
       facilityCodeId: '',
       platformId: '',
       deviceCodeId: '',
-      shipCodeId: '',
       beginDateId: '',
       endDateId: '',
       latId: '',
@@ -365,7 +353,6 @@ export default {
     this.facilityCodeId = genId();
     this.platformId = genId();
     this.deviceCodeId = genId();
-    this.shipCodeId = genId();
     this.beginDateId = genId();
     this.endDateId = genId();
     this.latId = genId();

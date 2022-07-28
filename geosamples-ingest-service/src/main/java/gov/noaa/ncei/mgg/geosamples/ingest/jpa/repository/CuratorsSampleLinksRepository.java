@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface CuratorsSampleLinksRepository extends JpaRepository<CuratorsSampleLinksEntity, Long>, JpaSpecificationExecutor<CuratorsSampleLinksEntity> {
 
   Optional<CuratorsSampleLinksEntity> findBySample(CuratorsSampleTsqpEntity sample);
+  boolean existsBySample(CuratorsSampleTsqpEntity sample);
 }

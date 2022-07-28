@@ -184,10 +184,6 @@ export default {
           label: 'Sampling Device',
         },
         {
-          key: 'shipCode',
-          label: 'Ship Code',
-        },
-        {
           key: 'beginDate',
           label: 'Begin Date',
         },

@@ -192,10 +192,6 @@ export default {
           label: 'Sampling Device',
         },
         {
-          key: 'shipCode',
-          label: 'Ship Code',
-        },
-        {
           key: 'beginDate',
           label: 'Begin Date',
         },
@@ -208,64 +204,16 @@ export default {
           label: 'Latitude',
         },
         {
-          key: 'latDeg',
-          label: 'Lat. Deg.',
-        },
-        {
-          key: 'latMin',
-          label: 'Lat. Min.',
-        },
-        {
-          key: 'ns',
-          label: 'N/S',
-        },
-        {
           key: 'endLat',
           label: 'End Latitude',
-        },
-        {
-          key: 'endLatDeg',
-          label: 'End Lat. Deg.',
-        },
-        {
-          key: 'endLatMin',
-          label: 'End Lat. Min.',
-        },
-        {
-          key: 'endNs',
-          label: 'End N/S',
         },
         {
           key: 'lon',
           label: 'Longitude',
         },
         {
-          key: 'lonDeg',
-          label: 'Lon. Deg.',
-        },
-        {
-          key: 'lonMin',
-          label: 'Lon. Min.',
-        },
-        {
-          key: 'ew',
-          label: 'E/W',
-        },
-        {
           key: 'endLon',
           label: 'End Longitude',
-        },
-        {
-          key: 'endLonDeg',
-          label: 'End Lon. Deg.',
-        },
-        {
-          key: 'endLonMin',
-          label: 'End Lon. Min.',
-        },
-        {
-          key: 'endEw',
-          label: 'End E/W',
         },
         {
           key: 'latLonOrig',
@@ -326,10 +274,6 @@ export default {
         {
           key: 'sampleComments',
           label: 'Sample Comments',
-        },
-        {
-          key: 'objectId',
-          label: 'Object Id',
         },
         {
           key: 'sampleComments',

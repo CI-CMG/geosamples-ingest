@@ -7,7 +7,6 @@ const fields = [
   'facilityCode',
   'platform',
   'deviceCode',
-  'shipCode',
   'beginDate',
   'endDate',
   'lat',

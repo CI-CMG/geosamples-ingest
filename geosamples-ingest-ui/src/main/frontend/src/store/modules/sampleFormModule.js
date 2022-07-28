@@ -25,7 +25,6 @@ const model = {
   facilityCode: 'string',
   platform: 'string',
   deviceCode: 'string',
-  shipCode: 'string',
   beginDate: 'string',
   endDate: 'string',
   lat: 'float',

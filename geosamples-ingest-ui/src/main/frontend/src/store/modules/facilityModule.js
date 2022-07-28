@@ -1,7 +1,7 @@
 import { apiService } from '@/api';
 
 const defaultParams = {
-  int: '',
+  id: '',
   facilityCode: '',
   instCode: '',
   facility: '',

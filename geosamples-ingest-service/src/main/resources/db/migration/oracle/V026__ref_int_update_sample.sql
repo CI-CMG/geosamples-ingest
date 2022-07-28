@@ -1,3 +1,4 @@
+alter table ${schema_name}.CURATORS_SAMPLE_TSQP MODIFY IGSN varchar(50);
 alter table  ${schema_name}.CURATORS_SAMPLE_TSQP add
     (
     CRUISE_ID number(19) constraint CURATORS_SAMPLE_TSQP_CRUISE_ID_FK references ${schema_name}.CURATORS_CRUISE,

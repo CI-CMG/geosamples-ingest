@@ -1,3 +1,4 @@
+alter table ${schema_name}.CURATORS_INTERVAL modify IGSN varchar(50);
 alter table ${schema_name}.CURATORS_INTERVAL drop constraint CURATORS_INTERVAL_UK;
 alter table ${schema_name}.CURATORS_INTERVAL drop column SHIP_CODE;
 alter table ${schema_name}.CURATORS_INTERVAL drop column FACILITY_CODE;

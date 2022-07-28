@@ -26,21 +26,9 @@ public class CombinedSampleIntervalView {
   private String beginDate;
   private String endDate;
   private Double lat;
-  private Integer latDeg;
-  private String latMin;
-  private String ns;
-  private Double endLat;
-  private Integer endLatDeg;
-  private String endLatMin;
-  private String endNs;
   private Double lon;
-  private Integer lonDeg;
-  private String lonMin;
-  private String ew;
+  private Double endLat;
   private Double endLon;
-  private Integer endLonDeg;
-  private String endLonMin;
-  private String endEw;
   private String latLonOrig;
   private Integer waterDepth;
   private Integer endWaterDepth;
@@ -57,11 +45,6 @@ public class CombinedSampleIntervalView {
   private String igsn;
   private String leg;
   private String sampleComments;
-  private Long objectId;
-
-  // TODO
-//  @Column(name = "SHAPE")
-//  private Geometry shape;
 
   private String showSampl;
 
@@ -187,29 +170,6 @@ public class CombinedSampleIntervalView {
     this.lat = lat;
   }
 
-  public Integer getLatDeg() {
-    return latDeg;
-  }
-
-  public void setLatDeg(Integer latDeg) {
-    this.latDeg = latDeg;
-  }
-
-  public String getLatMin() {
-    return latMin;
-  }
-
-  public void setLatMin(String latMin) {
-    this.latMin = latMin;
-  }
-
-  public String getNs() {
-    return ns;
-  }
-
-  public void setNs(String ns) {
-    this.ns = ns;
-  }
 
   public Double getEndLat() {
     return endLat;
@@ -217,30 +177,6 @@ public class CombinedSampleIntervalView {
 
   public void setEndLat(Double endLat) {
     this.endLat = endLat;
-  }
-
-  public Integer getEndLatDeg() {
-    return endLatDeg;
-  }
-
-  public void setEndLatDeg(Integer endLatDeg) {
-    this.endLatDeg = endLatDeg;
-  }
-
-  public String getEndLatMin() {
-    return endLatMin;
-  }
-
-  public void setEndLatMin(String endLatMin) {
-    this.endLatMin = endLatMin;
-  }
-
-  public String getEndNs() {
-    return endNs;
-  }
-
-  public void setEndNs(String endNs) {
-    this.endNs = endNs;
   }
 
   public Double getLon() {
@@ -251,60 +187,12 @@ public class CombinedSampleIntervalView {
     this.lon = lon;
   }
 
-  public Integer getLonDeg() {
-    return lonDeg;
-  }
-
-  public void setLonDeg(Integer lonDeg) {
-    this.lonDeg = lonDeg;
-  }
-
-  public String getLonMin() {
-    return lonMin;
-  }
-
-  public void setLonMin(String lonMin) {
-    this.lonMin = lonMin;
-  }
-
-  public String getEw() {
-    return ew;
-  }
-
-  public void setEw(String ew) {
-    this.ew = ew;
-  }
-
   public Double getEndLon() {
     return endLon;
   }
 
   public void setEndLon(Double endLon) {
     this.endLon = endLon;
-  }
-
-  public Integer getEndLonDeg() {
-    return endLonDeg;
-  }
-
-  public void setEndLonDeg(Integer endLonDeg) {
-    this.endLonDeg = endLonDeg;
-  }
-
-  public String getEndLonMin() {
-    return endLonMin;
-  }
-
-  public void setEndLonMin(String endLonMin) {
-    this.endLonMin = endLonMin;
-  }
-
-  public String getEndEw() {
-    return endEw;
-  }
-
-  public void setEndEw(String endEw) {
-    this.endEw = endEw;
   }
 
   public String getLatLonOrig() {
@@ -433,15 +321,6 @@ public class CombinedSampleIntervalView {
 
   public void setSampleComments(String sampleComments) {
     this.sampleComments = sampleComments;
-  }
-
-
-  public Long getObjectId() {
-    return objectId;
-  }
-
-  public void setObjectId(Long objectId) {
-    this.objectId = objectId;
   }
 
   public String getShowSampl() {

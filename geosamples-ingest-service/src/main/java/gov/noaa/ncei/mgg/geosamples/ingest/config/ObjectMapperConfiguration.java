@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,8 @@ public class ObjectMapperConfiguration {
     return builder -> builder
         .serializationInclusion(JsonInclude.Include.NON_NULL)
         .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-        .modules(DoubleSerializer.DOUBLE_SERIALIZER_MODULE);
+        .modules(DoubleSerializer.DOUBLE_SERIALIZER_MODULE)
+        .modules(new JavaTimeModule());
   }
 
 }

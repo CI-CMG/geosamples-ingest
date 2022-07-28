@@ -18,6 +18,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidTexture
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidWeatheringCode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -140,6 +141,9 @@ public class SampleRow {
   }
 
   public void setFacilityCode(String facilityCode) {
+    if (facilityCode != null) {
+      facilityCode = facilityCode.trim().toUpperCase(Locale.ENGLISH);
+    }
     this.facilityCode = facilityCode;
   }
 
@@ -148,6 +152,9 @@ public class SampleRow {
   }
 
   public void setShipName(String shipName) {
+    if (shipName != null) {
+      shipName = shipName.trim().toUpperCase(Locale.ENGLISH);
+    }
     this.shipName = shipName;
   }
 
@@ -420,6 +427,9 @@ public class SampleRow {
   }
 
   public void setAlternateCruise(String alternateCruise) {
+    if(alternateCruise != null) {
+      alternateCruise = alternateCruise.trim().toUpperCase(Locale.ENGLISH);
+    }
     this.alternateCruise = alternateCruise;
   }
 

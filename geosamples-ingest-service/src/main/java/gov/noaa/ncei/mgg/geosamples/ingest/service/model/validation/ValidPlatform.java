@@ -42,7 +42,7 @@ public @interface ValidPlatform {
       if (value == null) {
         return true;
       }
-      return repository.existsByPlatform(value);
+      return repository.existsByPlatformNormalized(value);
     }
   }
 

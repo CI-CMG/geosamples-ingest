@@ -56,3 +56,5 @@ where ID in (
 );
 
 update ${schema_name}.CURATORS_CRUISE set CRUISE_NAME = upper(CRUISE_NAME);
+
+update ${schema_name}.CURATORS_LEG set LEG_NAME = upper(LEG_NAME);

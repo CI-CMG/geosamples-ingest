@@ -6,10 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -66,6 +69,8 @@ public class CuratorPreviewPersistenceServiceIT {
   private GeosamplesUserRepository geosamplesUserRepository;
   @Autowired
   private GeosamplesAuthorityRepository geosamplesAuthorityRepository;
+  @Autowired
+  private CuratorsCruiseRepository curatorsCruiseRepository;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -121,6 +126,7 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsIntervalRepository.deleteAll();
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
+      curatorsCruiseRepository.deleteAll();
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
@@ -139,8 +145,32 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsIntervalRepository.deleteAll();
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
+      curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
     });
+  }
+
+  private void createCruise(String cruiseName, Integer year, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(createJwt("martin"));
+
+    CruiseView cruiseView = new CruiseView();
+    cruiseView.setCruiseName(cruiseName);
+    cruiseView.setYear(year);
+    cruiseView.setPublish(true);
+    cruiseView.setFacilityCodes(facilityCodes);
+    cruiseView.setPlatforms(platforms);
+    cruiseView.setLegs(legs);
+
+
+    HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(cruiseView), headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/cruise", HttpMethod.POST, entity, String.class);
+
+    assertEquals(200, response.getStatusCode().value());
   }
 
   private void uploadFile(String file) throws Exception {
@@ -194,6 +224,12 @@ public class CuratorPreviewPersistenceServiceIT {
   @Test
   public void testSaveHappyPath() throws Exception {
 
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
     uploadFile("imlgs_sample_good_full.xlsm");
     List<CombinedSampleIntervalView> sampleIntervals = getAll();
 
@@ -211,21 +247,9 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("20210729", view.getBeginDate());
     assertEquals("20210730", view.getEndDate());
     assertEquals(39.68416154, view.getLat(), 0.0001);
-    assertEquals(39, view.getLatDeg());
-    assertEquals("41.05", view.getLatMin());
-    assertEquals("N", view.getNs());
     assertEquals(40.684161537, view.getEndLat(), 0.0001);
-    assertEquals(40, view.getEndLatDeg());
-    assertEquals("41.05", view.getEndLatMin());
-    assertEquals("N", view.getEndNs());
     assertEquals(26.97946201, view.getLon(), 0.0001);
-    assertEquals(26, view.getLonDeg());
-    assertEquals("58.77", view.getLonMin());
-    assertEquals("E", view.getEw());
     assertEquals(27.979462008, view.getEndLon(), 0.0001);
-    assertEquals(27, view.getEndLonDeg());
-    assertEquals("58.77", view.getEndLonMin());
-    assertEquals("E", view.getEndEw());
     assertEquals("D", view.getLatLonOrig());
     assertEquals(14, view.getWaterDepth());
     assertEquals(15, view.getEndWaterDepth());
@@ -242,7 +266,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getIgsn());
     assertEquals(null, view.getLeg());
     assertEquals(null, view.getSampleComments());
-    assertNotNull(view.getObjectId());
     assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());
@@ -305,21 +328,9 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("20210727", view.getBeginDate());
     assertEquals("20210827", view.getEndDate());
     assertEquals(38.68416154, view.getLat(), 0.0001);
-    assertEquals(38, view.getLatDeg());
-    assertEquals("41.05", view.getLatMin());
-    assertEquals("N", view.getNs());
     assertEquals(39.684161537, view.getEndLat(), 0.0001);
-    assertEquals(39, view.getEndLatDeg());
-    assertEquals("41.05", view.getEndLatMin());
-    assertEquals("N", view.getEndNs());
     assertEquals(25.97946201, view.getLon(), 0.0001);
-    assertEquals(25, view.getLonDeg());
-    assertEquals("58.77", view.getLonMin());
-    assertEquals("E", view.getEw());
     assertEquals(26.979462008, view.getEndLon(), 0.0001);
-    assertEquals(26, view.getEndLonDeg());
-    assertEquals("58.77", view.getEndLonMin());
-    assertEquals("E", view.getEndEw());
     assertEquals("D", view.getLatLonOrig());
     assertEquals(14, view.getWaterDepth());
     assertEquals(15, view.getEndWaterDepth());
@@ -336,7 +347,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("aasw32111", view.getIgsn());
     assertEquals("AQ-LEFT-LEG", view.getLeg());
     assertEquals(null, view.getSampleComments());
-    assertNotNull(view.getObjectId());
     assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());
@@ -391,6 +401,11 @@ public class CuratorPreviewPersistenceServiceIT {
 
   @Test
   public void testSaveAlternateDateFormat() throws Exception {
+
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
 
     uploadFile("imlgs_sample_good_full_yyyy.xlsm");
     List<CombinedSampleIntervalView> sampleIntervals = getAll();

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface PlatformMasterRepository extends JpaRepository<PlatformMasterEntity, Long>, JpaSpecificationExecutor<PlatformMasterEntity> {
 
-  boolean existsByPlatform(String platform);
-
-  Optional<PlatformMasterEntity> findByPlatform(String platform);
+  boolean existsByPlatformNormalized(String platform);
+  Optional<PlatformMasterEntity> findByPlatformNormalized(String platform);
 }

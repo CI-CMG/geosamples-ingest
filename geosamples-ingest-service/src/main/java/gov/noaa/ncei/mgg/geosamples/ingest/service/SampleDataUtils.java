@@ -40,6 +40,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import javax.sql.DataSource;
 import org.hibernate.dialect.Dialect;
@@ -138,7 +139,7 @@ public class SampleDataUtils {
       return null;
     }
     return platformMasterRepository
-        .findByPlatform(platformName)
+        .findByPlatformNormalized(platformName)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
   }
 
@@ -161,9 +162,15 @@ public class SampleDataUtils {
   }
 
   public CuratorsCruiseEntity getCruise(String cruiseName, PlatformMasterEntity platform, CuratorsFacilityEntity facilityName) {
-    return curatorsCruiseRepository
-        .findByCruiseNameAndPlatformAndFacility(cruiseName,platform,facilityName)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise: " + cruiseName).build()));
+    //TODO update template to accept optional year
+    List<CuratorsCruiseEntity> cruises = curatorsCruiseRepository.findByCruiseNameAndPlatformAndFacility(cruiseName,platform,facilityName);
+    if(cruises.isEmpty()) {
+      throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise: " + cruiseName).build());
+    }
+    if (cruises.size() > 1) {
+      throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Multiple cruises found with name: " + cruiseName).build());
+    }
+    return cruises.get(0);
   }
 
   public CuratorsLegEntity getLeg(String legName, CuratorsCruiseEntity cruise) {

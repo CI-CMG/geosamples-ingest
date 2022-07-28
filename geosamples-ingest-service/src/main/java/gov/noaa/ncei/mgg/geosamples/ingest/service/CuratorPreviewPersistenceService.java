@@ -4,6 +4,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
@@ -12,13 +14,12 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsMunsellEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLegRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import org.apache.xmlbeans.impl.store.Cur;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,19 +41,18 @@ public class CuratorPreviewPersistenceService {
   private final CuratorsIntervalRepository curatorsIntervalRepository;
   private final ServiceProperties serviceProperties;
   private final SampleDataUtils sampleDataUtils;
-  private final Validator validator;
 
 
   @Autowired
   public CuratorPreviewPersistenceService(
       CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
       CuratorsIntervalRepository curatorsIntervalRepository, ServiceProperties serviceProperties,
-      SampleDataUtils sampleDataUtils, Validator validator) {
+      SampleDataUtils sampleDataUtils,
+      CuratorsLegRepository curatorsLegRepository) {
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.serviceProperties = serviceProperties;
     this.sampleDataUtils = sampleDataUtils;
-    this.validator = validator;
   }
 
 
@@ -68,8 +68,8 @@ public class CuratorPreviewPersistenceService {
   }
 
   private CuratorsSampleTsqpEntity createSample(
-//      CuratorsFacilityEntity facility,
-//      PlatformMasterEntity platform,
+      CuratorsCruiseFacilityEntity facility,
+      CuratorsCruisePlatformEntity platform,
       CuratorsDeviceEntity device,
       CuratorsCruiseEntity cruise,
       String sampleId,
@@ -80,6 +80,9 @@ public class CuratorPreviewPersistenceService {
     sample.setCruise(cruise);
     sample.setSample(sampleId);
     sample.setDevice(device);
+
+    sample.setCruisePlatform(platform);
+    sample.setCruiseFacility(facility);
 
 //    sample.setObjectId(getObjectId());
 //    sample.setImlgs(getImlgs(sample.getObjectId()));
@@ -124,7 +127,10 @@ public class CuratorPreviewPersistenceService {
     // TODO add me ? - DOI per curator - pass in form?
 //      sample.setOtherLink();
     sample.setLastUpdate(Instant.now());
-//    sample.setLeg(row.getAlternateCruise());
+    if(StringUtils.isNotBlank(row.getAlternateCruise())){
+      sample.setLeg(cruise.getLegs().stream().filter(l -> l.getLegName().equals(row.getAlternateCruise())).findFirst()
+          .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("leg not found: " + row.getAlternateCruise()).build())));
+    }
 
     sample.setPublish(false);
 
@@ -223,7 +229,13 @@ public class CuratorPreviewPersistenceService {
 //      Long cruiseId = row.getCruiseId();
       String sampleId = row.getSampleId();
 
-      CuratorsSampleTsqpEntity potSample = createSample(device, cruise, sampleId, row);
+      CuratorsSampleTsqpEntity potSample = createSample(
+          cruise.getFacilityMappings().stream().filter(e -> e.getFacility().getFacilityCode().equals(row.getFacilityCode())).findFirst().orElse(null),
+          cruise.getPlatformMappings().stream().filter(e -> e.getPlatform().getPlatformNormalized().equals(row.getShipName())).findFirst().orElse(null),
+          device,
+          cruise,
+          sampleId,
+          row);
 
       Optional<CuratorsSampleTsqpEntity> maybeSample = resolveSample(potSample);
 
@@ -231,7 +243,7 @@ public class CuratorPreviewPersistenceService {
       if (!maybeSample.isPresent()) {
 //        potSample.setObjectId(sampleDataUtils.getObjectId());
         potSample.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
-        potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + potSample.getImlgs());
+        potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + potSample.getImlgs());
         sample = curatorsSampleTsqpRepository.saveAndFlush(potSample);
       } else {
         CuratorsSampleTsqpEntity existing = maybeSample.get();

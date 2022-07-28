@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import java.util.Locale;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -65,6 +66,9 @@ public class FacilityView {
   }
 
   public void setFacilityCode(String facilityCode) {
+    if(facilityCode != null) {
+      facilityCode = facilityCode.trim().toUpperCase(Locale.ENGLISH);
+    }
     this.facilityCode = facilityCode;
   }
 

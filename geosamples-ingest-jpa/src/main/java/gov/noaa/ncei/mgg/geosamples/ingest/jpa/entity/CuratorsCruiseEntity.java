@@ -40,6 +40,9 @@ public class CuratorsCruiseEntity implements EntityWithId<Long> {
   @OneToMany(mappedBy = "cruise", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CuratorsCruiseFacilityEntity> facilityMappings = new ArrayList<>();
 
+  @OneToMany(mappedBy = "cruise", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsLegEntity> legs = new ArrayList<>();
+
   public void addPlatformMapping(CuratorsCruisePlatformEntity platformMapping) {
     EntityUtil.addAndParent(this, platformMappings, platformMapping, this::removePlatformMapping, platformMapping::setCruise);
   }
@@ -70,6 +73,22 @@ public class CuratorsCruiseEntity implements EntityWithId<Long> {
 
   public List<CuratorsCruiseFacilityEntity> getFacilityMappings() {
     return Collections.unmodifiableList(facilityMappings);
+  }
+
+  public void addLeg(CuratorsLegEntity leg) {
+    EntityUtil.addAndParent(this, legs, leg, this::removeLeg, leg::setCruise);
+  }
+
+  public void removeLeg(CuratorsLegEntity leg) {
+    EntityUtil.removeAndOrphan(legs, leg, leg::setCruise);
+  }
+
+  public void clearLegs() {
+    EntityUtil.clearAndOrphan(legs, CuratorsLegEntity::setCruise);
+  }
+
+  public List<CuratorsLegEntity> getLegs() {
+    return Collections.unmodifiableList(legs);
   }
 
   @Override

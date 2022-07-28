@@ -38,15 +38,15 @@ public final class SampleIntervalUtils {
   static {
     Map<String, String> map = new HashMap<>();
     map.put("publish", "publish");
-    map.put("imlgs", "parentEntity.imlgs");
+    map.put("imlgs", "sample.imlgs");
     map.put("interval", "interval");
-    map.put("igsn", "parentEntity.igsn");
+    map.put("igsn", "sample.igsn");
     map.put("intervalIgsn", "igsn");
-    map.put("cruiseId", "cruiseId");
-    map.put("sample", "parentEntity.sample");
-    map.put("facility", "parentEntity.facility");
-    map.put("platform", "parentEntity.platform");
-    map.put("beginDate", "parentEntity.beginDate");
+    map.put("cruise", "sample.cruise.cruiseName");
+    map.put("sample", "sample.sample");
+    map.put("facility", "sample.cruiseFacility.facility.facilityCode");
+    map.put("platform", "sample.cruisePlatform.platform.platformNormalized");
+    map.put("beginDate", "sample.beginDate");
     SORT_MAPPING = Collections.unmodifiableMap(map);
   }
 
@@ -214,25 +214,12 @@ public final class SampleIntervalUtils {
     view.setFacility(sampleEntity.getCruiseFacility().getFacility().getFacilityCode());
     view.setPlatform(sampleEntity.getCruisePlatform().getPlatform().getPlatform());
     view.setDevice(sampleEntity.getDevice().getDeviceCode());
-//    view.setShipCode(sampleEntity.getShipCode());
     view.setBeginDate(sampleEntity.getBeginDate());
     view.setEndDate(sampleEntity.getEndDate());
     view.setLat(sampleEntity.getLat());
-//    view.setLatDeg(sampleEntity.getLatDeg());
-//    view.setLatMin(sampleEntity.getLatMin());
-//    view.setNs(sampleEntity.getNs());
     view.setEndLat(sampleEntity.getEndLat());
-//    view.setEndLatDeg(sampleEntity.getEndLatDeg());
-//    view.setEndLatMin(sampleEntity.getEndLatMin());
-//    view.setEndNs(sampleEntity.getEndNs());
     view.setLon(sampleEntity.getLon());
-//    view.setLonDeg(sampleEntity.getLonDeg());
-//    view.setLonMin(sampleEntity.getLonMin());
-//    view.setEw(sampleEntity.getEw());
     view.setEndLon(sampleEntity.getEndLon());
-//    view.setEndLonDeg(sampleEntity.getEndLonDeg());
-//    view.setEndLonMin(sampleEntity.getEndLonMin());
-//    view.setEndEw(sampleEntity.getEndEw());
     view.setLatLonOrig(sampleEntity.getLatLonOrig());
     view.setWaterDepth(sampleEntity.getWaterDepth());
     view.setEndWaterDepth(sampleEntity.getEndWaterDepth());
@@ -247,9 +234,8 @@ public final class SampleIntervalUtils {
     view.setOtherLink(sampleEntity.getOtherLink());
     view.setLastUpdate(sampleEntity.getLastUpdate());
     view.setIgsn(sampleEntity.getIgsn());
-    view.setLeg(sampleEntity.getLeg().getLegName());
+    view.setLeg(sampleEntity.getLeg() == null ? null : sampleEntity.getLeg().getLegName());
     view.setSampleComments(sampleEntity.getSampleComments());
-//    view.setObjectId(sampleEntity.getObjectId());
     view.setShowSampl(sampleEntity.getShowSampl());
     view.setImlgs(sampleEntity.getImlgs());
 
@@ -298,7 +284,7 @@ public final class SampleIntervalUtils {
     view.setCmcdBot(entity.getCmcdBot());
     view.setMmcdBot(entity.getMmcdBot());
     view.setIntervalIgsn(entity.getIgsn());
-//    view.setIntervalParentIsgn(entity.getParentIgsn());
+    view.setIntervalParentIsgn(sampleEntity.getIgsn());
 
     view.setPublish(sampleEntity.isPublish() && entity.isPublish());
 

@@ -1,8 +1,13 @@
 import { apiService } from '@/api';
-import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
+  id: '',
   imlgs: '',
+  dataLink: '',
+  linkLevel: '',
+  linkSource: '',
+  linkType: '',
+  publish: '',
 };
 
 export default {
@@ -67,8 +72,26 @@ export default {
       state.totalPages = 1;
       state.totalItems = 0;
     },
-    setSampleLink(state, sampleLink) {
-      state.params.sampleLink = sampleLink;
+    setId(state, id) {
+      state.params.id = id;
+    },
+    setImlgs(state, imlgs) {
+      state.params.imlgs = imlgs;
+    },
+    setPublish(state, value) {
+      state.params.publish = value;
+    },
+    setDataLink(state, dataLink) {
+      state.params.dataLink = dataLink;
+    },
+    setLinkLevel(state, linkLevel) {
+      state.params.linkLevel = linkLevel;
+    },
+    setLinkSource(state, linkSource) {
+      state.params.linkSource = linkSource;
+    },
+    setLinkType(state, linkType) {
+      state.params.linkType = linkType;
     },
     setPage(state, page) {
       state.page = page;
@@ -150,7 +173,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/rock-mineral/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.get(`/sample-link/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -164,7 +187,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/rock-mineral/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/rock-mineral', provider);
+      const req = id ? () => apiService.put(`/sample-link/${id}`, provider) : () => apiService.post('/sample-link', provider);
       return req()
         .then(
           (response) => {
@@ -182,8 +205,8 @@ export default {
                   const paths = Object.keys(formErrors);
                   paths.forEach((path) => {
                     const message = formErrors[path].join(', ');
-                    commit('rockMineralForm/setTouched', { path, touched: false }, { root: true });
-                    commit('rockMineralForm/setError', { path, error: message }, { root: true });
+                    commit('sampleLinkForm/setTouched', { path, touched: false }, { root: true });
+                    commit('sampleLinkForm/setError', { path, error: message }, { root: true });
                   });
                 }
               }
@@ -194,7 +217,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/rock-mineral/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.delete(`/sample-link/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

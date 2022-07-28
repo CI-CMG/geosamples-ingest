@@ -5,7 +5,7 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Sample Link - {{ getValue('sampleLink') }}</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Sample Link - {{ getValue('imlgs') }}</h1>
       <h1 v-else class="text-primary">Add New Sample Link</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
@@ -69,7 +69,15 @@
           />
           <b-form-invalid-feedback>{{ getError('linkType') }}</b-form-invalid-feedback>
         </b-form-group>
-
+        <b-form-group label="Publish" :label-for="publishId">
+          <b-form-checkbox
+            :id="publishId"
+            :checked="getValue('publish')"
+            @change="(value) => setValue({ path: 'publish', value })"
+            :state="showError('publish')"
+          />
+          <b-form-invalid-feedback>{{ getError('publish') }}</b-form-invalid-feedback>
+        </b-form-group>
         <div>
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">Save</b-button>
           <b-button v-if="formDirty" type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Reset</b-button>
@@ -98,6 +106,7 @@ export default {
       linkLevelId: '',
       linkSourceId: '',
       linkTypeId: '',
+      publishId: '',
     };
   },
   beforeMount() {
@@ -106,6 +115,7 @@ export default {
     this.linkLevelId = genId();
     this.linkSourceId = genId();
     this.linkTypeId = genId();
+    this.publishId = genId();
   },
   methods: {
     ...mapMutations('sampleLinkForm',
@@ -136,8 +146,8 @@ export default {
   },
 
   computed: {
-    ...mapState('rockMineral', ['deleting', 'loading', 'saving']),
-    ...mapGetters('rockMineralForm',
+    ...mapState('sampleLink', ['deleting', 'loading', 'saving']),
+    ...mapGetters('sampleLinkForm',
       [
         'getValue',
         'formDirty',

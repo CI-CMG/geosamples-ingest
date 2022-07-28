@@ -2,7 +2,9 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleLinksSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleLinksView;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleLinksEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleLinksEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
@@ -14,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.Column;
 import javax.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,13 +31,13 @@ public class SampleLinksService extends
 
   static {
     Map<String, String> map = new HashMap<>();
-    map.put("imlgs", "imlgs");
+    map.put("imlgs", "sample.imlgs");
+    map.put("linkType", "linkType");
+    map.put("linkLevel", "linkLevel");
     viewToEntitySortMapping = Collections.unmodifiableMap(map);
   }
-
   private final CuratorsSampleLinksRepository curatorsSampleLinksRepository;
   private final SampleDataUtils sampleDataUtils;
-
   @Autowired
   public SampleLinksService(CuratorsSampleLinksRepository curatorsSampleLinksRepository,
       SampleDataUtils sampleDataUtils) {
@@ -48,44 +49,70 @@ public class SampleLinksService extends
   protected List<Specification<CuratorsSampleLinksEntity>> getSpecs(SampleLinksSearchParameters searchParameters) {
     List<Specification<CuratorsSampleLinksEntity>> specs = new ArrayList<>();
 
+    List<Long> id = searchParameters.getId();
+    List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
     List<String> imlgs = searchParameters.getImlgs();
+    List<String> dataLink = searchParameters.getDataLink();
+    List<String> linkLevel = searchParameters.getLinkLevel();
+    List<String> linkSource = searchParameters.getLinkSource();
+    List<String> linkType = searchParameters.getLinkType();
 
-    if (!imlgs.isEmpty()) {
-      specs.add((Specification<CuratorsSampleLinksEntity>) (e, cq, cb) ->
-          cb.or(imlgs.stream().map(v ->
-                  cb.equal(
-                      e.get(CuratorsSampleLinksEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.IMLGS),
-                      v))
-              .collect(Collectors.toList()).toArray(new Predicate[0])));
+    if (!id.isEmpty()){
+      specs.add(SearchUtils.equal(id, CuratorsSampleLinksEntity_.ID));
     }
-
+    if (!publish.isEmpty()) {
+      specs.add(SearchUtils.equal(publish, CuratorsSampleLinksEntity_.PUBLISH));
+    }
+    if (!imlgs.isEmpty()) {
+      specs.add(SearchUtils.equal(imlgs, (e) -> e.join(CuratorsSampleLinksEntity_.SAMPLE)
+          .get(CuratorsSampleTsqpEntity_.IMLGS)));
+    }
+    if (!dataLink.isEmpty()){
+      specs.add(SearchUtils.equal(dataLink, CuratorsSampleLinksEntity_.DATALINK));
+    }
+    if (!linkLevel.isEmpty()){
+      specs.add(SearchUtils.equal(linkLevel, CuratorsSampleLinksEntity_.LINK_LEVEL));
+    }
+    if (!linkSource.isEmpty()){
+      specs.add(SearchUtils.equal(linkSource, CuratorsSampleLinksEntity_.LINK_SOURCE));
+    }
+    if (!linkType.isEmpty()){
+      specs.add(SearchUtils.equal(linkType, CuratorsSampleLinksEntity_.LINK_TYPE));
+    }
     return specs;
   }
 
   @Override
   protected SampleLinksView toView(CuratorsSampleLinksEntity entity) {
     SampleLinksView view = new SampleLinksView();
+    view.setId(entity.getId());
     view.setImlgs(entity.getSample()== null ? null : entity.getSample().getImlgs());
+    view.setDataLink(entity.getDatalink());
+    view.setLinkLevel(entity.getLinkLevel());
+    view.setLinkSource(entity.getLinkSource());
+    view.setLinkType(entity.getLinkType());
+    view.setPublish(entity.isPublish());
     return view;
   }
 
   @Override
   protected CuratorsSampleLinksEntity newEntityWithDefaultValues(SampleLinksView view) {
-    CuratorsSampleLinksEntity entity = new CuratorsSampleLinksEntity();
-    entity.setId(view.getId());
-    entity.setPublish(true);
-    return entity;
+//    CuratorsSampleLinksEntity entity = new CuratorsSampleLinksEntity();
+//    entity.setSample(sampleDataUtils.getSample(view.getImlgs()));
+//    entity.setPublish(true);
+//    return entity;
+    return new CuratorsSampleLinksEntity();
   }
 
   @Override
   protected void updateEntity(CuratorsSampleLinksEntity entity, SampleLinksView view) {
     entity.setId(view.getId());
-    CuratorsSampleTsqpEntity sample = sampleDataUtils.getSample(view.getImlgs());
-    entity.setSample(sample);
+    entity.setSample(sampleDataUtils.getSample(view.getImlgs()));
     entity.setDatalink(view.getDataLink());
     entity.setLinkLevel(view.getLinkLevel());
     entity.setLinkSource(view.getLinkSource());
     entity.setLinkType(view.getLinkType());
+    entity.setPublish(view.getPublish());
   }
 
   @Override

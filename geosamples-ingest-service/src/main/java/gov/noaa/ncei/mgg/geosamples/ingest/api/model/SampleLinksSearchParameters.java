@@ -26,6 +26,7 @@ public class SampleLinksSearchParameters implements PagingAndSortingParameters {
   private List<@ValidSort(SampleLinksView.class) String> order = DEFAULT_SORT;
 
   private List<Long> id = new ArrayList<>(0);
+  private List<Boolean> publish = new ArrayList<>(0);
   private List<String> imlgs = new ArrayList<>(0);
   private List<String> dataLink = new ArrayList<>(0);
   private List<String> linkLevel = new ArrayList<>(0);
@@ -42,6 +43,17 @@ public class SampleLinksSearchParameters implements PagingAndSortingParameters {
       id = new ArrayList<>(0);
     }
     this.id = id;
+  }
+
+  public List<Boolean> getPublish() {
+    return publish;
+  }
+
+  public void setPublish(List<Boolean> publish) {
+    if (publish == null) {
+      publish = new ArrayList<>(0);
+    }
+    this.publish = publish;
   }
 
   public List<String> getImlgs() {

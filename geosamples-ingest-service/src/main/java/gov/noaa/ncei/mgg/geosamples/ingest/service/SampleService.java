@@ -202,7 +202,7 @@ public class SampleService extends
     view.setLake(entity.getLake());
     view.setOtherLink(entity.getOtherLink());
     view.setIgsn(entity.getIgsn());
-    view.setLeg(entity.getLeg().getLegName() == null ? null : entity.getLeg().getLegName());
+    view.setLeg(entity.getLeg() == null ? null : entity.getLeg().getLegName());
     view.setSampleComments(entity.getSampleComments());
     view.setPublish(entity.isPublish());
     view.setShowSampl(entity.getShowSampl());

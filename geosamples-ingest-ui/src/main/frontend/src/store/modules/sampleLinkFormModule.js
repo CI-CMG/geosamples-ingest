@@ -19,9 +19,13 @@ import {
 } from '@ci-cmg/form-vuex';
 
 const model = {
-  rockMineral: 'string',
-  rockMineralCode: 'string',
-  sourceUri: 'string',
+  id: 'int',
+  imlgs: 'string',
+  dataLink: 'string',
+  linkLevel: 'string',
+  linkSource: 'string',
+  linkType: 'string',
+  publish: 'boolean',
 };
 
 export default {

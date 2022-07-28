@@ -4,6 +4,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Sortable({
@@ -26,7 +27,7 @@ public class SampleLinksView {
   @Size(max = 30)
   private String linkType;
 
-  @NotBlank
+  @NotNull
   private Boolean publish;
 
   @NotBlank

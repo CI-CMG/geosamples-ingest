@@ -19,6 +19,7 @@ import {
 } from '@/store/form/vuexForm';
 
 const model = {
+  id: 'int',
   platform: 'string',
   masterId: 'int',
   prefix: 'string',

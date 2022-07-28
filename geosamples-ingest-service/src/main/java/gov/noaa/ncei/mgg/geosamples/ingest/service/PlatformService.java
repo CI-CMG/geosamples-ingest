@@ -32,10 +32,14 @@ public class PlatformService extends
   protected List<Specification<PlatformMasterEntity>> getSpecs(PlatformSearchParameters searchParameters) {
     List<Specification<PlatformMasterEntity>> specs = new ArrayList<>();
 
+    List<Long> id = searchParameters.getId();
     List<String> platform = searchParameters.getPlatform();
     List<Integer> masterId = searchParameters.getMasterId();
     List<String> icesCode = searchParameters.getIcesCode();
 
+    if (!id.isEmpty()){
+      specs.add(SearchUtils.equal(id, PlatformMasterEntity_.ID));
+    }
     if (!platform.isEmpty()) {
       specs.add(SearchUtils.contains(platform, PlatformMasterEntity_.PLATFORM));
     }
@@ -52,6 +56,7 @@ public class PlatformService extends
   @Override
   protected PlatformView toView(PlatformMasterEntity entity) {
     PlatformView view = new PlatformView();
+    view.setId(entity.getId());
     view.setPlatform(entity.getPlatform());
     view.setMasterId(entity.getMasterId());
     view.setPrefix(entity.getPrefix());
@@ -71,6 +76,7 @@ public class PlatformService extends
 
   @Override
   protected void updateEntity(PlatformMasterEntity entity, PlatformView view) {
+    entity.setId(view.getId());
     entity.setMasterId(view.getMasterId());
     entity.setPrefix(view.getPrefix());
     entity.setIcesCode(view.getIcesCode());

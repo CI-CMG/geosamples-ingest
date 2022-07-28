@@ -1,7 +1,7 @@
 import { apiService } from '@/api';
-import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
+  id: '',
   platform: '',
   masterId: '',
   icesCode: '',
@@ -68,6 +68,9 @@ export default {
       state.page = 1;
       state.totalPages = 1;
       state.totalItems = 0;
+    },
+    setId(state, id) {
+      state.params.id = id;
     },
     setPlatform(state, platform) {
       state.params.platform = platform;
@@ -158,7 +161,7 @@ export default {
     },
     load({ commit }, id) {
       commit('platformRequest');
-      return apiService.get(`/platform/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.get(`/platform/${id}`)
         .then(
           (response) => {
             commit('platformSuccess', response.data);
@@ -172,7 +175,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('platformSaveRequest');
-      const req = id ? () => apiService.put(`/platform/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/platform', provider);
+      const req = id ? () => apiService.put(`/platform/${id}`, provider) : () => apiService.post('/platform', provider);
       return req()
         .then(
           (response) => {
@@ -202,7 +205,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('platformDeleteRequest');
-      return apiService.delete(`/platform/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.delete(`/platform/${id}`)
         .then(
           (response) => {
             commit('platformDeleteSuccess', response.data);

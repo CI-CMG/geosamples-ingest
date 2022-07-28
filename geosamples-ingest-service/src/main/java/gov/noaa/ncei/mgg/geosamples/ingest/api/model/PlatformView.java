@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 })
 public class PlatformView {
 
-  @NotBlank
   private Long id;
 
   @NotBlank

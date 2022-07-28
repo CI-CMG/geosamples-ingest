@@ -17,7 +17,7 @@ private String sourceUri;
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="Ship/Platform" :label-for="platformId">
+        <b-form-group label="Ship/Platform" :label-for="platformId">
           <b-form-input
             :id="platformId"
             type="text" @blur="() => setTouched({path: 'platform', touched: true})"

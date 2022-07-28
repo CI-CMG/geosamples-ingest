@@ -76,7 +76,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('platform', ['setPlatform', 'clearParams', 'setIcesCode', 'setMasterId', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
+    ...mapMutations('platform', ['setPlatform', 'clearParams', 'setId', 'setIcesCode', 'setMasterId', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
     ...mapActions('platform', ['search', 'reset', 'changePage']),
     sortChanged({ sortBy, sortDesc }) {
       this.setSortBy(sortBy);
@@ -87,6 +87,14 @@ export default {
 
   computed: {
     ...mapState('platform', ['searching', 'page', 'totalItems', 'totalPages', 'platforms', 'params', 'sortDesc', 'sortBy']),
+    id: {
+      get() {
+        return this.params.id;
+      },
+      set(value) {
+        this.setId(value);
+      },
+    },
     platform: {
       get() {
         return this.params.platform;

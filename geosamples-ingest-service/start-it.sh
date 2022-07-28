@@ -7,4 +7,4 @@ if [[ -z "$MB_WORK_DIR" ]]; then
 fi
 
 
-docker run -d --name geosamples-ingest-test-1 -p 15215:1521 cirescmg/crowbar-db:20210416
+docker run -d --name geosamples-ingest-test-1 -p 15215:1521 mud-db-backup

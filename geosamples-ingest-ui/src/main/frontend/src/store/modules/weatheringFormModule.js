@@ -16,7 +16,7 @@ import {
   reset,
   isFormDirty,
   isFormUntouchedErrors,
-} from '@/store/form/vuexForm';
+} from '@ci-cmg/form-vuex';
 
 const model = {
   weathering: 'string',

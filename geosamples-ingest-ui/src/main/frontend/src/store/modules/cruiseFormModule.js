@@ -19,9 +19,13 @@ import {
 } from '@ci-cmg/form-vuex';
 
 const model = {
-  device: 'string',
-  deviceCode: 'string',
-  sourceUri: 'string',
+  id: 'int',
+  year: 'int',
+  cruiseName: 'string',
+  publish: 'boolean',
+  facilityCodes: ['string'],
+  platforms: ['string'],
+  legs: ['string'],
 };
 
 export default {

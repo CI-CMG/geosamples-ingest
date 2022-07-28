@@ -4,7 +4,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingPara
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -30,8 +29,8 @@ public class CruiseSearchParameters implements PagingAndSortingParameters {
   private List<String> cruiseNameEquals = new ArrayList<>(0);
   private List<Long> year = new ArrayList<>(0);
   private List<Boolean> publish = new ArrayList<>(0);
-  private List<String> facilityCodesEquals = new ArrayList<>(0);
-  private List<String> platformsEquals = new ArrayList<>(0);
+  private List<String> facilityCodeEquals = new ArrayList<>(0);
+  private List<String> platformEquals = new ArrayList<>(0);
   private List<Long> id = new ArrayList<>(0);
 
   public List<String> getCruiseNameContains() {
@@ -78,26 +77,26 @@ public class CruiseSearchParameters implements PagingAndSortingParameters {
     this.publish = publish;
   }
 
-  public List<String> getFacilityCodesEquals() {
-    return facilityCodesEquals;
+  public List<String> getFacilityCodeEquals() {
+    return facilityCodeEquals;
   }
 
-  public void setFacilityCodesEquals(List<String> facilityCodesEquals) {
-    if (facilityCodesEquals == null) {
-      facilityCodesEquals = new ArrayList<>(0);
+  public void setFacilityCodeEquals(List<String> facilityCodeEquals) {
+    if (facilityCodeEquals == null) {
+      facilityCodeEquals = new ArrayList<>(0);
     }
-    this.facilityCodesEquals = facilityCodesEquals;
+    this.facilityCodeEquals = facilityCodeEquals;
   }
 
-  public List<String> getPlatformsEquals() {
-    return platformsEquals;
+  public List<String> getPlatformEquals() {
+    return platformEquals;
   }
 
-  public void setPlatformsEquals(List<String> platformsEquals) {
-    if (platformsEquals == null) {
-      platformsEquals = new ArrayList<>(0);
+  public void setPlatformEquals(List<String> platformEquals) {
+    if (platformEquals == null) {
+      platformEquals = new ArrayList<>(0);
     }
-    this.platformsEquals = platformsEquals;
+    this.platformEquals = platformEquals;
   }
 
   public List<Long> getId() {

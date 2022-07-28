@@ -29,6 +29,7 @@
             <b-dropdown-item :to="{ name: 'SampleList'}">Sample</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Ancillary Data">
+            <b-dropdown-item :to="{ name: 'CruiseList'}">Cruise</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'SampleLinkList'}">Sample Link</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>

@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CruiseService extends
     SearchServiceBase<CuratorsCruiseEntity, Long, CruiseSearchParameters, CruiseView, CuratorsCruiseRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(FacilityView.class);
+  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(CruiseView.class);
 
   private final CuratorsCruiseRepository curatorsCruiseRepository;
   private final PlatformMasterRepository platformMasterRepository;
@@ -62,8 +62,8 @@ public class CruiseService extends
     List<String> cruiseNameEquals = searchParameters.getCruiseNameEquals();
     List<Long> year = searchParameters.getYear();
     List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
-    List<String> facilityCodesEquals = searchParameters.getFacilityCodesEquals();
-    List<String> platformsEquals = searchParameters.getPlatformsEquals().stream().map(p -> p.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
+    List<String> facilityCodesEquals = searchParameters.getFacilityCodeEquals();
+    List<String> platformsEquals = searchParameters.getPlatformEquals().stream().map(p -> p.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<Long> id = searchParameters.getId();
 
 

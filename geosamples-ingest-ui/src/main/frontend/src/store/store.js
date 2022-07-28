@@ -34,6 +34,8 @@ import sampleSearchForm from '@/store/modules/sampleSearchFormModule';
 import sampleSortForm from '@/store/modules/sampleSortFormModule';
 import authority from '@/store/modules/authorityModule';
 import userAuth from '@/store/modules/userAuthModule';
+import cruiseForm from '@/store/modules/cruiseFormModule';
+import cruise from '@/store/modules/cruiseModule';
 import app from './modules/appModule';
 import user from './modules/userModule';
 import userForm from './modules/userFormModule';
@@ -93,5 +95,7 @@ export default new Vuex.Store({
     userAuth,
     sampleLink,
     sampleLinkForm,
+    cruise,
+    cruiseForm,
   },
 });

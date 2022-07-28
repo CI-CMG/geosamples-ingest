@@ -59,6 +59,9 @@ import Callback from '@/views/view/callback/Callback.vue';
 import SampleLink from '@/views/view/main/sample-link/SampleLink.vue';
 import SampleLinkList from '@/views/view/main/sample-link/list/SampleLinkList.vue';
 import SampleLinkEdit from '@/views/view/main/sample-link/edit/SampleLinkEdit.vue';
+import Cruise from '@/views/view/main/cruise/Cruise.vue';
+import CruiseList from '@/views/view/main/cruise/list/CruiseList.vue';
+import CruiseEdit from '@/views/view/main/cruise/edit/CruiseEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -537,6 +540,34 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'SampleLink' },
+              },
+            ],
+          },
+          {
+            path: 'cruise',
+            component: Cruise,
+            name: 'Cruise',
+            redirect: { name: 'CruiseList' },
+            children: [
+              {
+                path: 'list',
+                name: 'CruiseList',
+                component: CruiseList,
+              },
+              {
+                path: 'add',
+                name: 'CruiseAdd',
+                component: CruiseEdit,
+              },
+              {
+                path: 'edit/:id',
+                name: 'CruiseEdit',
+                component: CruiseEdit,
+                props: true,
+              },
+              {
+                path: '*',
+                redirect: { name: 'Cruise' },
               },
             ],
           },

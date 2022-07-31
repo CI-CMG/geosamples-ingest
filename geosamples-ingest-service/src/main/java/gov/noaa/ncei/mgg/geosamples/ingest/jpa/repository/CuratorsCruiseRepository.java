@@ -4,6 +4,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,8 @@ public interface CuratorsCruiseRepository extends JpaRepository<CuratorsCruiseEn
       @Param("cruiseName") String cruiseName,
       @Param("platform") PlatformMasterEntity platform,
       @Param("facility") CuratorsFacilityEntity facility);
+
+  Optional<CuratorsCruiseEntity> findByCruiseNameAndYear(String cruiseName, Short year);
+  boolean existsByCruiseNameAndYear(String cruiseName, Short year);
 
 }

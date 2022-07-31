@@ -5,25 +5,55 @@
 
     <div v-if="ready">
 
-      <h1 v-if="isEdit" class="text-primary">Edit Sample Link - {{ getValue('imlgs') }}</h1>
-      <h1 v-else class="text-primary">Add New Sample Link</h1>
+      <h1 v-if="isEdit" class="text-primary">Edit Cruise Link - {{ getValue('id') }}</h1>
+      <h1 v-else class="text-primary">Add New Cruise Link</h1>
 
       <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
-      <b-modal ref="delete-modal" title="Delete Sample Link" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-        <p class="my-4">Are you sure you want to delete this Sample Link?</p>
+      <b-modal ref="delete-modal" title="Delete Cruise Link" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+        <p class="my-4">Are you sure you want to delete this Cruise Link?</p>
       </b-modal>
 
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
 
-        <b-form-group v-if="!isEdit" label="IMLGS" :label-for="imlgsId">
+        <b-form-group label="Cruise Name" :label-for="cruiseNameId">
           <b-form-input
-            :id="imlgsId"
-            type="text" @blur="() => setTouched({path: 'imlgs', touched: true})"
-            :value="getValue('imlgs')"
-            @update="(value) => setValue({ path: 'imlgs', value })"
-            :state="showError('imlgs')"
+            :id="cruiseNameId"
+            type="text" @blur="() => setTouched({path: 'cruiseNameId', touched: true})"
+            :value="getValue('cruiseName')"
+            @update="(value) => setValue({ path: 'cruiseName', value })"
+            :state="showError('cruiseName')"
           />
-          <b-form-invalid-feedback>{{ getError('imlgs') }}</b-form-invalid-feedback>
+          <b-form-invalid-feedback>{{ getError('cruiseName') }}</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Cruise Year" :label-for="cruiseYearId">
+          <b-form-input
+            :id="cruiseYearId"
+            type="text" @blur="() => setTouched({path: 'cruiseYearId', touched: true})"
+            :value="getValue('cruiseYear')"
+            @update="(value) => setValue({ path: 'cruiseYear', value })"
+            :state="showError('cruiseYear')"
+          />
+          <b-form-invalid-feedback>{{ getError('cruiseYear') }}</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Platform" :label-for="platformId">
+          <b-form-input
+            :id="platformId"
+            type="text" @blur="() => setTouched({path: 'platformId', touched: true})"
+            :value="getValue('platform')"
+            @update="(value) => setValue({ path: 'platform', value })"
+            :state="showError('leg')"
+          />
+          <b-form-invalid-feedback>{{ getError('platform') }}</b-form-invalid-feedback>
+        </b-form-group>
+        <b-form-group label="Leg Name" :label-for="legNameId">
+          <b-form-input
+            :id="legNameId"
+            type="text" @blur="() => setTouched({path: 'legNameId', touched: true})"
+            :value="getValue('legName')"
+            @update="(value) => setValue({ path: 'legName', value })"
+            :state="showError('legName')"
+          />
+          <b-form-invalid-feedback>{{ getError('legName') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Data Link" :label-for="dataLinkId">
@@ -101,7 +131,12 @@ export default {
   props: ['id'],
   data() {
     return {
-      imlgsId: '',
+      cruisePlatformId: '',
+      cruiseNameId: '',
+      cruiseYearId: '',
+      platformId: '',
+      legId: '',
+      legNameId: '',
       dataLinkId: '',
       linkLevelId: '',
       linkSourceId: '',
@@ -110,7 +145,12 @@ export default {
     };
   },
   beforeMount() {
-    this.imlgsId = genId();
+    this.cruisePlatformId = genId();
+    this.cruiseNameId = genId();
+    this.cruiseYearId = genId();
+    this.platformId = genId();
+    this.legId = genId();
+    this.legNameId = genId();
     this.dataLinkId = genId();
     this.linkLevelId = genId();
     this.linkSourceId = genId();
@@ -118,7 +158,7 @@ export default {
     this.publishId = genId();
   },
   methods: {
-    ...mapMutations('sampleLinkForm',
+    ...mapMutations('cruiseLinkForm',
       [
         'initialize',
         'setValue',
@@ -127,8 +167,8 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
-    ...mapActions('sampleLink', ['load', 'save', 'delete']),
-    ...mapActions('sampleLinkForm', ['submit', 'reset']),
+    ...mapActions('cruiseLink', ['load', 'save', 'delete']),
+    ...mapActions('cruiseLinkForm', ['submit', 'reset']),
     showModal() {
       this.$refs['delete-modal'].show();
     },
@@ -138,16 +178,16 @@ export default {
     saveForm() {
       this.submit()
         .then((provider) => this.save({ provider, id: this.id }))
-        .then(() => this.$router.push({ name: 'SampleLinkList' }));
+        .then(() => this.$router.push({ name: 'CruiseLinkList' }));
     },
     doDelete() {
-      this.delete(this.id).then(() => this.$router.push({ name: 'SampleLinkList' }));
+      this.delete(this.id).then(() => this.$router.push({ name: 'CruiseLinkList' }));
     },
   },
 
   computed: {
-    ...mapState('sampleLink', ['deleting', 'loading', 'saving']),
-    ...mapGetters('sampleLinkForm',
+    ...mapState('cruiseLink', ['deleting', 'loading', 'saving']),
+    ...mapGetters('cruiseLinkForm',
       [
         'getValue',
         'formDirty',

@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import java.util.Locale;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -47,7 +48,7 @@ public class SampleLinksView {
   }
 
   public void setDataLink(String dataLink) {
-    this.dataLink = dataLink;
+    this.dataLink = dataLink.trim().toUpperCase(Locale.ENGLISH);;
   }
 
   public String getLinkLevel() {
@@ -55,7 +56,7 @@ public class SampleLinksView {
   }
 
   public void setLinkLevel(String linkLevel) {
-    this.linkLevel = linkLevel;
+    this.linkLevel = linkLevel.trim().toUpperCase(Locale.ENGLISH);;
   }
 
   public String getLinkSource() {
@@ -63,7 +64,7 @@ public class SampleLinksView {
   }
 
   public void setLinkSource(String linkSource) {
-    this.linkSource = linkSource;
+    this.linkSource = linkSource.trim().toUpperCase(Locale.ENGLISH);;
   }
 
   public String getLinkType() {
@@ -71,7 +72,7 @@ public class SampleLinksView {
   }
 
   public void setLinkType(String linkType) {
-    this.linkType = linkType;
+    this.linkType = linkType.trim().toUpperCase(Locale.ENGLISH);;
   }
 
   public Boolean getPublish() {

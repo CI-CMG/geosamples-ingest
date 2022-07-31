@@ -70,3 +70,7 @@ insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_C
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_CREATE');
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_UPDATE');
 insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_DELETE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_LINK_READ');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_LINK_CREATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_LINK_UPDATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_CRUISE_LINK_DELETE');

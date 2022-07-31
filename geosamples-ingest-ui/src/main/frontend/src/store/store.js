@@ -46,6 +46,8 @@ import interval from './modules/intervalModule';
 import intervalSortForm from './modules/intervalSortFormModule';
 import sampleLink from './modules/sampleLinkModule';
 import sampleLinkForm from './modules/sampleLinkFormModule';
+import cruiseLink from './modules/cruiseLinkModule';
+import cruiseLinkForm from './modules/cruiseLinkFormModule';
 
 Vue.use(Vuex);
 
@@ -97,5 +99,7 @@ export default new Vuex.Store({
     sampleLinkForm,
     cruise,
     cruiseForm,
+    cruiseLink,
+    cruiseLinkForm,
   },
 });

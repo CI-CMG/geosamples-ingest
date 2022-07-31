@@ -2,12 +2,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleLinksSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleLinksView;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleLinksEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleLinksEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleLinksRepository;
 import java.util.ArrayList;
@@ -97,10 +93,6 @@ public class SampleLinksService extends
 
   @Override
   protected CuratorsSampleLinksEntity newEntityWithDefaultValues(SampleLinksView view) {
-//    CuratorsSampleLinksEntity entity = new CuratorsSampleLinksEntity();
-//    entity.setSample(sampleDataUtils.getSample(view.getImlgs()));
-//    entity.setPublish(true);
-//    return entity;
     return new CuratorsSampleLinksEntity();
   }
 

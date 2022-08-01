@@ -95,8 +95,8 @@ public class CruiseLinksService extends
       specs.add(SearchUtils.equal(leg, (e) -> e.join(CuratorsCruiseLinksEntity_.LEG)
           .get(CuratorsLegEntity_.ID)));
     }
-    if (!leg.isEmpty()) {
-      specs.add(SearchUtils.equal(leg, (e) -> e.join(CuratorsCruiseLinksEntity_.LEG)
+    if (!legName.isEmpty()) {
+      specs.add(SearchUtils.equal(legName, (e) -> e.join(CuratorsCruiseLinksEntity_.LEG)
           .get(CuratorsLegEntity_.LEG_NAME)));
     }
     if (!dataLink.isEmpty()){

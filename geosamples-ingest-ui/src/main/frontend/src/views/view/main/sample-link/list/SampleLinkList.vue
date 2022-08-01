@@ -224,12 +224,12 @@ export default {
         },
         {
           key: 'linkSource',
-          label: 'Link Level',
+          label: 'Link Source',
           sortable: true,
         },
         {
           key: 'linkType',
-          label: 'Link Level',
+          label: 'Link Type',
           sortable: true,
         },
       ],

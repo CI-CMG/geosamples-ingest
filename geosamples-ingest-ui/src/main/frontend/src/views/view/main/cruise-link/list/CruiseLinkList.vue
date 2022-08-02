@@ -3,11 +3,11 @@
     <b-form @submit.prevent="search" @reset.prevent="reset">
       <b-container fluid>
         <b-row>
-<!--          <b-col>-->
-<!--            <b-form-group label="Cruise Name" :label-for="cruiseNameId">-->
-<!--              <b-form-input :id="cruiseNameId" v-model="cruiseName"/>-->
-<!--            </b-form-group>-->
-<!--          </b-col>-->
+          <b-col>
+            <b-form-group label="Cruise Name Contains" :label-for="cruiseNameContainsId">
+              <b-form-input :id="cruiseNameContainsId" v-model="cruiseNameContains"/>
+            </b-form-group>
+          </b-col>
 <!--          <b-col>-->
 <!--            <b-form-group label="Cruise Year" :label-for="cruiseYearId">-->
 <!--                <b-form-input :id="cruiseYearId" v-model="cruiseYear"/>-->
@@ -77,8 +77,8 @@
       @sort-changed="sortChanged"
       :sort-by="sortBy"
       :sort-desc="sortDesc">
-      <template #cell(cruiseName)="data">
-        <b-link :to="{ name: 'CruiseLinkEdit', params: { id: data.item.id }}">{{ data.item.cruiseName }}</b-link>
+      <template #cell(id)="data">
+        <b-link :to="{ name: 'CruiseLinkEdit', params: { id: data.item.id }}">{{ data.item.id }}</b-link>
       </template>
     </b-table>
     <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>
@@ -95,6 +95,7 @@ import {
 export default {
   beforeMount() {
     this.idId = genId();
+    this.cruiseNameContainsId = genId();
     this.cruisePlatformId = genId();
     this.cruiseNameId = genId();
     this.cruiseYearId = genId();
@@ -122,6 +123,7 @@ export default {
   },
   methods: {
     ...mapMutations('cruiseLink', [
+      'setCruiseNameContains',
       'setCruisePlatform',
       'setCruiseName',
       'setCruiseYear',
@@ -180,6 +182,14 @@ export default {
       },
       set(value) {
         this.setCruisePlatform(value);
+      },
+    },
+    cruiseNameContains: {
+      get() {
+        return this.params.cruiseNameContains;
+      },
+      set(value) {
+        this.setCruiseNameContains(value);
       },
     },
     cruiseName: {
@@ -260,6 +270,7 @@ export default {
     return {
       idId: null,
       cruisePlatformId: null,
+      cruiseNameContainsId: null,
       cruiseNameId: null,
       cruiseYearId: null,
       platformId: null,
@@ -272,11 +283,11 @@ export default {
       linkTypeId: null,
 
       fields: [
-        // {
-        //   key: 'cruisePlatform',
-        //   label: 'Cruise Platform',
-        //   sortable: true,
-        // },
+        {
+          key: 'id',
+          label: 'Id',
+          sortable: true,
+        },
         {
           key: 'cruiseName',
           label: 'Cruise Name',
@@ -292,11 +303,6 @@ export default {
           label: 'Platform',
           sortable: true,
         },
-        // {
-        //   key: 'leg',
-        //   label: 'Leg',
-        //   sortable: true,
-        // },
         {
           key: 'legName',
           label: 'Leg Name',

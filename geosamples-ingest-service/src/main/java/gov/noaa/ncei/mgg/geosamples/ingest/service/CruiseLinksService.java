@@ -56,6 +56,7 @@ public class CruiseLinksService extends
     List<Long> id = searchParameters.getId();
     List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
     List<Long> cruisePlatform = searchParameters.getCruisePlatform();
+    List<String> cruiseNameContains = searchParameters.getCruiseNameContains();
     List<String> cruiseName = searchParameters.getCruiseName();
     List<Long> cruiseYear = searchParameters.getYear();
     List<String> platform = searchParameters.getPlatform();
@@ -75,6 +76,11 @@ public class CruiseLinksService extends
     if (!cruisePlatform.isEmpty()) {
       specs.add(SearchUtils.equal(cruisePlatform, (e) -> e.join(CuratorsCruiseLinksEntity_.CRUISE_PLATFORM)
           .get(CuratorsCruisePlatformEntity_.ID)));
+    }
+    if (!cruiseNameContains.isEmpty()) {
+      specs.add(SearchUtils.contains(cruiseNameContains,(e) -> e.join(CuratorsCruiseLinksEntity_.CRUISE_PLATFORM)
+          .join(CuratorsCruisePlatformEntity_.CRUISE)
+          .get(CuratorsCruiseEntity_.CRUISE_NAME)));
     }
     if(!cruiseName.isEmpty()){
       specs.add(SearchUtils.equal(cruisePlatform, (e) -> e.join(CuratorsCruiseLinksEntity_.CRUISE_PLATFORM)

@@ -3,6 +3,7 @@ import { apiService } from '@/api';
 const defaultParams = {
   id: '',
   cruisePlatform: '',
+  cruiseNameContains: '',
   cruiseName: '',
   cruiseYear: '',
   platform: '',
@@ -82,6 +83,9 @@ export default {
     },
     setCruisePlatform(state, cruisePlatform) {
       state.params.cruisePlatform = cruisePlatform;
+    },
+    setCruiseNameContains(state, value) {
+      state.params.cruiseNameContains = value;
     },
     setCruiseName(state, cruiseName) {
       state.params.cruisePlacruiseNametform = cruiseName;

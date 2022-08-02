@@ -28,6 +28,7 @@ public class CruiseLinksSearchParameters implements PagingAndSortingParameters {
   private List<Long> id = new ArrayList<>(0);
   private List<Boolean> publish = new ArrayList<>(0);
   private List<Long> cruisePlatform = new ArrayList<>(0);
+  private List<String> cruiseNameContains = new ArrayList<>(0);
   private List<String> cruiseName = new ArrayList<>(0);
   private List<Long> year = new ArrayList<>(0);
   private List<String> platform = new ArrayList<>(0);
@@ -70,6 +71,17 @@ public class CruiseLinksSearchParameters implements PagingAndSortingParameters {
       cruisePlatform = new ArrayList<>(0);
     }
     this.cruisePlatform = cruisePlatform;
+  }
+
+  public List<String> getCruiseNameContains() {
+    return cruiseNameContains;
+  }
+
+  public void setCruiseNameContains(List<String> cruiseNameContains) {
+    if (cruiseNameContains == null) {
+      cruiseNameContains = new ArrayList<>(0);
+    }
+    this.cruiseNameContains = cruiseNameContains;
   }
 
   public List<String> getCruiseName() {

@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseLinksSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseLinksView;;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseLinksEntity;
@@ -29,17 +30,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class CruiseLinksService extends
     SearchServiceBase<CuratorsCruiseLinksEntity, Long, CruiseLinksSearchParameters, CruiseLinksView, CuratorsCruiseLinksRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping;
-
-  static {
-    Map<String, String> map = new HashMap<>();
-//    map.put("cruiseName", "cruise.cruiseName");
-//    map.put("platform", "platform.platform");
-    map.put("id", "id");
-    map.put("linkType", "linkType");
-    map.put("linkLevel", "linkLevel");
-    viewToEntitySortMapping = Collections.unmodifiableMap(map);
-  }
+  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(CruiseLinksView.class);
+//  private static final Map<String, String> viewToEntitySortMapping;
+//
+//  static {
+//    Map<String, String> map = new HashMap<>();
+////    map.put("cruiseName", "cruise.cruiseName");
+////    map.put("platform", "platform.platform");
+//    map.put("id", "id");
+//    map.put("cruiseName", "cruiseName");
+//    map.put("linkType", "linkType");
+//    map.put("linkLevel", "linkLevel");
+//    viewToEntitySortMapping = Collections.unmodifiableMap(map);
+//  }
   private final CuratorsCruiseLinksRepository curatorsCruiseLinksRepository;
   private final SampleDataUtils sampleDataUtils;
   @Autowired

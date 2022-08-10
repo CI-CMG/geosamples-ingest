@@ -2,7 +2,7 @@ create table ${schema_name}.GEOSAMPLES_USER_TOKEN
 (
     ID number(19)
         constraint GEOSAMPLES_USER_TOKEN_PK primary key,
-    USER_ID number(19)
+    USER_NAME varchar(200)
         constraint GEOSAMPLES_USER_TOKEN_USER_ID_NN not null
         constraint GEOSAMPLES_USER_TOKEN_USER_ID_FK references ${schema_name}.GEOSAMPLES_USER,
     TOKEN_ALIAS varchar2(200)

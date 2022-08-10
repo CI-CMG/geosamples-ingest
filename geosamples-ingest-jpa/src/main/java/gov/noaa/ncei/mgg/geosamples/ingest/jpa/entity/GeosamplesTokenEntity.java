@@ -28,7 +28,7 @@ public class GeosamplesTokenEntity implements EntityWithId<Long> {
   private String alias;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
-  @JoinColumn(name = "USER_ID", nullable = false)
+  @JoinColumn(name = "USER_NAME", nullable = false)
   private GeosamplesUserEntity user;
 
   @Column(name = "TOKEN_HASH", nullable = false, length = 1000, unique = true)

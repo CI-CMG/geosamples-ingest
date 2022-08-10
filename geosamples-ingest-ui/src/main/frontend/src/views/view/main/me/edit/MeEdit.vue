@@ -28,7 +28,7 @@
           <b-button v-if="formDirty" type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Reset</b-button>
         </div>
       </b-form>
-      <b-alert :v-if="lastUserToken" show>{{lastUserToken}}</b-alert>
+      <b-alert v-if="lastUserToken" show>{{lastUserToken}}</b-alert>
 
   </div>
 </template>
@@ -90,6 +90,9 @@ export default {
     tokenAliases() {
       return this.user.tokenAliases ? this.user.tokenAliases : [];
     },
+  },
+  created() {
+    this.initialize();
   },
 };
 </script>

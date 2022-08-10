@@ -10,7 +10,7 @@ create table ${schema_name}.GEOSAMPLES_USER_TOKEN
     TOKEN_HASH varchar2(1000)
         constraint GEOSAMPLES_USER_TOKEN_TOKEN_HASH_NN not null
         constraint GEOSAMPLES_USER_TOKEN_TOKEN_HASH_UK unique,
-    constraint GEOSAMPLES_USER_TOKEN_USER_ID_TOKEN_ALIAS_UK unique (USER_ID, TOKEN_ALIAS)
+    constraint GEOSAMPLES_USER_TOKEN_USER_ID_TOKEN_ALIAS_UK unique (USER_NAME, TOKEN_ALIAS)
 );
 
 create sequence ${schema_name}.GEOSAMPLES_USER_TOKEN_SEQ nocache;

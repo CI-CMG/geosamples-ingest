@@ -65,6 +65,7 @@ import CruiseEdit from '@/views/view/main/cruise/edit/CruiseEdit.vue';
 import CruiseLink from '@/views/view/main/cruise-link/CruiseLink.vue';
 import CruiseLinkList from '@/views/view/main/cruise-link/list/CruiseLinkList.vue';
 import CruiseLinkEdit from '@/views/view/main/cruise-link/edit/CruiseLinkEdit.vue';
+import MeEdit from '@/views/view/main/me/edit/MeEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -86,6 +87,11 @@ const routes = [
         component: Main,
         redirect: { name: 'Home' },
         children: [
+          {
+            path: 'me',
+            component: MeEdit,
+            name: MeEdit,
+          },
           {
             path: 'submit',
             component: Submit,

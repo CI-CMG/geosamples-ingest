@@ -1,4 +1,5 @@
 geosamples:
+  token-size-bytes: 64
   show-sample-base-url: https://maps.ngdc.noaa.gov/viewers/imlgs/samples/
   jwt-issuer: ''
   auth-service-url: ''

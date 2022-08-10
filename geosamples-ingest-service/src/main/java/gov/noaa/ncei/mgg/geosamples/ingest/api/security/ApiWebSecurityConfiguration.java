@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -31,6 +32,10 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     //@formatter:off
     http
       .antMatcher("/api/**")
+      .addFilterBefore(ApiProviderAuthenticationFilterFactory.build(
+              authenticationManager(),
+              accessDeniedHandler),
+          UsernamePasswordAuthenticationFilter.class)
       .authorizeRequests()
 
         .antMatchers(HttpMethod.GET, "/api/v1/age", "/api/v1/age/*").hasAuthority(Authorities.ROLE_AGE_READ.toString())
@@ -141,6 +146,9 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             Authorities.ROLE_USER_UPDATE.toString(),
             Authorities.ROLE_USER_DELETE.toString()
         )
+
+        .antMatchers(HttpMethod.POST, "/api/v1/user-token/*").hasAuthority(Authorities.ROLE_AUTHENTICATED_USER.toString())
+
 
         .anyRequest().denyAll()
         .and()

@@ -31,6 +31,8 @@ public class GeosamplesUserEntity implements EntityWithId<String> {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<GeosamplesUserAuthorityEntity> userAuthorities = new ArrayList<>();
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<GeosamplesTokenEntity> tokens = new ArrayList<>();
 
   public void addUserAuthority(GeosamplesUserAuthorityEntity userAuthority) {
     EntityUtil.addAndParent(this, userAuthorities, userAuthority, this::removeUserAuthority, userAuthority::setUser);
@@ -85,5 +87,21 @@ public class GeosamplesUserEntity implements EntityWithId<String> {
 
   public void setDisplayName(String displayName) {
     this.displayName = displayName;
+  }
+
+  public List<GeosamplesTokenEntity> getTokens() {
+    return Collections.unmodifiableList(tokens);
+  }
+
+  public void addToken(GeosamplesTokenEntity token) {
+    EntityUtil.addAndParent(this, tokens, token, this::removeToken, token::setUser);
+  }
+
+  public void removeToken(GeosamplesTokenEntity token) {
+    EntityUtil.removeAndOrphan(tokens, token, token::setUser);
+  }
+
+  public void clearTokens() {
+    EntityUtil.clearAndOrphan(tokens, GeosamplesTokenEntity::setUser);
   }
 }

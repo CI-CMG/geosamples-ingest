@@ -36,6 +36,7 @@ import authority from '@/store/modules/authorityModule';
 import userAuth from '@/store/modules/userAuthModule';
 import cruiseForm from '@/store/modules/cruiseFormModule';
 import cruise from '@/store/modules/cruiseModule';
+import tokenForm from '@/store/modules/tokenFormModule';
 import app from './modules/appModule';
 import user from './modules/userModule';
 import userForm from './modules/userFormModule';
@@ -101,5 +102,6 @@ export default new Vuex.Store({
     cruiseForm,
     cruiseLink,
     cruiseLinkForm,
+    tokenForm,
   },
 });

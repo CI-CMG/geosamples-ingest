@@ -13,6 +13,7 @@ public class UserView {
   private String userName;
   private String displayName;
   private List<String> authorities = new ArrayList<>(0);
+  private List<String> tokenAliases = new ArrayList<>(0);
 
   public String getUserName() {
     return userName;
@@ -39,5 +40,16 @@ public class UserView {
       authorities = new ArrayList<>(0);
     }
     this.authorities = authorities;
+  }
+
+  public List<String> getTokenAliases() {
+    return tokenAliases;
+  }
+
+  public void setTokenAliases(List<String> tokenAliases) {
+    if(tokenAliases == null) {
+      tokenAliases = new ArrayList<>(0);
+    }
+    this.tokenAliases = tokenAliases;
   }
 }

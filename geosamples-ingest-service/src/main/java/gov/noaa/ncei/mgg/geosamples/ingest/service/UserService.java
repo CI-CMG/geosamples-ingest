@@ -8,6 +8,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
@@ -93,6 +94,12 @@ public class UserService extends
     authorities.addAll(entity.getUserAuthorities().stream().map(GeosamplesUserAuthorityEntity::getAuthorityName).collect(Collectors.toList()));
     Collections.sort(authorities);
     view.setAuthorities(authorities);
+
+    List<String> tokenAliases = new ArrayList<>();
+    tokenAliases.addAll(entity.getTokens().stream().map(GeosamplesTokenEntity::getAlias).collect(Collectors.toList()));
+    Collections.sort(tokenAliases);
+    view.setTokenAliases(tokenAliases);
+
     return view;
   }
 

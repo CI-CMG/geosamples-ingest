@@ -38,7 +38,7 @@
 
       <b-navbar-nav class="ml-auto">
         <b-nav-form @submit.stop.prevent="submit">
-          <span v-if="loggedIn">User: <b>{{user.displayName}}</b></span>
+          <b-link v-if="loggedIn" :to="{ name: 'MeEdit' }">{{user.displayName}}</b-link>
           <b-button size="sm" type="submit" class="ml-2">{{loggedIn ? 'Log Out' : 'Log In'}}</b-button>
         </b-nav-form>
       </b-navbar-nav>

@@ -13,6 +13,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("geosamples")
 public class ServiceProperties {
 
+
+  @NotNull
+  @Min(16)
+  private Integer tokenSizeBytes;
   @NotBlank
   private String jwtIssuer;
   @NotBlank
@@ -52,5 +56,13 @@ public class ServiceProperties {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
+  }
+
+  public Integer getTokenSizeBytes() {
+    return tokenSizeBytes;
+  }
+
+  public void setTokenSizeBytes(Integer tokenSizeBytes) {
+    this.tokenSizeBytes = tokenSizeBytes;
   }
 }

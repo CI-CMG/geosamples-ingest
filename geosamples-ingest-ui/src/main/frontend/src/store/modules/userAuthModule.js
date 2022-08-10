@@ -8,6 +8,7 @@ export default {
     token: '',
     user: {},
     loading: false,
+    lastUserToken: '',
   },
 
   mutations: {
@@ -19,9 +20,18 @@ export default {
         state.token = token;
       }
     },
+    updateUserOnly(state, { user }) {
+      if (user.userName === state.user.userName) {
+        state.user = user;
+      }
+    },
+    updateLastUserToken(state, { token }) {
+      state.lastUserToken = token;
+    },
     clearUser(state) {
       state.user = {};
       state.token = '';
+      state.lastUserToken = '';
     },
   },
 
@@ -38,6 +48,28 @@ export default {
           return state.user;
         });
     },
-
+    generateToken({ state, commit }, { alias }) {
+      commit('updateLastUserToken', { token: '' });
+      return apiService.post('/user-token/generate', { alias })
+        .then((response) => {
+          commit('updateLastUserToken', { token: response.data.token });
+          return response.data.token;
+        })
+        .then(() => apiService.get('/me'))
+        .then((response) => {
+          commit('updateUserOnly', { user: response.data });
+          return state.lastUserToken;
+        });
+    },
+    deleteToken({ commit }, { alias }) {
+      commit('updateLastUserToken', { token: '' });
+      return apiService.post('/user-token/delete', { alias })
+        .then((response) => response.data.alias)
+        .then(() => apiService.get('/me'))
+        .then((response) => {
+          commit('updateUserOnly', { user: response.data });
+          return '';
+        });
+    },
   },
 };

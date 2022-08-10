@@ -89,8 +89,8 @@ const routes = [
         children: [
           {
             path: 'me',
+            name: 'MeEdit',
             component: MeEdit,
-            name: MeEdit,
           },
           {
             path: 'submit',

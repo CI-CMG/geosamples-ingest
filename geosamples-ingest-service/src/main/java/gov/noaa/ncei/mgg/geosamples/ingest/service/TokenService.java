@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
@@ -38,10 +39,12 @@ public class TokenService {
   }
 
   private static Set<String> getAuthorities(GeosamplesUserEntity user) {
-    return user.getUserAuthorities().stream()
+    Set<String> authorities = user.getUserAuthorities().stream()
         .map(GeosamplesUserAuthorityEntity::getAuthority)
         .map(GeosamplesAuthorityEntity::getAuthorityName)
         .collect(Collectors.toSet());
+    authorities.add(Authorities.ROLE_AUTHENTICATED_USER.toString());
+    return authorities;
   }
 
   private static Optional<TokenAuthorization> fromTokenEntity(GeosamplesTokenEntity entity) {

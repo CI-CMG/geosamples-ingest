@@ -33,7 +33,7 @@ public class ApiProviderAuthenticationFilterFactory {
     @Override
     public Authentication convert(HttpServletRequest request) {
       Authentication authentication = null;
-      String headerValue = request.getHeader(HttpHeaders.AUTHORIZATION);
+      String headerValue = request.getHeader("X-API-TOKEN");
       if (StringUtils.isNotBlank(headerValue)) {
         headerValue = headerValue.trim();
         Matcher matcher = BEARER_PATTERN.matcher(headerValue);

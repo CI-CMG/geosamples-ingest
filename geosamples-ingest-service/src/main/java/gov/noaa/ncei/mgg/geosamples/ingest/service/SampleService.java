@@ -46,10 +46,14 @@ public class SampleService extends
   private static final Map<String, String> viewToEntitySortMapping;
 
   static {
+
     Map<String, String> map = new HashMap<>();
     map.put("imlgs", "imlgs");
     map.put("sample", "sample");
     map.put("facilityCode", "facility.facilityCode");
+    map.put("cruise", "cruise.cruiseName");
+    map.put("platform", "cruisePlatform.platform.platform");
+    map.put("deviceCode", "device.deviceCode");
     viewToEntitySortMapping = Collections.unmodifiableMap(map);
   }
 

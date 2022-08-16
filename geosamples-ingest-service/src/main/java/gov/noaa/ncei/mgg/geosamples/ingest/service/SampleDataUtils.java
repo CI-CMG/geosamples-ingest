@@ -135,7 +135,7 @@ public class SampleDataUtils {
       return null;
     }
     return curatorsFacilityRepository
-        .findByFacilityCode(facility)
+        .findByFacilityCode(facility.trim().toUpperCase(Locale.ENGLISH))
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find facility: " + facility).build()));
   }
 
@@ -144,7 +144,7 @@ public class SampleDataUtils {
       return null;
     }
     return platformMasterRepository
-        .findByPlatformNormalized(platformName)
+        .findByPlatformNormalized(platformName.trim().toUpperCase())
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find platform: " + platformName).build()));
   }
 
@@ -168,8 +168,11 @@ public class SampleDataUtils {
 
   public CuratorsCruiseEntity getCruise(String cruiseName, PlatformMasterEntity platform, CuratorsFacilityEntity facilityName) {
     //TODO update template to accept optional year
-    List<CuratorsCruiseEntity> cruises = curatorsCruiseRepository.findByCruiseNameAndPlatformAndFacility(cruiseName,platform,facilityName);
-    if(cruises.isEmpty()) {
+    List<CuratorsCruiseEntity> cruises = curatorsCruiseRepository.findByCruiseNameAndPlatformAndFacility(
+        cruiseName.trim().toUpperCase(Locale.ENGLISH),
+        platform,
+        facilityName);
+    if (cruises.isEmpty()) {
       throw new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise: " + cruiseName).build());
     }
     if (cruises.size() > 1) {
@@ -179,7 +182,7 @@ public class SampleDataUtils {
   }
 
   public CuratorsCruiseEntity getCruise(String cruiseName, Short year) {
-    if (cruiseName == null || year == null){
+    if (cruiseName == null || year == null) {
       return null;
     }
     return curatorsCruiseRepository
@@ -188,20 +191,21 @@ public class SampleDataUtils {
   }
 
 
-  public CuratorsCruisePlatformEntity getCruisePlatform(String cruiseName, Short year, String platform){
+  public CuratorsCruisePlatformEntity getCruisePlatform(String cruiseName, Short year, String platform) {
     CuratorsCruiseEntity cruiseEntity = getCruise(cruiseName, year);
     PlatformMasterEntity platformEntity = getPlatform(platform);
-    if (cruiseEntity == null || platformEntity == null){
+    if (cruiseEntity == null || platformEntity == null) {
       return null;
     }
     return curatorsCruisePlatformRepository
         .findByCruiseAndPlatform(cruiseEntity, platformEntity)
-        .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise_platform: " + cruiseName).build()));
+        .orElseThrow(
+            () -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find cruise_platform: " + cruiseName).build()));
   }
 
   public CuratorsLegEntity getLeg(String legName, CuratorsCruiseEntity cruise) {
     return curatorsLegRepository
-        .findByLegNameAndCruise(legName,cruise)
+        .findByLegNameAndCruise(legName, cruise)
         .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, ApiError.builder().error("Unable to find leg: " + legName).build()));
   }
 

@@ -19,11 +19,11 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacilityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruisePlatformRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,15 +61,21 @@ public class SampleService extends
   private final CuratorsIntervalRepository curatorsIntervalRepository;
   private final SampleDataUtils sampleDataUtils;
   private final ServiceProperties serviceProperties;
+  private final CuratorsCruisePlatformRepository curatorsCruisePlatformRepository;
+  private final CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository;
 
   @Autowired
   public SampleService(CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
       CuratorsIntervalRepository curatorsIntervalRepository, SampleDataUtils sampleDataUtils,
-      ServiceProperties serviceProperties) {
+      ServiceProperties serviceProperties,
+      CuratorsCruisePlatformRepository curatorsCruisePlatformRepository,
+      CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository) {
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.sampleDataUtils = sampleDataUtils;
     this.serviceProperties = serviceProperties;
+    this.curatorsCruisePlatformRepository = curatorsCruisePlatformRepository;
+    this.curatorsCruiseFacilityRepository = curatorsCruiseFacilityRepository;
   }
 
   public SimpleItemsView<SampleView> patch(SimpleItemsView<SampleView> patch) {
@@ -124,7 +130,6 @@ public class SampleService extends
     List<String> deviceCode = searchParameters.getDeviceCode();
     List<String> igsn = searchParameters.getIgsn();
 
-
     if (!imlgs.isEmpty()) {
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
     }
@@ -140,23 +145,24 @@ public class SampleService extends
     if (!facilityCode.isEmpty()) {
       specs.add(SearchUtils.equal(cruise, e ->
           e.join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
-          .join(CuratorsCruiseFacilityEntity_.FACILITY)
-          .get(CuratorsFacilityEntity_.FACILITY_CODE)));
+              .join(CuratorsCruiseFacilityEntity_.FACILITY)
+              .get(CuratorsFacilityEntity_.FACILITY_CODE)));
     }
     if (!deviceCode.isEmpty()) {
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
           cb.or(deviceCode.stream().map(v ->
-              cb.equal(
-                  e.get(CuratorsSampleTsqpEntity_.DEVICE).get(CuratorsDeviceEntity_.DEVICE_CODE),
-                  v))
+                  cb.equal(
+                      e.get(CuratorsSampleTsqpEntity_.DEVICE).get(CuratorsDeviceEntity_.DEVICE_CODE),
+                      v))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
     if (!platform.isEmpty()) {
       specs.add((Specification<CuratorsSampleTsqpEntity>) (e, cq, cb) ->
           cb.or(platform.stream().map(v ->
-              cb.like(
-                  cb.lower(e.join(CuratorsSampleTsqpEntity_.CRUISE_PLATFORM).join(CuratorsCruisePlatformEntity_.PLATFORM).get(PlatformMasterEntity_.PLATFORM)),
-                  SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
+                  cb.like(
+                      cb.lower(e.join(CuratorsSampleTsqpEntity_.CRUISE_PLATFORM).join(CuratorsCruisePlatformEntity_.PLATFORM)
+                          .get(PlatformMasterEntity_.PLATFORM)),
+                      SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
 
@@ -167,7 +173,7 @@ public class SampleService extends
   protected SampleView toView(CuratorsSampleTsqpEntity entity) {
     SampleView view = new SampleView();
     view.setImlgs(entity.getImlgs());
-    view.setCruise(entity.getCruise()== null ? null : entity.getCruise().getCruiseName());
+    view.setCruise(entity.getCruise() == null ? null : entity.getCruise().getCruiseName());
     view.setSample(entity.getSample());
     view.setFacilityCode(entity.getCruiseFacility().getFacility().getFacilityCode());
     view.setPlatform(entity.getCruisePlatform().getPlatform().getPlatform());
@@ -184,19 +190,19 @@ public class SampleService extends
     view.setStorageMethCode(entity.getStorageMeth() == null ? null : entity.getStorageMeth().getStorageMethCode());
 
     Double coredLength = null;
-    if(entity.getCoredLength() != null) {
+    if (entity.getCoredLength() != null) {
       coredLength = Double.valueOf(entity.getCoredLength());
     }
-    if(coredLength != null && entity.getCoredLengthMm() != null) {
+    if (coredLength != null && entity.getCoredLengthMm() != null) {
       coredLength = coredLength + entity.getCoredLengthMm() / 10D;
     }
     view.setCoredLength(coredLength);
 
     Double coredDiam = null;
-    if(entity.getCoredDiam() != null) {
+    if (entity.getCoredDiam() != null) {
       coredDiam = Double.valueOf(entity.getCoredDiam());
     }
-    if(coredDiam != null && entity.getCoredDiamMm() != null) {
+    if (coredDiam != null && entity.getCoredDiamMm() != null) {
       coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
     }
     view.setCoredDiam(coredDiam);
@@ -229,9 +235,20 @@ public class SampleService extends
     CuratorsFacilityEntity facility = sampleDataUtils.getFacility(view.getFacilityCode());
     PlatformMasterEntity platform = sampleDataUtils.getPlatform(view.getPlatform());
     CuratorsDeviceEntity device = sampleDataUtils.getDevice(view.getDeviceCode());
-    CuratorsCruiseEntity cruise = sampleDataUtils.getCruise(view.getCruise(), platform,facility);
+    CuratorsCruiseEntity cruise = sampleDataUtils.getCruise(view.getCruise(), platform, facility);
     CuratorsLegEntity leg = sampleDataUtils.getLeg(view.getLeg(), cruise);
     sample.setCruise(cruise);
+
+    sample.setCruiseFacility(curatorsCruiseFacilityRepository.findByCruiseAndFacility(cruise, facility).orElseThrow(() ->
+        new ApiException(HttpStatus.BAD_REQUEST,
+            ApiError.builder().error("cruise " + cruise.getCruiseName() + " is not associated with facility " + facility.getFacility()).build())
+    ));
+
+    sample.setCruisePlatform(curatorsCruisePlatformRepository.findByCruiseAndPlatform(cruise, platform).orElseThrow(() ->
+        new ApiException(HttpStatus.BAD_REQUEST,
+            ApiError.builder().error("cruise " + cruise.getCruiseName() + " is not associated with platform " + platform.getPlatform()).build())
+    ));
+
     sample.setSample(view.getSample());
 //    sample.setFacility(facility);
 //    sample.setPlatform(platform);

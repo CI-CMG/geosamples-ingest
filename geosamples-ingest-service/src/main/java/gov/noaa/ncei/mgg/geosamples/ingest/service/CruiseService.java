@@ -59,10 +59,10 @@ public class CruiseService extends
     List<Specification<CuratorsCruiseEntity>> specs = new ArrayList<>();
 
     List<String> cruiseNameContains = searchParameters.getCruiseNameContains();
-    List<String> cruiseNameEquals = searchParameters.getCruiseNameEquals();
+    List<String> cruiseNameEquals = searchParameters.getCruiseNameEquals().stream().map(s -> s.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<Long> year = searchParameters.getYear();
     List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
-    List<String> facilityCodesEquals = searchParameters.getFacilityCodeEquals();
+    List<String> facilityCodesEquals = searchParameters.getFacilityCodeEquals().stream().map(s -> s.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<String> platformsEquals = searchParameters.getPlatformEquals().stream().map(p -> p.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<Long> id = searchParameters.getId();
 
@@ -190,7 +190,7 @@ public class CruiseService extends
 
   @Override
   protected void updateEntity(CuratorsCruiseEntity entity, CruiseView view) {
-    entity.setCruiseName(view.getCruiseName());
+    entity.setCruiseName(view.getCruiseName().trim().toUpperCase(Locale.ENGLISH));
     entity.setYear(view.getYear().shortValue());
     entity.setPublish(view.getPublish());
     mergeFacilities(entity, view.getFacilityCodes());

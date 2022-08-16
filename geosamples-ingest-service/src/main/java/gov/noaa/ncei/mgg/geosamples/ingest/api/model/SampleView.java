@@ -18,7 +18,6 @@ public class SampleView {
   private String facilityCode;
   private String platform;
   private String deviceCode;
-  private String shipCode;
   private String beginDate;
   private String endDate;
   private Double lat;
@@ -87,14 +86,6 @@ public class SampleView {
 
   public void setDeviceCode(String deviceCode) {
     this.deviceCode = deviceCode;
-  }
-
-  public String getShipCode() {
-    return shipCode;
-  }
-
-  public void setShipCode(String shipCode) {
-    this.shipCode = shipCode;
   }
 
   public String getBeginDate() {

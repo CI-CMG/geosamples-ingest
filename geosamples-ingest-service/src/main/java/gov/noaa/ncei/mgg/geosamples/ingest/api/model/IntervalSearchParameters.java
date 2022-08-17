@@ -27,6 +27,18 @@ public class IntervalSearchParameters implements PagingAndSortingParameters {
 
 
   private List<Integer> interval = new ArrayList<>(0);
+  private List<String> imlgs = new ArrayList<>(0);
+
+  public List<String> getImlgs() {
+    return imlgs;
+  }
+
+  public void setImlgs(List<String> imlgs) {
+    if (imlgs == null) {
+      imlgs = new ArrayList<>(0);
+    }
+    this.imlgs = imlgs;
+  }
 
   public List<Integer> getInterval() {
     return interval;

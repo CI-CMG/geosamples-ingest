@@ -33,6 +33,7 @@ public class IntervalView {
 
 
 
+  private Long id;
   private Integer interval;
   private Double depthTop;
   private Double depthBot;
@@ -72,6 +73,14 @@ public class IntervalView {
   private Boolean publish;
   private String igsn;
   private String imlgs;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getImlgs() {
     return imlgs;

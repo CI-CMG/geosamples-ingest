@@ -4,9 +4,11 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseLinksEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
@@ -86,7 +88,7 @@ public class IntervalService extends
       specs.add(SearchUtils.equal(interval, CuratorsIntervalEntity_.INTERVAL));
     }
     if (!imlgs.isEmpty()) {
-      specs.add(SearchUtils.equal(imlgs, CuratorsIntervalEntity_.SAMPLE));
+      specs.add(SearchUtils.equal(imlgs, (e) -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.IMLGS)));
     }
     return specs;
   }

@@ -111,6 +111,7 @@ public class IntervalService extends
     IntervalView view = new IntervalView();
 
     view.setId(entity.getId());
+    view.setInterval(entity.getInterval());
 
     setCombinedCmMm(entity::getDepthTop, entity::getDepthTopMm, view::setDepthTop);
     setCombinedCmMm(entity::getDepthBot, entity::getDepthTopMm, view::setDepthBot);

@@ -3,12 +3,15 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import edu.colorado.cires.cmg.jpa.model.EntityWithId;
 import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -43,6 +46,15 @@ public class CuratorsFacilityEntity implements EntityWithId<Long> {
   @Column(name = "ADDR_4", length = 45)
   private String addr4;
 
+  @Column(name = "CONTACT_1", length = 45)
+  private String contact1;
+
+  @Column(name = "CONTACT_2", length = 45)
+  private String contact2;
+
+  @Column(name = "CONTACT_3", length = 45)
+  private String contact3;
+
   @Column(name = "EMAIL_LINK", length = 45)
   private String emailLink;
 
@@ -67,6 +79,9 @@ public class CuratorsFacilityEntity implements EntityWithId<Long> {
   @Column(name = "PREVIOUS_STATE", length = 1)
   private String previousState;
 
+  // no getters and setters on purpose, this needs to be here to generate a JPA query only
+  @OneToMany(mappedBy = "facility")
+  private List<CuratorsCruiseFacilityEntity> cruiseFacilities = new ArrayList<>();
 
 
   @Override
@@ -206,5 +221,29 @@ public class CuratorsFacilityEntity implements EntityWithId<Long> {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public String getContact1() {
+    return contact1;
+  }
+
+  public void setContact1(String contact1) {
+    this.contact1 = contact1;
+  }
+
+  public String getContact2() {
+    return contact2;
+  }
+
+  public void setContact2(String contact2) {
+    this.contact2 = contact2;
+  }
+
+  public String getContact3() {
+    return contact3;
+  }
+
+  public void setContact3(String contact3) {
+    this.contact3 = contact3;
   }
 }

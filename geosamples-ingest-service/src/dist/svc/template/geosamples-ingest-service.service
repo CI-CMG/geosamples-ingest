@@ -1,5 +1,5 @@
 [Unit]
-Description=Crowbar Edge Service
+Description=Geosamples Ingest Service
 After=network.target
 
 

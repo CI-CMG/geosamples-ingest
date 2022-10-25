@@ -1,4 +1,4 @@
-# Crowbar UI Edge Service
+# Geosamples Ingest Service
 
 ## Installation
 ### Basic Installation Overview

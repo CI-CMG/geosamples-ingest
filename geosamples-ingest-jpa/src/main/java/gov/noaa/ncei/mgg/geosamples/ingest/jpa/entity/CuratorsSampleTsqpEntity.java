@@ -3,13 +3,18 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import edu.colorado.cires.cmg.jpa.model.EntityWithId;
 import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.locationtech.jts.geom.Geometry;
 
@@ -120,6 +125,17 @@ public class CuratorsSampleTsqpEntity implements EntityWithId<String> {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "LEG_ID")
   private CuratorsLegEntity leg;
+
+  @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsIntervalEntity> intervals = new ArrayList<>();
+
+  @OneToMany(mappedBy = "sample", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsSampleLinksEntity> links = new ArrayList<>();
+
+  // no getters and setters on purpose, this needs to be here to generate a JPA query only
+  @OneToMany(mappedBy = "facility")
+  private List<CuratorsCruiseFacilityEntity> cruiseFacilities = new ArrayList<>();
+
 
   @Override
   public boolean equals(Object o) {
@@ -390,5 +406,37 @@ public class CuratorsSampleTsqpEntity implements EntityWithId<String> {
 
   public void setCruiseFacility(CuratorsCruiseFacilityEntity cruiseFacility) {
     this.cruiseFacility = cruiseFacility;
+  }
+
+  public void addInterval(CuratorsIntervalEntity interval) {
+    EntityUtil.addAndParent(this, intervals, interval, this::removeInterval, interval::setSample);
+  }
+
+  public void removeInterval(CuratorsIntervalEntity interval) {
+    EntityUtil.removeAndOrphan(intervals, interval, interval::setSample);
+  }
+
+  public void clearIntervals() {
+    EntityUtil.clearAndOrphan(intervals, CuratorsIntervalEntity::setSample);
+  }
+
+  public List<CuratorsIntervalEntity> getIntervals() {
+    return Collections.unmodifiableList(intervals);
+  }
+
+  public void addLink(CuratorsSampleLinksEntity link) {
+    EntityUtil.addAndParent(this, links, link, this::removeLink, link::setSample);
+  }
+
+  public void removeLink(CuratorsSampleLinksEntity link) {
+    EntityUtil.removeAndOrphan(links, link, link::setSample);
+  }
+
+  public void clearLinks() {
+    EntityUtil.clearAndOrphan(links, CuratorsSampleLinksEntity::setSample);
+  }
+
+  public List<CuratorsSampleLinksEntity> getLinks() {
+    return Collections.unmodifiableList(links);
   }
 }

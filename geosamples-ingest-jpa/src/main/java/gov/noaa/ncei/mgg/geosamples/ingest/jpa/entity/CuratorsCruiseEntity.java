@@ -43,6 +43,10 @@ public class CuratorsCruiseEntity implements EntityWithId<Long> {
   @OneToMany(mappedBy = "cruise", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CuratorsLegEntity> legs = new ArrayList<>();
 
+  // no getters and setters on purpose, this needs to be here to generate a JPA query only
+  @OneToMany(mappedBy = "cruise")
+  private List<CuratorsSampleTsqpEntity> samples = new ArrayList<>();
+
   public void addPlatformMapping(CuratorsCruisePlatformEntity platformMapping) {
     EntityUtil.addAndParent(this, platformMappings, platformMapping, this::removePlatformMapping, platformMapping::setCruise);
   }

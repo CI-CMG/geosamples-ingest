@@ -2,7 +2,11 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 
 import edu.colorado.cires.cmg.jpa.model.EntityWithId;
 import edu.colorado.cires.cmg.jpa.util.EntityUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -34,6 +39,13 @@ public class CuratorsCruisePlatformEntity implements EntityWithId<Long> {
 
   @Column(name = "PUBLISH", nullable = false, length = 1)
   private String publish = "Y";
+
+  @OneToMany(mappedBy = "cruisePlatform", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CuratorsCruiseLinksEntity> cruiseLinks = new ArrayList<>();
+
+  // no getters and setters on purpose, this needs to be here to generate a JPA query only
+  @OneToMany(mappedBy = "cruisePlatform")
+  private List<CuratorsSampleTsqpEntity> samples = new ArrayList<>();
 
   @Override
   public boolean equals(Object o) {
@@ -76,5 +88,21 @@ public class CuratorsCruisePlatformEntity implements EntityWithId<Long> {
 
   public void setPublish(boolean publish) {
     this.publish = publish ? "Y" : "N";
+  }
+
+  public void addCruiseLink(CuratorsCruiseLinksEntity link) {
+    EntityUtil.addAndParent(this, cruiseLinks, link, this::removeCruiseLink, link::setCruisePlatform);
+  }
+
+  public void removeCruiseLink(CuratorsCruiseLinksEntity link) {
+    EntityUtil.removeAndOrphan(cruiseLinks, link, link::setCruisePlatform);
+  }
+
+  public void clearCruiseLinks() {
+    EntityUtil.clearAndOrphan(cruiseLinks, CuratorsCruiseLinksEntity::setCruisePlatform);
+  }
+
+  public List<CuratorsCruiseLinksEntity> getCruiseLinks() {
+    return Collections.unmodifiableList(cruiseLinks);
   }
 }

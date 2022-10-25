@@ -3,11 +3,14 @@ package gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity;
 import edu.colorado.cires.cmg.jpa.model.EntityWithId;
 import edu.colorado.cires.cmg.jpa.util.EntityUtil;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -48,6 +51,10 @@ public class PlatformMasterEntity implements EntityWithId<Long> {
 
   @Column(name = "SOURCE_URI", length = 255)
   private String sourceUri;
+
+  // no getters and setters on purpose, this needs to be here to generate a JPA query only
+  @OneToMany(mappedBy = "platform")
+  private List<CuratorsCruisePlatformEntity> cruisePlatforms = new ArrayList<>();
 
 
   @Override

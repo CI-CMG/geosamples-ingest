@@ -10,7 +10,7 @@ import App from './App.vue';
 
 Vue.config.productionTip = false;
 
-startSessionMonster();
+startSessionMonster(router);
 
 Vue.use(VueVirtualScroller);
 Vue.use(BootstrapVue);

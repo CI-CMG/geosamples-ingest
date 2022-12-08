@@ -61,7 +61,7 @@ const updateState = (nextEncodedSession) => {
   return false;
 };
 
-const refreshAccessToken = (stored) => {
+const refreshAccessToken = (stored, router) => {
   const tokenData = JSON.parse(base64url.decode(stored));
   const { refreshToken } = tokenData;
   let promise;
@@ -91,6 +91,7 @@ const refreshAccessToken = (stored) => {
         const message = errorData ? JSON.stringify(errorData) : 'Authentication Failed';
         store.commit('app/addErrors', [message]);
         updateState('');
+        router.push({ name: 'View' });
         throw error;
       },
     );
@@ -115,18 +116,23 @@ export const setStorageFromOauthResponse = ({
   return tokenData;
 };
 
-const pollStorage = () => {
+const pollStorage = (router) => {
   const now = Date.now();
   const nextEncodedSession = getStored();
   const updated = updateState(nextEncodedSession);
   if (!updated && expTimestamp && expTimestamp - now <= 3 * pollInterval) {
-    refreshAccessToken(nextEncodedSession).then(setStorageFromOauthResponse);
+    refreshAccessToken(nextEncodedSession, router).then(setStorageFromOauthResponse);
   }
 };
 
-export const start = () => {
-  pollStorage();
-  return setInterval(pollStorage, pollInterval);
+export const start = (router) => {
+  pollStorage(router);
+  return setInterval(
+    () => {
+      pollStorage(router);
+    },
+    pollInterval,
+  );
 };
 
 export const logout = (router) => {

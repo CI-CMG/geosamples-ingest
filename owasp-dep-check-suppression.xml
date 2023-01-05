@@ -129,4 +129,40 @@
     <vulnerabilityName>CWE-300: Channel Accessible by Non-Endpoint ('Man-in-the-Middle')</vulnerabilityName>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   file name: cmg-jpa-entity-utils-1.3.0.jar
+   reason: not using fredsmith utils
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/edu\.colorado\.cires\.cmg/cmg\-jpa\-entity\-utils@.*$</packageUrl>
+    <cve>CVE-2021-4277</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   file name: snakeyaml-1.33.jar
+   Not using on user supplied input
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+    <vulnerabilityName>CVE-2022-1471</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   file name: spring-security-crypto-5.7.5.jar
+   Valid installed version, false positive
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-crypto@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-5408</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   file name: spring-web-5.3.20.jar
+   Valid installed version, false positive
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
+    <cve>CVE-2016-1000027</cve>
+  </suppress>
+
 </suppressions>

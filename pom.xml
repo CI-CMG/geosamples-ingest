@@ -21,6 +21,12 @@
     <module>geosamples-ingest-service</module>
   </modules>
 
+  <scm>
+    <connection>scm:git:git@github.com:CI-CMG/geosamples-ingest.git</connection>
+    <developerConnection>scm:git:git@github.com:CI-CMG/geosamples-ingest.git</developerConnection>
+    <url>https://github.com/CI-CMG/geosamples-ingest</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <properties>
     <java.version>1.8</java.version>

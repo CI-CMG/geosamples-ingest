@@ -48,12 +48,16 @@ public class SampleRow {
   @Pattern(regexp = "(\\d{8})|(\\d{4})|(\\d{6})", message = "End Date must be YYYYMMDD, YYYY, or YYYYMM")
   @ValidDate(message = "Invalid End Date")
   private String endDate;
+  @NotNull(message = "Beginning Latitude is required")
   @ValidLatitude
   private Double beginningLatitude;
+  @NotNull(message = "Beginning Longitude is required")
   @ValidLongitude
   private Double beginningLongitude;
+  @NotNull(message = "Ending Latitude is required")
   @ValidLatitude
   private Double endingLatitude;
+  @NotNull(message = "Ending Longitude is required")
   @ValidLongitude
   private Double endingLongitude;
   @Min(value = 0, message = "Beginning Water Depth must not be negative")

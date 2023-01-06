@@ -7,7 +7,7 @@
         </label>
       </b-col>
       <b-col sm="1">
-        <b-input type="text" v-model="page" :id="pageInputId"/>
+        <b-input type="number" :value="page" @input="updatePage" :id="pageInputId" @onemptied="updatePage(1)" min="1" :max="totalPages"/>
       </b-col>
     </b-row>
     <b-row>
@@ -22,7 +22,7 @@
 import genId from '@/components/idGenerator';
 
 export default {
-  props: ['updated', 'page', 'totalItems', 'itemsPerPage'],
+  props: ['updated', 'page', 'totalItems', 'itemsPerPage', 'totalPages'],
   data() {
     return {
       pageInputId: null,
@@ -31,6 +31,14 @@ export default {
 
   beforeMount() {
     this.pageInputId = genId();
+  },
+
+  methods: {
+    updatePage(value) {
+      if (value !== '') {
+        this.updated(value);
+      }
+    },
   },
 };
 </script>

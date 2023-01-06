@@ -44,7 +44,7 @@
       <b-link :to="{ name: 'PlatformEdit', params: { id: data.item.id }}">{{ data.item.platform }}</b-link>
     </template>
   </b-table>
-  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50"/>
+  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50" :total-pages="totalPages"/>
 </div>
 </template>
 

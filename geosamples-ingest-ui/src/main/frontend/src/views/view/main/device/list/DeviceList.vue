@@ -39,7 +39,7 @@
       <b-link :to="{ name: 'DeviceEdit', params: { id: data.item.device }}">{{ data.item.device }}</b-link>
     </template>
   </b-table>
-  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50"/>
+  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50" :total-pages="totalPages"/>
 </div>
 </template>
 

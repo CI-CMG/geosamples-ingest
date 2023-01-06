@@ -7,12 +7,12 @@
         </label>
       </b-col>
       <b-col sm="1">
-        <b-input type="number" :value="page" @input="updatePage" :id="pageInputId" @onemptied="updatePage(1)" min="1" :max="totalPages"/>
+        <b-input type="number" :value="page" @input="updatePage" :id="pageInputId" min="1" :max="totalPages"/>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-pagination v-model="page" @input="updated" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
+        <b-pagination :value="page" @input="updatePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
       </b-col>
     </b-row>
   </div>
@@ -35,7 +35,7 @@ export default {
 
   methods: {
     updatePage(value) {
-      if (value !== '') {
+      if (value !== '' && Number(value) <= Number(this.totalPages) && Number(this.page) !== Number(value)) {
         this.updated(value);
       }
     },

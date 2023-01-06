@@ -25,7 +25,7 @@
           :sortedColumns="sortParameters.selected"
         />
       </div>
-      <TextPagination :updated="changePage" :page="page" :total-items="totalItems" :items-per-page="itemsPerPage"/>
+      <TextPagination :updated="changePage" :page="page" :total-items="totalItems" :items-per-page="itemsPerPage" :total-pages="totalPages"/>
     </div>
   </b-card>
 

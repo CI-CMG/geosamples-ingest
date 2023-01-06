@@ -165,4 +165,22 @@
     <cve>CVE-2016-1000027</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   file name: snakeyaml-1.33.jar
+   Not parsing user supplied yaml files
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+    <cve>CVE-2021-4235</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   file name: snakeyaml-1.33.jar
+   Not parsing user supplied yaml files
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+    <cve>CVE-2022-3064</cve>
+  </suppress>
+
 </suppressions>

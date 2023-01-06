@@ -25,7 +25,7 @@
           :sortedColumns="sortParameters.selected"
         />
       </div>
-      <b-pagination class="mt-3" :value="page" @change="changePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
+      <TextPagination :updated="changePage" :page="page" :total-items="totalItems" :items-per-page="itemsPerPage"/>
     </div>
   </b-card>
 
@@ -36,6 +36,7 @@
 import {
   mapActions, mapMutations, mapState,
 } from 'vuex';
+import TextPagination from '@/components/TextPagination.vue';
 import IntervalListTable from './IntervalListTable.vue';
 import IntervalSearchControl from './IntervalSearchControl.vue';
 
@@ -51,6 +52,7 @@ export default {
   components: {
     IntervalListTable,
     IntervalSearchControl,
+    TextPagination,
   },
   beforeRouteEnter(to, from, next) {
     next((self) => {

@@ -39,7 +39,7 @@
       <b-link :to="{ name: 'MunsellEdit', params: { id: data.item.munsellCode }}">{{ data.item.munsellCode }}</b-link>
     </template>
   </b-table>
-  <b-pagination v-model="currentPage" @input="changePage" :total-rows="totalItems" per-page="50"></b-pagination>
+  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50"/>
 </div>
 </template>
 
@@ -49,11 +49,17 @@ import genId from '@/components/idGenerator';
 import {
   mapActions, mapMutations, mapState,
 } from 'vuex';
+import TextPagination from '@/components/TextPagination.vue';
 
 export default {
+  components: {
+    TextPagination,
+  },
+
   beforeMount() {
     this.munsellId = genId();
     this.munsellCodeId = genId();
+    this.pageInputId = genId();
   },
   beforeRouteEnter(to, from, next) {
     next((self) => {
@@ -111,6 +117,7 @@ export default {
     return {
       munsellId: null,
       munsellCodeId: null,
+      pageInputId: null,
 
       fields: [
         {

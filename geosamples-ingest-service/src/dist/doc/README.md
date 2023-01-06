@@ -3,7 +3,7 @@
 ## Installation
 ### Basic Installation Overview
 1. Extract distribution bundle
-1. Configure TLS key and truststore
+1. Configure TLS key
 1. Configure application properties
 1. Install as a systemd service
 
@@ -12,7 +12,7 @@
 1. Install the Java 1.8 JRE
 1. If running as a non-root user, set create that user ```useradd geosamples```. You may also want to increase the number of file descriptors for that user.
 1. If not running as a service, it is recommended to set the JAVA_HOME environment variable
-1. Download either the zip or the tar.gz archive from the repository and copy it to the install location
+1. Download either the zip or the tar.gz archive from the repository and copy it to the installation location
 1. Run ```unzip geosamples-ingest-service-XXX.zip``` or ```tar -xvf geosamples-ingest-service-XXX.tar.gz```
 1. If extracted as the root user, file ownership will be incorrect. Update file permissions with chown.  Ex. ```chown -R user:user service_dir```
 
@@ -102,22 +102,15 @@ And finally, sign the certificate
 openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt -days 365
 ```
 
-The next steps will create the keystore to use for TLS encryption and the truststore to trust connections to other resources like the
-HazEL Auth Service and database.
+The next steps will create the keystore to use for TLS encryption.
 
-First create the keystore
+Create the keystore
 ```bash
 cat tls.crt ca.crt > tls.chain
 openssl pkcs12 -export -inkey tls.key -in tls.chain -out keystore.p12 -name tls
 ```
 
-Next create a truststore with any CA certificates needed
-```bash
-keytool -import -file ca.crt -alias tlsca -keystore truststore.jks
-```
-Repeat this command to add additional certificates.  The alias does not matter.
-
-By default the service will look for the keystore and truststore in the config directory with the names keystore.p12 and truststore.jks.  Copy these files
+By default, the service will look for the keystore in the config directory with the name keystore.p12.  Copy this file
 here.
 
 
@@ -129,19 +122,7 @@ format for the environment variables: https://docs.spring.io/spring-boot/docs/cu
 
 
 The properties file is located at config/application.properties.  Most of the properties have sensible defaults.  However, some are blank and need to be 
-configured:
-```properties
-# The password used to encrypt the keystore
-server.ssl.key-store-password=
-# The password used to encrypt the truststore
-server.ssl.trust-store-password=
-# A comma separated list of hosts for the hazard service.  Ex. https://com.example:9005,https://com.example2:9000
-hazel.hazard-service.hosts=
-# The OAuth client ID configured in the Auth service
-hazel.oauth.client-id=
-# The external base URL for the auth service
-hazel.oauth.auth-service-url=
-```
+configured.
 
 The _${svc.home}_ placeholder can be used in properties files or environment variables and represents the absolute path to the service install location.
 

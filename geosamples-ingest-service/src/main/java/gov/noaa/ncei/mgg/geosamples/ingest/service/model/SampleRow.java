@@ -54,10 +54,8 @@ public class SampleRow {
   @NotNull(message = "Beginning Longitude is required")
   @ValidLongitude
   private Double beginningLongitude;
-  @NotNull(message = "Ending Latitude is required")
   @ValidLatitude
   private Double endingLatitude;
-  @NotNull(message = "Ending Longitude is required")
   @ValidLongitude
   private Double endingLongitude;
   @Min(value = 0, message = "Beginning Water Depth must not be negative")

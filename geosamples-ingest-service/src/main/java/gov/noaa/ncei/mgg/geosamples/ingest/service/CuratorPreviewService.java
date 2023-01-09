@@ -1,13 +1,11 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CuratorDataResponse;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Autowired;

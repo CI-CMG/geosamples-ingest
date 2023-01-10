@@ -12,7 +12,7 @@ export default {
   namespaced: true,
 
   state: {
-    platforms: [],
+    items: [],
     searching: false,
 
     page: 1,
@@ -98,7 +98,7 @@ export default {
     },
     searchSuccess(state, data) {
       state.searching = false;
-      state.platforms = data.items;
+      state.items = data.items;
       state.page = data.page;
       state.totalPages = data.totalPages;
       state.totalItems = data.totalItems;
@@ -108,7 +108,7 @@ export default {
     },
     clearAll(state) {
       state.params = { ...defaultParams };
-      state.platforms = [];
+      state.items = [];
       state.searching = false;
       state.page = 1;
       state.totalPages = 1;

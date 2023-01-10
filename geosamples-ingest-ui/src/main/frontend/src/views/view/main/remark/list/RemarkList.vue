@@ -1,123 +1,45 @@
 <template>
-<div>
-  <b-form @submit.prevent="search" @reset.prevent="reset">
-    <b-container fluid>
-      <b-row>
-        <b-col>
-          <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkId">
-            <b-form-input :id="remarkId" v-model="remark"/>
-          </b-form-group>
-        </b-col>
-        <b-col>
-          <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide Code" :label-for="remarkCodeId">
-            <b-form-input :id="remarkCodeId" v-model="remarkCode"/>
-          </b-form-group>
-        </b-col>
-      </b-row>
-    </b-container>
-
-    <div v-if="!searching">
-      <b-button type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">Search</b-button>
-      <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Clear</b-button>
-    </div>
-  </b-form>
-  <b-button :to="{ name: 'RemarkAdd' }" variant="secondary" class="m-3">Add New Rock Glass Remarks & Mn/Fe Oxide</b-button>
-  <b-table
-    sticky-header="500px"
-    head-variant="dark"
-    striped
-    bordered
-    small
-    hover
-    :items="items"
-    :fields="fields"
-    no-local-sorting
-    @sort-changed="sortChanged"
-    :sort-by="sortBy"
-    :sort-desc="sortDesc">
-    <template #cell(remark)="data">
-      <b-link :to="{ name: 'RemarkEdit', params: { id: data.item.remark }}">{{ data.item.remark }}</b-link>
-    </template>
-  </b-table>
-  <TextPagination :updated="changePage" :page="currentPage" :total-items="totalItems" items-per-page="50" :total-pages="totalPages"/>
-</div>
+  <InteractiveTable
+    module="remark"
+    read-authority="ROLE_REMARK_READ"
+    :fields="[
+      { label: 'Rock Glass Remarks & Mn/Fe Oxide', value: params.remark, set: setRemark },
+      { label: 'Rock Glass Remarks & Mn/Fe Oxide Code', value: params.remarkCode, set: setRemarkCode },
+    ]"
+    :table-fields="tableFields"
+    create-route="RemarkAdd"
+    create-text="Add New Rock Glass"
+    create-authority="ROLE_REMARK_CREATE"
+    edit-field="remark"
+    edit-parameter="remark"
+    edit-route="RemarkEdit"
+    edit-authority="ROLE_REMARK_UPDATE"
+  />
 </template>
 
 <script>
 
-import genId from '@/components/idGenerator';
 import {
-  mapActions, mapMutations, mapState,
+  mapMutations, mapState,
 } from 'vuex';
-import TextPagination from '@/components/TextPagination.vue';
+import InteractiveTable from '@/components/InteractiveTable.vue';
 
 export default {
   components: {
-    TextPagination,
-  },
-
-  beforeMount() {
-    this.remarkId = genId();
-    this.remarkCodeId = genId();
-  },
-  beforeRouteEnter(to, from, next) {
-    next((self) => {
-      self.search();
-    });
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.search();
-    next();
-  },
-  beforeRouteLeave(to, from, next) {
-    this.clearAll();
-    next();
+    InteractiveTable,
   },
 
   methods: {
-    ...mapMutations('remark', ['setRemark', 'clearParams', 'setRemarkCode', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll']),
-    ...mapActions('remark', ['search', 'reset', 'changePage']),
-    sortChanged({ sortBy, sortDesc }) {
-      this.setSortBy(sortBy);
-      this.setSortDesc(sortDesc);
-      this.search();
-    },
+    ...mapMutations('remark', ['setRemark', 'setRemarkCode']),
   },
 
   computed: {
-    ...mapState('remark', ['searching', 'page', 'totalItems', 'totalPages', 'items', 'params', 'sortDesc', 'sortBy']),
-    remark: {
-      get() {
-        return this.params.remark;
-      },
-      set(value) {
-        this.setRemark(value);
-      },
-    },
-    remarkCode: {
-      get() {
-        return this.params.remarkCode;
-      },
-      set(value) {
-        this.setRemarkCode(value);
-      },
-    },
-    currentPage: {
-      get() {
-        return this.page;
-      },
-      set(value) {
-        this.setPage(value);
-      },
-    },
+    ...mapState('remark', ['params']),
   },
 
   data() {
     return {
-      remarkId: null,
-      remarkCodeId: null,
-
-      fields: [
+      tableFields: [
         {
           key: 'remark',
           label: 'Rock Glass Remarks & Mn/Fe Oxide',

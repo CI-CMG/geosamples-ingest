@@ -32,6 +32,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.Predicate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -129,6 +133,7 @@ public class SampleService extends
     List<String> platform = searchParameters.getPlatform();
     List<String> deviceCode = searchParameters.getDeviceCode();
     List<String> igsn = searchParameters.getIgsn();
+    Geometry area = searchParameters.getArea();
 
     if (!imlgs.isEmpty()) {
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
@@ -165,8 +170,36 @@ public class SampleService extends
                       SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
+    if (area != null) {
+      specs.add(within(normalizeArea(area)));
+    }
 
     return specs;
+  }
+
+  public static Specification<CuratorsSampleTsqpEntity> within(Geometry shape) {
+    return (feature, cq, cb) -> cb.and(
+        cb.isNotNull(feature.get(CuratorsSampleTsqpEntity_.SHAPE)),
+        new WithinPredicate(cb, feature.get(CuratorsSampleTsqpEntity_.SHAPE), shape)
+    );
+  }
+
+  private static Geometry normalizeArea(Geometry geometry) {
+    if (geometry instanceof GeometryCollection && geometry.getGeometryType().equals("GeometryCollection")) {
+      List<Polygon> polygons = new ArrayList<>();
+      for (int n = 0; n < geometry.getNumGeometries(); n++) {
+        Geometry g = geometry.getGeometryN(n);
+        if (g instanceof Polygon) {
+          polygons.add((Polygon) g);
+        } else if (g instanceof MultiPolygon) {
+          for (int n2 = 0; n2 < g.getNumGeometries(); n2++) {
+            polygons.add((Polygon) g.getGeometryN(n));
+          }
+        }
+      }
+      return geometry.getFactory().createMultiPolygon(polygons.toArray(new Polygon[0]));
+    }
+    return geometry;
   }
 
   @Override

@@ -68,7 +68,7 @@ public class UserService extends
       specs.add(SearchUtils.contains(userNameContains, GeosamplesUserEntity_.USER_NAME));
     }
 
-    if (!userNameContains.isEmpty()) {
+    if (!userNameEquals.isEmpty()) {
       specs.add(SearchUtils.equal(userNameEquals, GeosamplesUserEntity_.USER_NAME));
     }
 

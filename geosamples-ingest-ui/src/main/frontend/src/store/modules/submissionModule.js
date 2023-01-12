@@ -7,7 +7,7 @@ export default {
   state: {
     file: null,
     uploading: false,
-    errorData: {},
+    errorHeaders: [],
     dataRows: [],
   },
 
@@ -15,8 +15,20 @@ export default {
     setFile(state, file) {
       state.file = file;
     },
-    setErrorData(state, errorData) {
-      state.errorData = errorData;
+    setErrorHeaders(state, errorData) {
+      const errors = Object.keys(errorData);
+      for (let i = 0; i < errors.length; i++) {
+        let error = errors[i].split('.');
+        if (error.length === 2) {
+          error = error[1].trim();
+          if (!state.errorHeaders.includes(error)) {
+            state.errorHeaders.push(error);
+          }
+        }
+      }
+    },
+    clearErrorHeaders(state) {
+      state.errorHeaders = [];
     },
     setDataRows(state, dataRows) {
       state.dataRows = dataRows;
@@ -64,7 +76,7 @@ export default {
               const { data } = response;
               if (data) {
                 const { formErrors, additionalData } = data;
-                // commit('setErrorData', formErrors);
+                commit('setErrorHeaders', formErrors);
                 if (additionalData && additionalData.rows) {
                   commit('submissionForm/initialize', additionalData, { root: true });
                 } else {

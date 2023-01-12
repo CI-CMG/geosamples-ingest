@@ -8,7 +8,7 @@
     ]"
     :table-fields="tableFields"
     create-route="RockMineralAdd"
-    create-text="Add New Rock Mineral"
+    create-text="Add New Rock Mineralogy"
     create-authority="ROLE_ROCK_MINERAL_CREATE"
     edit-field="rockMineral"
     edit-parameter="rockMineral"

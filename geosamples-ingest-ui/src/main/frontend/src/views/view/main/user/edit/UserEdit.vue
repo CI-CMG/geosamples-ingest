@@ -102,7 +102,7 @@ export default {
     saveForm() {
       this.submit()
         .then((user) => this.save({ user, userName: this.id }))
-        .then(() => this.$router.push({ name: 'UserList' }));
+        .then(() => this.$router.push({ name: 'UserList' }, () => window.location.reload()));
     },
     doDelete() {
       this.delete(this.id).then(() => this.$router.push({ name: 'UserList' }));

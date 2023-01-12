@@ -28,6 +28,19 @@ export default {
   components: {
     SubmissionResultCell,
   },
+
+  created() {
+    for (let i = 0; i < this.errorHeaders.length; i++) {
+      const header = this.errorHeaders[i];
+      const headerLocation = this.fields.findIndex((f) => f.key === header);
+      if (headerLocation !== -1) {
+        this.fields[headerLocation].thStyle = {
+          backgroundColor: '#dc3545',
+        };
+      }
+    }
+  },
+
   data() {
     return {
       fields: [
@@ -220,7 +233,7 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
-    ...mapState('submission', ['errorData', 'dataRows']),
+    ...mapState('submission', ['errorHeaders', 'dataRows']),
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
     },
@@ -238,7 +251,7 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
-    ...mapMutations('submission', ['setErrorData']),
+    ...mapMutations('submission', ['clearErrorHeaders']),
   },
   // beforeRouteEnter(to, from, next) {
   //   next((self) => {
@@ -250,7 +263,7 @@ export default {
   //   next();
   // },
   beforeRouteLeave(to, from, next) {
-    this.setErrorData(null);
+    this.clearErrorHeaders();
     this.initialize();
     next();
   },

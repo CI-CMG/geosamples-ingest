@@ -19,14 +19,14 @@ html {
   &.geo-submission-result-error {
 
     .geo-submission-result-value {
-      background-color: red;
+      background-color: #dc3545;
       border: 1px solid black;
     }
 
   }
 
   .geo-submission-result-error-message {
-    border: 1px solid red;
+    border: 1px solid #dc3545;
   }
 
 }

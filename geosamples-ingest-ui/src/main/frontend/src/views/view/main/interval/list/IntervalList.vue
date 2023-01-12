@@ -54,19 +54,21 @@ export default {
     IntervalSearchControl,
     TextPagination,
   },
-  beforeRouteEnter(to, from, next) {
-    next((self) => {
-      route(self, to);
-    });
-  },
+
   beforeRouteUpdate(to, from, next) {
     // noinspection JSDeepBugsSwappedArgs
     route(this, to);
     next();
   },
-  beforeRouteLeave(to, from, next) {
-    this.clearAll();
-    next();
+
+  created() {
+    if (this.items) {
+      if (this.items.length === 0) {
+        this.searchPage();
+      }
+    } else {
+      this.searchPage();
+    }
   },
 
   methods: {

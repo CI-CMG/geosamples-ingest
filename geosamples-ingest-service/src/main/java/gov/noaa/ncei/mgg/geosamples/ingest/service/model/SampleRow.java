@@ -121,7 +121,7 @@ public class SampleRow {
   private String principalInvestigator;
   @Pattern(regexp = "X", message = "Sample Not Available must be X or empty")
   private String sampleNotAvailable;
-  @Size(max = 9, message = "IGSN must be at most 9 characters")
+  @Size(max = 50, message = "IGSN must be at most 50 characters")
   private String igsn;
   @Size(max = 30, message = "Alternate Cruise/Leg must be at most 30 characters")
   private String alternateCruise;

@@ -77,7 +77,7 @@ public class CruiseService extends
       specs.add(SearchUtils.equal(year, CuratorsCruiseEntity_.YEAR));
     }
     if (!publish.isEmpty()) {
-      specs.add(SearchUtils.equal(year, CuratorsCruiseEntity_.PUBLISH));
+      specs.add(SearchUtils.equal(publish, CuratorsCruiseEntity_.PUBLISH));
     }
     if (!facilityCodesEquals.isEmpty()) {
       specs.add(SearchUtils.equal(facilityCodesEquals, (e) -> e.join(CuratorsCruiseEntity_.FACILITY_MAPPINGS)

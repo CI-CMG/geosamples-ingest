@@ -144,11 +144,11 @@ public class UserService extends
       }
     }
 
-    Iterator<GeosamplesUserAuthorityEntity> it = entity.getUserAuthorities().iterator();
+    Iterator<GeosamplesUserAuthorityEntity> it = new ArrayList<>(entity.getUserAuthorities()).iterator();
     while (it.hasNext()) {
       GeosamplesUserAuthorityEntity userAuthorityEntity = it.next();
       if(toRemove.contains(userAuthorityEntity.getAuthorityName())) {
-        it.remove();
+        entity.removeUserAuthority(userAuthorityEntity);
       }
     }
 

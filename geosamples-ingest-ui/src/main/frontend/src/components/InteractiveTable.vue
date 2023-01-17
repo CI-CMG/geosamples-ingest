@@ -88,10 +88,6 @@ export default {
     this.search();
   },
 
-  beforeDestroy() {
-    this.$store.commit(`${this.module}/clearAll`);
-  },
-
   computed: {
     currentPage: {
       get() {
@@ -113,7 +109,13 @@ export default {
 
   methods: {
     search() {
-      this.$store.dispatch(`${this.module}/search`);
+      this.$store.dispatch(`${this.module}/searchPage`).then(
+        (response) => {
+          if (response.items.length === 0) {
+            this.$store.dispatch(`${this.module}/search`);
+          }
+        },
+      );
     },
 
     sortChanged({ sortBy, sortDesc }) {

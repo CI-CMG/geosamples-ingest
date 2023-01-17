@@ -33,7 +33,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringBootTest
 @ActiveProfiles("it")
-public class SampleServiceTest {
+public class SampleServiceIT {
 
   @Autowired
   private SampleService sampleService;

@@ -19,7 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @SpringBootTest
 @ActiveProfiles("it")
-public class UserServiceTest {
+public class UserServiceIT {
 
   @Autowired
   private GeosamplesUserRepository geosamplesUserRepository;

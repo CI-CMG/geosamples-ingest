@@ -1,6 +1,11 @@
 <template>
   <div>
     <b-row class="mb-3">
+      <b-col>
+        <span>{{ `Total records: ${ totalItems }` }}</span>
+      </b-col>
+    </b-row>
+    <b-row class="mb-3">
       <b-col sm="1">
         <label :for="pageInputId" class="mt-1">
           Current page:

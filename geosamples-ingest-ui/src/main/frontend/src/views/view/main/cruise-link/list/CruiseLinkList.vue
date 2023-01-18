@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Cruise Link', active: true },
+    ]"
     module="cruiseLink"
     read-authority="ROLE_CRUISE_LINK_READ"
     :fields="[

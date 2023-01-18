@@ -1,7 +1,11 @@
 <template>
   <div class="m-2">
 
-<!--    <b-breadcrumb :items="items"/>-->
+    <b-breadcrumb :items="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Rock Mineralogy', to: { name: 'RockMineralList' } },
+      { text: 'Edit Rock Mineralogy', active: true },
+    ]"/>
 
     <div v-if="ready">
 

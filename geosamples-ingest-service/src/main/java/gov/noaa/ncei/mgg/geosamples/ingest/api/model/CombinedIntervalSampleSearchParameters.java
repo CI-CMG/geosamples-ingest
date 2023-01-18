@@ -9,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.locationtech.jts.geom.Geometry;
 
 
 public class CombinedIntervalSampleSearchParameters implements PagingAndSortingParameters {
@@ -48,6 +49,7 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
   private List<String> weathMetaCode = new ArrayList<>(0);
   private List<String> remarkCode = new ArrayList<>(0);
   private List<String> munsellCode = new ArrayList<>(0);
+  private Geometry area;
 
 
   public List<String> getCruiseContains() {
@@ -276,6 +278,14 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
       munsellCode = new ArrayList<>(0);
     }
     this.munsellCode = munsellCode;
+  }
+
+  public Geometry getArea() {
+    return area;
+  }
+
+  public void setArea(Geometry area) {
+    this.area = area;
   }
 
   @Override

@@ -26,6 +26,9 @@ const model = {
   platform: ['string'],
   deviceCode: ['string'],
   igsn: ['string'],
+  area: 'string',
+  swCoordinate: 'string',
+  neCoordinate: 'string',
 };
 
 export default {

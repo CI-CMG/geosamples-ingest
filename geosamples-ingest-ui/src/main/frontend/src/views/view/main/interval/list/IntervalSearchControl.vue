@@ -35,8 +35,11 @@
           </b-row>
           <b-row>
             <SearchCardColSelect title="Weathering/Metamorphism" field="weathMetaCode" :options="optionsWeatheringCode" module="intervalSearchForm"/>
-            <SearchCardColSelect title="Rock Glass Remarks & Mn/Fe Oxide" field="remarkCode" :options="optionsRemarkCode" module="intervalSearchForm"/>
             <SearchCardColSelect title="Munsell Color" field="munsellCode" :options="optionsMunsellCode" module="intervalSearchForm"/>
+            <SearchCardBoundingBox title="Within Area" module="intervalSearchForm"/>
+          </b-row>
+          <b-row>
+            <SearchCardColSelect title="Rock Glass Remarks & Mn/Fe Oxide" field="remarkCode" :options="optionsRemarkCode" module="intervalSearchForm"/>
           </b-row>
         </b-container>
 
@@ -68,6 +71,7 @@ import SearchCardCol from '@/components/SearchCardCol.vue';
 import SearchCardColSelect from '@/components/SearchCardColSelect.vue';
 import SearchCardColSingleSelect from '@/components/SearchCardColSingleSelect.vue';
 import SortModal from '@/components/SortModal.vue';
+import SearchCardBoundingBox from '@/components/SearchCardBoundingBox.vue';
 
 const concatQuoted = (list) => list.map((v) => `'${v}'`).join(',');
 const concat = (list) => list.join(',');
@@ -80,6 +84,7 @@ export default {
     SearchCardColSelect,
     SearchCardColSingleSelect,
     SortModal,
+    SearchCardBoundingBox,
   },
   props: ['onSearch', 'onSort'],
   computed: {
@@ -300,6 +305,26 @@ export default {
     ...mapActions('interval', ['loadOptions']),
     showSearch() {
       this.loadOptions();
+      if (this.searchParameters) {
+        const polygon = this.searchParameters.area;
+        if (polygon) {
+          const polygonParts = polygon[0].split('((');
+          if (polygonParts.length === 2) {
+            const coordinates = polygonParts[1];
+            const coordinateParts = coordinates.split(',');
+            if (coordinateParts.length === 5) {
+              let swCoordinate = coordinateParts[0];
+              swCoordinate = swCoordinate.split(' ');
+              let neCoordinate = coordinateParts[2];
+              neCoordinate = neCoordinate.split(' ');
+              if (swCoordinate.length === 2 && neCoordinate.length === 2) {
+                this.searchParameters.swCoordinate = `${swCoordinate[0]}, ${swCoordinate[1]}`;
+                this.searchParameters.neCoordinate = `${neCoordinate[0]}, ${neCoordinate[1]}`;
+              }
+            }
+          }
+        }
+      }
       this.initialize(this.searchParameters);
       this.$refs['search-modal'].show();
     },

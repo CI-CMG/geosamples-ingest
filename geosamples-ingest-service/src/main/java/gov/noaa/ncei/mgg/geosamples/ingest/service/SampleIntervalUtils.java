@@ -28,6 +28,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
 import java.util.stream.Collectors;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -219,9 +223,38 @@ public final class SampleIntervalUtils {
           .get(CuratorsCruiseEntity_.CRUISE_NAME)));
     }
 
+    Geometry area = searchParameters.getArea();
+    if (area != null) {
+      specs.add(within(normalizeArea(area)));
+    }
+
     return specs;
   }
 
+  public static Specification<CuratorsIntervalEntity> within(Geometry shape) {
+    return (feature, cq, cb) -> cb.and(
+        cb.isNotNull(feature.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.SHAPE)),
+        new WithinPredicate(cb, feature.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.SHAPE), shape)
+    );
+  }
+
+  private static Geometry normalizeArea(Geometry geometry) {
+    if (geometry instanceof GeometryCollection && geometry.getGeometryType().equals("GeometryCollection")) {
+      List<Polygon> polygons = new ArrayList<>();
+      for (int n = 0; n < geometry.getNumGeometries(); n++) {
+        Geometry g = geometry.getGeometryN(n);
+        if (g instanceof Polygon) {
+          polygons.add((Polygon) g);
+        } else if (g instanceof MultiPolygon) {
+          for (int n2 = 0; n2 < g.getNumGeometries(); n2++) {
+            polygons.add((Polygon) g.getGeometryN(n));
+          }
+        }
+      }
+      return geometry.getFactory().createMultiPolygon(polygons.toArray(new Polygon[0]));
+    }
+    return geometry;
+  }
 
   public static CombinedSampleIntervalView toViewBase(CuratorsIntervalEntity entity) {
     CombinedSampleIntervalView view = new CombinedSampleIntervalView();

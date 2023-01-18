@@ -1,7 +1,7 @@
 <template>
   <div class="m-2">
 
-<!--    <b-breadcrumb :items="items"/>-->
+    <b-breadcrumb :items="breadcrumbs"/>
 
     <div v-if="ready">
 
@@ -345,8 +345,26 @@ export default {
       sampleCommentsId: '',
       publishId: '',
       showSamplId: '',
+
+      breadcrumbs: [],
     };
   },
+
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.name) {
+        sessionStorage.setItem('previousRoute', from.name);
+      }
+      const previousRoute = sessionStorage.getItem('previousRoute');
+      const previousText = previousRoute === 'IntervalList' ? 'Sample + Interval' : 'Sample';
+      vm.breadcrumbs = [
+        { text: 'Geosamples Ingest', to: { name: 'Home' } },
+        { text: previousText, to: { name: previousRoute } },
+        { text: 'Edit Sample', active: true },
+      ];
+    });
+  },
+
   beforeMount() {
     this.cruiseId = genId();
     this.sampleId = genId();

@@ -1,55 +1,58 @@
 <template>
-  <AuthorizedContent :authorities="[readAuthority]">
-    <b-form @submit.prevent="search" @reset.prevent="$store.dispatch(`${module}/reset`)">
-      <b-row>
-        <b-col v-for="(value, index) in fields" :key="`v${index}`">
-          <b-form-group :label="value.label" :label-for="fieldIds[value.label]">
-            <b-form-input :id="fieldIds[value.label]" :value="value.value" @input="(v) => value.set(v)"/>
-          </b-form-group>
-        </b-col>
-      </b-row>
+  <div>
+    <b-breadcrumb :items="breadcrumbs"/>
+    <AuthorizedContent :authorities="[readAuthority]">
+      <b-form @submit.prevent="search" @reset.prevent="$store.dispatch(`${module}/reset`)">
+        <b-row>
+          <b-col v-for="(value, index) in fields" :key="`v${index}`">
+            <b-form-group :label="value.label" :label-for="fieldIds[value.label]">
+              <b-form-input :id="fieldIds[value.label]" :value="value.value" @input="(v) => value.set(v)"/>
+            </b-form-group>
+          </b-col>
+        </b-row>
 
-      <div v-if="!$store.state[module].searching" class="mb-3">
-        <b-button type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
-          <b-icon icon="search" class="mr-2"/>Search
-        </b-button>
-        <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">
-          <b-icon icon="arrow-counterclockwise" class="mr-2"/>Clear
-        </b-button>
-        <AuthorizedContent :authorities="[createAuthority]">
-          <b-button :to="{ name: createRoute }" variant="secondary" class="mb-2 mr-sm-2 mb-sm-0">
-            <b-icon icon="plus" class="mr-2"/>{{ createText }}
+        <div v-if="!$store.state[module].searching" class="mb-3">
+          <b-button type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
+            <b-icon icon="search" class="mr-2"/>Search
           </b-button>
-        </AuthorizedContent>
-      </div>
-    </b-form>
-    <b-table
-      sticky-header="500px"
-      head-variant="dark"
-      striped
-      bordered
-      small
-      hover
-      :items="$store.state[module].items"
-      :fields="tableFields"
-      no-local-sorting
-      @sort-changed="sortChanged"
-      :sort-by="sortBy"
-      :sort-desc="sortDesc">
-      <template :slot="`cell(${editField})`" slot-scope="data">
-        <AuthorizedContent :authorities="[editAuthority]" :fallback-text="data.item[editField]">
-          <b-link :to="{ name: editRoute, params: { id: data.item[editParameter] }}">{{ data.item[editField] }}</b-link>
-        </AuthorizedContent>
-      </template>
-    </b-table>
-    <TextPagination
-      :updated="(value) => $store.dispatch(`${module}/changePage`, value)"
-      :page="currentPage"
-      :total-items="$store.state[module].totalItems"
-      items-per-page="50"
-      :total-pages="$store.state[module].totalPages"
-    />
-  </AuthorizedContent>
+          <b-button type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">
+            <b-icon icon="arrow-counterclockwise" class="mr-2"/>Clear
+          </b-button>
+          <AuthorizedContent :authorities="[createAuthority]">
+            <b-button :to="{ name: createRoute }" variant="secondary" class="mb-2 mr-sm-2 mb-sm-0">
+              <b-icon icon="plus" class="mr-2"/>{{ createText }}
+            </b-button>
+          </AuthorizedContent>
+        </div>
+      </b-form>
+      <b-table
+        sticky-header="500px"
+        head-variant="dark"
+        striped
+        bordered
+        small
+        hover
+        :items="$store.state[module].items"
+        :fields="tableFields"
+        no-local-sorting
+        @sort-changed="sortChanged"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc">
+        <template :slot="`cell(${editField})`" slot-scope="data">
+          <AuthorizedContent :authorities="[editAuthority]" :fallback-text="data.item[editField]">
+            <b-link :to="{ name: editRoute, params: { id: data.item[editParameter] }}">{{ data.item[editField] }}</b-link>
+          </AuthorizedContent>
+        </template>
+      </b-table>
+      <TextPagination
+        :updated="(value) => $store.dispatch(`${module}/changePage`, value)"
+        :page="currentPage"
+        :total-items="$store.state[module].totalItems"
+        items-per-page="50"
+        :total-pages="$store.state[module].totalPages"
+      />
+    </AuthorizedContent>
+  </div>
 </template>
 
 <script>
@@ -62,6 +65,7 @@ export default {
 
   props: [
     'module',
+    'breadcrumbs',
     'readAuthority',
     'fields',
     'tableFields',

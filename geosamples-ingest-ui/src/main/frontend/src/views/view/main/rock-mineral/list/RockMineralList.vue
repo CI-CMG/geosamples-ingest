@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Rock Mineralogy', active: true },
+    ]"
     module="rockMineral"
     read-authority="ROLE_ROCK_MINERAL_READ"
     :fields="[

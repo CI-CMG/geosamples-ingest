@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Storage Method', active: true },
+    ]"
     module="storageMethod"
     read-authority="ROLE_STORAGE_METHOD_READ"
     :fields="[

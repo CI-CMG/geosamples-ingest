@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Texture', active: true },
+    ]"
     module="texture"
     read-authority="ROLE_TEXTURE_READ"
     :fields="[

@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Munsell Color', active: true },
+    ]"
     module="munsell"
     read-authority="ROLE_MUNSELL_READ"
     :fields="[

@@ -1,5 +1,9 @@
 <template>
   <InteractiveTable
+    :breadcrumbs="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Physiographic Province', active: true },
+    ]"
     module="province"
     read-authority="ROLE_PROVINCE_READ"
     :fields="[

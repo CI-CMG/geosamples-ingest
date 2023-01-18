@@ -22,6 +22,7 @@ const fields = [
   'weathMetaCode',
   'remarkCode',
   'munsellCode',
+  'area',
 ];
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
@@ -147,6 +148,19 @@ export default {
           }
         }
       });
+      const swCoordinate = searchParameters.swCoordinate;
+      const neCoordinate = searchParameters.neCoordinate;
+      if (swCoordinate && neCoordinate) {
+        const swCoordinateParts = swCoordinate.split(',');
+        const neCoordinateParts = neCoordinate.split(',');
+        if (swCoordinateParts.length === 2 && neCoordinateParts.length === 2) {
+          const swLon = swCoordinateParts[1].trim();
+          const swLat = swCoordinateParts[0].trim();
+          const neLon = neCoordinateParts[1].trim();
+          const neLat = neCoordinateParts[0].trim();
+          params.area = `POLYGON((${swLon} ${swLat},${neLon} ${swLat},${neLon} ${neLat},${swLon} ${neLat},${swLon} ${swLat}))`;
+        }
+      }
       state.searchParameters = params;
     },
 

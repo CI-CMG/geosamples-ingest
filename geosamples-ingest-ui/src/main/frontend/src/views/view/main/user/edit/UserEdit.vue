@@ -1,6 +1,12 @@
 <template>
   <div class="m-2">
 
+    <b-breadcrumb :items="[
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Users', to: { name: 'UserList' } },
+      { text: 'Edit User', active: true },
+    ]"/>
+
     <div v-if="ready">
 
       <h1 v-if="isEdit" class="text-primary">Edit User - {{ getValue('userName') }}</h1>

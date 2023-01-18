@@ -1,5 +1,9 @@
 <template>
 <div>
+  <b-breadcrumb :items="[
+    { text: 'Geosamples Ingest', to: { name: 'Home' } },
+    { text: 'Sample', active: true },
+  ]"/>
   <b-modal ref="delete-modal" title="Delete Samples and Intervals" ok-variant="danger" ok-title="Delete" @ok="doDelete">
     <p class="my-4">Are you sure you want to delete the selected samples and associated intervals?</p>
   </b-modal>

@@ -4,6 +4,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseLinksEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
@@ -20,6 +21,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepo
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsWeathMetaRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -136,7 +138,11 @@ public class IntervalService extends
     view.setCompCode5(entity.getComp5() == null ? null : entity.getComp5().getLithologyCode());
     view.setCompCode6(entity.getComp6() == null ? null : entity.getComp6().getLithologyCode());
     view.setDescription(entity.getDescription());
-    view.setAgeCode(entity.getAge() == null ? null : entity.getAge().getAgeCode());
+    view.setAgeCodes(entity.getAges() == null || entity.getAges().isEmpty() ? Collections.emptyList() :
+        entity.getAges().stream()
+            .map(CuratorsAgeEntity::getAgeCode)
+            .collect(Collectors.toList())
+    );
     view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
     view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());
     view.setWeight(entity.getWeight());
@@ -220,7 +226,16 @@ public class IntervalService extends
 
     entity.setDescription(view.getDescription());
 
-    setRelation(view::getAgeCode, curatorsAgeRepository::findByAgeCode, entity::setAge);
+    entity.setAges(
+        view.getAgeCodes().stream()
+            .map(a -> curatorsAgeRepository.findByAgeCode(a).orElseThrow(
+                    () -> new ApiException(
+                        HttpStatus.NOT_FOUND,
+                        ApiError.builder().error(String.format("Area not found for code: %s", a)).build()
+                    )
+            ))
+            .collect(Collectors.toSet())
+    );
 
 
     entity.setAbsoluteAgeTop(view.getAbsoluteAgeTop());

@@ -380,8 +380,8 @@ export default {
           label: 'Description',
         },
         {
-          key: 'age',
-          label: 'Geologic Age',
+          key: 'ages',
+          label: 'Geologic Ages',
         },
         {
           key: 'absoluteAgeTop',

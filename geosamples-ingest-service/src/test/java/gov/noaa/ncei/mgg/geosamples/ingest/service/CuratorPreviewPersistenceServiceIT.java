@@ -55,7 +55,7 @@ import org.springframework.util.LinkedMultiValueMap;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("it")
-public class CuratorPreviewPersistenceServiceIT { // TODO: Write tests validating that empty latitudes/longitudes throw validation errors
+public class CuratorPreviewPersistenceServiceIT {
 
   private static MockWebServer mockCas;
 

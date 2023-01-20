@@ -2,41 +2,76 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsDeviceRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
-import java.time.Instant;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import okhttp3.mockwebserver.Dispatcher;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import org.apache.commons.io.FileUtils;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Example;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.LinkedMultiValueMap;
 
-
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("it")
 public class SampleServiceIT {
 
+  private static MockWebServer mockCas;
+
   @Autowired
-  private SampleService sampleService;
+  private ObjectMapper objectMapper;
+
+  @Autowired
+  private TestRestTemplate restTemplate;
+
+  @Autowired
+  private TransactionTemplate txTemplate;
+
+  @Autowired
+  private CuratorsIntervalRepository curatorsIntervalRepository;
 
   @Autowired
   private CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
@@ -45,135 +80,87 @@ public class SampleServiceIT {
   private CuratorsCruiseRepository curatorsCruiseRepository;
 
   @Autowired
-  private PlatformMasterRepository platformMasterRepository;
+  private GeosamplesAuthorityRepository geosamplesAuthorityRepository;
 
   @Autowired
-  private CuratorsFacilityRepository curatorsFacilityRepository;
+  private GeosamplesUserRepository geosamplesUserRepository;
 
   @Autowired
-  private CuratorsDeviceRepository curatorsDeviceRepository;
-
-  @Autowired
-  private TransactionTemplate transactionTemplate;
+  private SampleService sampleService;
 
   @Autowired
   private GeometryFactory geometryFactory;
 
+  @BeforeAll
+  public static void setUpAll() throws IOException {
+    mockCas = new MockWebServer();
+    mockCas.start(20158);
+
+    mockCas.setDispatcher(new Dispatcher() {
+      @Override
+      public MockResponse dispatch(RecordedRequest request) {
+        if ("/jwks".equals(request.getPath())) {
+          try {
+            return new MockResponse()
+                .setResponseCode(200)
+                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setBody(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+        return new MockResponse().setResponseCode(404);
+      }
+    });
+  }
+
+  @AfterAll
+  public static void tearDownAll() throws IOException {
+    mockCas.shutdown();
+  }
+
   @BeforeEach
-  private void beforeEach() {
-    cleanDb();
+  public void before() {
+    txTemplate.executeWithoutResult(s -> {
+      curatorsIntervalRepository.deleteAll();
+      curatorsIntervalRepository.flush();
+      curatorsSampleTsqpRepository.deleteAll();
+      curatorsCruiseRepository.deleteAll();
+      GeosamplesUserEntity martin = new GeosamplesUserEntity();
+      martin.setDisplayName("Marty McPharty");
+      martin.setUserName("martin");
+      for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
+        GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
+        userAuthorityEntity.setAuthority(authorityEntity);
+        martin.addUserAuthority(userAuthorityEntity);
+      }
+      geosamplesUserRepository.save(martin);
+    });
   }
 
   @AfterEach
-  private void afterEach() {
-    cleanDb();
+  public void after() {
+    txTemplate.executeWithoutResult(s -> {
+      curatorsIntervalRepository.deleteAll();
+      curatorsIntervalRepository.flush();
+      curatorsSampleTsqpRepository.deleteAll();
+      curatorsCruiseRepository.deleteAll();
+      geosamplesUserRepository.deleteById("martin");
+    });
   }
 
   @Test
-  public void testSearchByArea() throws ParseException {
+  public void testSearchByArea() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
 
-    transactionTemplate.executeWithoutResult(s -> {
-      CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
-      cruise.setId(1L);
-      cruise.setCruiseName("TEST");
-      cruise.setPublish(true);
-      cruise.setYear(Short.parseShort("2020"));
-      cruise = curatorsCruiseRepository.save(cruise);
 
-      PlatformMasterEntity platformMasterEntity = new PlatformMasterEntity();
-      platformMasterEntity.setPlatform("TEST");
-      platformMasterEntity.setId(1L);
-      platformMasterEntity.setPublish(true);
-      platformMasterEntity.setMasterId(1);
-      platformMasterEntity.setPrefix("TEST");
-      platformMasterEntity.setDateAdded(Instant.now());
-      platformMasterEntity.setIcesCode("TEST");
-      platformMasterEntity.setSourceUri("TEST");
-      platformMasterEntity.setPreviousState("T");
-      platformMasterEntity = platformMasterRepository.save(platformMasterEntity);
-
-      CuratorsFacilityEntity facilityEntity = new CuratorsFacilityEntity();
-      facilityEntity.setId(1L);
-      facilityEntity.setFacilityCode("T");
-      facilityEntity.setPublish(true);
-      facilityEntity.setPreviousState("T");
-      facilityEntity.setAddr1("TEST-1");
-      facilityEntity.setAddr2("TEST-2");
-      facilityEntity.setAddr3("TEST-3");
-      facilityEntity.setAddr4("TEST-4");
-      facilityEntity.setPreviousState("T");
-      facilityEntity.setFacility("TEST");
-      facilityEntity.setDoiLink("TEST");
-      facilityEntity.setEmailLink("TEST");
-      facilityEntity.setFacilityComment("TEST");
-      facilityEntity.setFtpLink("TEST");
-      facilityEntity.setInstCode("T");
-      facilityEntity.setLastUpdate(Instant.now());
-      facilityEntity.setUrlLink("TEST");
-      facilityEntity.setContact1("TEST-1");
-      facilityEntity.setContact2("TEST-1");
-      facilityEntity.setContact3("TEST-3");
-      facilityEntity = curatorsFacilityRepository.save(facilityEntity);
-
-      CuratorsCruiseFacilityEntity cruiseFacilityEntity = new CuratorsCruiseFacilityEntity();
-      cruiseFacilityEntity.setFacility(facilityEntity);
-      cruiseFacilityEntity.setCruise(cruise);
-      cruiseFacilityEntity.setPublish(true);
-      cruiseFacilityEntity.setId(1L);
-      cruise.addFacilityMapping(cruiseFacilityEntity);
-
-      CuratorsCruisePlatformEntity cruisePlatformEntity = new CuratorsCruisePlatformEntity();
-      cruisePlatformEntity.setCruise(cruise);
-      cruisePlatformEntity.setPlatform(platformMasterEntity);
-      cruisePlatformEntity.setPublish(true);
-      cruisePlatformEntity.setId(1L);
-      cruise.addPlatformMapping(cruisePlatformEntity);
-
-      CuratorsLegEntity curatorsLegEntity = new CuratorsLegEntity();
-      curatorsLegEntity.setCruise(cruise);
-      curatorsLegEntity.setPublish(true);
-      curatorsLegEntity.setId(1L);
-      curatorsLegEntity.setLegName("TEST");
-      cruise.addLeg(curatorsLegEntity);
-
-      curatorsCruiseRepository.save(cruise);
-
-      CuratorsDeviceEntity deviceEntity = new CuratorsDeviceEntity();
-      deviceEntity.setDevice("TEST");
-      deviceEntity.setDeviceCode("T");
-      deviceEntity.setPublish(true);
-      deviceEntity.setPreviousState("T");
-      deviceEntity.setSourceUri("TEST");
-      curatorsDeviceRepository.save(deviceEntity);
-    });
-
-    SampleView sampleView1 = new SampleView();
-    sampleView1.setImlgs("TEST-1");
-    sampleView1.setCruise("TEST");
-    sampleView1.setFacilityCode("T");
-    sampleView1.setPlatform("TEST");
-    sampleView1.setLeg("TEST");
-    sampleView1.setLat(15.); // Center of square
-    sampleView1.setLon(15.);
-    sampleView1.setDeviceCode("T");
-    sampleView1.setSample("TEST-1");
-    sampleView1 = sampleService.create(sampleView1);
-
-    SampleView sampleView2 = new SampleView();
-    sampleView2.setImlgs("TEST-2");
-    sampleView2.setCruise("TEST");
-    sampleView2.setFacilityCode("T");
-    sampleView2.setPlatform("TEST");
-    sampleView2.setLeg("TEST");
-    sampleView2.setLat(25.); // Outside of square
-    sampleView2.setLon(25.);
-    sampleView2.setDeviceCode("T");
-    sampleView2.setSample("TEST-2");
-    sampleService.create(sampleView2);
+    uploadFile("imlgs_sample_good_full.xlsm");
 
     SampleSearchParameters searchParameters = new SampleSearchParameters();
-
-    String wkt = "POLYGON((10 10,10 20,20 20,20 10, 10 10))";
+    String wkt = "POLYGON((25.97845409376835 38.68503454336369,25.980514030291786 38.68503454336369,25.980514030291786 38.68356055251447,25.97845409376835 38.68356055251447,25.97845409376835 38.68503454336369))";
     searchParameters.setArea(new WKTReader(geometryFactory).read(wkt));
 
     PagedItemsView<SampleView> pagedItemsView = sampleService.search(searchParameters);
@@ -181,29 +168,77 @@ public class SampleServiceIT {
     assertEquals(1, pagedItemsView.getTotalPages());
     assertEquals(searchParameters.getItemsPerPage(), pagedItemsView.getItemsPerPage());
 
-    List<SampleView> sampleViews = pagedItemsView.getItems();
-    assertEquals(1, sampleViews.size());
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity expectedSample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(sample -> sample.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
 
-    SampleView sampleView = sampleViews.get(0);
-    assertEquals(sampleView1.getImlgs(), sampleView.getImlgs());
-    assertEquals(sampleView1.getCruise(), sampleView.getCruise());
-    assertEquals(sampleView1.getFacilityCode(), sampleView.getFacilityCode());
-    assertEquals(sampleView1.getPlatform(), sampleView.getPlatform());
-    assertEquals(sampleView1.getLeg(), sampleView.getLeg());
-    assertEquals(sampleView1.getLat(), sampleView.getLat());
-    assertEquals(sampleView1.getLon(), sampleView.getLon());
-    assertEquals(sampleView1.getDeviceCode(), sampleView.getDeviceCode());
-    assertEquals(sampleView1.getSample(), sampleView.getSample());
+      List<SampleView> sampleViews = pagedItemsView.getItems();
+      assertEquals(1, sampleViews.size());
+
+      SampleView sampleView = sampleViews.get(0);
+      assertEquals(expectedSample.getImlgs(), sampleView.getImlgs());
+      assertEquals(expectedSample.getCruise().getCruiseName(), sampleView.getCruise());
+      assertEquals(expectedSample.getCruiseFacility().getFacility().getFacilityCode(), sampleView.getFacilityCode());
+      assertEquals(expectedSample.getCruisePlatform().getPlatform().getPlatform(), sampleView.getPlatform());
+      assertEquals(expectedSample.getLeg().getLegName(), sampleView.getLeg());
+      assertEquals(expectedSample.getLat(), sampleView.getLat());
+      assertEquals(expectedSample.getLon(), sampleView.getLon());
+      assertEquals(expectedSample.getDevice().getDeviceCode(), sampleView.getDeviceCode());
+      assertEquals(expectedSample.getSample(), sampleView.getSample());
+    });
   }
 
-  private void cleanDb() {
-    transactionTemplate.executeWithoutResult(s -> {
-      curatorsSampleTsqpRepository.deleteAll();
-      curatorsCruiseRepository.deleteAll();
-      platformMasterRepository.deleteAll();
-      curatorsFacilityRepository.deleteAll();
-      curatorsDeviceRepository.deleteAll();
-    });
+  private void createCruise(String cruiseName, Integer year, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(createJwt("martin"));
+
+    CruiseView cruiseView = new CruiseView();
+    cruiseView.setCruiseName(cruiseName);
+    cruiseView.setYear(year);
+    cruiseView.setPublish(true);
+    cruiseView.setFacilityCodes(facilityCodes);
+    cruiseView.setPlatforms(platforms);
+    cruiseView.setLegs(legs);
+
+
+    HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(cruiseView), headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/cruise", HttpMethod.POST, entity, String.class);
+
+    assertEquals(200, response.getStatusCode().value());
+  }
+
+  private static String createJwt(String subject) throws IOException, JoseException {
+    JwtClaims claims = new JwtClaims();
+    claims.setIssuer("http://localhost:20158");
+    claims.setSubject(subject);
+    JsonWebSignature jws = new JsonWebSignature();
+    jws.setPayload(claims.toJson());
+    JsonWebKeySet jwks = new JsonWebKeySet(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
+    RsaJsonWebKey jwk = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+    jws.setKey(jwk.getPrivateKey());
+    jws.setKeyIdHeaderValue(jwk.getKeyId());
+    jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+    return jws.getCompactSerialization();
+  }
+
+  private void uploadFile(String file) throws Exception {
+    LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+    parameters.add("file", new ClassPathResource(file));
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.setBearerAuth(createJwt("martin"));
+
+    HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/curator-data/upload", HttpMethod.POST, entity, String.class);
+
+    assertEquals(200, response.getStatusCode().value());
   }
 
 }

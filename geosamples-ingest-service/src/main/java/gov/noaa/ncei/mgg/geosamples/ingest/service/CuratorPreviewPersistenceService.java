@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
@@ -189,7 +190,11 @@ public class CuratorPreviewPersistenceService {
     }
 
     interval.setDescription(row.getDescription());
-    interval.setAge(sampleDataUtils.getAge(row.getGeologicAgeCode()));
+    interval.setAges(
+        row.getGeologicAgeCodes().stream()
+            .map(sampleDataUtils::getAge)
+            .collect(Collectors.toSet())
+    );
 
     interval.setWeight(row.getBulkWeight());
     interval.setRockLith(sampleDataUtils.getRockLithology(row.getSampleLithologyCode()));

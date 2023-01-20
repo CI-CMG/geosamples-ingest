@@ -72,7 +72,7 @@ public class EntitySignificantFields {
     fields.add(new SignificantField<>(source::getComp5, source::setComp5, dest::getComp5, dest::setComp5));
     fields.add(new SignificantField<>(source::getComp6, source::setComp6, dest::getComp6, dest::setComp6));
     fields.add(new SignificantField<>(source::getDescription, source::setDescription, dest::getDescription, dest::setDescription));
-    fields.add(new SignificantField<>(source::getAge, source::setAge, dest::getAge, dest::setAge));
+    fields.add(new SignificantField<>(source::getAges, source::setAges, dest::getAges, dest::setAges));
     fields.add(new SignificantField<>(source::getAbsoluteAgeTop, source::setAbsoluteAgeTop, dest::getAbsoluteAgeTop, dest::setAbsoluteAgeTop));
     fields.add(new SignificantField<>(source::getAbsoluteAgeBot, source::setAbsoluteAgeBot, dest::getAbsoluteAgeBot, dest::setAbsoluteAgeBot));
     fields.add(new SignificantField<>(source::getWeight, source::setWeight, dest::getWeight, dest::setWeight));

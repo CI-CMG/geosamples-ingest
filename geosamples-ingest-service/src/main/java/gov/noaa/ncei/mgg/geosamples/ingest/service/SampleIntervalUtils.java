@@ -2,8 +2,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity_;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity_;
@@ -28,6 +28,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 public final class SampleIntervalUtils {
@@ -81,7 +87,18 @@ public final class SampleIntervalUtils {
 
     List<String> ageCode = searchParameters.getAgeCode();
     if (!ageCode.isEmpty()) {
-      specs.add(SearchUtils.equal(ageCode, e -> e.join(CuratorsIntervalEntity_.AGE).get(CuratorsAgeEntity_.AGE_CODE)));
+      specs.add(
+          (Specification<CuratorsIntervalEntity>) (e1, cq, cb) -> {
+            Subquery<CuratorsAgeEntity> subquery = cq.subquery(CuratorsAgeEntity.class);
+            Root<CuratorsAgeEntity> subqueryRoot = subquery.from(CuratorsAgeEntity.class);
+            subquery.select(subqueryRoot);
+
+            subquery.where(cb.and(cb.equal(e1.get(CuratorsIntervalEntity_.ID), subqueryRoot.join(CuratorsAgeEntity_.INTERVALS).get(CuratorsIntervalEntity_.ID)),
+                subqueryRoot.get(CuratorsAgeEntity_.AGE_CODE).in(ageCode)));
+
+            return cb.exists(subquery);
+          }
+      );
     }
 
     List<String> textCode = searchParameters.getTextCode();
@@ -263,7 +280,11 @@ public final class SampleIntervalUtils {
     view.setComp5(entity.getComp5() == null ? null : entity.getComp5().getLithologyCode());
     view.setComp6(entity.getComp6() == null ? null : entity.getComp6().getLithologyCode());
     view.setDescription(entity.getDescription());
-    view.setAge(entity.getAge() == null ? null : entity.getAge().getAgeCode());
+    view.setAges(entity.getAges() == null || entity.getAges().isEmpty() ? Collections.emptyList() :
+        entity.getAges().stream()
+            .map(CuratorsAgeEntity::getAgeCode)
+            .collect(Collectors.toList())
+    );
     view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
     view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());
     view.setWeight(entity.getWeight());

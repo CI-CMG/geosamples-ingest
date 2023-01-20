@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -293,7 +294,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getComp5());
     assertEquals(null, view.getComp6());
     assertEquals(null, view.getDescription());
-    assertEquals(null, view.getAge());
+    assertTrue(view.getAges().isEmpty());
     assertEquals(null, view.getAbsoluteAgeTop());
     assertEquals(null, view.getAbsoluteAgeBot());
     assertEquals(null, view.getWeight());
@@ -374,7 +375,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("P", view.getComp5());
     assertEquals("Q", view.getComp6());
     assertEquals("Test Description", view.getDescription());
-    assertEquals("58", view.getAge());
+    assertEquals(Collections.singletonList("58"), view.getAges());
     assertEquals(null, view.getAbsoluteAgeTop());
     assertEquals(null, view.getAbsoluteAgeBot());
     assertEquals(50.5, view.getWeight(), 0.01);

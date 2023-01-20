@@ -27,7 +27,7 @@ public enum HeaderNames {
   SECONDARY_LITHOLOGIC_COMPOSITION_CODE("Secondary Lithologic Composition Code.*"),
   SECONDARY_TEXTURE_CODE("Secondary Texture Code.*"),
   OTHER_COMPONENT_CODE("Other Component Code.*", true),
-  GEOLOGIC_AGE_CODE("Geologic Age Code.*"),
+  GEOLOGIC_AGE_CODE("Geologic Age Code.*", true),
   INTERVAL_NUMBER("Interval.*"),
   BULK_WEIGHT("Bulk Weight.*"),
   PHYSIOGRAPHIC_PROVINCE_CODE("Physiographic Province Code.*"),

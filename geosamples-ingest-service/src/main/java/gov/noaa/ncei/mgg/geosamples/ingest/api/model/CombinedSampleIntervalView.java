@@ -2,6 +2,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Sortable({
     "publish",
@@ -74,7 +76,7 @@ public class CombinedSampleIntervalView {
   private String comp5;
   private String comp6;
   private String description;
-  private String age;
+  private List<String> ages = new ArrayList<>(0);
   private String absoluteAgeTop;
   private String absoluteAgeBot;
   private Double weight;
@@ -531,12 +533,15 @@ public class CombinedSampleIntervalView {
     this.description = description;
   }
 
-  public String getAge() {
-    return age;
+  public List<String> getAges() {
+    return ages;
   }
 
-  public void setAge(String age) {
-    this.age = age;
+  public void setAges(List<String> ages) {
+    if (ages == null) {
+      ages = new ArrayList<>(0);
+    }
+    this.ages = ages;
   }
 
   public String getAbsoluteAgeTop() {

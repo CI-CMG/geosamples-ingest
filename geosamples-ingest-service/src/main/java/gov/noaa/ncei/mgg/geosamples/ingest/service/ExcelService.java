@@ -163,7 +163,7 @@ public class ExcelService {
     sampleRow.setSecondaryLithologicCompositionCode(parseString(df, headers, row, HeaderNames.SECONDARY_LITHOLOGIC_COMPOSITION_CODE));
     sampleRow.setSecondaryTextureCode(parseString(df, headers, row, HeaderNames.SECONDARY_TEXTURE_CODE));
     sampleRow.setOtherComponentCodes(getValues(df, headers, row, HeaderNames.OTHER_COMPONENT_CODE));
-    sampleRow.setGeologicAgeCode(parseString(df, headers, row, HeaderNames.GEOLOGIC_AGE_CODE));
+    sampleRow.setGeologicAgeCodes(getValues(df, headers, row, HeaderNames.GEOLOGIC_AGE_CODE));
     sampleRow.setIntervalNumber(parseInteger(df, headers, row, HeaderNames.INTERVAL_NUMBER));
     sampleRow.setBulkWeight(parseDouble(df, headers, row, HeaderNames.BULK_WEIGHT));
     sampleRow.setPhysiographicProvinceCode(parseString(df, headers, row, HeaderNames.PHYSIOGRAPHIC_PROVINCE_CODE));

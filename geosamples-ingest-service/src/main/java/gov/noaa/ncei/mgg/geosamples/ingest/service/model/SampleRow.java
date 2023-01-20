@@ -91,9 +91,8 @@ public class SampleRow {
   private String secondaryTextureCode;
   @Valid
   private List<@Size(max = 1, message = "Must be 1 character") @ValidLithologyCode String> otherComponentCodes = new ArrayList<>(0);
-  @Size(max = 2, message = "Must be at most 2 characters")
-  @ValidAgeCode
-  private String geologicAgeCode;
+  @Valid
+  private List<@Size(max = 2, message = "Must be at most 2 characters") @ValidAgeCode String> geologicAgeCodes = new ArrayList<>(0);
   @NotNull(message = "Interval # is required")
   private Integer intervalNumber;
   @Min(value = 0, message = "Bulk Weight must not be negative")
@@ -312,12 +311,15 @@ public class SampleRow {
     otherComponentCodes.add(code);
   }
 
-  public String getGeologicAgeCode() {
-    return geologicAgeCode;
+  public List<String> getGeologicAgeCodes() {
+    return geologicAgeCodes;
   }
 
-  public void setGeologicAgeCode(String geologicAgeCode) {
-    this.geologicAgeCode = geologicAgeCode;
+  public void setGeologicAgeCodes(List<String> geologicAgeCodes) {
+    if (geologicAgeCodes == null) {
+      geologicAgeCodes = new ArrayList<>(0);
+    }
+    this.geologicAgeCodes = geologicAgeCodes;
   }
 
   public Integer getIntervalNumber() {

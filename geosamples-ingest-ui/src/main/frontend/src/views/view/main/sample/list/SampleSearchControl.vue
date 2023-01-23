@@ -153,26 +153,6 @@ export default {
 
     showSearch() {
       this.loadOptions();
-      if (this.searchParameters) {
-        const polygon = this.searchParameters.area;
-        if (polygon) {
-          const polygonParts = polygon[0].split('((');
-          if (polygonParts.length === 2) {
-            const coordinates = polygonParts[1];
-            const coordinateParts = coordinates.split(',');
-            if (coordinateParts.length === 5) {
-              let swCoordinate = coordinateParts[0];
-              swCoordinate = swCoordinate.split(' ');
-              let neCoordinate = coordinateParts[2];
-              neCoordinate = neCoordinate.split(' ');
-              if (swCoordinate.length === 2 && neCoordinate.length === 2) {
-                this.searchParameters.swCoordinate = `${swCoordinate[0]}, ${swCoordinate[1]}`;
-                this.searchParameters.neCoordinate = `${neCoordinate[0]}, ${neCoordinate[1]}`;
-              }
-            }
-          }
-        }
-      }
       this.initialize(this.searchParameters);
       this.$refs['search-modal'].show();
     },

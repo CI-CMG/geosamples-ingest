@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { coordinates2WktPolygon } from '@/store/modules/shapeUtil';
 
 const fields = [
   'cruiseContains',
@@ -22,7 +23,8 @@ const fields = [
   'weathMetaCode',
   'remarkCode',
   'munsellCode',
-  'area',
+  'swCoordinate',
+  'neCoordinate',
 ];
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
@@ -148,19 +150,6 @@ export default {
           }
         }
       });
-      const swCoordinate = searchParameters.swCoordinate;
-      const neCoordinate = searchParameters.neCoordinate;
-      if (swCoordinate && neCoordinate) {
-        const swCoordinateParts = swCoordinate.split(',');
-        const neCoordinateParts = neCoordinate.split(',');
-        if (swCoordinateParts.length === 2 && neCoordinateParts.length === 2) {
-          const swLon = swCoordinateParts[1].trim();
-          const swLat = swCoordinateParts[0].trim();
-          const neLon = neCoordinateParts[1].trim();
-          const neLat = neCoordinateParts[0].trim();
-          params.area = `POLYGON((${swLon} ${swLat},${neLon} ${swLat},${neLon} ${neLat},${swLon} ${neLat},${swLon} ${swLat}))`;
-        }
-      }
       state.searchParameters = params;
     },
 
@@ -369,19 +358,29 @@ export default {
           params.append('publish', state.searchParameters.publish);
         }
         fields.forEach((f) => {
-          const field = state.searchParameters[f];
-          if (field) {
-            if (Array.isArray(field)) {
-              field.forEach((v) => {
+          if (f !== 'swCoordinate' && f !== 'neCoordinate') {
+            const field = state.searchParameters[f];
+            if (field) {
+              if (Array.isArray(field)) {
+                field.forEach((v) => {
+                  // noinspection JSDeepBugsSwappedArgs
+                  params.append(f, v);
+                });
+              } else {
                 // noinspection JSDeepBugsSwappedArgs
-                params.append(f, v);
-              });
-            } else {
-              // noinspection JSDeepBugsSwappedArgs
-              params.append(f, field);
+                params.append(f, field);
+              }
             }
           }
         });
+        if (state.searchParameters.swCoordinate && state.searchParameters.neCoordinate) {
+          params.append(
+            'area',
+            coordinates2WktPolygon(
+              state.searchParameters.swCoordinate, state.searchParameters.neCoordinate,
+            ),
+          );
+        }
       }
 
       return apiService.get('/sample-interval', { params })

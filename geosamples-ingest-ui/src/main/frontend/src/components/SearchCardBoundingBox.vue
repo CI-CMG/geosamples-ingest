@@ -23,7 +23,7 @@
                 @blur="() => setTouched({ path: 'swCoordinate', touched: true })"
                 :value="getValue('swCoordinate')"
                 @update="(value) => setValue({ path: 'swCoordinate', value })"
-                :state="validCoordinate(getValue('swCoordinate')) && showError('swCoordinate')"
+                :state="validCoordinates() && !showError('swCoordinate')"
               />
             </b-col>
           </b-row>
@@ -39,7 +39,7 @@
                 @blur="() => setTouched({ path: 'neCoordinate', touched: true })"
                 :value="getValue('neCoordinate')"
                 @update="(value) => setValue({ path: 'neCoordinate', value })"
-                :state="validCoordinate(getValue('neCoordinate')) && showError('neCoordinate')"
+                :state="validCoordinates() && !showError('neCoordinate')"
               />
             </b-col>
           </b-row>
@@ -100,7 +100,22 @@ export default {
       this.collapseOpen = !this.collapseOpen;
     },
 
+    validCoordinates() {
+      const swValid = this.validCoordinate(this.getValue('swCoordinate'));
+      const neValid = this.validCoordinate(this.getValue('neCoordinate'));
+      if (swValid === 'N/A' && neValid === 'N/A') {
+        return null;
+      }
+      if (swValid === 'N/A' || neValid === 'N/A') {
+        return false;
+      }
+      return swValid && neValid;
+    },
+
     validCoordinate(coordinate) {
+      if (coordinate === '') {
+        return 'N/A';
+      }
       return coordinate.match(this.coordinateRegex) != null;
     },
   },

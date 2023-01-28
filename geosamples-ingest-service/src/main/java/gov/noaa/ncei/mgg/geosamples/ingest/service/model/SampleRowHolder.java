@@ -1,8 +1,10 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service.model;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UniqueIGSNs;
 import java.util.List;
 import javax.validation.Valid;
 
+@UniqueIGSNs
 public class SampleRowHolder {
 
   @Valid

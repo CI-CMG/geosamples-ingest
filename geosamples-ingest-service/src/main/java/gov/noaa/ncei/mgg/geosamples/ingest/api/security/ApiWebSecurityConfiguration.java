@@ -148,6 +148,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         )
 
         .antMatchers(HttpMethod.POST, "/api/v1/user-token/*").hasAuthority(Authorities.ROLE_AUTHENTICATED_USER.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/user-token/jwt").hasAuthority(Authorities.ROLE_AUTHENTICATED_USER.toString())
 
 
         .anyRequest().denyAll()

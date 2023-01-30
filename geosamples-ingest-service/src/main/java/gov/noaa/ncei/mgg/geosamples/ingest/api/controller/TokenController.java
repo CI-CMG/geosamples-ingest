@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.JwtView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.TokenGenerateModel;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.TokenService;
 import javax.validation.Valid;
@@ -47,6 +48,11 @@ public class TokenController {
     tokenGenerateModel.setToken(null);
     return tokenGenerateModel;
 
+  }
+
+  @PostMapping(path = "/jwt", produces = MediaType.APPLICATION_JSON_VALUE)
+  public JwtView createJwt(Authentication authentication) {
+    return tokenService.createJwt(authentication.getName());
   }
 
 }

@@ -18,7 +18,7 @@ public class ServiceProperties {
   @Min(16)
   private Integer tokenSizeBytes;
   @NotBlank
-  private String jwtIssuer;
+  private String remoteJwtIssuer;
   @NotBlank
   private String authServiceUrl;
   @NotBlank
@@ -27,6 +27,10 @@ public class ServiceProperties {
   private String showSampleBaseUrl;
   @NotBlank
   private String version;
+  @NotNull
+  private Integer tokenExpirationSeconds;
+  @NotBlank
+  private String localJwkSetUri;
 
   public String getShowSampleBaseUrl() {
     return showSampleBaseUrl;
@@ -36,12 +40,12 @@ public class ServiceProperties {
     this.showSampleBaseUrl = showSampleBaseUrl;
   }
 
-  public String getJwtIssuer() {
-    return jwtIssuer;
+  public String getRemoteJwtIssuer() {
+    return remoteJwtIssuer;
   }
 
-  public void setJwtIssuer(String jwtIssuer) {
-    this.jwtIssuer = jwtIssuer;
+  public void setRemoteJwtIssuer(String remoteJwtIssuer) {
+    this.remoteJwtIssuer = remoteJwtIssuer;
   }
 
   public String getAuthServiceUrl() {
@@ -74,5 +78,21 @@ public class ServiceProperties {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public Integer getTokenExpirationSeconds() {
+    return tokenExpirationSeconds;
+  }
+
+  public void setTokenExpirationSeconds(Integer tokenExpirationSeconds) {
+    this.tokenExpirationSeconds = tokenExpirationSeconds;
+  }
+
+  public String getLocalJwkSetUri() {
+    return localJwkSetUri;
+  }
+
+  public void setLocalJwkSetUri(String localJwkSetUri) {
+    this.localJwkSetUri = localJwkSetUri;
   }
 }

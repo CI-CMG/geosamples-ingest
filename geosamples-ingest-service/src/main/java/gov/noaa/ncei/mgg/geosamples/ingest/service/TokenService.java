@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.JwtView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
@@ -86,6 +87,12 @@ public class TokenService {
     } else {
       throw new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find token").build());
     }
+  }
+
+  public JwtView createJwt(String username) {
+    JwtView jwtView = new JwtView();
+    jwtView.setToken(tokenGenerator.generateJwt(username));
+    return jwtView;
   }
 
 }

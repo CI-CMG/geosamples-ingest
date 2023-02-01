@@ -27,9 +27,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExcelService {
+public class ExcelInputService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ExcelService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ExcelInputService.class);
 
   private static Map<HeaderNames, List<Integer>> parseHeader(Row row) {
     Map<HeaderNames, List<Integer>> headerMap = new LinkedHashMap<>();
@@ -176,7 +176,7 @@ public class ExcelService {
     sampleRow.setSampleNotAvailable(parseString(df, headers, row, HeaderNames.SAMPLE_NOT_AVAILABLE));
     sampleRow.setIgsn(parseString(df, headers, row, HeaderNames.ISGN));
     sampleRow.setAlternateCruise(parseString(df, headers, row, HeaderNames.ALTERNATE_CRUISE_OR_LEG));
-    sampleRow.setDescription(parseString(df, headers, row, HeaderNames.FREE_FORM_DESCRIPTION_OF_COMPOSITION));
+    sampleRow.setDescription(parseString(df, headers, row, HeaderNames. FREE_FORM_DESCRIPTION_OF_COMPOSITION));
     sampleRow.setComments(parseString(df, headers, row, HeaderNames.COMMENTS_ON_SUBSAMPLE_OR_INTERVAL));
 
     return sampleRow;

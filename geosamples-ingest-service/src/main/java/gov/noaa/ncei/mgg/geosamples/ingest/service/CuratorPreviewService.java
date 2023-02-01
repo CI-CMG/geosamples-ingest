@@ -15,14 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class CuratorPreviewService {
 
-  private final ExcelService excelService;
+  private final ExcelInputService excelInputService;
   private final ValidationService validationService;
   private final CuratorPreviewPersistenceService curatorPreviewPersistenceService;
 
   @Autowired
-  public CuratorPreviewService(ExcelService excelService, ValidationService validationService,
+  public CuratorPreviewService(ExcelInputService excelInputService, ValidationService validationService,
       CuratorPreviewPersistenceService curatorPreviewPersistenceService) {
-    this.excelService = excelService;
+    this.excelInputService = excelInputService;
     this.validationService = validationService;
     this.curatorPreviewPersistenceService = curatorPreviewPersistenceService;
   }
@@ -30,7 +30,7 @@ public class CuratorPreviewService {
   public CuratorDataResponse upload(MultipartFile file) {
     List<SampleRow> samples;
     try(InputStream in = file.getInputStream()) {
-      samples = excelService.read(in);
+      samples = excelInputService.read(in);
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read file", e);
     }

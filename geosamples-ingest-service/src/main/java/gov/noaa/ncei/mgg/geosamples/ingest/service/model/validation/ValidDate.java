@@ -3,7 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelService;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelInputService;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidDate.ValidDateValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -39,13 +39,13 @@ public @interface ValidDate {
       DateTimeFormatter dtf;
       switch (value.length()) {
         case 8:
-          dtf = ExcelService.DTF_YMD;
+          dtf = ExcelInputService.DTF_YMD;
           break;
         case 6:
-          dtf = ExcelService.DTF_YM;
+          dtf = ExcelInputService.DTF_YM;
           break;
         case 4:
-          dtf = ExcelService.DTF_Y;
+          dtf = ExcelInputService.DTF_Y;
           break;
         default:
           return false;

@@ -118,6 +118,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/interval/**").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/interval/**").hasAuthority(Authorities.ROLE_DATA_MANAGER_DELETE.toString())
         .antMatchers(HttpMethod.GET, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_READ.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/sample-interval/export").hasAuthority(Authorities.ROLE_DATA_MANAGER_READ.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/sample-link", "/api/v1/sample-link/*").hasAuthority(Authorities.ROLE_SAMPLE_LINK_READ.toString())

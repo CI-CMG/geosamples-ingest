@@ -25,6 +25,8 @@ public class ServiceProperties {
   private String clientId;
   @NotBlank
   private String showSampleBaseUrl;
+  @NotBlank
+  private String version;
 
   public String getShowSampleBaseUrl() {
     return showSampleBaseUrl;
@@ -64,5 +66,13 @@ public class ServiceProperties {
 
   public void setTokenSizeBytes(Integer tokenSizeBytes) {
     this.tokenSizeBytes = tokenSizeBytes;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

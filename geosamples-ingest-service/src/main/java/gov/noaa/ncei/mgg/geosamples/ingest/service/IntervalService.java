@@ -5,7 +5,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseLinksEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
@@ -141,6 +140,7 @@ public class IntervalService extends
     view.setAgeCodes(entity.getAges() == null || entity.getAges().isEmpty() ? Collections.emptyList() :
         entity.getAges().stream()
             .map(CuratorsAgeEntity::getAgeCode)
+            .sorted()
             .collect(Collectors.toList())
     );
     view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
@@ -234,7 +234,7 @@ public class IntervalService extends
                         ApiError.builder().error(String.format("Area not found for code: %s", a)).build()
                     )
             ))
-            .collect(Collectors.toSet())
+            .collect(Collectors.toList())
     );
 
 

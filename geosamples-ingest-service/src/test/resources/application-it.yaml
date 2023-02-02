@@ -1,9 +1,10 @@
 geosamples:
-  remote-jwt-issuer: 'test'
+  remote-jwt-issuer: http://localhost:20158
   auth-service-url: 'test'
   client-id: 'test'
   token-expiration-seconds: 10
   local-jwk-set-uri: src/test/resources/jwks.json
+  remote-jwk-set-uri: http://localhost:20158/jwks
 
 spring:
   jpa:
@@ -16,12 +17,6 @@ spring:
     password: letmein
   flyway:
     enabled: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:20158
-          jwk-set-uri: http://localhost:20158/jwks
 
 server:
   tomcat:

@@ -61,6 +61,14 @@ export default {
           return state.lastUserToken;
         });
     },
+    generateJwt() {
+      return apiService.post('/user-token/jwt').then(
+        (response) => response.data,
+        (error) => {
+          throw error;
+        },
+      );
+    },
     deleteToken({ commit }, { alias }) {
       commit('updateLastUserToken', { token: '' });
       return apiService.post('/user-token/delete', { alias })

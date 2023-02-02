@@ -30,7 +30,8 @@ public class SpaController {
       indexHtml = StreamUtils.copyToString(in, StandardCharsets.UTF_8)
           .replaceAll("@contextRoot@", servletContextPath)
           .replaceAll("@authServiceUrl@", properties.getAuthServiceUrl().trim())
-          .replaceAll("@clientId@", properties.getClientId().trim());
+          .replaceAll("@clientId@", properties.getClientId().trim())
+          .replaceAll("@version@", properties.getVersion());
     } catch (IOException e) {
       throw new IllegalStateException("Unable to read index.html", e);
     }

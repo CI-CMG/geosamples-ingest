@@ -1,4 +1,5 @@
 import { apiService } from '@/api';
+import { BASE_PATH } from '@/basePath';
 import { coordinates2WktPolygon } from '@/store/modules/shapeUtil';
 
 const fields = [
@@ -394,6 +395,37 @@ export default {
             throw error;
           },
         );
+    },
+
+    downloadSamplesIntervals({ state }, token) {
+      const orders = [];
+      state.sortParameters.selected.forEach(({ key, asc }) => {
+        orders.push(`${key}:${asc ? 'asc' : 'desc'}`);
+      });
+
+      const params = {
+        page: state.page,
+        itemsPerPage: state.itemsPerPage,
+        order: orders,
+        ...state.searchParameters,
+      };
+
+      let parameterString = [];
+      // eslint-disable-next-line no-restricted-syntax
+      for (const parameter of Object.keys(params)) {
+        if (params[parameter] !== '' && params[parameter] !== undefined && params[parameter] !== null) {
+          if (Array.isArray(params[parameter])) {
+            params[parameter] = params[parameter].join();
+          }
+          parameterString.push(`${encodeURIComponent(parameter)}=${encodeURIComponent(params[parameter])}`);
+        }
+      }
+      parameterString = parameterString.join('&');
+      const link = document.createElement('a');
+      link.href = `${BASE_PATH}/api/v1/sample-interval/export?access_token=${token}&${parameterString}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
 
     loadSample({ commit }, id) {

@@ -63,6 +63,9 @@
     <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSort">
       <b-icon class="mr-2" icon="sort-up"/>Sort
     </b-button>
+    <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="download">
+      <b-icon class="mr-2" icon="download"/>Download
+    </b-button>
     <b-badge v-for="badge in badges" :key="badge" pill variant="info">{{badge}}</b-badge>
   </b-card>
 </template>
@@ -306,7 +309,8 @@ export default {
       sortInitialize: 'intervalSortForm/initialize',
     }),
     ...mapActions('intervalSearchForm', ['submit', 'reset']),
-    ...mapActions('interval', ['loadOptions']),
+    ...mapActions('interval', ['loadOptions', 'downloadSamplesIntervals']),
+    ...mapActions('userAuth', ['generateJwt']),
     showSearch() {
       this.loadOptions();
       this.initialize(this.searchParameters);
@@ -328,6 +332,11 @@ export default {
           this.hideSearch();
           this.onSearch(searchParameters);
         });
+    },
+    download() {
+      this.generateJwt().then(
+        (response) => this.downloadSamplesIntervals(response.token),
+      );
     },
   },
 };

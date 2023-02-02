@@ -6,22 +6,23 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 public class ExcelWorkbookWriter implements Closeable {
 
-  private final Sheet sheet;
-  private final Workbook workbook;
+  private final SXSSFSheet sheet;
+  private final SXSSFWorkbook workbook;
   private final OutputStream outputStream;
   private int rowNum = 1;
   private int nOtherComponents = 0;
 
   public ExcelWorkbookWriter(String sheetName, OutputStream outputStream) {
     this.outputStream = outputStream;
-    this.workbook = new XSSFWorkbook();
+    this.workbook = new SXSSFWorkbook();
+    this.workbook.setCompressTempFiles(true);
     this.sheet = this.workbook.createSheet(sheetName);
+    sheet.setRandomAccessWindowSize(100); // keep 100 rows in memory at once, the rest are kept in compressed tmp files on disk
   }
 
   public void writeToSheet(List<SampleRow> sampleRows) throws IOException {
@@ -175,6 +176,7 @@ public class ExcelWorkbookWriter implements Closeable {
     }
     workbook.write(outputStream);
 
+    workbook.dispose(); // cleans up temporary files
     workbook.close();
   }
 }

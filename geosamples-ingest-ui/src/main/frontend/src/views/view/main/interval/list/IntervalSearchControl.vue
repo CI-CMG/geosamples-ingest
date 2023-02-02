@@ -57,8 +57,12 @@
        module="intervalSortForm"
       />
     </b-modal>
-    <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSearch">Search</b-button>
-    <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSort">Sort</b-button>
+    <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSearch">
+      <b-icon class="mr-2" icon="search"/>Search
+    </b-button>
+    <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="showSort">
+      <b-icon class="mr-2" icon="sort-up"/>Sort
+    </b-button>
     <b-badge v-for="badge in badges" :key="badge" pill variant="info">{{badge}}</b-badge>
   </b-card>
 </template>

@@ -31,6 +31,8 @@ public class ServiceProperties {
   private Integer tokenExpirationSeconds;
   @NotBlank
   private String localJwkSetUri;
+  @NotBlank
+  private String remoteJwkSetUri;
 
   public String getShowSampleBaseUrl() {
     return showSampleBaseUrl;
@@ -94,5 +96,13 @@ public class ServiceProperties {
 
   public void setLocalJwkSetUri(String localJwkSetUri) {
     this.localJwkSetUri = localJwkSetUri;
+  }
+
+  public String getRemoteJwkSetUri() {
+    return remoteJwkSetUri;
+  }
+
+  public void setRemoteJwkSetUri(String remoteJwkSetUri) {
+    this.remoteJwkSetUri = remoteJwkSetUri;
   }
 }

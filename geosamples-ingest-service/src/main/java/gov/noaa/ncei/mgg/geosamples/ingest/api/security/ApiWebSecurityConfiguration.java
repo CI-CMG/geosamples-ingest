@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -17,12 +17,14 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final ApiAccessDeniedHandler accessDeniedHandler;
   private final JwtAuthenticationConverter jwtAuthenticationConverter;
+  private final JwtUrlFilter jwtUrlFilter;
 
   @Autowired
   public ApiWebSecurityConfiguration(ApiAccessDeniedHandler accessDeniedHandler,
-      JwtAuthenticationConverter jwtAuthenticationConverter) {
+      JwtAuthenticationConverter jwtAuthenticationConverter, JwtUrlFilter jwtUrlFilter) {
     this.accessDeniedHandler = accessDeniedHandler;
     this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+    this.jwtUrlFilter = jwtUrlFilter;
   }
 
 
@@ -32,10 +34,9 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     //@formatter:off
     http
       .antMatcher("/api/**")
-      .addFilterBefore(ApiProviderAuthenticationFilterFactory.build(
-              authenticationManager(),
-              accessDeniedHandler),
-          UsernamePasswordAuthenticationFilter.class)
+        .httpBasic().disable()
+        .formLogin().disable()
+        .addFilterBefore(jwtUrlFilter, BearerTokenAuthenticationFilter.class)
       .authorizeRequests()
 
         .antMatchers(HttpMethod.GET, "/api/v1/age", "/api/v1/age/*").hasAuthority(Authorities.ROLE_AGE_READ.toString())
@@ -164,8 +165,8 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
       .httpBasic().disable()
       .formLogin().disable()
       .logout().disable()
-      .csrf().disable()
-      .oauth2ResourceServer(oauth -> oauth.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter));
+        .csrf().disable()
+        .oauth2ResourceServer(oauth -> oauth.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter));
     //@formatter:on
   }
 }

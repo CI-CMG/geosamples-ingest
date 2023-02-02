@@ -7,6 +7,7 @@ geosamples:
   client-id: ''
   token-expiration-seconds: ''
   local-jwk-set-uri: ''
+  remote-jwk-set-uri: ''
 
 server:
   servlet:
@@ -38,6 +39,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: '${geosamples.remote-jwt-issuer}'
+          jwk-set-uri: '${geosamples.remote-jwk-set-uri}'
   mvc:
     throw-exception-if-no-handler-found: true
   jmx:

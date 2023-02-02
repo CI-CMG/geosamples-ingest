@@ -283,6 +283,7 @@ public final class SampleIntervalUtils {
     view.setAges(entity.getAges() == null || entity.getAges().isEmpty() ? Collections.emptyList() :
         entity.getAges().stream()
             .map(CuratorsAgeEntity::getAgeCode)
+            .sorted()
             .collect(Collectors.toList())
     );
     view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());

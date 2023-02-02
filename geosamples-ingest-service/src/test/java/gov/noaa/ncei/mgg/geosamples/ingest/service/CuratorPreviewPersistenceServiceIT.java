@@ -2,7 +2,6 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +11,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
@@ -294,7 +292,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getComp5());
     assertEquals(null, view.getComp6());
     assertEquals(null, view.getDescription());
-    assertTrue(view.getAges().isEmpty());
+    assertEquals(Arrays.asList("00", "54"), view.getAges());
     assertEquals(null, view.getAbsoluteAgeTop());
     assertEquals(null, view.getAbsoluteAgeBot());
     assertEquals(null, view.getWeight());
@@ -375,7 +373,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("P", view.getComp5());
     assertEquals("Q", view.getComp6());
     assertEquals("Test Description", view.getDescription());
-    assertEquals(Collections.singletonList("58"), view.getAges());
+    assertEquals(Arrays.asList("00", "58"), view.getAges());
     assertEquals(null, view.getAbsoluteAgeTop());
     assertEquals(null, view.getAbsoluteAgeBot());
     assertEquals(50.5, view.getWeight(), 0.01);

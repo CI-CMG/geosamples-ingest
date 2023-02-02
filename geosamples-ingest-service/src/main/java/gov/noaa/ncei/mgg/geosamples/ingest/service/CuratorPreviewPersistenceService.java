@@ -191,9 +191,9 @@ public class CuratorPreviewPersistenceService {
 
     interval.setDescription(row.getDescription());
     interval.setAges(
-        row.getGeologicAgeCodes().stream()
+        row.getGeologicAgeCodes().stream().sorted()
             .map(sampleDataUtils::getAge)
-            .collect(Collectors.toSet())
+            .collect(Collectors.toList())
     );
 
     interval.setWeight(row.getBulkWeight());

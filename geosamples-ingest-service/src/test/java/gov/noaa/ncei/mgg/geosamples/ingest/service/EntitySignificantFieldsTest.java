@@ -256,7 +256,7 @@ public class EntitySignificantFieldsTest {
     src.setComp5(comp5);
     src.setComp6(comp6);
     src.setDescription("description");
-    src.setAges(Collections.singleton(age));
+    src.setAges(Collections.singletonList(age));
     src.setAbsoluteAgeTop("absoluteAgeTop");
     src.setAbsoluteAgeBot("absoluteAgeBot");
     src.setWeight(13.1);

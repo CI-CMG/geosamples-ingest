@@ -183,4 +183,20 @@
     <cve>CVE-2022-3064</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   file name: snakeyaml-1.33.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.yaml/snakeyaml@.*$</packageUrl>
+    <vulnerabilityName>CVE-2022-1471</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+   file name: spatial4j-0.8.jar
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+    <cve>CVE-2014-125074</cve>
+  </suppress>
+
 </suppressions>

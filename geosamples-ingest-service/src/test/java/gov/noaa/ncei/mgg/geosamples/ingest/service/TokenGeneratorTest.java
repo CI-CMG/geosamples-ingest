@@ -10,16 +10,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import java.util.Base64;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 
-@WebMvcTest(excludeFilters = {
-    @ComponentScan.Filter(
-      type = FilterType.REGEX,
-      pattern = ".*[Service]|.*[Handler]"
-    ),
-})
 public class TokenGeneratorTest {
 
   private final TokenGenerator tokenGenerator = new TokenGenerator(mockServiceProperties());

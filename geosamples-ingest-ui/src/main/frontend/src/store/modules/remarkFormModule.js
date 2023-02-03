@@ -19,6 +19,7 @@ import {
 } from '@ci-cmg/form-vuex';
 
 const model = {
+  id: 'number',
   remark: 'string',
   remarkCode: 'string',
   sourceUri: 'string',

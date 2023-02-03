@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/remark")
-public class RemarkController extends ControllerBase<RemarkView, RemarkSearchParameters, String, RemarkService> {
+public class RemarkController extends ControllerBase<RemarkView, RemarkSearchParameters, Long, RemarkService> {
 
   @Autowired
   public RemarkController(RemarkService service) {

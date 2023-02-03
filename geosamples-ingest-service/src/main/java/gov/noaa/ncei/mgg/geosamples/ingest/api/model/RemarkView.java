@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Sortable({
@@ -10,6 +11,8 @@ import javax.validation.constraints.Size;
     "remarkCode",
 })
 public class RemarkView {
+
+  private Long id;
 
   @NotBlank
   @Size(max = 70)
@@ -21,6 +24,14 @@ public class RemarkView {
 
   @Size(max = 255)
   private String sourceUri;
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
 
   public String getRemark() {
     return remark;

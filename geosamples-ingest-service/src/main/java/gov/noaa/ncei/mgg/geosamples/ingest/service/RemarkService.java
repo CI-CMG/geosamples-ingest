@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class RemarkService extends
-    SearchServiceBase<CuratorsRemarkEntity, String, RemarkSearchParameters, RemarkView, CuratorsRemarkRepository> {
+    SearchServiceBase<CuratorsRemarkEntity, Long, RemarkSearchParameters, RemarkView, CuratorsRemarkRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(RemarkView.class);
 
@@ -48,6 +48,7 @@ public class RemarkService extends
   @Override
   protected RemarkView toView(CuratorsRemarkEntity entity) {
     RemarkView view = new RemarkView();
+    view.setId(entity.getId());
     view.setRemark(entity.getRemark());
     view.setRemarkCode(entity.getRemarkCode());
     view.setSourceUri(entity.getSourceUri());

@@ -5,31 +5,48 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelWorkbookWriter implements Closeable {
 
-  private final SXSSFSheet sheet;
+  private final SXSSFSheet singleValuedSheet;
+  private final SXSSFSheet otherComponentsSheet;
+  private final SXSSFSheet geologicAgesSheet;
+
   private final SXSSFWorkbook workbook;
   private final OutputStream outputStream;
   private int rowNum = 1;
   private int nOtherComponents = 0;
+  private int nGeologicAges = 0;
 
-  public ExcelWorkbookWriter(String sheetName, OutputStream outputStream) {
-    this.outputStream = outputStream;
+  public ExcelWorkbookWriter(OutputStream outputStream) {
     this.workbook = new SXSSFWorkbook();
     this.workbook.setCompressTempFiles(true);
-    this.sheet = this.workbook.createSheet(sheetName);
-    sheet.setRandomAccessWindowSize(100); // keep 100 rows in memory at once, the rest are kept in compressed tmp files on disk
+
+    this.singleValuedSheet = workbook.createSheet(SheetName.SINGLE_VALUE);
+    this.singleValuedSheet.setRandomAccessWindowSize(100); // keep 100 rows in memory at once, the rest are kept in compressed tmp files on disk
+
+    this.otherComponentsSheet = workbook.createSheet(SheetName.OTHER_COMPONENTS);
+    this.otherComponentsSheet.setRandomAccessWindowSize(100);
+
+    this.geologicAgesSheet = workbook.createSheet(SheetName.GEOLOGIC_AGES);
+    this.geologicAgesSheet.setRandomAccessWindowSize(100);
+
+    this.outputStream = outputStream;
   }
 
+
+
   public void writeToSheet(List<SampleRow> sampleRows) throws IOException {
+    workbook.setActiveSheet(workbook.getSheetIndex(SheetName.SINGLE_VALUE));
     Row row;
 
     for (SampleRow sampleRow : sampleRows) {
-      row = sheet.createRow(rowNum);
+      row = this.singleValuedSheet.createRow(rowNum);
       if (sampleRow.getFacilityCode() != null) {
        row.createCell(0).setCellValue(sampleRow.getFacilityCode());
       }
@@ -96,60 +113,67 @@ public class ExcelWorkbookWriter implements Closeable {
       if (sampleRow.getSecondaryTextureCode() != null) {
        row.createCell(21).setCellValue(sampleRow.getSecondaryTextureCode());
       }
-      if (sampleRow.getGeologicAgeCode() != null) {
-       row.createCell(22).setCellValue(sampleRow.getGeologicAgeCode());
-      }
       if (sampleRow.getIntervalNumber() != null) {
-       row.createCell(23).setCellValue(sampleRow.getIntervalNumber());
+       row.createCell(22).setCellValue(sampleRow.getIntervalNumber());
       }
       if (sampleRow.getBulkWeight() != null) {
-       row.createCell(24).setCellValue(sampleRow.getBulkWeight());
+       row.createCell(23).setCellValue(sampleRow.getBulkWeight());
       }
       if (sampleRow.getPhysiographicProvinceCode() != null) {
-       row.createCell(25).setCellValue(sampleRow.getPhysiographicProvinceCode());
+       row.createCell(24).setCellValue(sampleRow.getPhysiographicProvinceCode());
       }
       if (sampleRow.getSampleLithologyCode() != null) {
-       row.createCell(26).setCellValue(sampleRow.getSampleLithologyCode());
+       row.createCell(25).setCellValue(sampleRow.getSampleLithologyCode());
       }
       if (sampleRow.getSampleMineralogyCode() != null) {
-       row.createCell(27).setCellValue(sampleRow.getSampleMineralogyCode());
+       row.createCell(26).setCellValue(sampleRow.getSampleMineralogyCode());
       }
       if (sampleRow.getSampleWeatheringOrMetamorphismCode() != null) {
-       row.createCell(28).setCellValue(sampleRow.getSampleWeatheringOrMetamorphismCode());
+       row.createCell(27).setCellValue(sampleRow.getSampleWeatheringOrMetamorphismCode());
       }
       if (sampleRow.getGlassRemarksCode() != null) {
-       row.createCell(29).setCellValue(sampleRow.getGlassRemarksCode());
+       row.createCell(28).setCellValue(sampleRow.getGlassRemarksCode());
       }
       if (sampleRow.getMunsellColor() != null) {
-       row.createCell(30).setCellValue(sampleRow.getMunsellColor());
+       row.createCell(29).setCellValue(sampleRow.getMunsellColor());
       }
       if (sampleRow.getPrincipalInvestigator() != null) {
-       row.createCell(31).setCellValue(sampleRow.getPrincipalInvestigator());
+       row.createCell(30).setCellValue(sampleRow.getPrincipalInvestigator());
       }
       if (sampleRow.getSampleNotAvailable() != null) {
-       row.createCell(32).setCellValue(sampleRow.getSampleNotAvailable());
+       row.createCell(31).setCellValue(sampleRow.getSampleNotAvailable());
       }
       if (sampleRow.getIgsn() != null) {
-       row.createCell(33).setCellValue(sampleRow.getIgsn());
+       row.createCell(32).setCellValue(sampleRow.getIgsn());
       }
       if (sampleRow.getAlternateCruise() != null) {
-       row.createCell(34).setCellValue(sampleRow.getAlternateCruise());
+       row.createCell(33).setCellValue(sampleRow.getAlternateCruise());
       }
       if (sampleRow.getDescription() != null) {
-       row.createCell(35).setCellValue(sampleRow.getDescription());
+       row.createCell(34).setCellValue(sampleRow.getDescription());
       }
       if (sampleRow.getComments() != null) {
-       row.createCell(36).setCellValue(sampleRow.getComments());
+       row.createCell(35).setCellValue(sampleRow.getComments());
       }
 
-      int cellNum = 37;
-      for (String componentCode : sampleRow.getOtherComponentCodes()) {
-        row.createCell(cellNum).setCellValue(componentCode);
-        cellNum += 1;
+      Row otherComponentsRow = otherComponentsSheet.createRow(rowNum);
+      if (sampleRow.getOtherComponentCodes() != null) {
+        int cellNum = 0;
+        for (String otherComponent : sampleRow.getOtherComponentCodes()) {
+          otherComponentsRow.createCell(cellNum).setCellValue(otherComponent);
+          cellNum += 1;
+        }
+        nOtherComponents = Math.max(cellNum, nOtherComponents);
       }
-      int currentNOtherComponents = cellNum - 37;
-      if (currentNOtherComponents > nOtherComponents) {
-        nOtherComponents = currentNOtherComponents;
+
+      Row geologicAgeRow = geologicAgesSheet.createRow(rowNum);
+      if (sampleRow.getGeologicAgeCodes() != null) {
+        int cellNum = 0;
+        for (String ageCode : sampleRow.getGeologicAgeCodes()) {
+          geologicAgeRow.createCell(cellNum).setCellValue(ageCode);
+          cellNum += 1;
+        }
+        nGeologicAges = Math.max(cellNum, nGeologicAges);
       }
 
       rowNum += 1;
@@ -158,10 +182,10 @@ public class ExcelWorkbookWriter implements Closeable {
 
   @Override
   public void close() throws IOException {
-    Row row = sheet.createRow(0);
+    Row row = singleValuedSheet.createRow(0);
     int cellNum = 0;
     for (HeaderNames headerName : HeaderNames.values()) {
-      if (!headerName.equals(HeaderNames.OTHER_COMPONENT_CODE)) {
+      if (!headerName.equals(HeaderNames.OTHER_COMPONENT_CODE) && !headerName.equals(HeaderNames.GEOLOGIC_AGE_CODE)) {
         row.createCell(cellNum).setCellValue(headerName.getText());
         cellNum += 1;
       }
@@ -173,10 +197,53 @@ public class ExcelWorkbookWriter implements Closeable {
       }
     } else {
       row.createCell(cellNum).setCellValue(HeaderNames.OTHER_COMPONENT_CODE.getText());
+      cellNum += 1;
     }
+    if (nGeologicAges > 1) {
+      for (int i = 0; i < nGeologicAges; i++) {
+        row.createCell(cellNum).setCellValue(String.format("%s (%s)", HeaderNames.GEOLOGIC_AGE_CODE.getText(), i + 1));
+        cellNum += 1;
+      }
+    } else {
+      row.createCell(cellNum).setCellValue(HeaderNames.GEOLOGIC_AGE_CODE.getText());
+    }
+
+    for (int i = 1; i < rowNum; i++) {
+      row = singleValuedSheet.getRow(i);
+
+      Row multiValueRow = otherComponentsSheet.getRow(i);
+      for (int j = 0; j < nOtherComponents; j++) {
+        Cell multiValueCell = multiValueRow.getCell(j);
+        if (multiValueCell != null) {
+          row.createCell(36 + j).setCellValue(multiValueCell.getStringCellValue());
+        }
+        multiValueRow.removeCell(multiValueCell);
+      }
+
+      multiValueRow = geologicAgesSheet.getRow(i);
+      for (int j = 0; j < nGeologicAges; j++) {
+        Cell multiValueCell = multiValueRow.getCell(j);
+        if (multiValueCell != null) {
+          row.createCell(36 + nOtherComponents + j).setCellValue(multiValueCell.getStringCellValue());
+        }
+        multiValueRow.removeCell(multiValueCell);
+      }
+    }
+
+    geologicAgesSheet.flushRows();
+    otherComponentsSheet.flushRows();
+    workbook.removeSheetAt(workbook.getSheetIndex(SheetName.OTHER_COMPONENTS));
+    workbook.removeSheetAt(workbook.getSheetIndex(SheetName.GEOLOGIC_AGES));
     workbook.write(outputStream);
 
     workbook.dispose(); // cleans up temporary files
     workbook.close();
+  }
+
+  public static class SheetName {
+    public static final String SINGLE_VALUE = "Data Output";
+    public static final String OTHER_COMPONENTS = "Other Components";
+    public static final String GEOLOGIC_AGES = "Geologic Ages";
+
   }
 }

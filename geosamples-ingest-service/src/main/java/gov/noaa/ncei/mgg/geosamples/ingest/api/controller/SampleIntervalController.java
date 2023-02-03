@@ -7,6 +7,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelWorkbookWriter;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelWorkbookWriter.SheetName;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.SampleIntervalService;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class SampleIntervalController {
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.xlsx");
     try (
         OutputStream outputStream = response.getOutputStream();
-        ExcelWorkbookWriter excelWorkBookWriter = new ExcelWorkbookWriter("Data Output", outputStream)
+        ExcelWorkbookWriter excelWorkBookWriter = new ExcelWorkbookWriter(outputStream)
     ) {
       while (page.getPage() <= page.getTotalPages()) {
         excelWorkBookWriter.writeToSheet(
@@ -119,7 +120,7 @@ public class SampleIntervalController {
         ).filter(c -> c != null && !c.isEmpty())
             .collect(Collectors.toList())
     );
-    sampleRow.setGeologicAgeCode(view.getAge());
+    sampleRow.setGeologicAgeCodes(view.getAges());
     sampleRow.setIntervalNumber(view.getInterval());
     sampleRow.setBulkWeight(view.getWeight());
     sampleRow.setPhysiographicProvinceCode(view.getProvince());

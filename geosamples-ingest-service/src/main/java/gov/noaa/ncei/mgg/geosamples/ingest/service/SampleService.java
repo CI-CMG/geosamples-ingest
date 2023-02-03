@@ -269,7 +269,7 @@ public class SampleService extends
     PlatformMasterEntity platform = sampleDataUtils.getPlatform(view.getPlatform());
     CuratorsDeviceEntity device = sampleDataUtils.getDevice(view.getDeviceCode());
     CuratorsCruiseEntity cruise = sampleDataUtils.getCruise(view.getCruise(), platform, facility);
-    CuratorsLegEntity leg = sampleDataUtils.getLeg(view.getLeg(), cruise);
+    CuratorsLegEntity leg = view.getLeg() == null ? null : sampleDataUtils.getLeg(view.getLeg(), cruise);
     sample.setCruise(cruise);
 
     sample.setCruiseFacility(curatorsCruiseFacilityRepository.findByCruiseAndFacility(cruise, facility).orElseThrow(() ->

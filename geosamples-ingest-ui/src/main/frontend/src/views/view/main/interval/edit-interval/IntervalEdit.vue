@@ -535,18 +535,18 @@ export default {
       ]),
     ...mapActions('interval', ['loadInterval', 'saveInterval', 'deleteInterval']),
     ...mapActions('intervalForm', ['submit', 'reset']),
-    load({ id, imlgs }) {
-      return this.loadInterval({ id, imlgs });
+    load({ id }) {
+      return this.loadInterval({ id });
     },
     save(params) {
       return this.saveInterval(params);
     },
     delete() {
-      return this.deleteInterval({ id: this.id, imlgs: this.imlgs });
+      return this.deleteInterval({ id: this.id });
     },
     saveForm() {
       this.submit()
-        .then((provider) => this.save({ provider, id: this.id, imlgs: this.imlgs }))
+        .then((provider) => this.save({ provider, id: this.id }))
         .then(() => this.$router.push({ name: 'IntervalList' }));
     },
     doDelete() {
@@ -594,7 +594,7 @@ export default {
   },
   created() {
     if (this.id != null) {
-      this.load({ id: this.id, imlgs: this.imlgs }).then(this.initialize);
+      this.load({ id: this.id }).then(this.initialize);
     } else {
       this.initialize();
     }

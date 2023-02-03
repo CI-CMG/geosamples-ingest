@@ -53,6 +53,7 @@ public class CombinedSampleIntervalView {
   private String imlgs;
 
   private Integer interval;
+  private Long intervalId;
   private Integer depthTop;
   private Integer depthTopMm;
   private Integer depthBot;
@@ -347,6 +348,14 @@ public class CombinedSampleIntervalView {
 
   public void setInterval(Integer interval) {
     this.interval = interval;
+  }
+
+  public Long getIntervalId() {
+    return intervalId;
+  }
+
+  public void setIntervalId(Long intervalId) {
+    this.intervalId = intervalId;
   }
 
   public Integer getDepthTop() {

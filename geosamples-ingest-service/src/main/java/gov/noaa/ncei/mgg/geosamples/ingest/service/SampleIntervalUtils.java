@@ -290,6 +290,7 @@ public final class SampleIntervalUtils {
     view.setImlgs(sampleEntity.getImlgs());
 
     view.setInterval(entity.getInterval());
+    view.setIntervalId(entity.getId());
     view.setDepthTop(entity.getDepthTop());
     view.setDepthTopMm(entity.getDepthTopMm());
     view.setDepthBot(entity.getDepthBot());

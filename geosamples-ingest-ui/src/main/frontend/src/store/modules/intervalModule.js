@@ -442,9 +442,9 @@ export default {
         );
     },
 
-    loadInterval({ commit }, { id, imlgs }) {
+    loadInterval({ commit }, { id }) {
       commit('loadSampleRequest');
-      return apiService.get(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`)
+      return apiService.get(`/interval/${encodeURIComponent(id)}`)
         .then(
           (response) => {
             commit('loadSampleSuccess', response.data);
@@ -456,9 +456,9 @@ export default {
           },
         );
     },
-    saveInterval({ commit }, { provider, id, imlgs }) {
+    saveInterval({ commit }, { provider, id }) {
       commit('saveIntervalRequest');
-      const req = id ? () => apiService.put(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`, provider) : () => apiService.post('/interval', provider);
+      const req = id ? () => apiService.put(`/interval/${encodeURIComponent(id)}`, provider) : () => apiService.post('/interval', provider);
       return req()
         .then(
           (response) => {
@@ -486,9 +486,9 @@ export default {
           },
         );
     },
-    deleteInterval({ commit }, { id, imlgs }) {
+    deleteInterval({ commit }, { id }) {
       commit('deleteIntervalRequest');
-      return apiService.delete(`/interval/${encodeURIComponent(imlgs)}/${encodeURIComponent(id)}`)
+      return apiService.delete(`/interval/${encodeURIComponent(id)}`)
         .then(
           (response) => {
             commit('deleteIntervalSuccess', response.data);

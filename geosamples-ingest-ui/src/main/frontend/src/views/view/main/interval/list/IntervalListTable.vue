@@ -29,7 +29,7 @@
         <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>
       </template>
       <template #cell(interval)="data">
-        <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.interval }}">{{ data.item.interval }}</b-link>
+        <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.intervalId }}">{{ data.item.interval }}</b-link>
       </template>
   </b-table>
 </template>

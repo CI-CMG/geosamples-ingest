@@ -11,7 +11,7 @@
     create-text="Add New Rock Glass"
     create-authority="ROLE_REMARK_CREATE"
     edit-field="remark"
-    edit-parameter="remark"
+    edit-parameter="id"
     edit-route="RemarkEdit"
     edit-authority="ROLE_REMARK_UPDATE"
   />

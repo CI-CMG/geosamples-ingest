@@ -1,5 +1,4 @@
 import { apiService } from '@/api';
-import { encodeSlash } from '@/store/modules/urlUtil';
 
 const defaultParams = {
   remark: '',
@@ -154,7 +153,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/remark/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.get(`/remark/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -168,7 +167,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/remark/${encodeURIComponent(encodeSlash(id))}`, provider) : () => apiService.post('/remark', provider);
+      const req = id ? () => apiService.put(`/remark/${id}`, provider) : () => apiService.post('/remark', provider);
       return req()
         .then(
           (response) => {
@@ -198,7 +197,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/remark/${encodeURIComponent(encodeSlash(id))}`)
+      return apiService.delete(`/remark/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);

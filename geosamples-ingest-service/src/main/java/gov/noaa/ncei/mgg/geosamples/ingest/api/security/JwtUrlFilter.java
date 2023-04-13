@@ -1,9 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.security;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

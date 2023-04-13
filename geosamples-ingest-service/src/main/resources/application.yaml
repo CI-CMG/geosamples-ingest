@@ -2,12 +2,10 @@ geosamples:
   version: ^project.version^
   token-size-bytes: 64
   show-sample-base-url: https://maps.ngdc.noaa.gov/viewers/imlgs/samples/
-  remote-jwt-issuer: ''
   auth-service-url: ''
   client-id: ''
   token-expiration-seconds: ''
-  local-jwk-set-uri: ''
-  remote-jwk-set-uri: ''
+  local-jwk-set-path: ''
 
 server:
   servlet:
@@ -34,12 +32,11 @@ server:
     #key-alias: ''
 
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: '${geosamples.remote-jwt-issuer}'
-          jwk-set-uri: '${geosamples.remote-jwk-set-uri}'
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri:
   mvc:
     throw-exception-if-no-handler-found: true
   jmx:

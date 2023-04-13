@@ -13,7 +13,9 @@ import org.junit.jupiter.api.Test;
 
 public class TokenGeneratorTest {
 
-  private final TokenGenerator tokenGenerator = new TokenGenerator(mockServiceProperties());
+
+  private final ServiceProperties serviceProperties = mockServiceProperties();
+  private final TokenGenerator tokenGenerator = new TokenGenerator(serviceProperties, new JwksInitializer(serviceProperties));
   private final ObjectMapper objectMapper = new ObjectMapper();
   private static final int TOKEN_SIZE_BYTES = 64;
 
@@ -48,11 +50,10 @@ public class TokenGeneratorTest {
 
     ServiceProperties properties = new ServiceProperties();
     properties.setAuthServiceUrl(TEST);
-    properties.setRemoteJwtIssuer(TEST);
     properties.setClientId(TEST);
     properties.setShowSampleBaseUrl(TEST);
     properties.setTokenSizeBytes(TOKEN_SIZE_BYTES);
-    properties.setLocalJwkSetUri("src/test/resources/jwks.json");
+    properties.setLocalJwkSetPath("src/test/resources/jwks.json");
     properties.setTokenExpirationSeconds(10);
     return properties;
   }

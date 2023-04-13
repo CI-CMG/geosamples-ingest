@@ -106,7 +106,7 @@ public class TokenControllerIT {
     fred.setDisplayName("Fred");
     fred.setAuthorities(Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.get(eq("fred"))).thenReturn(fred);
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/jwt")
         .build().encode().toUri();

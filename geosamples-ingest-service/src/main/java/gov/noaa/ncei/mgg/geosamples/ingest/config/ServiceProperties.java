@@ -1,6 +1,5 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.config;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -18,8 +17,6 @@ public class ServiceProperties {
   @Min(16)
   private Integer tokenSizeBytes;
   @NotBlank
-  private String remoteJwtIssuer;
-  @NotBlank
   private String authServiceUrl;
   @NotBlank
   private String clientId;
@@ -30,9 +27,7 @@ public class ServiceProperties {
   @NotNull
   private Integer tokenExpirationSeconds;
   @NotBlank
-  private String localJwkSetUri;
-  @NotBlank
-  private String remoteJwkSetUri;
+  private String localJwkSetPath;
 
   public String getShowSampleBaseUrl() {
     return showSampleBaseUrl;
@@ -40,14 +35,6 @@ public class ServiceProperties {
 
   public void setShowSampleBaseUrl(String showSampleBaseUrl) {
     this.showSampleBaseUrl = showSampleBaseUrl;
-  }
-
-  public String getRemoteJwtIssuer() {
-    return remoteJwtIssuer;
-  }
-
-  public void setRemoteJwtIssuer(String remoteJwtIssuer) {
-    this.remoteJwtIssuer = remoteJwtIssuer;
   }
 
   public String getAuthServiceUrl() {
@@ -90,19 +77,12 @@ public class ServiceProperties {
     this.tokenExpirationSeconds = tokenExpirationSeconds;
   }
 
-  public String getLocalJwkSetUri() {
-    return localJwkSetUri;
+  public String getLocalJwkSetPath() {
+    return localJwkSetPath;
   }
 
-  public void setLocalJwkSetUri(String localJwkSetUri) {
-    this.localJwkSetUri = localJwkSetUri;
+  public void setLocalJwkSetPath(String localJwkSetPath) {
+    this.localJwkSetPath = localJwkSetPath;
   }
 
-  public String getRemoteJwkSetUri() {
-    return remoteJwkSetUri;
-  }
-
-  public void setRemoteJwkSetUri(String remoteJwkSetUri) {
-    this.remoteJwkSetUri = remoteJwkSetUri;
-  }
 }

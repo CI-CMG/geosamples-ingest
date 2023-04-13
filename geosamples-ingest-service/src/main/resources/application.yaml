@@ -4,8 +4,8 @@ geosamples:
   show-sample-base-url: https://maps.ngdc.noaa.gov/viewers/imlgs/samples/
   auth-service-url: ''
   client-id: ''
-  token-expiration-seconds: ''
-  local-jwk-set-path: ''
+  token-expiration-seconds: 60
+  local-jwk-set-path: '${svc.home}/config/jwks.json'
 
 server:
   servlet:

@@ -38,7 +38,7 @@ const model = {
   compCode5: 'string',
   compCode6: 'string',
   description: 'string',
-  ageCode: 'string',
+  ageCodes: ['string'],
   absoluteAgeTop: 'string',
   absoluteAgeBot: 'string',
   weight: 'float',

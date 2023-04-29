@@ -213,15 +213,23 @@
           <b-form-invalid-feedback>{{ getError('description') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Geologic Age Code" :label-for="ageCodeId">
-          <b-form-input
-            :id="ageCodeId"
-            type="text" @blur="() => setTouched({path: 'ageCode', touched: true})"
-            :value="getValue('ageCode')"
-            @update="(value) => setValue({ path: 'ageCode', value })"
-            :state="showError('ageCode')"
-          />
-          <b-form-invalid-feedback>{{ getError('ageCode') }}</b-form-invalid-feedback>
+        <b-form-group label="Geologic Age Codes" :label-for="ageCodeId">
+          <b-spinner v-if="!optionsAgeCode.length"/>
+          <div v-else>
+            <div class="geo-search-card-list">
+              <RemovableSelectField
+                v-for="(value, index) in getValue('ageCodes')" :key="`v${index}`"
+                :onBlur="() => setTouched({path: `ageCodes[${index}]`, touched: true})"
+                :value="getValue(`ageCodes[${index}]`)"
+                :onUpdate="(value) => setValue({ path: `ageCodes[${index}]`, value })"
+                :state="showError(`ageCodes[${index}]`)"
+                :error="getError(`ageCodes[${index}]`)"
+                :onRemove="() => deleteFromArray(`ageCodes[${index}]`)"
+                :options="optionsAgeCode"
+              />
+            </div>
+            <b-button variant="outline-primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3" @click="addToArray({ path: 'ageCodes' })"><b-icon icon="plus-circle" class="mr-2"/></b-button>
+          </div>
         </b-form-group>
 
         <b-form-group label="Absolute Age Top" :label-for="absoluteAgeTopId">
@@ -438,8 +446,10 @@ import {
   mapActions, mapGetters, mapMutations, mapState,
 } from 'vuex';
 import genId from '@/components/idGenerator';
+import RemovableSelectField from '@/components/RemovableSelectField.vue';
 
 export default {
+  components: { RemovableSelectField },
   props: ['id', 'imlgs'],
   data() {
     return {
@@ -533,7 +543,7 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
-    ...mapActions('interval', ['loadInterval', 'saveInterval', 'deleteInterval']),
+    ...mapActions('interval', ['loadInterval', 'saveInterval', 'deleteInterval', 'loadOptions']),
     ...mapActions('intervalForm', ['submit', 'reset']),
     load({ id }) {
       return this.loadInterval({ id });
@@ -555,7 +565,7 @@ export default {
   },
 
   computed: {
-    ...mapState('interval', ['intervalLoading', 'intervalSaving']),
+    ...mapState('interval', ['intervalLoading', 'intervalSaving', 'options']),
     ...mapGetters('intervalForm',
       [
         'getValue',
@@ -564,6 +574,10 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
+    optionsAgeCode() {
+      const { ageCode: field } = this.options;
+      return field || [];
+    },
     loading() {
       return this.intervalLoading;
     },
@@ -598,6 +612,7 @@ export default {
     } else {
       this.initialize();
     }
+    this.loadOptions();
   },
 
 };

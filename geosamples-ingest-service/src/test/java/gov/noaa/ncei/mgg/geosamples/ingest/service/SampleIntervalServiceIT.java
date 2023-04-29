@@ -151,6 +151,31 @@ public class SampleIntervalServiceIT {
   }
 
   @Test
+  public void testSearchByFacility() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full.xlsm");
+
+    CombinedIntervalSampleSearchParameters searchParameters = new CombinedIntervalSampleSearchParameters();
+    searchParameters.setFacilityCode(Collections.singletonList("GEOMAR"));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<CombinedSampleIntervalView> result = sampleIntervalService.search(searchParameters);
+    assertEquals(5, result.getTotalItems());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(5, result.getItems().size());
+    assertEquals("AQ-01-01", result.getItems().get(0).getSample());
+    assertEquals("AQ-01-01", result.getItems().get(1).getSample());
+    assertEquals("AQ-001", result.getItems().get(2).getSample());
+    assertEquals("AQ-002", result.getItems().get(3).getSample());
+    assertEquals("AQ-003", result.getItems().get(4).getSample());
+  }
+
+  @Test
   public void testSearchByGeologicAgeCode() throws Exception {
     createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

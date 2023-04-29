@@ -8,12 +8,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -163,7 +165,15 @@ public class ExcelInputService {
     sampleRow.setSecondaryLithologicCompositionCode(parseString(df, headers, row, HeaderNames.SECONDARY_LITHOLOGIC_COMPOSITION_CODE));
     sampleRow.setSecondaryTextureCode(parseString(df, headers, row, HeaderNames.SECONDARY_TEXTURE_CODE));
     sampleRow.setOtherComponentCodes(getValues(df, headers, row, HeaderNames.OTHER_COMPONENT_CODE));
-    sampleRow.setGeologicAgeCodes(getValues(df, headers, row, HeaderNames.GEOLOGIC_AGE_CODE));
+
+    String geologicAgeCodesStringValue = parseString(df, headers, row, HeaderNames.GEOLOGIC_AGE_CODE);
+    if (geologicAgeCodesStringValue != null) {
+      sampleRow.setGeologicAgeCodes(
+          Arrays.stream(geologicAgeCodesStringValue.split(","))
+              .map(String::trim)
+              .collect(Collectors.toList())
+      );
+    }
     sampleRow.setIntervalNumber(parseInteger(df, headers, row, HeaderNames.INTERVAL_NUMBER));
     sampleRow.setBulkWeight(parseDouble(df, headers, row, HeaderNames.BULK_WEIGHT));
     sampleRow.setPhysiographicProvinceCode(parseString(df, headers, row, HeaderNames.PHYSIOGRAPHIC_PROVINCE_CODE));

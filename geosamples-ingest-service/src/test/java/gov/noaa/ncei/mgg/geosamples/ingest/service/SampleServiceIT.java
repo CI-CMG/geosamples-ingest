@@ -150,6 +150,32 @@ public class SampleServiceIT {
   }
 
   @Test
+  public void testSearchByFacilityCode() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full.xlsm");
+
+    SampleSearchParameters searchParameters = new SampleSearchParameters();
+    searchParameters.setFacilityCode(Collections.singletonList("GEOMAR"));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<SampleView> result = sampleService.search(searchParameters);
+
+    assertEquals(4, result.getTotalItems());
+    assertEquals(4, result.getItems().size());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(1, result.getPage());
+    assertEquals("AQ-001", result.getItems().get(0).getSample());
+    assertEquals("AQ-002", result.getItems().get(1).getSample());
+    assertEquals("AQ-003", result.getItems().get(2).getSample());
+    assertEquals("AQ-01-01", result.getItems().get(3).getSample());
+  }
+
+  @Test
   public void testSearchByArea() throws Exception {
     createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

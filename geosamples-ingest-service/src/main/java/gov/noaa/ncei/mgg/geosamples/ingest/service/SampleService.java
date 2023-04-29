@@ -148,7 +148,7 @@ public class SampleService extends
       specs.add(SearchUtils.contains(igsn, CuratorsSampleTsqpEntity_.IGSN));
     }
     if (!facilityCode.isEmpty()) {
-      specs.add(SearchUtils.equal(cruise, e ->
+      specs.add(SearchUtils.equal(facilityCode, e ->
           e.join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
               .join(CuratorsCruiseFacilityEntity_.FACILITY)
               .get(CuratorsFacilityEntity_.FACILITY_CODE)));

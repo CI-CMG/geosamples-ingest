@@ -18,7 +18,7 @@
             <b-col>
               <b-input
                 :id="swCoordinateId"
-                placeholder="latitude, longitude"
+                placeholder="longitude, latitude"
                 type="text"
                 @blur="() => setTouched({ path: 'swCoordinate', touched: true })"
                 :value="getValue('swCoordinate')"
@@ -34,7 +34,7 @@
             <b-col>
               <b-input
                 :id="neCoordinateId"
-                placeholder="latitude, longitude"
+                placeholder="longitude, latitude"
                 type="text"
                 @blur="() => setTouched({ path: 'neCoordinate', touched: true })"
                 :value="getValue('neCoordinate')"

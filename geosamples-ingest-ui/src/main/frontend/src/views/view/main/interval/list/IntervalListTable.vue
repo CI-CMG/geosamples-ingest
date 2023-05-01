@@ -22,15 +22,18 @@
     <template #cell(selected)="data">
       <b-form-checkbox plain :checked="data.item.selected" @change="() => toggleSelect(data.index)"/>
     </template>
-      <template #cell(publish)="data">
-        <b-form-checkbox :disabled="true" plain :checked="data.item.publish"/>
-      </template>
-      <template #cell(imlgs)="data">
-        <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>
-      </template>
-      <template #cell(interval)="data">
-        <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.intervalId }}">{{ data.item.interval }}</b-link>
-      </template>
+    <template #cell(publish)="data">
+      <b-form-checkbox :disabled="true" plain :checked="data.item.publish"/>
+    </template>
+    <template #cell(imlgs)="data">
+      <b-link :to="{ name: 'SampleEdit', params: { id: data.item.imlgs }}">{{ data.item.imlgs }}</b-link>
+    </template>
+    <template #cell(interval)="data">
+      <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.intervalId }}">{{ data.item.interval }}</b-link>
+    </template>
+    <template #cell(ages)="data">
+      <span v-if="data.item.ages">{{ data.item.ages.join(', ') }}</span>
+    </template>
   </b-table>
 </template>
 

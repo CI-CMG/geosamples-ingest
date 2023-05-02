@@ -1,7 +1,7 @@
 <template>
   <b-col lg="4">
     <b-card :title="title">
-      <b-button v-b-toggle:collapse variant="outline-primary" @click="toggleCollapseOpen">
+      <b-button variant="outline-primary" @click="toggleCollapseOpen">
         <div v-if="!collapseOpen">
           <b-icon icon="arrow-down-circle"/>
         </div>
@@ -9,7 +9,10 @@
           <b-icon icon="arrow-up-circle"/>
         </div>
       </b-button>
-      <b-collapse id="collapse" class="mt-3">
+      <b-button v-if="valueDefined" variant="outline-primary" @click="clearCoordinates">
+          <b-icon icon="x-circle"/>
+      </b-button>
+      <b-collapse class="mt-3" :visible="collapseOpen">
         <div class="geo-search-card-list">
           <b-row class="mb-2">
             <b-col class="my-auto" cols="5">
@@ -61,7 +64,7 @@ export default {
       neCoordinateId: null,
 
       collapseOpen: false,
-      coordinateRegex: /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/g,
+      coordinateRegex: /^[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?),\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)$/g,
     };
   },
 
@@ -85,9 +88,18 @@ export default {
     getValue() {
       return this.$store.getters[`${this.module}/getValue`];
     },
+
+    valueDefined() {
+      return this.getValue('swCoordinate') || this.getValue('neCoordinate');
+    }
   },
 
   methods: {
+    clearCoordinates() {
+      this.setValue({ path: 'swCoordinate', value: '' });
+      this.setValue({ path: 'neCoordinate', value: '' });
+    },
+
     setTouched(value) {
       this.$store.commit(`${this.module}/setTouched`, value);
     },
@@ -119,5 +131,11 @@ export default {
       return coordinate.match(this.coordinateRegex) != null;
     },
   },
+
+  created() {
+    if (this.valueDefined) {
+      this.collapseOpen = true;
+    }
+  }
 };
 </script>

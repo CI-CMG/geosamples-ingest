@@ -91,7 +91,7 @@ export default {
 
     valueDefined() {
       return this.getValue('swCoordinate') || this.getValue('neCoordinate');
-    }
+    },
   },
 
   methods: {
@@ -136,6 +136,6 @@ export default {
     if (this.valueDefined) {
       this.collapseOpen = true;
     }
-  }
+  },
 };
 </script>

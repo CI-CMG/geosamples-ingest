@@ -52,6 +52,18 @@
           <b-form-invalid-feedback>{{ getError('role') }}</b-form-invalid-feedback>
         </b-form-group>
 
+        <b-form-group label="Facility" :label-for="facilityId">
+          <b-form-select
+            :id="facilityId"
+            :disabled="!loggedInUserHasReadFacilityAuthority"
+            @blur="() => setTouched({path: 'facility', touched: true})"
+            :value="currentFacility"
+            :options="optionsFacilityCode"
+            @change="(value) => setFacility(value)"
+          />
+          <b-form-invalid-feedback>{{ getError('facility') }}</b-form-invalid-feedback>
+        </b-form-group>
+
         <div>
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">Save</b-button>
           <b-button v-if="formDirty" type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">Reset</b-button>
@@ -78,12 +90,14 @@ export default {
       userNameId: '',
       displayNameId: '',
       roleId: '',
+      facilityId: '',
     };
   },
   beforeMount() {
     this.userNameId = genId();
     this.displayNameId = genId();
     this.roleId = genId();
+    this.facilityId = genId();
   },
   methods: {
     ...mapMutations('userForm',
@@ -95,7 +109,7 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
-    ...mapActions('user', ['load', 'save', 'delete']),
+    ...mapActions('user', ['load', 'save', 'delete', 'loadOptions']),
     ...mapActions('userForm', ['submit', 'reset']),
     ...mapActions('authority', { loadRoles: 'loadRoles' }),
     showModal() {
@@ -112,10 +126,15 @@ export default {
     doDelete() {
       this.delete(this.id).then(() => this.$router.push({ name: 'UserList' }));
     },
+    setFacility(value) {
+      this.setValue({ path: 'facility.id', value: value.id });
+      this.setValue({ path: 'facility.facilityCode', value: value.facilityCode });
+    },
   },
 
   computed: {
-    ...mapState('user', ['deleting', 'loading', 'saving']),
+    ...mapState('user', ['deleting', 'loading', 'saving', 'options']),
+    ...mapState('userAuth', { loggedInUser: 'user', loadingLoggedInUser: 'loading' }),
     ...mapGetters('userForm',
       [
         'getValue',
@@ -125,8 +144,17 @@ export default {
         'formHasUntouchedErrors',
       ]),
     ...mapState('authority', { roles: 'roles', loadingRoles: 'loading' }),
+    currentFacility() {
+      const currentFacilityId = this.getValue('facility.id');
+      if (!currentFacilityId) {
+        return null;
+      }
+
+      const option = this.optionsFacilityCode.find((f) => String(f.value.id) === currentFacilityId);
+      return option ? option.value : null;
+    },
     ready() {
-      return (!this.isEdit || !this.loading) && !this.loadingRoles;
+      return (!this.isEdit || !this.loading) && !this.loadingRoles && !this.loadingLoggedInUser;
     },
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
@@ -136,6 +164,13 @@ export default {
     },
     isEdit() {
       return this.id || this.id === 0;
+    },
+    loggedInUserHasReadFacilityAuthority() {
+      return this.loggedInUser.authorities.some((a) => a === 'ROLE_FACILITY_READ');
+    },
+    optionsFacilityCode() {
+      const { facilityCode: field } = this.options;
+      return field || [];
     },
   },
   watch: {
@@ -149,6 +184,7 @@ export default {
   },
   created() {
     this.loadRoles();
+    this.loadOptions();
     if (this.id != null) {
       this.load(this.id).then(this.initialize);
     } else {

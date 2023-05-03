@@ -134,7 +134,8 @@ public class SampleIntervalControllerIT {
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
-      geosamplesRoleRepository.deleteAll();
+      geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
+      geosamplesRoleRepository.getByRoleName("CANNOT READ").ifPresent(geosamplesRoleRepository::delete);
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
@@ -165,7 +166,8 @@ public class SampleIntervalControllerIT {
       if (geosamplesUserRepository.existsById("maurice")) {
         geosamplesUserRepository.deleteById("maurice");
       }
-      geosamplesRoleRepository.deleteAll();
+      geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
+      geosamplesRoleRepository.getByRoleName("CANNOT READ").ifPresent(geosamplesRoleRepository::delete);
     });
     FileUtils.deleteDirectory(new File("target/test"));
   }

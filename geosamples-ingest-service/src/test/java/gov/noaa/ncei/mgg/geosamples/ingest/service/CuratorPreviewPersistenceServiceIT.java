@@ -132,7 +132,7 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
-      geosamplesRoleRepository.deleteAll();
+      geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
@@ -159,7 +159,7 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
-      geosamplesRoleRepository.deleteAll();
+      geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
     });
   }
 

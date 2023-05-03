@@ -18,6 +18,9 @@ public class UserView {
   private String displayName;
   @NotBlank
   private String role;
+
+  private AttachedFacilityVIew facility;
+
   private List<String> tokenAliases = new ArrayList<>(0);
 
   public String getUserName() {
@@ -42,6 +45,14 @@ public class UserView {
 
   public String setRole(String role) {
     return this.role = role;
+  }
+
+  public AttachedFacilityVIew getFacility() {
+    return facility;
+  }
+
+  public void setFacility(AttachedFacilityVIew facility) {
+    this.facility = facility;
   }
 
   public List<String> getTokenAliases() {

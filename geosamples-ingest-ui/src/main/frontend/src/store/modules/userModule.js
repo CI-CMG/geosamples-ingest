@@ -5,6 +5,34 @@ const defaultParams = {
   userNameContains: '',
   userNameEquals: '',
   displayNameContains: '',
+  facilityCode: '',
+};
+
+const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
+  params: { page },
+}).then(
+  (response) => {
+    const { items, totalPages } = response.data;
+    items.forEach((item) => result.push(transform(item)));
+    if (page < totalPages) {
+      return loadAll(endpoint, transform, result, page + 1);
+    }
+    return result;
+  },
+);
+
+const sortOptions = (options) => {
+  options.sort((a, b) => {
+    const atxt = a.text.toLowerCase();
+    const btxt = b.text.toLowerCase();
+    if (atxt === btxt) {
+      return 0;
+    } if (atxt > btxt) {
+      return 1;
+    }
+    return -1;
+  });
+  return options;
 };
 
 export default {
@@ -28,6 +56,8 @@ export default {
     loading: false,
     saving: false,
     deleting: false,
+
+    options: {},
 
   },
 
@@ -78,6 +108,10 @@ export default {
     setDisplayNameContains(state, value) {
       state.params.displayNameContains = value;
     },
+    setFacilityCode(state, value) {
+      console.log('setFacilityCode', value);
+      state.params.facilityCode = value;
+    },
     setPage(state, page) {
       state.page = page;
     },
@@ -111,9 +145,34 @@ export default {
       state.totalPages = 1;
       state.totalItems = 0;
     },
+    updateOptions(state, options) {
+      state.options = options;
+    },
   },
 
   actions: {
+    loadOptions({ commit }) {
+      commit('updateOptions', {});
+      const nextOpts = {};
+
+      Promise.all([
+        loadAll('/facility', ({ facility, facilityCode, id }) => ({ value: { id, facilityCode }, text: `${facilityCode} - ${facility}` })).then(sortOptions).then((options) => { nextOpts.facilityCode = options; return options; }),
+      ]).then(() => {
+        commit('updateOptions', nextOpts);
+      });
+    },
+
+    loadSearchOptions({ commit }) {
+      commit('updateOptions', {});
+      const nextOpts = {};
+
+      Promise.all([
+        loadAll('/facility', ({ facility, facilityCode }) => ({ value: facilityCode, text: `${facilityCode} - ${facility}` })).then(sortOptions).then((options) => { nextOpts.facilityCode = options; return options; }),
+      ]).then(() => {
+        commit('updateOptions', nextOpts);
+      });
+    },
+
     // eslint-disable-next-line no-unused-vars
     changePage({ dispatch, commit }, page) {
       commit('setPage', page);

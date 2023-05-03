@@ -28,6 +28,18 @@ public class UserSearchParameters implements PagingAndSortingParameters {
   private List<String> userNameContains = new ArrayList<>(0);
   private List<String> userNameEquals = new ArrayList<>(0);
   private List<String> displayNameContains = new ArrayList<>(0);
+  private List<String> facilityCode = new ArrayList<>(0);
+
+  public List<String> getFacilityCode() {
+    return facilityCode;
+  }
+
+  public void setFacilityCode(List<String> facilityCode) {
+    if (facilityCode == null) {
+      facilityCode = new ArrayList<>(0);
+    }
+    this.facilityCode = facilityCode;
+  }
 
   public List<String> getUserNameContains() {
     return userNameContains;

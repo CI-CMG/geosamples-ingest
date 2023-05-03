@@ -10,6 +10,7 @@
       { label: 'Username Contains', value: params.userNameContains, set: setUserNameContains },
       { label: 'Username Equals', value: params.userNameEquals, set: setUserNameEquals },
       { label: 'Display Name Contains', value: params.displayNameContains, set: setDisplayNameContains },
+      { label: 'Facility Code Equals', value: params.facilityCode, set: setFacilityCode, options: optionsFacilityCode },
     ]"
     :table-fields="tableFields"
     create-route="UserAdd"
@@ -25,6 +26,7 @@
 <script>
 
 import {
+  mapActions,
   mapMutations, mapState,
 } from 'vuex';
 import InteractiveTable from '@/components/InteractiveTable.vue';
@@ -35,11 +37,17 @@ export default {
   },
 
   methods: {
-    ...mapMutations('user', ['setUserNameEquals', 'setUserNameContains', 'setDisplayNameContains']),
+    ...mapMutations('user', ['setUserNameEquals', 'setUserNameContains', 'setDisplayNameContains', 'setFacilityCode']),
+    ...mapActions('user', ['loadSearchOptions']),
   },
 
   computed: {
-    ...mapState('user', ['params']),
+    ...mapState('user', ['params', 'options']),
+
+    optionsFacilityCode() {
+      const { facilityCode: field } = this.options;
+      return field || [];
+    },
   },
 
   data() {
@@ -55,8 +63,22 @@ export default {
           label: 'Display Name',
           sortable: true,
         },
+        {
+          key: 'role',
+          label: 'Role',
+          sortable: true,
+        },
+        {
+          key: 'facility.facilityCode',
+          label: 'Facility',
+          sortable: true,
+        },
       ],
     };
+  },
+
+  created() {
+    this.loadSearchOptions();
   },
 };
 </script>

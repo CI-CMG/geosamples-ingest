@@ -6,7 +6,14 @@
         <b-row>
           <b-col v-for="(value, index) in fields" :key="`v${index}`">
             <b-form-group :label="value.label" :label-for="fieldIds[value.label]">
-              <b-form-input :id="fieldIds[value.label]" :value="value.value" @input="(v) => value.set(v)"/>
+              <b-form-select
+                v-if="value.options"
+                :id="fieldIds[value.label]"
+                :options="value.options"
+                :value="value.value"
+                @input="(v) => value.set(v)"
+              />
+              <b-form-input v-else :id="fieldIds[value.label]" :value="value.value" @input="(v) => value.set(v)"/>
             </b-form-group>
           </b-col>
         </b-row>

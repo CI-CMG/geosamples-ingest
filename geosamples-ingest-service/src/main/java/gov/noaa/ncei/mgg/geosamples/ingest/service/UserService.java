@@ -2,17 +2,21 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.AttachedFacilityVIew;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.DescriptorView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ReadOnlySimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
@@ -38,13 +42,16 @@ public class UserService extends
   private final GeosamplesUserRepository geosamplesUserRepository;
   private final GeosamplesRoleRepository geosamplesRoleRepository;
   private final GeosamplesAuthorityRepository geosamplesAuthorityRepository;
+  private final CuratorsFacilityRepository curatorsFacilityRepository;
 
   @Autowired
   public UserService(GeosamplesUserRepository geosamplesUserRepository, GeosamplesRoleRepository geosamplesRoleRepository,
-      GeosamplesAuthorityRepository geosamplesAuthorityRepository) {
+      GeosamplesAuthorityRepository geosamplesAuthorityRepository,
+      CuratorsFacilityRepository curatorsFacilityRepository) {
     this.geosamplesUserRepository = geosamplesUserRepository;
     this.geosamplesRoleRepository = geosamplesRoleRepository;
     this.geosamplesAuthorityRepository = geosamplesAuthorityRepository;
+    this.curatorsFacilityRepository = curatorsFacilityRepository;
   }
 
   @Override
@@ -64,6 +71,7 @@ public class UserService extends
     List<String> userNameContains = searchParameters.getUserNameContains();
     List<String> userNameEquals = searchParameters.getUserNameEquals();
     List<String> displayNameContains = searchParameters.getDisplayNameContains();
+    List<String> facilityCodeEquals = searchParameters.getFacilityCode();
 
     if (!userNameContains.isEmpty()) {
       specs.add(SearchUtils.contains(userNameContains, GeosamplesUserEntity_.USER_NAME));
@@ -75,6 +83,12 @@ public class UserService extends
 
     if (!displayNameContains.isEmpty()) {
       specs.add(SearchUtils.contains(displayNameContains, GeosamplesUserEntity_.DISPLAY_NAME));
+    }
+
+    if (!facilityCodeEquals.isEmpty()) {
+      specs.add(SearchUtils.equal(facilityCodeEquals, e ->
+          e.join(GeosamplesUserEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE)
+      ));
     }
 
     return specs;
@@ -97,12 +111,24 @@ public class UserService extends
     Collections.sort(tokenAliases);
     view.setTokenAliases(tokenAliases);
 
+    if (entity.getFacility() != null) {
+      AttachedFacilityVIew facilityView = new AttachedFacilityVIew();
+      facilityView.setId(entity.getFacility().getId());
+      facilityView.setFacilityCode(entity.getFacility().getFacilityCode());
+      view.setFacility(facilityView);
+    }
+
     return view;
   }
 
   private GeosamplesRoleEntity getUserRole(String roleName) {
     return geosamplesRoleRepository.getByRoleName(roleName)
         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find role: " + roleName).build()));
+  }
+
+  private CuratorsFacilityEntity getFacility(Long facilityId) {
+    return curatorsFacilityRepository.findById(facilityId)
+        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find facility: " + facilityId).build()));
   }
 
   @Override
@@ -112,12 +138,22 @@ public class UserService extends
     entity.setUserName(view.getUserName().trim().toLowerCase(Locale.ENGLISH));
     entity.setDisplayName(view.getDisplayName().trim());
     entity.setUserRole(getUserRole(view.getRole()));
+    if (view.getFacility() != null) {
+      CuratorsFacilityEntity facility = getFacility(view.getFacility().getId());
+      entity.setFacility(facility);
+    }
     return entity;
   }
 
   @Override
   protected void updateEntity(GeosamplesUserEntity entity, UserView view) {
     entity.setDisplayName(view.getDisplayName());
+    if (view.getRole() != null) {
+      entity.setUserRole(getUserRole(view.getRole()));
+    }
+    if (view.getFacility() != null) {
+      entity.setFacility(getFacility(view.getFacility().getId()));
+    }
   }
 
   public ReadOnlySimpleItemsView<DescriptorView> getAllAuthorities() {

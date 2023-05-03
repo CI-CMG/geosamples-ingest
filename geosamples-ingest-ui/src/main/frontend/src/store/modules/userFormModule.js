@@ -22,6 +22,10 @@ const model = {
   userName: 'string',
   displayName: 'string',
   role: 'string',
+  facility: {
+    id: 'string',
+    facilityCode: 'string',
+  },
 };
 
 export default {

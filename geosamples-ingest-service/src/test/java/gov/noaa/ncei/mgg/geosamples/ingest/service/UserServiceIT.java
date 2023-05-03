@@ -5,12 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +39,9 @@ public class UserServiceIT {
 
   @Autowired
   private GeosamplesRoleRepository geosamplesRoleRepository;
+
+  @Autowired
+  private GeosamplesAuthorityRepository geosamplesAuthorityRepository;
 
   @BeforeEach
   public void beforeEach() {
@@ -133,6 +141,49 @@ public class UserServiceIT {
     UserView userView = users.get(0);
     assertEquals("gabby", userView.getUserName());
     assertEquals("Gabby Glacier", userView.getDisplayName());
+  }
+
+  @Test
+  public void testGetUserAuthoritiesRoleDefined() {
+    transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER");
+      role = geosamplesRoleRepository.save(role);
+
+      for (GeosamplesAuthorityEntity authority : geosamplesAuthorityRepository.findAll()) {
+        GeosamplesRoleAuthorityEntity roleAuthority = new GeosamplesRoleAuthorityEntity();
+        roleAuthority.setAuthority(authority);
+        role.addRoleAuthority(roleAuthority);
+      }
+
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby Glacier");
+      user.setVersion(1);
+      user.setUserRole(role);
+      geosamplesUserRepository.save(user);
+    });
+
+    List<String> authorities = userService.getUserAuthorities("gabby");
+    assertEquals(geosamplesAuthorityRepository.count(), authorities.size());
+    assertEquals(
+        new HashSet<>(authorities),
+        geosamplesAuthorityRepository.findAll().stream().map(GeosamplesAuthorityEntity::getAuthorityName).collect(Collectors.toSet())
+    );
+  }
+
+  @Test
+  public void testGetUserAuthoritiesRoleNotDefined() {
+    transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby Glacier");
+      user.setVersion(1);
+      geosamplesUserRepository.save(user);
+    });
+
+    List<String> authorities = userService.getUserAuthorities("gabby");
+    assertEquals(0, authorities.size());
   }
 
   private void cleanDb() {

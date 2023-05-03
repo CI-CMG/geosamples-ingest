@@ -49,6 +49,8 @@ import sampleLink from './modules/sampleLinkModule';
 import sampleLinkForm from './modules/sampleLinkFormModule';
 import cruiseLink from './modules/cruiseLinkModule';
 import cruiseLinkForm from './modules/cruiseLinkFormModule';
+import role from './modules/roleModule';
+import roleForm from './modules/roleFormModule';
 
 Vue.use(Vuex);
 
@@ -103,5 +105,7 @@ export default new Vuex.Store({
     cruiseLink,
     cruiseLinkForm,
     tokenForm,
+    role,
+    roleForm,
   },
 });

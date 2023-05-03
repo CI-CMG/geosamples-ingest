@@ -41,16 +41,15 @@
           <b-form-invalid-feedback>{{ getError('displayName') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Authorities" :label-for="authoritiesId">
+        <b-form-group label="Role" :label-for="roleId">
           <b-form-select
-            :id="authoritiesId"
-            @blur="() => setTouched({path: 'displayName', touched: true})"
-            :value="selectedAuthorities"
-            :options="authorities"
-            @change="setSelectedAuthorities"
-            multiple
+            :id="roleId"
+            @blur="() => setTouched({path: 'role', touched: true})"
+            :value="getValue('role')"
+            :options="roles"
+            @change="(value) => setValue({ path: 'role', value })"
           />
-          <div class="mt-3">Selected Authorities: <strong>{{ selectedAuthorities }}</strong></div>
+          <b-form-invalid-feedback>{{ getError('role') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <div>
@@ -78,13 +77,13 @@ export default {
     return {
       userNameId: '',
       displayNameId: '',
-      authoritiesId: '',
+      roleId: '',
     };
   },
   beforeMount() {
     this.userNameId = genId();
     this.displayNameId = genId();
-    this.authoritiesId = genId();
+    this.roleId = genId();
   },
   methods: {
     ...mapMutations('userForm',
@@ -98,7 +97,7 @@ export default {
       ]),
     ...mapActions('user', ['load', 'save', 'delete']),
     ...mapActions('userForm', ['submit', 'reset']),
-    ...mapActions('authority', { loadAuthorities: 'load' }),
+    ...mapActions('authority', { loadRoles: 'loadRoles' }),
     showModal() {
       this.$refs['delete-modal'].show();
     },
@@ -113,15 +112,6 @@ export default {
     doDelete() {
       this.delete(this.id).then(() => this.$router.push({ name: 'UserList' }));
     },
-    setSelectedAuthorities(values) {
-      const existingSize = this.getValue('authorities').length;
-      for (let i = 0; i < existingSize; i += 1) {
-        this.deleteFromArray('authorities[0]');
-      }
-      for (let k = 0; k < values.length; k += 1) {
-        this.addToArray({ path: 'authorities', value: values[k] });
-      }
-    },
   },
 
   computed: {
@@ -134,9 +124,9 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
-    ...mapState('authority', { authorities: 'authorities', loadingAuthorities: 'loading' }),
+    ...mapState('authority', { roles: 'roles', loadingRoles: 'loading' }),
     ready() {
-      return (!this.isEdit || !this.loading) && !this.loadingAuthorities;
+      return (!this.isEdit || !this.loading) && !this.loadingRoles;
     },
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
@@ -146,13 +136,6 @@ export default {
     },
     isEdit() {
       return this.id || this.id === 0;
-    },
-    selectedAuthorities() {
-      const authorities = this.getValue('authorities');
-      if (!authorities) {
-        return [];
-      }
-      return authorities.map((x) => x.value);
     },
   },
   watch: {
@@ -165,7 +148,7 @@ export default {
     },
   },
   created() {
-    this.loadAuthorities();
+    this.loadRoles();
     if (this.id != null) {
       this.load(this.id).then(this.initialize);
     } else {

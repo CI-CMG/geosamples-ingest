@@ -66,6 +66,9 @@ import CruiseLink from '@/views/view/main/cruise-link/CruiseLink.vue';
 import CruiseLinkList from '@/views/view/main/cruise-link/list/CruiseLinkList.vue';
 import CruiseLinkEdit from '@/views/view/main/cruise-link/edit/CruiseLinkEdit.vue';
 import MeEdit from '@/views/view/main/me/edit/MeEdit.vue';
+import Role from '@/views/view/main/role/Role.vue';
+import RoleList from '@/views/view/main/role/list/RoleList.vue';
+import RoleEdit from '@/views/view/main/role/edit/RoleEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -605,6 +608,30 @@ const routes = [
               {
                 path: '*',
                 redirect: { name: 'CruiseLink' },
+              },
+            ],
+          },
+          {
+            path: 'role',
+            component: Role,
+            name: 'Role',
+            redirect: { name: 'RoleList' },
+            children: [
+              {
+                path: 'list',
+                name: 'RoleList',
+                component: RoleList,
+              },
+              {
+                path: 'add',
+                name: 'RoleAdd',
+                component: RoleEdit,
+              },
+              {
+                path: 'edit/:id',
+                name: 'RoleEdit',
+                component: RoleEdit,
+                props: true,
               },
             ],
           },

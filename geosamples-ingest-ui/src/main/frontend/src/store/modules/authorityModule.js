@@ -6,6 +6,7 @@ export default {
 
   state: {
     authorities: [],
+    roles: [],
     loading: false,
   },
 
@@ -13,9 +14,13 @@ export default {
     loadRequest(state) {
       state.loading = true;
     },
-    loadSuccess(state, authorities) {
+    loadAuthoritiesSuccess(state, authorities) {
       state.loading = false;
       state.authorities = authorities;
+    },
+    loadRolesSuccess(state, roles) {
+      state.loading = false;
+      state.roles = roles;
     },
     loadFailure(state) {
       state.loading = false;
@@ -26,12 +31,27 @@ export default {
   },
 
   actions: {
-    load({ commit }) {
+    loadAuthorities({ commit }) {
       commit('loadRequest');
       return apiService.get('/descriptor/authority')
         .then(
           (response) => {
-            commit('loadSuccess', response.data.items);
+            commit('loadAuthoritiesSuccess', response.data.items);
+            return response.data.items;
+          },
+          (error) => {
+            commit('loadFailure');
+            throw error;
+          },
+        );
+    },
+
+    loadRoles({ commit }) {
+      commit('loadRequest');
+      return apiService.get('/descriptor/role')
+        .then(
+          (response) => {
+            commit('loadRolesSuccess', response.data.items);
             return response.data.items;
           },
           (error) => {

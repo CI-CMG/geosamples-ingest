@@ -19,9 +19,10 @@ import {
 } from '@ci-cmg/form-vuex';
 
 const model = {
-  userName: 'string',
-  displayName: 'string',
-  role: 'string',
+  id: 'string',
+  version: 'string',
+  roleName: 'string',
+  authorities: ['string'],
 };
 
 export default {

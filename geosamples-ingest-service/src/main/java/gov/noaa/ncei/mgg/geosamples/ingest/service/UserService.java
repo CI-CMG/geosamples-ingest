@@ -6,6 +6,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.DescriptorView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ReadOnlySimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -148,11 +149,14 @@ public class UserService extends
         .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find user: " + userName).build()))
         .getUserRole();
     if (roleAuthority == null) {
-      return Collections.emptyList();
+      return Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString());
     }
-    return roleAuthority.getRoleAuthorities().stream()
+    List<String> authorities = roleAuthority.getRoleAuthorities().stream()
           .map(GeosamplesRoleAuthorityEntity::getAuthority)
           .map(GeosamplesAuthorityEntity::getAuthorityName)
           .collect(Collectors.toList());
+
+    authorities.add(Authorities.ROLE_AUTHENTICATED_USER.toString());
+    return authorities;
   }
 }

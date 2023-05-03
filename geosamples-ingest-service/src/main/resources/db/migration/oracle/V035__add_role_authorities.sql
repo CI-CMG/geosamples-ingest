@@ -1,0 +1,4 @@
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_ROLE_READ');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_ROLE_CREATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_ROLE_UPDATE');
+insert into ${schema_name}.GEOSAMPLES_AUTHORITY (AUTHORITY_NAME) values ('ROLE_USER_ROLE_DELETE');

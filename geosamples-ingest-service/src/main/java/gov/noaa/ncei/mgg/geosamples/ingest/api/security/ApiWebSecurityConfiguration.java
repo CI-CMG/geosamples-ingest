@@ -132,6 +132,11 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/user/*").hasAuthority(Authorities.ROLE_USER_DELETE.toString())
 
+        .antMatchers(HttpMethod.GET, "/api/v1/role", "/api/v1/role/*").hasAuthority(Authorities.ROLE_USER_ROLE_READ.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/role").hasAuthority(Authorities.ROLE_USER_ROLE_CREATE.toString())
+        .antMatchers(HttpMethod.PUT, "/api/v1/role/*").hasAuthority(Authorities.ROLE_USER_ROLE_UPDATE.toString())
+        .antMatchers(HttpMethod.DELETE, "/api/v1/role/*").hasAuthority(Authorities.ROLE_USER_ROLE_DELETE.toString())
+
         .antMatchers(HttpMethod.GET, "/api/v1/cruise", "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/cruise").hasAuthority(Authorities.ROLE_CRUISE_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_UPDATE.toString())
@@ -147,6 +152,17 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             Authorities.ROLE_USER_CREATE.toString(),
             Authorities.ROLE_USER_UPDATE.toString(),
             Authorities.ROLE_USER_DELETE.toString()
+        )
+
+        .antMatchers(HttpMethod.GET, "/api/v1/descriptor/role").hasAnyAuthority(
+            Authorities.ROLE_USER_READ.toString(),
+            Authorities.ROLE_USER_CREATE.toString(),
+            Authorities.ROLE_USER_UPDATE.toString(),
+            Authorities.ROLE_USER_DELETE.toString(),
+            Authorities.ROLE_USER_ROLE_READ.toString(),
+            Authorities.ROLE_USER_ROLE_CREATE.toString(),
+            Authorities.ROLE_USER_ROLE_UPDATE.toString(),
+            Authorities.ROLE_USER_ROLE_DELETE.toString()
         )
 
         .antMatchers(HttpMethod.POST, "/api/v1/user-token/*").hasAuthority(Authorities.ROLE_AUTHENTICATED_USER.toString())

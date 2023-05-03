@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -183,7 +184,8 @@ public class UserServiceIT {
     });
 
     List<String> authorities = userService.getUserAuthorities("gabby");
-    assertEquals(0, authorities.size());
+    assertEquals(1, authorities.size());
+    assertEquals(Authorities.ROLE_AUTHENTICATED_USER.toString(), authorities.get(0));
   }
 
   private void cleanDb() {

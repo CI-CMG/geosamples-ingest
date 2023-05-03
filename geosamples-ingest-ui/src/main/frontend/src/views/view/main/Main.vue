@@ -48,9 +48,14 @@
               </AuthorizedContent>
             </b-nav-item-dropdown>
           </AuthorizedContent>
-          <AuthorizedContent :authorities="['ROLE_USER_READ']">
+          <AuthorizedContent :authorities="['ROLE_USER_READ', 'ROLE_USER_ROLE_READ']">
             <b-nav-item-dropdown text="Administration">
-              <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>
+              <AuthorizedContent :authorities="['ROLE_USER_READ']">
+                <b-dropdown-item :to="{ name: 'User'}">Users</b-dropdown-item>
+              </AuthorizedContent>
+              <AuthorizedContent :authorities="['ROLE_USER_ROLE_READ']">
+                <b-dropdown-item :to="{ name: 'Role'}">Roles</b-dropdown-item>
+              </AuthorizedContent>
             </b-nav-item-dropdown>
           </AuthorizedContent>
           <AuthorizedContent :authorities="curatorDataAuthorities">

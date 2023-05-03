@@ -3,6 +3,8 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Sortable({
     "userName",
@@ -10,9 +12,12 @@ import java.util.List;
 })
 public class UserView {
 
+  @NotBlank
   private String userName;
+  @NotBlank
   private String displayName;
-  private List<String> authorities = new ArrayList<>(0);
+  @NotBlank
+  private String role;
   private List<String> tokenAliases = new ArrayList<>(0);
 
   public String getUserName() {
@@ -31,15 +36,12 @@ public class UserView {
     this.displayName = displayName;
   }
 
-  public List<String> getAuthorities() {
-    return authorities;
+  public String getRole() {
+    return role;
   }
 
-  public void setAuthorities(List<String> authorities) {
-    if(authorities == null) {
-      authorities = new ArrayList<>(0);
-    }
-    this.authorities = authorities;
+  public String setRole(String role) {
+    return this.role = role;
   }
 
   public List<String> getTokenAliases() {

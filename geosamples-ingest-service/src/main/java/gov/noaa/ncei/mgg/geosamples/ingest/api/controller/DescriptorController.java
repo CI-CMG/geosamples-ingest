@@ -25,4 +25,9 @@ public class DescriptorController {
     return userService.getAllAuthorities();
   }
 
+  @GetMapping(path = "role", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ReadOnlySimpleItemsView<DescriptorView> role() {
+    return userService.getAllRoles();
+  }
+
 }

@@ -9,12 +9,14 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -45,7 +47,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Example;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -91,6 +92,9 @@ public class SampleServiceIT {
   @Autowired
   private GeometryFactory geometryFactory;
 
+  @Autowired
+  private GeosamplesRoleRepository geosamplesRoleRepository;
+
   @BeforeAll
   public static void setUpAll() throws IOException {
     mockCas = new MockWebServer();
@@ -126,14 +130,20 @@ public class SampleServiceIT {
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
+      geosamplesRoleRepository.deleteAll();
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
-      for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
-        GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
-        userAuthorityEntity.setAuthority(authorityEntity);
-        martin.addUserAuthority(userAuthorityEntity);
+
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_ADMIN");
+      role = geosamplesRoleRepository.save(role);
+      for (GeosamplesAuthorityEntity authority : geosamplesAuthorityRepository.findAll()) {
+        GeosamplesRoleAuthorityEntity roleAuthority = new GeosamplesRoleAuthorityEntity();
+        roleAuthority.setAuthority(authority);
+        role.addRoleAuthority(roleAuthority);
       }
+      martin.setUserRole(role);
       geosamplesUserRepository.save(martin);
     });
   }
@@ -146,6 +156,7 @@ public class SampleServiceIT {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
+      geosamplesRoleRepository.deleteAll();
     });
   }
 

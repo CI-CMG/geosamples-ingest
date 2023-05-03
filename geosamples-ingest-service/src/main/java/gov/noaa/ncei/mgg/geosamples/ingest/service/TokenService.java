@@ -6,8 +6,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.JwtView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.TokenRepository;
@@ -40,8 +40,8 @@ public class TokenService {
   }
 
   private static Set<String> getAuthorities(GeosamplesUserEntity user) {
-    Set<String> authorities = user.getUserAuthorities().stream()
-        .map(GeosamplesUserAuthorityEntity::getAuthority)
+    Set<String> authorities = user.getUserRole().getRoleAuthorities().stream()
+        .map(GeosamplesRoleAuthorityEntity::getAuthority)
         .map(GeosamplesAuthorityEntity::getAuthorityName)
         .collect(Collectors.toSet());
     authorities.add(Authorities.ROLE_AUTHENTICATED_USER.toString());

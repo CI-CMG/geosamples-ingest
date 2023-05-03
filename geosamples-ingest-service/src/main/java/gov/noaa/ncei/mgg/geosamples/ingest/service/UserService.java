@@ -6,22 +6,20 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.DescriptorView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ReadOnlySimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,12 +35,14 @@ public class UserService extends
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(UserView.class);
 
   private final GeosamplesUserRepository geosamplesUserRepository;
+  private final GeosamplesRoleRepository geosamplesRoleRepository;
   private final GeosamplesAuthorityRepository geosamplesAuthorityRepository;
 
   @Autowired
-  public UserService(GeosamplesUserRepository geosamplesUserRepository,
+  public UserService(GeosamplesUserRepository geosamplesUserRepository, GeosamplesRoleRepository geosamplesRoleRepository,
       GeosamplesAuthorityRepository geosamplesAuthorityRepository) {
     this.geosamplesUserRepository = geosamplesUserRepository;
+    this.geosamplesRoleRepository = geosamplesRoleRepository;
     this.geosamplesAuthorityRepository = geosamplesAuthorityRepository;
   }
 
@@ -89,11 +89,7 @@ public class UserService extends
     UserView view = new UserView();
     view.setUserName(entity.getUserName());
     view.setDisplayName(entity.getDisplayName());
-    List<String> authorities = new ArrayList<>();
-    authorities.add(Authorities.ROLE_AUTHENTICATED_USER.toString());
-    authorities.addAll(entity.getUserAuthorities().stream().map(GeosamplesUserAuthorityEntity::getAuthorityName).collect(Collectors.toList()));
-    Collections.sort(authorities);
-    view.setAuthorities(authorities);
+    view.setRole(entity.getUserRole().getRoleName());
 
     List<String> tokenAliases = new ArrayList<>();
     tokenAliases.addAll(entity.getTokens().stream().map(GeosamplesTokenEntity::getAlias).collect(Collectors.toList()));
@@ -103,15 +99,9 @@ public class UserService extends
     return view;
   }
 
-  private GeosamplesUserAuthorityEntity getUserAuthority(String authority) {
-    GeosamplesUserAuthorityEntity entity = new GeosamplesUserAuthorityEntity();
-    entity.setAuthority(getAuthority(authority));
-    return entity;
-  }
-
-  private GeosamplesAuthorityEntity getAuthority(String authority) {
-    return geosamplesAuthorityRepository.findById(authority)
-        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find authority: " + authority).build()));
+  private GeosamplesRoleEntity getUserRole(String roleName) {
+    return geosamplesRoleRepository.getByRoleName(roleName)
+        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find role: " + roleName).build()));
   }
 
   @Override
@@ -120,44 +110,13 @@ public class UserService extends
     entity.setVersion(0);
     entity.setUserName(view.getUserName().trim().toLowerCase(Locale.ENGLISH));
     entity.setDisplayName(view.getDisplayName().trim());
-    for (String authority : view.getAuthorities()) {
-      entity.addUserAuthority(getUserAuthority(authority));
-    }
+    entity.setUserRole(getUserRole(view.getRole()));
     return entity;
   }
 
   @Override
   protected void updateEntity(GeosamplesUserEntity entity, UserView view) {
     entity.setDisplayName(view.getDisplayName());
-
-    Set<String> viewAuthorities = new HashSet<>(view.getAuthorities());
-
-    Set<String> existing = new HashSet<>();
-    for(GeosamplesUserAuthorityEntity userAuthorityEntity : entity.getUserAuthorities()) {
-      existing.add(userAuthorityEntity.getAuthorityName());
-    }
-
-    Set<String> toRemove = new HashSet<>();
-    for (String existingAuthority : existing) {
-      if(!viewAuthorities.contains(existingAuthority)) {
-        toRemove.add(existingAuthority);
-      }
-    }
-
-    Iterator<GeosamplesUserAuthorityEntity> it = new ArrayList<>(entity.getUserAuthorities()).iterator();
-    while (it.hasNext()) {
-      GeosamplesUserAuthorityEntity userAuthorityEntity = it.next();
-      if(toRemove.contains(userAuthorityEntity.getAuthorityName())) {
-        entity.removeUserAuthority(userAuthorityEntity);
-      }
-    }
-
-    for (String viewAuthority : viewAuthorities) {
-      if(!existing.contains(viewAuthority)) {
-        entity.addUserAuthority(getUserAuthority(viewAuthority));
-      }
-    }
-
   }
 
   public ReadOnlySimpleItemsView<DescriptorView> getAllAuthorities() {
@@ -172,4 +131,28 @@ public class UserService extends
     return result;
   }
 
+  public ReadOnlySimpleItemsView<DescriptorView> getAllRoles() {
+    ReadOnlySimpleItemsView<DescriptorView> result = new ReadOnlySimpleItemsView<>();
+    result.setItems(geosamplesRoleRepository.findAll().stream()
+        .map(GeosamplesRoleEntity::getRoleName)
+        .sorted()
+        .collect(Collectors.toList())
+        .stream().map(a -> new DescriptorView(a, a))
+        .collect(Collectors.toList())
+    );
+    return result;
+  }
+
+  public List<String> getUserAuthorities(String userName) {
+    GeosamplesRoleEntity roleAuthority = geosamplesUserRepository.findById(userName)
+        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Unable to find user: " + userName).build()))
+        .getUserRole();
+    if (roleAuthority == null) {
+      return Collections.emptyList();
+    }
+    return roleAuthority.getRoleAuthorities().stream()
+          .map(GeosamplesRoleAuthorityEntity::getAuthority)
+          .map(GeosamplesAuthorityEntity::getAuthorityName)
+          .collect(Collectors.toList());
+  }
 }

@@ -22,7 +22,7 @@ public class CustomGrantedAuthoritiesConverter implements Converter<Jwt, Collect
 
   @Override
   public Collection<GrantedAuthority> convert(Jwt jwt) {
-    return userService.get(jwt.getSubject()).getAuthorities().stream()
+    return userService.getUserAuthorities(jwt.getSubject()).stream()
         .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
   }
 

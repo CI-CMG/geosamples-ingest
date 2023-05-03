@@ -6,12 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelInputService;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.TokenGenerator;
@@ -122,6 +124,8 @@ public class SampleIntervalControllerIT {
   private GeosamplesAuthorityRepository geosamplesAuthorityRepository;
   @Autowired
   private CuratorsCruiseRepository curatorsCruiseRepository;
+  @Autowired
+  private GeosamplesRoleRepository geosamplesRoleRepository;
 
   @BeforeEach
   public void beforeEach() throws IOException {
@@ -130,14 +134,21 @@ public class SampleIntervalControllerIT {
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
+      geosamplesRoleRepository.deleteAll();
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
+
+      GeosamplesRoleEntity roleEntity = new GeosamplesRoleEntity();
+      roleEntity.setRoleName("ROLE_ADMIN");
+      roleEntity = geosamplesRoleRepository.save(roleEntity);
+
       for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
-        GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
-        userAuthorityEntity.setAuthority(authorityEntity);
-        martin.addUserAuthority(userAuthorityEntity);
+        GeosamplesRoleAuthorityEntity roleAuthorityEntity = new GeosamplesRoleAuthorityEntity();
+        roleAuthorityEntity.setAuthority(authorityEntity);
+        roleEntity.addRoleAuthority(roleAuthorityEntity);
       }
+      martin.setUserRole(roleEntity);
       geosamplesUserRepository.save(martin);
     });
     Files.createDirectories(Paths.get("target").resolve("test"));
@@ -151,6 +162,10 @@ public class SampleIntervalControllerIT {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
+      if (geosamplesUserRepository.existsById("maurice")) {
+        geosamplesUserRepository.deleteById("maurice");
+      }
+      geosamplesRoleRepository.deleteAll();
     });
     FileUtils.deleteDirectory(new File("target/test"));
   }
@@ -322,13 +337,19 @@ public class SampleIntervalControllerIT {
       GeosamplesUserEntity maurice = new GeosamplesUserEntity();
       maurice.setDisplayName("Maurice Moss");
       maurice.setUserName("maurice");
+
+      GeosamplesRoleEntity roleEntity = new GeosamplesRoleEntity();
+      roleEntity.setRoleName("CANNOT READ");
+      roleEntity = geosamplesRoleRepository.save(roleEntity);
+
       for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
         if (!authorityEntity.getAuthorityName().equals(Authorities.ROLE_DATA_MANAGER_READ.toString())) {
-          GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
-          userAuthorityEntity.setAuthority(authorityEntity);
-          maurice.addUserAuthority(userAuthorityEntity);
+          GeosamplesRoleAuthorityEntity roleAuthorityEntity = new GeosamplesRoleAuthorityEntity();
+          roleAuthorityEntity.setAuthority(authorityEntity);
+          roleEntity.addRoleAuthority(roleAuthorityEntity);
         }
       }
+      maurice.setUserRole(roleEntity);
       geosamplesUserRepository.save(maurice);
     });
 
@@ -351,13 +372,19 @@ public class SampleIntervalControllerIT {
       GeosamplesUserEntity maurice = new GeosamplesUserEntity();
       maurice.setDisplayName("Maurice Moss");
       maurice.setUserName("maurice");
+
+      GeosamplesRoleEntity roleEntity = new GeosamplesRoleEntity();
+      roleEntity.setRoleName("CANNOT READ");
+      roleEntity = geosamplesRoleRepository.save(roleEntity);
+
       for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
         if (!authorityEntity.getAuthorityName().equals(Authorities.ROLE_DATA_MANAGER_READ.toString())) {
-          GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
-          userAuthorityEntity.setAuthority(authorityEntity);
-          maurice.addUserAuthority(userAuthorityEntity);
+          GeosamplesRoleAuthorityEntity roleAuthorityEntity = new GeosamplesRoleAuthorityEntity();
+          roleAuthorityEntity.setAuthority(authorityEntity);
+          roleEntity.addRoleAuthority(roleAuthorityEntity);
         }
       }
+      maurice.setUserRole(roleEntity);
       geosamplesUserRepository.save(maurice);
     });
 

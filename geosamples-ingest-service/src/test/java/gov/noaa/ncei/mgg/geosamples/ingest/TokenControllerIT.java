@@ -104,9 +104,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString()));
 
-    when(mockUserService.get(eq("fred"))).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(eq("fred"))).thenReturn(
+        Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/jwt")
         .build().encode().toUri();
@@ -131,9 +132,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_DATA_MANAGER_READ.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(any())).thenReturn(
+        Collections.singletonList(Authorities.ROLE_DATA_MANAGER_READ.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/jwt")
         .build().encode().toUri();
@@ -177,9 +179,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(any())).thenReturn(
+        Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/generate")
         .build().encode().toUri();
@@ -207,9 +210,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_DATA_MANAGER_CREATE.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(any())).thenReturn(
+        Collections.singletonList(Authorities.ROLE_DATA_MANAGER_CREATE.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/generate")
         .build().encode().toUri();
@@ -253,9 +257,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(any())).thenReturn(
+        Collections.singletonList(Authorities.ROLE_AUTHENTICATED_USER.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/delete")
         .build().encode().toUri();
@@ -283,9 +288,10 @@ public class TokenControllerIT {
     UserView fred = new UserView();
     fred.setUserName("fred");
     fred.setDisplayName("Fred");
-    fred.setAuthorities(Collections.singletonList(Authorities.ROLE_DATA_MANAGER_CREATE.toString()));
 
-    when(mockUserService.get(any())).thenReturn(fred);
+    when(mockUserService.getUserAuthorities(any())).thenReturn(
+        Collections.singletonList(Authorities.ROLE_DATA_MANAGER_CREATE.toString())
+    );
 
     URI uri = UriComponentsBuilder.fromPath("/api/v1/user-token/delete")
         .build().encode().toUri();

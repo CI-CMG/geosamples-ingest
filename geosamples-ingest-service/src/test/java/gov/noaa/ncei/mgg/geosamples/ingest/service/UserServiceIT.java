@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +32,9 @@ public class UserServiceIT {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private GeosamplesRoleRepository geosamplesRoleRepository;
+
   @BeforeEach
   public void beforeEach() {
     cleanDb();
@@ -43,10 +48,15 @@ public class UserServiceIT {
   @Test
   public void testSearchByUsernameContains() {
     transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER");
+      role = geosamplesRoleRepository.save(role);
+
       GeosamplesUserEntity user = new GeosamplesUserEntity();
       user.setUserName("gabby");
       user.setDisplayName("Gabby Glacier");
       user.setVersion(1);
+      user.setUserRole(role);
       geosamplesUserRepository.save(user);
     });
 
@@ -68,9 +78,14 @@ public class UserServiceIT {
   @Test
   public void testSearchByUsernameEquals() {
     transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER");
+      role = geosamplesRoleRepository.save(role);
+
       GeosamplesUserEntity user = new GeosamplesUserEntity();
       user.setUserName("gabby");
       user.setDisplayName("Gabby Glacier");
+      user.setUserRole(role);
       user.setVersion(1);
       geosamplesUserRepository.save(user);
     });
@@ -93,10 +108,15 @@ public class UserServiceIT {
   @Test
   public void testSearchByDisplayNameContains() {
     transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER");
+      role = geosamplesRoleRepository.save(role);
+
       GeosamplesUserEntity user = new GeosamplesUserEntity();
       user.setUserName("gabby");
       user.setDisplayName("Gabby Glacier");
       user.setVersion(1);
+      user.setUserRole(role);
       geosamplesUserRepository.save(user);
     });
 
@@ -116,7 +136,12 @@ public class UserServiceIT {
   }
 
   private void cleanDb() {
-    transactionTemplate.executeWithoutResult(s -> geosamplesUserRepository.deleteAll());
+    transactionTemplate.executeWithoutResult(s -> {
+      if (geosamplesUserRepository.existsById("gabby")) {
+        geosamplesUserRepository.deleteById("gabby");
+      }
+      geosamplesRoleRepository.deleteAll();
+    });
   }
 
 }

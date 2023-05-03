@@ -9,12 +9,14 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -78,6 +80,9 @@ public class CuratorPreviewPersistenceServiceIT {
   @Autowired
   private TestRestTemplate restTemplate;
 
+  @Autowired
+  private GeosamplesRoleRepository geosamplesRoleRepository;
+
   public static String createJwt(String subject) throws IOException, JoseException {
     JwtClaims claims = new JwtClaims();
     claims.setIssuer("http://localhost:20158");
@@ -127,14 +132,21 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
+      geosamplesRoleRepository.deleteAll();
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
       martin.setUserName("martin");
+
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_ADMIN");
+      role = geosamplesRoleRepository.save(role);
+
       for (GeosamplesAuthorityEntity authorityEntity : geosamplesAuthorityRepository.findAll()) {
-        GeosamplesUserAuthorityEntity userAuthorityEntity = new GeosamplesUserAuthorityEntity();
-        userAuthorityEntity.setAuthority(authorityEntity);
-        martin.addUserAuthority(userAuthorityEntity);
+        GeosamplesRoleAuthorityEntity roleAuthorityEntity = new GeosamplesRoleAuthorityEntity();
+        roleAuthorityEntity.setAuthority(authorityEntity);
+        role.addRoleAuthority(roleAuthorityEntity);
       }
+      martin.setUserRole(role);
       geosamplesUserRepository.save(martin);
     });
   }
@@ -147,6 +159,7 @@ public class CuratorPreviewPersistenceServiceIT {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
+      geosamplesRoleRepository.deleteAll();
     });
   }
 

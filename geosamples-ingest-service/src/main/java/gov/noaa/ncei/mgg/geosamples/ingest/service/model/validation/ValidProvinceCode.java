@@ -3,9 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsProvinceRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidAgeCode.ValidAgeCodeCodeValidator;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidProvinceCode.ValidProvinceCodeValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

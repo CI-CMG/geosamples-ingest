@@ -5,10 +5,11 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidAgeCode.ValidAgeCodeCodeValidator;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidAgeCodes.ValidAgeCodesValidator;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.List;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -17,31 +18,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Target({TYPE_USE, FIELD})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidAgeCodeCodeValidator.class)
+@Constraint(validatedBy = ValidAgeCodesValidator.class)
 @Documented
-public @interface ValidAgeCode {
+public @interface ValidAgeCodes {
 
-  String message() default "Invalid Age Code";
+  String message() default "Invalid Age Codes";
 
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};
 
-  class ValidAgeCodeCodeValidator implements ConstraintValidator<ValidAgeCode, String> {
+  class ValidAgeCodesValidator implements ConstraintValidator<ValidAgeCodes, List<String>> {
 
     private final CuratorsAgeRepository repository;
 
     @Autowired
-    public ValidAgeCodeCodeValidator(CuratorsAgeRepository repository) {
+    public ValidAgeCodesValidator(CuratorsAgeRepository repository) {
       this.repository = repository;
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(List<String> value, ConstraintValidatorContext context) {
       if (value == null) {
         return true;
       }
-      return repository.existsByAgeCode(value);
+      return value.stream().filter(repository::existsByAgeCode).count() == value.size();
     }
   }
 

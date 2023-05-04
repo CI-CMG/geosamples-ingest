@@ -109,9 +109,9 @@ public class ExcelWorkbookWriter implements Closeable {
       if (sampleRow.getSecondaryTextureCode() != null) {
        row.createCell(21).setCellValue(sampleRow.getSecondaryTextureCode());
       }
-      if (sampleRow.getGeologicAgeCodes() != null) {
+      if (sampleRow.getGeologicAgeCode() != null) {
         row.createCell(22).setCellValue(
-            sampleRow.getGeologicAgeCodes().stream()
+            sampleRow.getGeologicAgeCode().stream()
                 .sorted(Comparator.comparing(String::toString))
                 .collect(Collectors.joining(", "))
         );

@@ -12,12 +12,12 @@
         </label>
       </b-col>
       <b-col sm="1">
-        <b-input type="number" :value="page" @input="updatePage" :id="pageInputId" min="1" :max="totalPages"/>
+        <b-input type="number" v-model="currentPage" @keydown.enter.native="updatePageFromText" :id="pageInputId" min="1" :max="totalPages"/>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-pagination :value="page" @input="updatePage" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
+        <b-pagination :value="page" @input="updatePageFromPagination" :total-rows="totalItems" :per-page="itemsPerPage"></b-pagination>
       </b-col>
     </b-row>
   </div>
@@ -31,6 +31,7 @@ export default {
   data() {
     return {
       pageInputId: null,
+      currentPage: 1,
     };
   },
 
@@ -39,11 +40,23 @@ export default {
   },
 
   methods: {
-    updatePage(value) {
+    updatePageFromText() {
+      const value = this.currentPage;
       if (value !== '' && Number(value) <= Number(this.totalPages) && Number(this.page) !== Number(value)) {
         this.updated(value);
       }
     },
+
+    updatePageFromPagination(value) {
+      this.currentPage = value;
+      if (value !== '' && Number(value) <= Number(this.totalPages) && Number(this.page) !== Number(value)) {
+        this.updated(value);
+      }
+    },
+  },
+
+  created() {
+    this.currentPage = this.page;
   },
 };
 </script>

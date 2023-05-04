@@ -423,6 +423,57 @@ public class UserServiceIT {
     assertEquals(facilityEntity.getId(), result.getItems().get(0).getFacility().getId());
   }
 
+  @Test
+  public void testSearchUserByRole() {
+    GeosamplesRoleEntity roleEntity = transactionTemplate.execute(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER");
+      return geosamplesRoleRepository.save(role);
+    });
+    assertNotNull(roleEntity);
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby Glacier");
+      user.setVersion(1);
+      user.setUserRole(roleEntity);
+      return geosamplesUserRepository.save(user);
+    });
+    assertNotNull(userEntity);
+
+    GeosamplesRoleEntity willNotMatchRole = transactionTemplate.execute(s -> {
+      GeosamplesRoleEntity role = new GeosamplesRoleEntity();
+      role.setRoleName("ROLE_USER2");
+      return geosamplesRoleRepository.save(role);
+    });
+    assertNotNull(willNotMatchRole);
+
+    GeosamplesUserEntity willNotMatchUser = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby2");
+      user.setDisplayName("Gabby Glacier 2");
+      user.setVersion(1);
+      user.setUserRole(willNotMatchRole);
+      return geosamplesUserRepository.save(user);
+    });
+    assertNotNull(willNotMatchUser);
+
+    UserSearchParameters searchParameters = new UserSearchParameters();
+    searchParameters.setRole(Collections.singletonList(roleEntity.getRoleName()));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+    PagedItemsView<UserView> result = userService.search(searchParameters);
+    assertEquals(1, result.getItems().size());
+    assertEquals(1, result.getTotalItems());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(1, result.getPage());
+    assertEquals(10, result.getItemsPerPage());
+    assertEquals(userEntity.getUserName(), result.getItems().get(0).getUserName());
+    assertEquals(userEntity.getDisplayName(), result.getItems().get(0).getDisplayName());
+    assertEquals(roleEntity.getRoleName(), result.getItems().get(0).getRole());
+  }
+
   private void cleanDb() {
     transactionTemplate.executeWithoutResult(s -> {
       if (geosamplesUserRepository.existsById("gabby")) {
@@ -432,6 +483,7 @@ public class UserServiceIT {
         geosamplesUserRepository.deleteById("gabby2");
       }
       geosamplesRoleRepository.getByRoleName("ROLE_USER").ifPresent(geosamplesRoleEntity -> geosamplesRoleRepository.delete(geosamplesRoleEntity));
+      geosamplesRoleRepository.getByRoleName("ROLE_USER2").ifPresent(geosamplesRoleEntity -> geosamplesRoleRepository.delete(geosamplesRoleEntity));
       curatorsFacilityRepository.findByFacilityCode("TEST").ifPresent(curatorsFacilityEntity -> curatorsFacilityRepository.delete(curatorsFacilityEntity));
       curatorsFacilityRepository.findByFacilityCode("TEST2").ifPresent(curatorsFacilityEntity -> curatorsFacilityRepository.delete(curatorsFacilityEntity));
     });

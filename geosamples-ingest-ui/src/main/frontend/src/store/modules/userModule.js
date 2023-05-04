@@ -6,6 +6,7 @@ const defaultParams = {
   userNameEquals: '',
   displayNameContains: '',
   facilityCode: '',
+  role: '',
 };
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
@@ -109,8 +110,10 @@ export default {
       state.params.displayNameContains = value;
     },
     setFacilityCode(state, value) {
-      console.log('setFacilityCode', value);
       state.params.facilityCode = value;
+    },
+    setRole(state, value) {
+      state.params.role = value;
     },
     setPage(state, page) {
       state.page = page;
@@ -168,6 +171,7 @@ export default {
 
       Promise.all([
         loadAll('/facility', ({ facility, facilityCode }) => ({ value: facilityCode, text: `${facilityCode} - ${facility}` })).then(sortOptions).then((options) => { nextOpts.facilityCode = options; return options; }),
+        loadAll('/role', ({ roleName }) => ({ value: roleName, text: roleName })).then(sortOptions).then((options) => { nextOpts.role = options; return options; }),
       ]).then(() => {
         commit('updateOptions', nextOpts);
       });

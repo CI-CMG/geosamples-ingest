@@ -11,6 +11,7 @@
       { label: 'Username Equals', value: params.userNameEquals, set: setUserNameEquals },
       { label: 'Display Name Contains', value: params.displayNameContains, set: setDisplayNameContains },
       { label: 'Facility Code Equals', value: params.facilityCode, set: setFacilityCode, options: optionsFacilityCode },
+      { label: 'Role Equals', value: params.role, set: setRole, options: optionsRole }
     ]"
     :table-fields="tableFields"
     create-route="UserAdd"
@@ -37,7 +38,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('user', ['setUserNameEquals', 'setUserNameContains', 'setDisplayNameContains', 'setFacilityCode']),
+    ...mapMutations('user', ['setUserNameEquals', 'setUserNameContains', 'setDisplayNameContains', 'setFacilityCode', 'setRole']),
     ...mapActions('user', ['loadSearchOptions']),
   },
 
@@ -46,6 +47,11 @@ export default {
 
     optionsFacilityCode() {
       const { facilityCode: field } = this.options;
+      return field || [];
+    },
+
+    optionsRole() {
+      const { role: field } = this.options;
       return field || [];
     },
   },

@@ -29,6 +29,7 @@ public class UserSearchParameters implements PagingAndSortingParameters {
   private List<String> userNameEquals = new ArrayList<>(0);
   private List<String> displayNameContains = new ArrayList<>(0);
   private List<String> facilityCode = new ArrayList<>(0);
+  private List<String> role = new ArrayList<>(0);
 
   public List<String> getFacilityCode() {
     return facilityCode;
@@ -72,6 +73,17 @@ public class UserSearchParameters implements PagingAndSortingParameters {
       displayNameContains = new ArrayList<>(0);
     }
     this.displayNameContains = displayNameContains;
+  }
+
+  public List<String> getRole() {
+    return role;
+  }
+
+  public void setRole(List<String> role) {
+    if (role == null) {
+      role = new ArrayList<>(0);
+    }
+    this.role = role;
   }
 
   @Override

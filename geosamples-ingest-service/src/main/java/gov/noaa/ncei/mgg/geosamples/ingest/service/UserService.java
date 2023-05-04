@@ -13,6 +13,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesTokenEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
@@ -72,6 +73,7 @@ public class UserService extends
     List<String> userNameEquals = searchParameters.getUserNameEquals();
     List<String> displayNameContains = searchParameters.getDisplayNameContains();
     List<String> facilityCodeEquals = searchParameters.getFacilityCode();
+    List<String> roleEquals = searchParameters.getRole();
 
     if (!userNameContains.isEmpty()) {
       specs.add(SearchUtils.contains(userNameContains, GeosamplesUserEntity_.USER_NAME));
@@ -88,6 +90,12 @@ public class UserService extends
     if (!facilityCodeEquals.isEmpty()) {
       specs.add(SearchUtils.equal(facilityCodeEquals, e ->
           e.join(GeosamplesUserEntity_.FACILITY).get(CuratorsFacilityEntity_.FACILITY_CODE)
+      ));
+    }
+
+    if (!roleEquals.isEmpty()) {
+      specs.add(SearchUtils.equal(roleEquals, e ->
+          e.join(GeosamplesUserEntity_.USER_ROLE).get(GeosamplesRoleEntity_.ROLE_NAME)
       ));
     }
 

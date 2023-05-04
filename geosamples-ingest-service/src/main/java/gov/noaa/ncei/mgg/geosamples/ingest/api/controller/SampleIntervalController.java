@@ -7,7 +7,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelWorkbookWriter;
-import gov.noaa.ncei.mgg.geosamples.ingest.service.ExcelWorkbookWriter.SheetName;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.SampleIntervalService;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import java.io.IOException;
@@ -120,7 +119,7 @@ public class SampleIntervalController {
         ).filter(c -> c != null && !c.isEmpty())
             .collect(Collectors.toList())
     );
-    sampleRow.setGeologicAgeCodes(view.getAges());
+    sampleRow.setGeologicAgeCode(view.getAges());
     sampleRow.setIntervalNumber(view.getInterval());
     sampleRow.setBulkWeight(view.getWeight());
     sampleRow.setPhysiographicProvinceCode(view.getProvince());

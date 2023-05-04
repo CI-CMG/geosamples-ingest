@@ -168,7 +168,7 @@ public class ExcelInputService {
 
     String geologicAgeCodesStringValue = parseString(df, headers, row, HeaderNames.GEOLOGIC_AGE_CODE);
     if (geologicAgeCodesStringValue != null) {
-      sampleRow.setGeologicAgeCodes(
+      sampleRow.setGeologicAgeCode(
           Arrays.stream(geologicAgeCodesStringValue.split(","))
               .map(String::trim)
               .collect(Collectors.toList())

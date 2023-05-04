@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -191,7 +190,7 @@ public class CuratorPreviewPersistenceService {
 
     interval.setDescription(row.getDescription());
     interval.setAges(
-        row.getGeologicAgeCodes().stream().sorted()
+        row.getGeologicAgeCode().stream().sorted()
             .map(sampleDataUtils::getAge)
             .collect(Collectors.toList())
     );

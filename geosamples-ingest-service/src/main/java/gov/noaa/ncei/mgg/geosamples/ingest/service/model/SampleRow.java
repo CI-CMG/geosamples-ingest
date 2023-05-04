@@ -1,6 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service.model;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidAgeCode;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidAgeCodes;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidDate;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidDeviceCode;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.ValidFacilityCode;
@@ -92,7 +92,8 @@ public class SampleRow {
   @Valid
   private List<@Size(max = 1, message = "Must be 1 character") @ValidLithologyCode String> otherComponentCodes = new ArrayList<>(0);
   @Valid
-  private List<@Size(max = 2, message = "Must be at most 2 characters") @ValidAgeCode String> geologicAgeCodes = new ArrayList<>(0);
+  @ValidAgeCodes
+  private List<@Size(max = 2, message = "Must be at most 2 characters") String> geologicAgeCode = new ArrayList<>(0);
   @NotNull(message = "Interval # is required")
   private Integer intervalNumber;
   @Min(value = 0, message = "Bulk Weight must not be negative")
@@ -311,15 +312,15 @@ public class SampleRow {
     otherComponentCodes.add(code);
   }
 
-  public List<String> getGeologicAgeCodes() {
-    return geologicAgeCodes;
+  public List<String> getGeologicAgeCode() {
+    return geologicAgeCode;
   }
 
-  public void setGeologicAgeCodes(List<String> geologicAgeCodes) {
-    if (geologicAgeCodes == null) {
-      geologicAgeCodes = new ArrayList<>(0);
+  public void setGeologicAgeCode(List<String> geologicAgeCode) {
+    if (geologicAgeCode == null) {
+      geologicAgeCode = new ArrayList<>(0);
     }
-    this.geologicAgeCodes = geologicAgeCodes;
+    this.geologicAgeCode = geologicAgeCode;
   }
 
   public Integer getIntervalNumber() {

@@ -132,13 +132,11 @@ export default {
     },
     doAccept(publish) {
       this.accept({ publish }).then(() => {
-        this.firstPage();
         this.search();
       });
     },
     doDelete() {
       this.delete().then(() => {
-        this.firstPage();
         this.search();
       });
     },

@@ -2,12 +2,14 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -18,6 +20,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepo
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -199,6 +202,22 @@ public class CuratorPreviewPersistenceServiceIT {
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/curator-data/upload", HttpMethod.POST, entity, String.class);
 
     assertEquals(200, response.getStatusCode().value());
+  }
+
+  private String uploadFileExpectingError(String file) throws Exception {
+    LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+    parameters.add("file", new ClassPathResource(file));
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.setBearerAuth(createJwt("martin"));
+
+    HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/curator-data/upload", HttpMethod.POST, entity, String.class);
+
+    assertEquals(400, response.getStatusCode().value());
+    return response.getBody();
   }
 
   private static final TypeReference<PagedItemsView<CombinedSampleIntervalView>> ITEMS_VIEW = new TypeReference<PagedItemsView<CombinedSampleIntervalView>>() {
@@ -439,6 +458,120 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("2021", view.getBeginDate());
     assertEquals("2021", view.getEndDate());
 
+  }
+
+  @Test
+  public void testSaveDuplicateIntervalNumbersWithinSample() throws Exception {
+
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_non_unique_intervals.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("Duplicate interval number detected", objectMapper.readTree(responseBody).get("formErrors").get("rows[4].intervalNumber").get(0).asText());
+  }
+
+  @Test
+  public void testSaveConflictingIGSNsWithinSample() throws Exception {
+
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_conflicting_igsns.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("Conflicting IGSN value specified for sample", objectMapper.readTree(responseBody).get("formErrors").get("rows[4].igsn").get(0).asText());
+  }
+
+  @Test
+  public void testSavePublishedIntervalUpdate() throws Exception {
+
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity entity = curatorsSampleTsqpRepository.findAll().stream().filter(e -> e.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
+          () -> new RuntimeException("Sample not found")
+      );
+      entity.getIntervals().forEach(i -> i.setPublish(true));
+      curatorsSampleTsqpRepository.save(entity);
+    });
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_good_full_yyyy.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("Cannot update published interval", objectMapper.readTree(responseBody).get("formErrors").get("rows[3].intervalNumber").get(0).asText());
+    assertEquals("Cannot update published interval", objectMapper.readTree(responseBody).get("formErrors").get("rows[4].intervalNumber").get(0).asText());
+  }
+
+  @Test
+  public void testNewIntervalToExistingSampleNullIntervalIGSN() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_new_interval_null_igsn.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("Existing sample has an IGSN defined", objectMapper.readTree(responseBody).get("formErrors").get("rows[0].igsn").get(0).asText());
+  }
+
+  @Test
+  public void testNewIntervalToExistingSampleWithSampleIGSN() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity entity = curatorsSampleTsqpRepository.findAll().stream().filter(e -> e.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
+          () -> new RuntimeException("Sample not found")
+      );
+      entity.setIgsn(null);
+      curatorsSampleTsqpRepository.save(entity);
+    });
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_new_interval_null_sample_igsn.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("Existing sample does not have an IGSN defined", objectMapper.readTree(responseBody).get("formErrors").get("rows[0].igsn").get(0).asText());
+  }
+
+  @Test
+  public void testNewIntervalToExistingSampleIGSNsNotEqual() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_new_interval_igsn_not_equal.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("IGSN does not match existing sample IGSN", objectMapper.readTree(responseBody).get("formErrors").get("rows[0].igsn").get(0).asText());
+  }
+
+  @Test
+  public void testCreateNewSampleWithExistingIGSN() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full_yyyy.xlsm");
+
+    String responseBody = uploadFileExpectingError("imlgs_sample_new_sample_existing_igsn.xlsm");
+    assertEquals("Invalid Request", objectMapper.readTree(responseBody).get("flashErrors").get(0).asText());
+    assertEquals("A sample with this IGSN already exists", objectMapper.readTree(responseBody).get("formErrors").get("rows[0].igsn").get(0).asText());
   }
 
 }

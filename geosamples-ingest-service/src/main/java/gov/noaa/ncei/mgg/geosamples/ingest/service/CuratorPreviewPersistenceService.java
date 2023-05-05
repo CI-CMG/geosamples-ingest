@@ -282,20 +282,20 @@ public class CuratorPreviewPersistenceService {
 
           if ((existing.getIgsn() != null && row.getIgsn() == null)) {
             violations.add(
-                new CustomConstraintViolation("Sample has an IGSN defined", String.format("rows[%s].igsn", index))
+                new CustomConstraintViolation("Existing sample has an IGSN defined", String.format("rows[%s].igsn", index))
             );
             continue;
           }
           if (existing.getIgsn() == null && row.getIgsn() != null) {
             violations.add(
-                new CustomConstraintViolation("Existing sample does not have IGSN defined", String.format("rows[%s].igsn", index))
+                new CustomConstraintViolation("Existing sample does not have an IGSN defined", String.format("rows[%s].igsn", index))
             );
             continue;
           }
 
           if (existing.getIgsn() != null && row.getIgsn() != null && !existing.getIgsn().equals(row.getIgsn())) {
             violations.add(
-                new CustomConstraintViolation("IGSN does not match existing sample", String.format("rows[%s].igsn", index))
+                new CustomConstraintViolation("IGSN does not match existing sample IGSN", String.format("rows[%s].igsn", index))
             );
             continue;
           }

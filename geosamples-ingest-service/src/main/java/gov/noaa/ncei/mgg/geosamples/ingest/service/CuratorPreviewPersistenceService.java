@@ -19,9 +19,12 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepo
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRow;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SampleRowHolder;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.model.SpreadsheetValidationException;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.model.validation.CustomConstraintViolation;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -219,6 +222,10 @@ public class CuratorPreviewPersistenceService {
 
   public void save(SampleRowHolder sampleRowHolder) {
 
+    Map<String, CuratorsSampleTsqpEntity> touchedSamples = new HashMap<>();
+    Map<Long, CuratorsIntervalEntity> touchedIntervals = new HashMap<>();
+
+
     List<SampleRow> samples = sampleRowHolder.getRows();
 
     Set<ConstraintViolation<?>> violations = new HashSet<>();
@@ -245,20 +252,65 @@ public class CuratorPreviewPersistenceService {
 
       CuratorsSampleTsqpEntity sample;
       if (!maybeSample.isPresent()) {
+        if (potSample.getIgsn() != null) {
+          if (curatorsSampleTsqpRepository.existsByIgsn(potSample.getIgsn())) {
+            violations.add(
+                new CustomConstraintViolation("A sample with this IGSN already exists", String.format("rows[%s].igsn", index))
+            );
+            continue;
+          }
+        }
 //        potSample.setObjectId(sampleDataUtils.getObjectId());
         potSample.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
         potSample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + potSample.getImlgs());
         sample = curatorsSampleTsqpRepository.saveAndFlush(potSample);
+        touchedSamples.put(sample.getImlgs(), sample);
       } else {
         CuratorsSampleTsqpEntity existing = maybeSample.get();
 //        potSample.setObjectId(existing.getObjectId());
+
+        if (existing.getIgsn() != null || row.getIgsn() != null) {
+
+          if (touchedSamples.get(existing.getImlgs()) != null) {
+            if ((existing.getIgsn() != null && row.getIgsn() == null) || (existing.getIgsn() == null && row.getIgsn() != null) || !existing.getIgsn().equals(row.getIgsn())) {
+              violations.add(
+                  new CustomConstraintViolation("Conflicting IGSN value specified for sample", String.format("rows[%s].igsn", index))
+              );
+              continue;
+            }
+          }
+
+          if ((existing.getIgsn() != null && row.getIgsn() == null)) {
+            violations.add(
+                new CustomConstraintViolation("Sample has an IGSN defined", String.format("rows[%s].igsn", index))
+            );
+            continue;
+          }
+          if (existing.getIgsn() == null && row.getIgsn() != null) {
+            violations.add(
+                new CustomConstraintViolation("Existing sample does not have IGSN defined", String.format("rows[%s].igsn", index))
+            );
+            continue;
+          }
+
+          if (existing.getIgsn() != null && row.getIgsn() != null && !existing.getIgsn().equals(row.getIgsn())) {
+            violations.add(
+                new CustomConstraintViolation("IGSN does not match existing sample", String.format("rows[%s].igsn", index))
+            );
+            continue;
+          }
+        }
+
+
         potSample.setImlgs(existing.getImlgs());
         potSample.setShowSampl(existing.getShowSampl());
         if (existing.isPublish() || EntitySignificantFields.equals(existing, potSample)) {
           sample = existing;
+          touchedSamples.put(sample.getImlgs(), sample);
         } else {
           EntitySignificantFields.copy(potSample, existing);
           sample = curatorsSampleTsqpRepository.saveAndFlush(existing);
+          touchedSamples.put(sample.getImlgs(), sample);
         }
       }
 
@@ -266,13 +318,32 @@ public class CuratorPreviewPersistenceService {
       Optional<CuratorsIntervalEntity> maybeInterval = resolveInterval(potInterval);
 
       if (!maybeInterval.isPresent()) {
-        curatorsIntervalRepository.saveAndFlush(potInterval);
+        CuratorsIntervalEntity interval = curatorsIntervalRepository.saveAndFlush(potInterval);
+        touchedIntervals.put(interval.getId(), interval);
       } else {
         CuratorsIntervalEntity existing = maybeInterval.get();
+
+        boolean hasViolation = false;
+        if (existing.isPublish()) {
+          violations.add(
+              new CustomConstraintViolation("Cannot update published interval", String.format("rows[%s].intervalNumber", index))
+          );
+          hasViolation = true;
+        }
+        if (touchedIntervals.get(existing.getId()) != null) {
+          violations.add(
+              new CustomConstraintViolation("Duplicate interval number detected", String.format("rows[%s].intervalNumber", index))
+          );
+          hasViolation = true;
+        }
+        if (hasViolation) {
+          continue;
+        }
         if (!existing.isPublish() && !EntitySignificantFields.equals(existing, potInterval)) {
           EntitySignificantFields.copy(potInterval, existing);
-          curatorsIntervalRepository.saveAndFlush(existing);
+          existing = curatorsIntervalRepository.saveAndFlush(existing);
         }
+        touchedIntervals.put(existing.getId(), existing);
       }
 
 

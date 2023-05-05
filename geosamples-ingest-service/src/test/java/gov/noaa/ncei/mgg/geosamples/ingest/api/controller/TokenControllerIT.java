@@ -1,4 +1,4 @@
-package gov.noaa.ncei.mgg.geosamples.ingest;
+package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.JwksGenTest;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.TokenGenerateModel;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.UserView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;

@@ -266,7 +266,15 @@ export default {
     },
     searchSuccess(state, data) {
       state.searching = false;
-      state.items = data.items.map((item) => ({ ...item, selected: false, lastUpdate: item.lastUpdate ? new Date(item.lastUpdate * 1000).toISOString() : null }));
+      state.items = data.items.map(
+        (item) => (
+          {
+            ...item,
+            selected: false,
+            lastUpdate: item.lastUpdate ? new Date(item.lastUpdate * 1000).toISOString().slice(0, 10).replace(/-/g, '') : null,
+          }
+        ),
+      );
       state.page = data.page;
       state.totalPages = data.totalPages;
       state.totalItems = data.totalItems;

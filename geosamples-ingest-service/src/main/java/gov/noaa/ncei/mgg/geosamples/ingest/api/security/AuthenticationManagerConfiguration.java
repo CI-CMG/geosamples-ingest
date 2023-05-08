@@ -53,8 +53,13 @@ public class AuthenticationManagerConfiguration {
   @Bean
   public AuthenticationManager authenticationManager(
       @Qualifier("localJwtProvider") AuthenticationProvider localJwtProvider,
-      JwtDecoder jwtDecoder) {
-    return new ProviderManager(new JwtAuthenticationProvider(jwtDecoder), localJwtProvider);
+      JwtDecoder jwtDecoder,
+      ApiProviderAuthenticationProvider apiProviderAuthenticationProvider,
+      JwtAuthenticationConverter jwtAuthenticationConverter
+  ) {
+    JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+    jwtAuthenticationProvider.setJwtAuthenticationConverter(jwtAuthenticationConverter);
+    return new ProviderManager(jwtAuthenticationProvider, localJwtProvider, apiProviderAuthenticationProvider);
   }
 
 }

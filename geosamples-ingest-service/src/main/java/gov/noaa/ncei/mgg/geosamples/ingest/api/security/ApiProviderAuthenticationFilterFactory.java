@@ -1,13 +1,10 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.security;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
@@ -16,9 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 public class ApiProviderAuthenticationFilterFactory {
 
-  private static final Pattern BEARER_PATTERN = Pattern.compile("Bearer (\\S+)");
   private static final NoOpAuthenticationSuccessHandler SUCCESS_HANDLER = new NoOpAuthenticationSuccessHandler();
-  private static final CsbProviderAuthenticationConverter CONVERTER = new CsbProviderAuthenticationConverter();
 
   private static class NoOpAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
@@ -30,25 +25,26 @@ public class ApiProviderAuthenticationFilterFactory {
 
   private static class CsbProviderAuthenticationConverter implements AuthenticationConverter {
 
+    private final BearerTokenResolver bearerTokenResolver;
+
+    private CsbProviderAuthenticationConverter(BearerTokenResolver bearerTokenResolver) {
+      this.bearerTokenResolver = bearerTokenResolver;
+    }
+
     @Override
     public Authentication convert(HttpServletRequest request) {
       Authentication authentication = null;
-      String headerValue = request.getHeader("X-API-TOKEN");
-      if (StringUtils.isNotBlank(headerValue)) {
-        headerValue = headerValue.trim();
-        Matcher matcher = BEARER_PATTERN.matcher(headerValue);
-        if (matcher.matches()) {
-          String token = matcher.group(1);
-          authentication = new ApiProviderAuthenticationToken(token);
-        }
+      final String headerToken = bearerTokenResolver.resolve(request);
+      if (headerToken != null) {
+        authentication = new ApiProviderAuthenticationToken(headerToken);
       }
-
       return authentication;
     }
   }
 
-  public static AuthenticationFilter build(AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint) {
-    AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, CONVERTER);
+  public static AuthenticationFilter build(BearerTokenResolver bearerTokenResolver, AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint) {
+    AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, new CsbProviderAuthenticationConverter(
+        bearerTokenResolver));
     authenticationFilter.setSuccessHandler(SUCCESS_HANDLER);
     authenticationFilter.setFailureHandler(new AuthenticationEntryPointFailureHandler(authenticationEntryPoint));
     return authenticationFilter;

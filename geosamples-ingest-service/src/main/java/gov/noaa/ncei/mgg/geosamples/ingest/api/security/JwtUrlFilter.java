@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.security;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.service.TokenService;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
@@ -22,10 +23,17 @@ public class JwtUrlFilter extends OncePerRequestFilter {
   private final BearerTokenAuthenticationFilter headerTokenFilter;
   private final DefaultBearerTokenResolver parameterTokenProvider;
   private final BearerTokenAuthenticationFilter parameterTokenFilter;
+  private final TokenService tokenService;
+  private final AuthenticationManager authenticationManager;
+  private final ApiAccessDeniedHandler accessDeniedHandler;
 
   @Autowired
-  public JwtUrlFilter(AuthenticationManager authenticationManager) {
+  public JwtUrlFilter(AuthenticationManager authenticationManager, TokenService tokenService,
+      ApiAccessDeniedHandler accessDeniedHandler) {
     headerTokenFilter = new BearerTokenAuthenticationFilter(authenticationManager);
+    this.tokenService = tokenService;
+    this.authenticationManager = authenticationManager;
+    this.accessDeniedHandler = accessDeniedHandler;
     headerTokenFilter.setBearerTokenResolver(headerTokenResolver);
 
     parameterTokenProvider = new DefaultBearerTokenResolver();
@@ -42,6 +50,10 @@ public class JwtUrlFilter extends OncePerRequestFilter {
     parameterTokenFilter.doFilter(request, response, filterChain);
   }
 
+  private void doAccessTokenAuth(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    ApiProviderAuthenticationFilterFactory.build(headerTokenResolver, authenticationManager, accessDeniedHandler).doFilter(request, response, filterChain);
+  }
+
   private boolean isDownload(HttpServletRequest request) {
     return request.getMethod().equals(HttpMethod.GET.toString()) && DOWNLOAD_PATTERN.matcher(request.getRequestURI()).matches();
   }
@@ -51,6 +63,10 @@ public class JwtUrlFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     final String headerToken = headerTokenResolver.resolve(request);
     if (headerToken != null) {
+      if (tokenService.authenticate(headerToken).isPresent()) {
+        doAccessTokenAuth(request, response, filterChain);
+        return;
+      }
       doStandardAuth(request, response, filterChain);
       return;
     }
@@ -64,10 +80,5 @@ public class JwtUrlFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);
-  }
-
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-    return !request.getRequestURI().contains("/api/v1/sample-interval/");
   }
 }

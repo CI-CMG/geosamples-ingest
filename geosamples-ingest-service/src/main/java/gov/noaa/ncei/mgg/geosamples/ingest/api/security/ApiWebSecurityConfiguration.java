@@ -16,14 +16,11 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthen
 public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   private final ApiAccessDeniedHandler accessDeniedHandler;
-  private final JwtAuthenticationConverter jwtAuthenticationConverter;
   private final JwtUrlFilter jwtUrlFilter;
 
   @Autowired
-  public ApiWebSecurityConfiguration(ApiAccessDeniedHandler accessDeniedHandler,
-      JwtAuthenticationConverter jwtAuthenticationConverter, JwtUrlFilter jwtUrlFilter) {
+  public ApiWebSecurityConfiguration(ApiAccessDeniedHandler accessDeniedHandler, JwtUrlFilter jwtUrlFilter) {
     this.accessDeniedHandler = accessDeniedHandler;
-    this.jwtAuthenticationConverter = jwtAuthenticationConverter;
     this.jwtUrlFilter = jwtUrlFilter;
   }
 
@@ -147,6 +144,21 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/cruise-link/*").hasAuthority(Authorities.ROLE_CRUISE_LINK_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/cruise-link/*").hasAuthority(Authorities.ROLE_CRUISE_LINK_DELETE.toString())
 
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/sample", "/api/v1/provider/sample/*").hasAuthority(Authorities.ROLE_PROVIDER_SAMPLE_READ.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/provider/sample").hasAuthority(Authorities.ROLE_PROVIDER_SAMPLE_CREATE.toString())
+        .antMatchers(HttpMethod.PUT, "/api/v1/provider/sample/*").hasAuthority(Authorities.ROLE_PROVIDER_SAMPLE_UPDATE.toString())
+        .antMatchers(HttpMethod.DELETE, "/api/v1/provider/sample/*").hasAuthority(Authorities.ROLE_PROVIDER_SAMPLE_DELETE.toString())
+
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/cruise", "/api/v1/provider/cruise/*").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_READ.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/provider/cruise").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_CREATE.toString())
+        .antMatchers(HttpMethod.PUT, "/api/v1/provider/cruise/*").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_UPDATE.toString())
+        .antMatchers(HttpMethod.DELETE, "/api/v1/provider/cruise/*").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_DELETE.toString())
+
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/interval", "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ.toString())
+        .antMatchers(HttpMethod.POST, "/api/v1/provider/interval").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_CREATE.toString())
+        .antMatchers(HttpMethod.PUT, "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_UPDATE.toString())
+        .antMatchers(HttpMethod.DELETE, "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_DELETE.toString())
+
         .antMatchers(HttpMethod.GET, "/api/v1/descriptor/authority").hasAnyAuthority(
             Authorities.ROLE_USER_READ.toString(),
             Authorities.ROLE_USER_CREATE.toString(),
@@ -181,8 +193,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
       .httpBasic().disable()
       .formLogin().disable()
       .logout().disable()
-        .csrf().disable()
-        .oauth2ResourceServer(oauth -> oauth.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter));
+        .csrf().disable();
     //@formatter:on
   }
 }

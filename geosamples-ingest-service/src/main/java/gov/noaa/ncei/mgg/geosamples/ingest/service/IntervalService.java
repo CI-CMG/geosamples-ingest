@@ -5,6 +5,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
@@ -84,12 +86,24 @@ public class IntervalService extends
 
     List<Integer> interval = searchParameters.getInterval();
     List<String> imlgs = searchParameters.getImlgs().stream().map(s -> s.trim().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
+    List<String> facilityCode = searchParameters.getFacilityCode();
 
     if (!interval.isEmpty()) {
       specs.add(SearchUtils.equal(interval, CuratorsIntervalEntity_.INTERVAL));
     }
     if (!imlgs.isEmpty()) {
       specs.add(SearchUtils.equal(imlgs, (e) -> e.join(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.IMLGS)));
+    }
+    if (!facilityCode.isEmpty()) {
+      specs.add(
+          SearchUtils.equal(
+              facilityCode,
+              (e) -> e.join(CuratorsIntervalEntity_.SAMPLE)
+                  .join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
+                  .join(CuratorsCruiseFacilityEntity_.FACILITY)
+                  .get(CuratorsFacilityEntity_.FACILITY_CODE)
+          )
+      );
     }
     return specs;
   }

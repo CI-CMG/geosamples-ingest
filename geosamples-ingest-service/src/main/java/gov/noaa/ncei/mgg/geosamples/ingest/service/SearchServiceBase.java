@@ -38,7 +38,7 @@ public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParamete
   private E getRequiredEntity(I id) {
     return getRepository()
         .findById(normalizeId(id))
-        .orElseThrow(() -> new ApiException(HttpStatus.FORBIDDEN, ApiError.builder().error(HttpStatus.NOT_FOUND.getReasonPhrase()).build()));
+        .orElseThrow(this::getNotFoundException);
   }
 
 
@@ -69,6 +69,10 @@ public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParamete
 
   public V get(I id) {
     return toView(getRequiredEntity(id));
+  }
+
+  public ApiException getNotFoundException() {
+    return new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error(HttpStatus.NOT_FOUND.getReasonPhrase()).build());
   }
 
   public PagedItemsView<V> search(S searchParameters) {

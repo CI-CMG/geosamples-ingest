@@ -297,7 +297,7 @@ public class SampleService extends
     sample.setLat(beginningLat.getValue());
 
     PositionDim endingLat = SampleDataUtils.getPositionDim(view.getEndLat(), true);
-    sample.setEndLon(endingLat.getValue());
+    sample.setEndLat(endingLat.getValue());
 
     PositionDim beginningLon = SampleDataUtils.getPositionDim(view.getLon(), false);
     sample.setLon(beginningLon.getValue());

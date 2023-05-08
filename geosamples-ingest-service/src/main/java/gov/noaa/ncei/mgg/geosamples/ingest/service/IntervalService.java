@@ -265,7 +265,7 @@ public class IntervalService extends
     entity.setLake(view.getLake());
     entity.setUnitNumber(view.getUnitNumber());
     entity.setIntComments(view.getIntComments());
-    entity.setDhDevice(entity.getDhDevice());
+    entity.setDhDevice(view.getDhDevice());
 
 
     setCmMm(view::getCdTop, entity::setCmcdTop, entity::setMmcdTop);

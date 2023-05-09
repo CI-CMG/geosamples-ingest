@@ -35,14 +35,14 @@ public abstract class SearchServiceBase<E, I, S extends PagingAndSortingParamete
     return id;
   }
 
-  private E getRequiredEntity(I id) {
+  protected E getRequiredEntity(I id) {
     return getRepository()
         .findById(normalizeId(id))
         .orElseThrow(this::getNotFoundException);
   }
 
 
-  private E toEntity(V view, I id) {
+  protected E toEntity(V view, I id) {
     E entity;
     if (id == null) {
       entity = newEntityWithDefaultValues(view);

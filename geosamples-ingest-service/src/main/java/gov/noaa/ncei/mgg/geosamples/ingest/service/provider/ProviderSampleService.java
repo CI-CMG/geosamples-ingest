@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class ProviderSampleService extends ProviderServiceBase<CuratorsSampleTsqpEntity, String, ProviderSampleSearchParameters, SampleSearchParameters, ProviderSampleView, SampleView, CuratorsSampleTsqpRepository> {
+public class ProviderSampleService extends ProviderServiceBase<String, CuratorsSampleTsqpEntity, ProviderSampleSearchParameters, SampleSearchParameters, ProviderSampleView, SampleView, CuratorsSampleTsqpRepository> {
 
   @Autowired
   protected ProviderSampleService(GeosamplesUserRepository geosamplesUserRepository, SampleService sampleService) {

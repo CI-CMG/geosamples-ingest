@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class ProviderIntervalService extends ProviderServiceBase<CuratorsIntervalEntity, Long, ProviderIntervalSearchParameters, IntervalSearchParameters, IntervalView, IntervalView, CuratorsIntervalRepository> {
+public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsIntervalEntity, ProviderIntervalSearchParameters, IntervalSearchParameters, IntervalView, IntervalView, CuratorsIntervalRepository> {
 
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   private final IntervalService intervalService;

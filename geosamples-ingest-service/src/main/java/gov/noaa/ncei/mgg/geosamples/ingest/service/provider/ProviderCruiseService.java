@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 
-public class ProviderCruiseService extends ProviderServiceBase<CuratorsCruiseEntity, Long, ProviderCruiseSearchParameters, CruiseSearchParameters, ProviderCruiseView, CruiseView, CuratorsCruiseRepository> {
+public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCruiseEntity, ProviderCruiseSearchParameters, CruiseSearchParameters, ProviderCruiseView, CruiseView, CuratorsCruiseRepository> {
 
   @Autowired
   protected ProviderCruiseService(

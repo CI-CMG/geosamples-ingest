@@ -45,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SampleService extends
-    SearchServiceBase<CuratorsSampleTsqpEntity, String, SampleSearchParameters, SampleView, CuratorsSampleTsqpRepository> {
+    ApprovalResourceServiceBase<String, CuratorsSampleTsqpEntity, SampleSearchParameters, SampleView, CuratorsSampleTsqpRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping;
 
@@ -344,5 +344,4 @@ public class SampleService extends
   protected CuratorsSampleTsqpRepository getRepository() {
     return curatorsSampleTsqpRepository;
   }
-
 }

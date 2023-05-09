@@ -4,7 +4,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.FacilityView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
@@ -36,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class CruiseService extends
-    SearchServiceBase<CuratorsCruiseEntity, Long, CruiseSearchParameters, CruiseView, CuratorsCruiseRepository> {
+    ApprovalResourceServiceBase<Long, CuratorsCruiseEntity, CruiseSearchParameters, CruiseView, CuratorsCruiseRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(CruiseView.class);
 
@@ -208,5 +207,4 @@ public class CruiseService extends
   protected CuratorsCruiseRepository getRepository() {
     return curatorsCruiseRepository;
   }
-
 }

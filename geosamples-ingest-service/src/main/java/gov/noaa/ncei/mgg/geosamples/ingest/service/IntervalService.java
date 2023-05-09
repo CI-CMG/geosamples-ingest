@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class IntervalService extends
-    SearchServiceBase<CuratorsIntervalEntity, Long, IntervalSearchParameters, IntervalView, CuratorsIntervalRepository> {
+    ApprovalResourceServiceBase<Long, CuratorsIntervalEntity, IntervalSearchParameters, IntervalView, CuratorsIntervalRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(IntervalView.class);
 
@@ -294,7 +294,6 @@ public class IntervalService extends
 
     entity.setPublish(publish);
     entity.setIgsn(view.getIgsn());
-
   }
 
 

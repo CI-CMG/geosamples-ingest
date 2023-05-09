@@ -6,6 +6,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleSearchParamet
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
@@ -32,7 +33,7 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
 
   @Override
   protected boolean userCannotModifyResource(String userFacilityCode, SampleView view) {
-    return false;
+    return view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
   @Override

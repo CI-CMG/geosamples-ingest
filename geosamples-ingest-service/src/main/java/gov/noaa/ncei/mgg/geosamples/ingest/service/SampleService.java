@@ -249,6 +249,7 @@ public class SampleService extends
     view.setSampleComments(entity.getSampleComments());
     view.setPublish(entity.isPublish());
     view.setShowSampl(entity.getShowSampl());
+    view.setApprovalState(entity.getApproval() != null ? entity.getApproval().getApprovalState() : null);
     return view;
   }
 

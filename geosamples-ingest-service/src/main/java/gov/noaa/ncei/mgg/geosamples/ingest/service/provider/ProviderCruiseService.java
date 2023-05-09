@@ -6,6 +6,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
@@ -35,7 +36,7 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
 
   @Override
   protected boolean userCannotModifyResource(String userFacilityCode, CruiseView view) {
-    return view.getFacilityCodes().size() > 1;
+    return view.getFacilityCodes().size() > 1 || view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
   @Override

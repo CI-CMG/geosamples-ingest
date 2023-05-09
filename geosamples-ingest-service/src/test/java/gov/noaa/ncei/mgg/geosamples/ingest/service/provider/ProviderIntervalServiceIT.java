@@ -20,6 +20,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEnti
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -837,6 +838,11 @@ public class ProviderIntervalServiceIT {
           () -> new RuntimeException("Interval not found")
       );
 
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      interval.setApproval(approval);
+      interval = curatorsIntervalRepository.save(interval);
+
       IntervalView view = new IntervalView();
       view.setId(interval.getId());
       view.setInterval(interval.getInterval());
@@ -1002,6 +1008,126 @@ public class ProviderIntervalServiceIT {
   }
 
   @Test
+  public void testUpdateProviderIntervalIntervalApproved() throws Exception {
+    createSamples();
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );;
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    IntervalView intervalView = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-003"))
+          .findFirst()
+          .orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+
+      CuratorsIntervalEntity interval = sample.getIntervals().stream()
+          .filter(i -> i.getInterval().equals(3))
+          .findFirst()
+          .orElseThrow(
+              () -> new RuntimeException("Interval not found")
+          );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      interval.setApproval(approval);
+      interval = curatorsIntervalRepository.save(interval);
+
+      IntervalView view = new IntervalView();
+      view.setId(interval.getId());
+      view.setInterval(interval.getInterval());
+      view.setDepthTop(0.);
+      view.setDepthBot(0.);
+      view.setDhCoreId(interval.getDhCoreId());
+      view.setDhCoreLength(1.0);
+      view.setDhCoreInterval(interval.getDhCoreInterval());
+      view.setdTopInDhCore(1.);
+      view.setdBotInDhCore(1.);
+      view.setLithCode1(curatorsLithologyRepository.findByLithologyCode("A").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setLithCode2(curatorsLithologyRepository.findByLithologyCode("B").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setTextCode1(curatorsTextureRepository.findByTextureCode("3").orElseThrow(
+          () -> new RuntimeException("Texture not found")
+      ).getTextureCode());
+      view.setTextCode2(curatorsTextureRepository.findByTextureCode("7").orElseThrow(
+          () -> new RuntimeException("Texture not found")
+      ).getTextureCode());
+      view.setCompCode1(curatorsLithologyRepository.findByLithologyCode("X").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode2(curatorsLithologyRepository.findByLithologyCode("Y").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode3(curatorsLithologyRepository.findByLithologyCode("C").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode4(curatorsLithologyRepository.findByLithologyCode("D").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode5(curatorsLithologyRepository.findByLithologyCode("E").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode6(curatorsLithologyRepository.findByLithologyCode("F").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setDescription(interval.getDescription());
+      view.setAgeCodes(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
+      view.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
+      view.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
+      view.setWeight(interval.getWeight());
+      view.setRockLithCode(curatorsRockLithRepository.findByRockLithCode("6C").orElseThrow(
+          () -> new RuntimeException("Rock Lithology not found")
+      ).getRockLithCode());
+      view.setRockMinCode(curatorsRockMinRepository.findByRockMinCode("A").orElseThrow(
+          () -> new RuntimeException("Rock Mineralogy not found")
+      ).getRockMinCode());
+      view.setWeathMetaCode(curatorsWeathMetaRepository.findByWeathMetaCode("0").orElseThrow(
+          () -> new RuntimeException("Weathering Metamorphism not found")
+      ).getWeathMetaCode());
+      view.setRemarkCode(curatorsRemarkRepository.findByRemarkCode("0").orElseThrow(
+          () -> new RuntimeException("Remark not found")
+      ).getRemarkCode());
+      view.setMunsellCode(curatorsMunsellRepository.findById("10R 6/1").orElseThrow(
+          () -> new RuntimeException("Munsell not found")
+      ).getMunsellCode());
+      view.setExhausted(true);
+      view.setPhotoLink(interval.getPhotoLink());
+      view.setLake(interval.getLake());
+      view.setUnitNumber(interval.getUnitNumber());
+      view.setIntComments(interval.getIntComments());
+      view.setDhDevice(interval.getDhDevice());
+      view.setCdTop(1.0);
+      view.setCdBot(1.0);
+      view.setPublish(interval.isPublish());
+      view.setIgsn(interval.getIgsn());
+      view.setImlgs(interval.getSample().getImlgs());
+
+      return view;
+    });
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerIntervalService.update(intervalView.getId(), intervalView, authentication));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
   public void testUpdateProviderIntervalNotFound() {
     GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
       GeosamplesUserEntity user = new GeosamplesUserEntity();
@@ -1126,7 +1252,15 @@ public class ProviderIntervalServiceIT {
               () -> new RuntimeException("Sample not found")
           );
 
-      return sample.getIntervals().get(0).getId();
+      CuratorsIntervalEntity interval = sample.getIntervals().get(0);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      interval.setApproval(approval);
+
+      interval = curatorsIntervalRepository.save(interval);
+
+      return interval.getId();
     });
     assertNotNull(intervalId);
 
@@ -1169,7 +1303,16 @@ public class ProviderIntervalServiceIT {
               () -> new RuntimeException("Sample not found")
           );
 
-      return sample.getIntervals().get(0).getId();
+      assertEquals(1, sample.getIntervals().size());
+      CuratorsIntervalEntity interval = sample.getIntervals().get(0);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      interval.setApproval(approval);
+
+      interval = curatorsIntervalRepository.save(interval);
+
+      return interval.getId();
     });
     assertNotNull(intervalId);
 

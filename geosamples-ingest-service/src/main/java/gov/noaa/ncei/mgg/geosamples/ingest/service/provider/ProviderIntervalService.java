@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalSearchParameters;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
@@ -45,7 +46,7 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
 
   @Override
   protected boolean userCannotModifyResource(String userFacilityCode, IntervalView view) {
-    return false;
+    return view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
   @Override

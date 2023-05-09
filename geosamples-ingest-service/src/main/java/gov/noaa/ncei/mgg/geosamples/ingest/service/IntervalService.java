@@ -179,6 +179,8 @@ public class IntervalService extends
     view.setIgsn(entity.getIgsn());
     view.setImlgs(entity.getSample().getImlgs());
 
+    view.setApprovalState(entity.getApproval() != null ? entity.getApproval().getApprovalState() : null);
+
     return view;
   }
 

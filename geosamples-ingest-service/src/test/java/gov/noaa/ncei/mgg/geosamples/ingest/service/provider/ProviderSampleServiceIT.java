@@ -21,6 +21,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsDeviceEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -785,6 +786,11 @@ public class ProviderSampleServiceIT {
               () -> new RuntimeException("Sample AQ-01-01 not found")
           );
 
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.PENDING);
+      sampleEntity.setApproval(approvalEntity);
+      sampleEntity = curatorsSampleTsqpRepository.save(sampleEntity);
+
       ProviderSampleView view = new ProviderSampleView();
       view.setImlgs(sampleEntity.getImlgs());
       view.setCruise(sampleEntity.getCruise().getCruiseName());
@@ -870,6 +876,72 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getPublish(), sampleEntity.isPublish());
       assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
     });
+  }
+
+  @Test
+  public void testUpdateProviderSampleSampleApproved() throws Exception {
+    createSamples();
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    ProviderSampleView providerSampleView = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found")
+          );
+
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.APPROVED);
+      sampleEntity.setApproval(approvalEntity);
+      sampleEntity = curatorsSampleTsqpRepository.save(sampleEntity);
+
+      ProviderSampleView view = new ProviderSampleView();
+      view.setImlgs(sampleEntity.getImlgs());
+      view.setCruise(sampleEntity.getCruise().getCruiseName());
+      view.setSample(sampleEntity.getSample());
+      view.setPlatform(sampleEntity.getCruisePlatform().getPlatform().getPlatform());
+      view.setDeviceCode(sampleEntity.getDevice().getDeviceCode());
+      view.setBeginDate(sampleEntity.getBeginDate());
+      view.setEndDate(sampleEntity.getEndDate());
+      view.setLat(sampleEntity.getLat() + 1);
+      view.setEndLat(sampleEntity.getEndLat() + 1);
+      view.setLon(sampleEntity.getLon() + 1);
+      view.setEndLon(sampleEntity.getEndLon() + 1);
+      view.setLatLonOrig(sampleEntity.getLatLonOrig());
+      view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
+      view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
+      view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
+      view.setCoredLength(Double.valueOf(sampleEntity.getCoredLength()));
+      view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
+      view.setPi(sampleEntity.getPi() + "-NEW");
+      view.setLake(sampleEntity.getLake() + "-NEW");
+      view.setOtherLink(sampleEntity.getOtherLink());
+      view.setIgsn(sampleEntity.getIgsn());
+      view.setSampleComments(sampleEntity.getSampleComments());
+      view.setPublish(sampleEntity.isPublish());
+      view.setShowSampl(sampleEntity.getShowSampl());
+
+      return view;
+    });
+    assertNotNull(providerSampleView);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerSampleService.update(providerSampleView.getImlgs(), providerSampleView, authentication));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1064,6 +1136,11 @@ public class ProviderSampleServiceIT {
               () -> new RuntimeException("Sample AQ-01-01 not found")
           );
 
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sampleEntity.setApproval(approval);
+      sampleEntity = curatorsSampleTsqpRepository.save(sampleEntity);
+
       ProviderSampleView view = new ProviderSampleView();
       view.setImlgs(sampleEntity.getImlgs());
       view.setCruise(cruiseEntity.getCruiseName());
@@ -1130,6 +1207,11 @@ public class ProviderSampleServiceIT {
           .filter(samp -> samp.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
               () -> new RuntimeException("Sample AQ-01-01 not found")
           );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+      sample = curatorsSampleTsqpRepository.save(sample);
 
       CuratorsCruiseFacilityEntity cruiseFacility = new CuratorsCruiseFacilityEntity();
       cruiseFacility.setCruise(sample.getCruise());

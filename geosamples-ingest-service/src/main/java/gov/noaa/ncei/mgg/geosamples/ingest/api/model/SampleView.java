@@ -1,6 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 
 @Sortable({
     "imlgs",
@@ -11,7 +12,17 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
     "deviceCode"
 })
 public class SampleView extends ProviderSampleView {
+  private ApprovalState approvalState;
+
   private String facilityCode;
+
+  public ApprovalState getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(ApprovalState approvalState) {
+    this.approvalState = approvalState;
+  }
 
   public String getFacilityCode() {
     return facilityCode;

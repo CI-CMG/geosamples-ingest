@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class IntervalView {
   private Boolean publish;
   private String igsn;
   private String imlgs;
+  private ApprovalState approvalState;
 
   public Long getId() {
     return id;
@@ -399,5 +401,13 @@ public class IntervalView {
 
   public void setCdBot(Double cdBot) {
     this.cdBot = cdBot;
+  }
+
+  public ApprovalState getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(ApprovalState approvalState) {
+    this.approvalState = approvalState;
   }
 }

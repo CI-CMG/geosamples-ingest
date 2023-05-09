@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +15,17 @@ import java.util.stream.Collectors;
     "publish"
 })
 public class CruiseView extends ProviderCruiseView {
+  private ApprovalState approvalState;
+
   private List<String> facilityCodes = new ArrayList<>(0);
+
+  public ApprovalState getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(ApprovalState approvalState) {
+    this.approvalState = approvalState;
+  }
 
   public List<String> getFacilityCodes() {
     return facilityCodes;

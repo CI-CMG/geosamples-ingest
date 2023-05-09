@@ -103,6 +103,7 @@ public class CruiseService extends
     view.setPlatforms(entity.getPlatformMappings().stream().map(e -> e.getPlatform().getPlatformNormalized()).sorted().collect(Collectors.toList()));
     view.setFacilityCodes(entity.getFacilityMappings().stream().map(e -> e.getFacility().getFacilityCode()).sorted().collect(Collectors.toList()));
     view.setLegs(entity.getLegs().stream().map(CuratorsLegEntity::getLegName).sorted().collect(Collectors.toList()));
+    view.setApprovalState(entity.getApproval() != null ? entity.getApproval().getApprovalState() : null);
     return view;
   }
 

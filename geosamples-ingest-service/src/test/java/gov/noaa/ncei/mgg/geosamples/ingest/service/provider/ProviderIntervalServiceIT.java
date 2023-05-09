@@ -14,6 +14,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
@@ -350,6 +351,11 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getPublish(), result.getPublish());
     assertEquals(intervalView.getIgsn(), result.getIgsn());
     assertEquals(intervalView.getImlgs(), result.getImlgs());
+
+    transactionTemplate.executeWithoutResult(s -> {
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.getReferenceById(result.getId());
+      assertEquals(ApprovalState.PENDING, interval.getApproval().getApprovalState());
+    });
   }
 
   @Test

@@ -13,6 +13,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity;
@@ -334,6 +335,7 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getSampleComments(), created.getSampleComments());
       assertEquals(sample.isPublish(), created.getPublish());
       assertEquals(sample.getShowSampl(), created.getShowSampl());
+      assertEquals(ApprovalState.PENDING, sample.getApproval().getApprovalState());
     });
   }
 

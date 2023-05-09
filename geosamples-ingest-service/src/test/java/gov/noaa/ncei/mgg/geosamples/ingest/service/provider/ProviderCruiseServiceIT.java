@@ -10,6 +10,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity;
@@ -202,6 +203,7 @@ public class ProviderCruiseServiceIT {
       assertEquals(created.getLegs().get(0), cruiseEntity.getLegs().get(0).getLegName());
       assertEquals(1, cruiseEntity.getFacilityMappings().size());
       assertEquals(facility.getFacilityCode(), cruiseEntity.getFacilityMappings().get(0).getFacility().getFacilityCode());
+      assertEquals(ApprovalState.PENDING, cruiseEntity.getApproval().getApprovalState());
     });
   }
 

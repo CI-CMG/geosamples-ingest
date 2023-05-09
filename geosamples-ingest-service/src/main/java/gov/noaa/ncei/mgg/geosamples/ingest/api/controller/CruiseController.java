@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/cruise")
-public class CruiseController extends ControllerBase<CruiseView, CruiseSearchParameters, Long, CruiseService> {
+public class CruiseController extends ApprovalControllerBase<CruiseView, CruiseSearchParameters, Long, CruiseService> {
 
   @Autowired
   public CruiseController(CruiseService service) {

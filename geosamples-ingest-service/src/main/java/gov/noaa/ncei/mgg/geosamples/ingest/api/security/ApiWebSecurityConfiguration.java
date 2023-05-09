@@ -92,6 +92,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PATCH, "/api/v1/sample").hasAuthority(Authorities.ROLE_SAMPLE_UPDATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/sample/*").hasAuthority(Authorities.ROLE_SAMPLE_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/sample/*").hasAuthority(Authorities.ROLE_SAMPLE_DELETE.toString())
+        .antMatchers(HttpMethod.PATCH, "/api/v1/sample/review/*").hasAuthority(Authorities.ROLE_SAMPLE_UPDATE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/storage-method", "/api/v1/storage-method/*").hasAuthority(Authorities.ROLE_STORAGE_METHOD_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/storage-method").hasAuthority(Authorities.ROLE_STORAGE_METHOD_CREATE.toString())
@@ -115,6 +116,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/api/v1/interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/interval/**").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/interval/**").hasAuthority(Authorities.ROLE_DATA_MANAGER_DELETE.toString())
+        .antMatchers(HttpMethod.PATCH, "/api/v1/interval/review/*").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
         .antMatchers(HttpMethod.GET, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_READ.toString())
         .antMatchers(HttpMethod.GET, "/api/v1/sample-interval/export").hasAuthority(Authorities.ROLE_DATA_MANAGER_READ.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/sample-interval").hasAuthority(Authorities.ROLE_DATA_MANAGER_UPDATE.toString())
@@ -138,6 +140,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/api/v1/cruise").hasAuthority(Authorities.ROLE_CRUISE_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_DELETE.toString())
+        .antMatchers(HttpMethod.PATCH, "/api/v1/cruise/review/*").hasAuthority(Authorities.ROLE_CRUISE_UPDATE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/cruise-link", "/api/v1/cruise-link/*").hasAuthority(Authorities.ROLE_CRUISE_LINK_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/cruise-link").hasAuthority(Authorities.ROLE_CRUISE_LINK_CREATE.toString())

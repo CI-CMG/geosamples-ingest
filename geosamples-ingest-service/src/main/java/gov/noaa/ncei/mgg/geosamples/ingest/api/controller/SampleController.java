@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/sample")
-public class SampleController extends ControllerBase<SampleView, SampleSearchParameters, String, SampleService> {
+public class SampleController extends ApprovalControllerBase<SampleView, SampleSearchParameters, String, SampleService> {
 
   private final SampleService service;
 

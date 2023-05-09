@@ -20,37 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/interval")
 @Validated
-public class IntervalController {
-
-  private final IntervalService service;
-
+public class IntervalController extends ApprovalControllerBase<IntervalView, IntervalSearchParameters, Long, IntervalService> {
   @Autowired
   public IntervalController(IntervalService service) {
-    this.service = service;
-  }
-
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public PagedItemsView<IntervalView> search(@Valid IntervalSearchParameters searchParameters) {
-    return service.search(searchParameters);
-  }
-
-  @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView get(@PathVariable("id") long id) {
-    return service.get(id);
-  }
-
-  @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView create(@Valid @RequestBody IntervalView view) {
-    return service.create(view);
-  }
-
-  @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView update(@Valid @RequestBody IntervalView view, @PathVariable("id") long id) {
-    return service.update(view, id);
-  }
-
-  @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public IntervalView delete(@PathVariable("id") long id) {
-    return service.delete(id);
+    super(service);
   }
 }

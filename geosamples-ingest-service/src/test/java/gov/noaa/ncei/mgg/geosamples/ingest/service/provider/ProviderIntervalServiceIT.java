@@ -269,7 +269,7 @@ public class ProviderIntervalServiceIT {
             () -> new RuntimeException("Sample AQ-01-01 not found")
         );
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
@@ -306,7 +306,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setDhDevice("TST");
     intervalView.setCdTop(0.0);
     intervalView.setCdBot(1.0);
-    intervalView.setPublish(true);
     intervalView.setIgsn("TST");
     intervalView.setImlgs(sample.getImlgs());
 
@@ -356,6 +355,7 @@ public class ProviderIntervalServiceIT {
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsIntervalEntity interval = curatorsIntervalRepository.getReferenceById(result.getId());
       assertEquals(ApprovalState.PENDING, interval.getApproval().getApprovalState());
+      assertFalse(interval.isPublish());
     });
   }
 
@@ -388,7 +388,7 @@ public class ProviderIntervalServiceIT {
             () -> new RuntimeException("Sample AQ-01-01 not found")
         );
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
@@ -425,7 +425,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setDhDevice("TST");
     intervalView.setCdTop(0.0);
     intervalView.setCdBot(1.0);
-    intervalView.setPublish(true);
     intervalView.setIgsn("TST");
     intervalView.setImlgs(sample.getImlgs());
 
@@ -449,7 +448,7 @@ public class ProviderIntervalServiceIT {
     });
     assertNotNull(userEntity);
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
@@ -486,7 +485,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setDhDevice("TST");
     intervalView.setCdTop(0.0);
     intervalView.setCdBot(1.0);
-    intervalView.setPublish(true);
     intervalView.setIgsn("TST");
     intervalView.setImlgs("TEST");
 
@@ -835,13 +833,15 @@ public class ProviderIntervalServiceIT {
           .orElseThrow(
           () -> new RuntimeException("Interval not found")
       );
+      
+      final boolean originalPublish = interval.isPublish();
 
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
       approval.setApprovalState(ApprovalState.PENDING);
       interval.setApproval(approval);
       interval = curatorsIntervalRepository.save(interval);
 
-      IntervalView view = new IntervalView();
+      ProviderIntervalView view = new IntervalView();
       view.setId(interval.getId());
       view.setInterval(interval.getInterval());
       view.setDepthTop(0.);
@@ -909,7 +909,6 @@ public class ProviderIntervalServiceIT {
       view.setDhDevice(interval.getDhDevice());
       view.setCdTop(1.0);
       view.setCdBot(1.0);
-      view.setPublish(interval.isPublish());
       view.setIgsn(interval.getIgsn());
       view.setImlgs(interval.getSample().getImlgs());
 
@@ -1000,6 +999,7 @@ public class ProviderIntervalServiceIT {
       assertEquals((int) Math.floor(result.getCdBot()), interval.getCmcdBot());
       assertEquals(result.getIgsn(), interval.getIgsn());
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
+      assertEquals(originalPublish, interval.isPublish());
     });
   }
 
@@ -1019,7 +1019,7 @@ public class ProviderIntervalServiceIT {
     });
     assertNotNull(userEntity);
 
-    IntervalView intervalView = transactionTemplate.execute(s -> {
+    ProviderIntervalView intervalView = transactionTemplate.execute(s -> {
       CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
           .filter(smpl -> smpl.getSample().equals("AQ-003"))
           .findFirst()
@@ -1039,7 +1039,7 @@ public class ProviderIntervalServiceIT {
       interval.setApproval(approval);
       interval = curatorsIntervalRepository.save(interval);
 
-      IntervalView view = new IntervalView();
+      ProviderIntervalView view = new ProviderIntervalView();
       view.setId(interval.getId());
       view.setInterval(interval.getInterval());
       view.setDepthTop(0.);
@@ -1107,7 +1107,6 @@ public class ProviderIntervalServiceIT {
       view.setDhDevice(interval.getDhDevice());
       view.setCdTop(1.0);
       view.setCdBot(1.0);
-      view.setPublish(interval.isPublish());
       view.setIgsn(interval.getIgsn());
       view.setImlgs(interval.getSample().getImlgs());
 
@@ -1138,7 +1137,7 @@ public class ProviderIntervalServiceIT {
     });
     assertNotNull(userEntity);
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setImlgs("IMLGS");
 
     Authentication authentication = mock(Authentication.class);
@@ -1174,7 +1173,7 @@ public class ProviderIntervalServiceIT {
     });
     assertNotNull(userEntity);
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setImlgs("IMLGS");
 
     Authentication authentication = mock(Authentication.class);
@@ -1261,10 +1260,9 @@ public class ProviderIntervalServiceIT {
     });
     assertNotNull(intervalId);
 
-    IntervalView intervalView = new IntervalView();
+    ProviderIntervalView intervalView = new ProviderIntervalView();
     intervalView.setId(intervalId);
     intervalView.setImlgs(imlgs);
-    intervalView.setPublish(true);
     intervalView.setInterval(2);
 
     Authentication authentication = mock(Authentication.class);

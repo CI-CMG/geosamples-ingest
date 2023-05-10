@@ -334,6 +334,7 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getSampleComments(), created.getSampleComments());
       assertEquals(sample.getShowSampl(), created.getShowSampl());
       assertEquals(ApprovalState.PENDING, sample.getApproval().getApprovalState());
+      assertFalse(sample.isPublish());
     });
   }
 
@@ -779,6 +780,8 @@ public class ProviderSampleServiceIT {
               () -> new RuntimeException("Sample AQ-01-01 not found")
           );
 
+      final boolean originalPublish = sampleEntity.isPublish();
+
       GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
       approvalEntity.setApprovalState(ApprovalState.PENDING);
       sampleEntity.setApproval(approvalEntity);
@@ -865,6 +868,7 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
       assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
+      assertEquals(originalPublish, sampleEntity.isPublish());
     });
   }
 

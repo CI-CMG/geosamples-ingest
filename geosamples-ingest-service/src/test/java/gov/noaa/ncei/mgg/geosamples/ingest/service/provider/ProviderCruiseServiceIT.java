@@ -1,6 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service.provider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -202,6 +203,7 @@ public class ProviderCruiseServiceIT {
       assertEquals(1, cruiseEntity.getFacilityMappings().size());
       assertEquals(facility.getFacilityCode(), cruiseEntity.getFacilityMappings().get(0).getFacility().getFacilityCode());
       assertEquals(ApprovalState.PENDING, cruiseEntity.getApproval().getApprovalState());
+      assertFalse(cruiseEntity.isPublish());
     });
   }
 
@@ -867,6 +869,8 @@ public class ProviderCruiseServiceIT {
     view.setPlatforms(Collections.singletonList(platformEntity2.getPlatform()));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
+    final boolean originalPublish = cruiseEntity.isPublish();
+
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
@@ -888,6 +892,7 @@ public class ProviderCruiseServiceIT {
       assertEquals(view.getPlatforms().get(0), cruise.getPlatformMappings().get(0).getPlatform().getPlatform());
       assertEquals(1, cruise.getLegs().size());
       assertEquals(view.getLegs().get(0), cruise.getLegs().get(0).getLegName());
+      assertEquals(originalPublish,  cruise.isPublish());
     });
   }
 

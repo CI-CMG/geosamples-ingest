@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
@@ -93,12 +94,30 @@ public class SampleIntervalService extends
               .build()));
       //TODO only publish is supported
       if (item.isPublish() != null) {
+        if (item.isPublish()) {
+          if (interval.getApproval() != null) {
+            if (!interval.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+              throw new ApiException(
+                  HttpStatus.BAD_REQUEST,
+                  ApiError.builder().error(String.format("Interval %s (%s) is not approved", interval.getInterval(), s.getImlgs()))
+                      .build());
+            }
+          }
+        }
         interval.setPublish(item.isPublish());
         interval = curatorsIntervalRepository.saveAndFlush(interval);
         CuratorsSampleTsqpEntity sample = interval.getSample();
         // Since a sample can have multiple intervals, only allow setting the sample publish to Y as setting this to N
         // would effectively make all sibling intervals unpublished
         if (item.isPublish() && !sample.isPublish()) {
+          if (sample.getApproval() != null) {
+            if (!sample.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+              throw new ApiException(
+                  HttpStatus.BAD_REQUEST,
+                  ApiError.builder().error(String.format("Sample %s is not approved", s.getImlgs()))
+                      .build());
+            }
+          }
           sample.setPublish(true);
           sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
           interval.setSample(sample);

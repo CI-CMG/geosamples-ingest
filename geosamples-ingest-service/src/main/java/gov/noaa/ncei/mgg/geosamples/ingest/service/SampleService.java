@@ -6,6 +6,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
@@ -111,6 +112,16 @@ public class SampleService extends
           ApiError.builder().error("Sample " + item.getImlgs() + "-" + item.getSample() + " was not found.")
               .build()));
       if (item.getPublish() != null) {
+        if (item.getPublish()) {
+          if (sample.getApproval() != null) {
+            if (!sample.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+              throw new ApiException(
+                  HttpStatus.BAD_REQUEST,
+                  ApiError.builder().error(String.format("Sample %s is not approved", imlgs)).build()
+              );
+            }
+          }
+        }
         sample.setPublish(item.getPublish());
         sample = curatorsSampleTsqpRepository.saveAndFlush(sample);
       }
@@ -330,7 +341,18 @@ public class SampleService extends
     sample.setSampleComments(view.getSampleComments());
     sample.setLastUpdate(Instant.now());
     sample.setLeg(leg);
-    sample.setPublish(view.getPublish() != null && view.getPublish());
+    final boolean publish = view.getPublish() != null && view.getPublish();
+    if (publish) {
+      if (sample.getApproval() != null) {
+        if (!sample.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+          throw new ApiException(
+              HttpStatus.BAD_REQUEST,
+              ApiError.builder().error(String.format("Sample %s is not approved", sample.getImlgs())).build()
+          );
+        }
+      }
+    }
+    sample.setPublish(publish);
     sample.setShape(sampleDataUtils.getShape(view.getLon(), view.getLat()));
 
   }

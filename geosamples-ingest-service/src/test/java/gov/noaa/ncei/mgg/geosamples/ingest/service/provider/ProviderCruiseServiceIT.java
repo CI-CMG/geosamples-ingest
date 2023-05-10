@@ -835,7 +835,7 @@ public class ProviderCruiseServiceIT {
       CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
       cruise.setCruiseName("TST");
       cruise.setYear((short) 2020);
-      cruise.setPublish(true);
+      cruise.setPublish(false);
       cruise = curatorsCruiseRepository.save(cruise);
 
       CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
@@ -851,7 +851,7 @@ public class ProviderCruiseServiceIT {
       CuratorsLegEntity leg = new CuratorsLegEntity();
       leg.setLegName("TST");
       leg.setCruise(cruise);
-      leg.setPublish(true);
+      leg.setPublish(false);
       cruise.addLeg(leg);
 
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
@@ -1147,7 +1147,7 @@ public class ProviderCruiseServiceIT {
       CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
       cruise.setCruiseName("TST-TO-CHANGE");
       cruise.setYear((short) 2021);
-      cruise.setPublish(true);
+      cruise.setPublish(false);
       cruise = curatorsCruiseRepository.save(cruise);
 
       CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
@@ -1163,7 +1163,7 @@ public class ProviderCruiseServiceIT {
       CuratorsLegEntity leg = new CuratorsLegEntity();
       leg.setLegName("TST");
       leg.setCruise(cruise);
-      leg.setPublish(true);
+      leg.setPublish(false);
       cruise.addLeg(leg);
 
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
@@ -1178,7 +1178,7 @@ public class ProviderCruiseServiceIT {
       CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
       cruise.setCruiseName("TST");
       cruise.setYear((short) 2020);
-      cruise.setPublish(true);
+      cruise.setPublish(false);
       cruise = curatorsCruiseRepository.save(cruise);
 
       CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
@@ -1194,7 +1194,7 @@ public class ProviderCruiseServiceIT {
       CuratorsLegEntity leg = new CuratorsLegEntity();
       leg.setLegName("TST");
       leg.setCruise(cruise);
-      leg.setPublish(true);
+      leg.setPublish(false);
       cruise.addLeg(leg);
 
       return curatorsCruiseRepository.save(cruise);

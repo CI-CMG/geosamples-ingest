@@ -4,6 +4,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
@@ -289,6 +290,16 @@ public class IntervalService extends
 
 
     boolean publish = view.getPublish() != null && view.getPublish();
+    if (publish) {
+      if (entity.getApproval() != null) {
+        if (!entity.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+          throw new ApiException(
+              HttpStatus.BAD_REQUEST,
+              ApiError.builder().error(String.format("Interval %s (%s) is not approved", entity.getInterval(), sample.getImlgs())).build()
+          );
+        }
+      }
+    }
     if (view.getPublish() && publish != sample.isPublish()) {
       sample.setPublish(publish);
       curatorsSampleTsqpRepository.saveAndFlush(sample);

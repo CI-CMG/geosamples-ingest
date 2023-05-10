@@ -1,13 +1,21 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
@@ -50,8 +58,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.LinkedMultiValueMap;
@@ -102,7 +112,8 @@ public class SampleServiceIT {
 
     mockCas.setDispatcher(new Dispatcher() {
       @Override
-      public MockResponse dispatch(RecordedRequest request) {
+      @NonNull
+      public MockResponse dispatch(@NonNull RecordedRequest request) {
         if ("/jwks".equals(request.getPath())) {
           try {
             return new MockResponse()
@@ -162,12 +173,12 @@ public class SampleServiceIT {
 
   @Test
   public void testSearchByFacilityCode() throws Exception {
-    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
 
-    uploadFile("imlgs_sample_good_full.xlsm");
+    uploadFile();
 
     SampleSearchParameters searchParameters = new SampleSearchParameters();
     searchParameters.setFacilityCode(Collections.singletonList("GEOMAR"));
@@ -188,13 +199,13 @@ public class SampleServiceIT {
 
   @Test
   public void testSearchByArea() throws Exception {
-    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
-    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
 
 
-    uploadFile("imlgs_sample_good_full.xlsm");
+    uploadFile();
 
     SampleSearchParameters searchParameters = new SampleSearchParameters();
     String wkt = "POLYGON((25.97845409376835 38.68503454336369,25.980514030291786 38.68503454336369,25.980514030291786 38.68356055251447,25.97845409376835 38.68356055251447,25.97845409376835 38.68503454336369))";
@@ -226,16 +237,204 @@ public class SampleServiceIT {
     });
   }
 
-  private void createCruise(String cruiseName, Integer year, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
+  @Test
+  public void testReviewSample() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    CuratorsSampleTsqpEntity sampleEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+
+      return curatorsSampleTsqpRepository.save(sample);
+    });
+    assertNotNull(sampleEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.APPROVED);
+    approvalView.setComment("Looks good to me");
+    SampleView view = sampleService.updateApproval(approvalView, sampleEntity.getImlgs());
+    assertEquals(ApprovalState.APPROVED, view.getApprovalState());
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+      assertEquals(ApprovalState.APPROVED, sample.getApproval().getApprovalState());
+      assertEquals("Looks good to me", sample.getApproval().getComment());
+    });
+  }
+
+  @Test
+  public void testReviewSampleRevokeApproval() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    CuratorsSampleTsqpEntity sampleEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      sample.setApproval(approval);
+
+      sample.setPublish(true);
+      return curatorsSampleTsqpRepository.save(sample);
+    });
+    assertNotNull(sampleEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.REJECTED);
+    approvalView.setComment("There are some issues here");
+    SampleView view = sampleService.updateApproval(approvalView, sampleEntity.getImlgs());
+    assertEquals(ApprovalState.REJECTED, view.getApprovalState());
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+      assertEquals(ApprovalState.REJECTED, sample.getApproval().getApprovalState());
+      assertEquals("There are some issues here", sample.getApproval().getComment());
+      assertFalse(sample.isPublish());
+    });
+  }
+
+  @Test
+  public void testReviewSampleChangeToPending() {
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.PENDING);
+
+    ApiException exception = assertThrows(ApiException.class, () -> sampleService.updateApproval(approvalView, "TEST"));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals("approvalState", exception.getApiError().getFormErrors().keySet().stream().findFirst().orElse(null));
+    assertEquals(1, exception.getApiError().getFormErrors().get("approvalState").size());
+    assertEquals("Cannot update approval state to: PENDING", exception.getApiError().getFormErrors().get("approvalState").get(0));
+  }
+
+  @Test
+  public void testUpdatePublishStatusSampleNotApprovedPatch() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    CuratorsSampleTsqpEntity sampleEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+
+      return curatorsSampleTsqpRepository.save(sample);
+    });
+    assertNotNull(sampleEntity);
+
+    SampleView sampleView = new SampleView();
+    sampleView.setPublish(true);
+    sampleView.setImlgs(sampleEntity.getImlgs());
+
+    SimpleItemsView<SampleView> simpleItemsView = new SimpleItemsView<>();
+    simpleItemsView.setItems(Collections.singletonList(sampleView));
+    ApiException exception = assertThrows(ApiException.class ,() -> sampleService.patch(simpleItemsView));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(String.format("Sample %s is not approved", sampleEntity.getImlgs()), exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testUpdatePublishStatusSampleNotApprovedPost() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    SampleView sampleView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+      sample.setPublish(false);
+
+      sample = curatorsSampleTsqpRepository.save(sample);
+
+      SampleView view = new SampleView();
+      view.setImlgs(sample.getImlgs());
+      view.setPublish(true);
+      view.setFacilityCode(sample.getCruiseFacility().getFacility().getFacilityCode());
+      view.setCruise(sample.getCruiseFacility().getCruise().getCruiseName());
+      view.setSample(sample.getSample());
+      view.setPlatform(sample.getCruisePlatform().getPlatform().getPlatform());
+      view.setDeviceCode(sample.getDevice().getDeviceCode());
+      view.setBeginDate(sample.getBeginDate());
+      view.setEndDate(sample.getEndDate());
+      view.setLat(sample.getLat());
+      view.setEndLat(sample.getEndLat());
+      view.setLon(sample.getLon());
+      view.setEndLon(sample.getEndLon());
+      view.setWaterDepth(sample.getWaterDepth());
+      view.setEndWaterDepth(sample.getEndWaterDepth());
+      view.setStorageMethCode(sample.getStorageMeth().getStorageMethCode());
+      view.setCoredLength(Double.valueOf(sample.getCoredLength()));
+      view.setCoredDiam(Double.valueOf(sample.getCoredDiam()));
+      view.setPi(sample.getPi());
+      view.setProvinceCode(sample.getProvince().getProvinceCode());
+      view.setLake(sample.getLake());
+      view.setOtherLink(sample.getOtherLink());
+      view.setIgsn(sample.getIgsn());
+      view.setLeg(sample.getLeg().getLegName());
+      view.setSampleComments(sample.getSampleComments());
+      view.setShowSampl(sample.getShowSampl());
+      return view;
+    });
+    assertNotNull(sampleView);
+
+    ApiException exception = assertThrows(ApiException.class ,() -> sampleService.update(sampleView, sampleView.getImlgs()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(String.format("Sample %s is not approved", sampleView.getImlgs()), exception.getApiError().getFlashErrors().get(0));
+  }
+
+  private void createCruise(String cruiseName, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.setBearerAuth(createJwt("martin"));
+    headers.setBearerAuth(createJwt());
 
     CruiseView cruiseView = new CruiseView();
     cruiseView.setCruiseName(cruiseName);
-    cruiseView.setYear(year);
+    cruiseView.setYear(2021);
     cruiseView.setPublish(true);
     cruiseView.setFacilityCodes(facilityCodes);
     cruiseView.setPlatforms(platforms);
@@ -249,10 +448,10 @@ public class SampleServiceIT {
     assertEquals(200, response.getStatusCode().value());
   }
 
-  private static String createJwt(String subject) throws IOException, JoseException {
+  private static String createJwt() throws IOException, JoseException {
     JwtClaims claims = new JwtClaims();
     claims.setIssuer("http://localhost:20158");
-    claims.setSubject(subject);
+    claims.setSubject("martin");
     JsonWebSignature jws = new JsonWebSignature();
     jws.setPayload(claims.toJson());
     JsonWebKeySet jwks = new JsonWebKeySet(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
@@ -263,13 +462,13 @@ public class SampleServiceIT {
     return jws.getCompactSerialization();
   }
 
-  private void uploadFile(String file) throws Exception {
+  private void uploadFile() throws Exception {
     LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-    parameters.add("file", new ClassPathResource(file));
+    parameters.add("file", new ClassPathResource("imlgs_sample_good_full.xlsm"));
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-    headers.setBearerAuth(createJwt("martin"));
+    headers.setBearerAuth(createJwt());
 
     HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
 

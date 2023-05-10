@@ -4,6 +4,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
@@ -192,6 +193,17 @@ public class CruiseService extends
   protected void updateEntity(CuratorsCruiseEntity entity, CruiseView view) {
     entity.setCruiseName(view.getCruiseName().trim().toUpperCase(Locale.ENGLISH));
     entity.setYear(view.getYear().shortValue());
+    if (view.getPublish() != null) {
+      if (view.getPublish()) {
+        if (entity.getApproval() != null) {
+          if (!entity.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+            throw new ApiException(
+                HttpStatus.BAD_REQUEST,
+                ApiError.builder().error(String.format("Cruise %s (%s) is not approved", entity.getCruiseName(), entity.getYear())).build());
+          }
+        }
+      }
+    }
     entity.setPublish(view.getPublish());
     mergeFacilities(entity, view.getFacilityCodes());
     mergePlatforms(entity, view.getPlatforms());

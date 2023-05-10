@@ -19,11 +19,15 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
     if (entity.getApproval() != null) {
       entity.getApproval().setApprovalState(view.getApprovalState());
       entity.getApproval().setComment(view.getComment());
+      if (view.getApprovalState().equals(ApprovalState.REJECTED)) {
+        entity.setPublish(false);
+      }
     } else {
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
       approval.setApprovalState(view.getApprovalState());
       approval.setComment(view.getComment());
       entity.setApproval(approval);
+      entity.setPublish(false);
     }
   }
 

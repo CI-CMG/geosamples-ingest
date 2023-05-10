@@ -13,6 +13,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalSearchParameters;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
@@ -312,7 +313,7 @@ public class ProviderIntervalServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    IntervalView result = providerIntervalService.create(intervalView, authentication);
+    ProviderIntervalView result = providerIntervalService.create(intervalView, authentication);
     assertEquals(intervalView.getInterval(), result.getInterval());
     assertEquals(intervalView.getDepthTop(), result.getDepthTop());
     assertEquals(intervalView.getDepthBot(), result.getDepthBot());
@@ -529,7 +530,7 @@ public class ProviderIntervalServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
-      IntervalView result = providerIntervalService.get(interval.getId(), authentication);
+      ProviderIntervalView result = providerIntervalService.get(interval.getId(), authentication);
       assertEquals(interval.getId(), result.getId());
       assertEquals(interval.getInterval(), result.getInterval());
       assertEquals((double) interval.getDepthTop() + 0.5, result.getDepthTop());
@@ -654,7 +655,7 @@ public class ProviderIntervalServiceIT {
       user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
               () -> new RuntimeException("Facility not found")
           )
-      );;
+      );
       return geosamplesUserRepository.save(user) ;
     });
     assertNotNull(userEntity);
@@ -665,7 +666,7 @@ public class ProviderIntervalServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    PagedItemsView<IntervalView> result = providerIntervalService.search(searchParameters, authentication);
+    PagedItemsView<ProviderIntervalView> result = providerIntervalService.search(searchParameters, authentication);
 
     assertEquals(1, result.getPage());
     assertEquals(10, result.getItemsPerPage());
@@ -674,13 +675,13 @@ public class ProviderIntervalServiceIT {
     assertEquals(5, result.getItems().size());
 
     transactionTemplate.executeWithoutResult(s -> {
-      List<IntervalView> items = result.getItems().stream().sorted(Comparator.comparing(IntervalView::getId)).collect(Collectors.toList());
+      List<ProviderIntervalView> items = result.getItems().stream().sorted(Comparator.comparing(ProviderIntervalView::getId)).collect(Collectors.toList());
       List<CuratorsIntervalEntity> entities = curatorsIntervalRepository.findAll().stream().sorted(Comparator.comparing(CuratorsIntervalEntity::getId)).collect(Collectors.toList());
       assertEquals(entities.size(), items.size());
 
       for (int i = 0; i < items.size(); i++) {
         CuratorsIntervalEntity interval = entities.get(i);
-        IntervalView view = items.get(i);
+        ProviderIntervalView view = items.get(i);
 
         assertEquals(interval.getId(), view.getId());
         assertEquals(interval.getInterval(), view.getInterval());
@@ -799,7 +800,7 @@ public class ProviderIntervalServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    PagedItemsView<IntervalView> result = providerIntervalService.search(searchParameters, authentication);
+    PagedItemsView<ProviderIntervalView> result = providerIntervalService.search(searchParameters, authentication);
     assertEquals(0, result.getItems().size());
     assertEquals(0, result.getTotalPages());
     assertEquals(0, result.getTotalItems());
@@ -818,7 +819,7 @@ public class ProviderIntervalServiceIT {
       user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
               () -> new RuntimeException("Facility not found")
           )
-      );;
+      );
       return geosamplesUserRepository.save(user) ;
     });
     assertNotNull(userEntity);
@@ -917,7 +918,7 @@ public class ProviderIntervalServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
-      IntervalView result = providerIntervalService.update(interval.getId(), view, authentication);
+      ProviderIntervalView result = providerIntervalService.update(interval.getId(), view, authentication);
 
       assertEquals(view.getId(), result.getId());
       assertEquals(view.getInterval(), result.getInterval());
@@ -1018,7 +1019,7 @@ public class ProviderIntervalServiceIT {
       user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
               () -> new RuntimeException("Facility not found")
           )
-      );;
+      );
       return geosamplesUserRepository.save(user) ;
     });
     assertNotNull(userEntity);
@@ -1117,6 +1118,7 @@ public class ProviderIntervalServiceIT {
 
       return view;
     });
+    assertNotNull(intervalView);
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -1136,7 +1138,7 @@ public class ProviderIntervalServiceIT {
       user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
               () -> new RuntimeException("Facility not found")
           )
-      );;
+      );
       return geosamplesUserRepository.save(user) ;
     });
     assertNotNull(userEntity);

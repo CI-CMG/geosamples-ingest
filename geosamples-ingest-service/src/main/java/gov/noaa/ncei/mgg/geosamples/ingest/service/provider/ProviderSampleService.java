@@ -14,6 +14,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.service.SampleService;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
   }
 
   @Override
-  protected SampleView toResourceView(String userFacilityCode, ProviderSampleView view) {
+  protected SampleView toResourceView(String userFacilityCode, ProviderSampleView view, @Nullable SampleView existing) {
     SampleView sampleView = new SampleView();
 
     sampleView.setFacilityCode(userFacilityCode); // Important
@@ -78,6 +79,10 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     sampleView.setSampleComments(view.getSampleComments());
     sampleView.setPublish(view.getPublish());
     sampleView.setShowSampl(view.getShowSampl());
+
+    if (existing != null) {
+      sampleView.setApprovalState(existing.getApprovalState());
+    }
     return sampleView;
   }
 

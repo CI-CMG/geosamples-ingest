@@ -14,6 +14,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.service.CruiseService;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +51,7 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected CruiseView toResourceView(String userFacilityCode, ProviderCruiseView view) {
+  protected CruiseView toResourceView(String userFacilityCode, ProviderCruiseView view, @Nullable CruiseView existing) {
     CruiseView cruiseView = new CruiseView();
 
     cruiseView.setFacilityCodes(Collections.singletonList(userFacilityCode)); // Important
@@ -61,6 +62,10 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
     cruiseView.setPublish(view.getPublish());
     cruiseView.setPlatforms(view.getPlatforms());
     cruiseView.setLegs(view.getLegs());
+
+    if (existing != null) {
+      cruiseView.setApprovalState(existing.getApprovalState());
+    }
     return cruiseView;
   }
 

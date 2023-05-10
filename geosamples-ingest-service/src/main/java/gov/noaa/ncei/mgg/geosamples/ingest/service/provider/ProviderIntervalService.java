@@ -5,6 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalSearchParameters;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
@@ -14,12 +15,13 @@ import gov.noaa.ncei.mgg.geosamples.ingest.service.IntervalService;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsIntervalEntity, ProviderIntervalSearchParameters, IntervalSearchParameters, IntervalView, IntervalView, CuratorsIntervalRepository> {
+public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsIntervalEntity, ProviderIntervalSearchParameters, IntervalSearchParameters, ProviderIntervalView, IntervalView, CuratorsIntervalRepository> {
 
   private final CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   private final IntervalService intervalService;
@@ -58,15 +60,60 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
   }
 
   @Override
-  protected IntervalView toResourceView(String userFacilityCode, IntervalView view) {
+  protected IntervalView toResourceView(String userFacilityCode, ProviderIntervalView view, @Nullable IntervalView existing) {
     if (view.getImlgs() == null || view.getImlgs().isEmpty()) {
       throw new ApiException(
           HttpStatus.BAD_REQUEST,
           ApiError.builder().fieldError("imlgs", "Missing IMLGS").build()
       );
     }
-    if (userCanAccessResource(userFacilityCode, view)) {
-      return view;
+    IntervalView intervalView = new IntervalView();
+    intervalView.setId(view.getId());
+    intervalView.setInterval(view.getInterval());
+    intervalView.setDepthTop(view.getDepthTop());
+    intervalView.setDepthBot(view.getDepthBot());
+    intervalView.setDhCoreId(view.getDhCoreId());
+    intervalView.setDhCoreLength(view.getDhCoreLength());
+    intervalView.setDhCoreInterval(view.getDhCoreInterval());
+    intervalView.setdTopInDhCore(view.getdTopInDhCore());
+    intervalView.setdBotInDhCore(view.getdBotInDhCore());
+    intervalView.setLithCode1(view.getLithCode1());
+    intervalView.setLithCode2(view.getLithCode2());
+    intervalView.setTextCode1(view.getTextCode1());
+    intervalView.setTextCode2(view.getTextCode2());
+    intervalView.setCompCode1(view.getCompCode1());
+    intervalView.setCompCode2(view.getCompCode2());
+    intervalView.setCompCode3(view.getCompCode3());
+    intervalView.setCompCode4(view.getCompCode4());
+    intervalView.setCompCode5(view.getCompCode5());
+    intervalView.setCompCode6(view.getCompCode6());
+    intervalView.setDescription(view.getDescription());
+    intervalView.setAgeCodes(view.getAgeCodes());
+    intervalView.setAbsoluteAgeTop(view.getAbsoluteAgeTop());
+    intervalView.setAbsoluteAgeBot(view.getAbsoluteAgeBot());
+    intervalView.setWeight(view.getWeight());
+    intervalView.setRockLithCode(view.getRockLithCode());
+    intervalView.setRockMinCode(view.getRockMinCode());
+    intervalView.setWeathMetaCode(view.getWeathMetaCode());
+    intervalView.setRemarkCode(view.getRemarkCode());
+    intervalView.setMunsellCode(view.getMunsellCode());
+    intervalView.setExhausted(view.getExhausted());
+    intervalView.setPhotoLink(view.getPhotoLink());
+    intervalView.setLake(view.getLake());
+    intervalView.setUnitNumber(view.getUnitNumber());
+    intervalView.setIntComments(view.getIntComments());
+    intervalView.setDhDevice(view.getDhDevice());
+    intervalView.setCdTop(view.getCdTop());
+    intervalView.setCdBot(view.getCdBot());
+    intervalView.setPublish(view.getPublish());
+    intervalView.setIgsn(view.getIgsn());
+    intervalView.setImlgs(view.getImlgs());
+
+    if (existing != null) {
+      intervalView.setApprovalState(existing.getApprovalState());
+    }
+    if (userCanAccessResource(userFacilityCode, intervalView)) {
+      return intervalView;
     }
     throw intervalService.getNotFoundException();
   }

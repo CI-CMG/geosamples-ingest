@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,14 +32,14 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
   protected abstract boolean userCanAccessResource(String userFacilityCode, V view);
   protected abstract boolean userCannotModifyResource(String userFacilityCode, V view);
   public abstract ApiException getIntegrityViolationException();
-  protected abstract V toResourceView(String userFacilityCode, PV view);
+  protected abstract V toResourceView(String userFacilityCode, PV view, @Nullable V existing);
   protected abstract S transformSearchParameters(PS searchParameters, String userFacilityCode);
 
   public PV create(PV view, Authentication authentication) {
     String userFacilityCode = getUserFacilityCode(authentication);
-    V resourceView = toResourceView(userFacilityCode, view);
+    V resourceView = toResourceView(userFacilityCode, view, null);
     if (userCanAccessResource(userFacilityCode, resourceView)) {
-      return approvalServiceBase.createWithNewApproval(toResourceView(userFacilityCode, view));
+      return approvalServiceBase.createWithNewApproval(resourceView);
     }
     throw approvalServiceBase.getNotFoundException();
   }
@@ -72,7 +73,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
       if (userCannotModifyResource(userFacilityCode, existing)) {
         throw getCannotEditException();
       }
-      return approvalServiceBase.update(toResourceView(userFacilityCode, view), id);
+      return approvalServiceBase.update(toResourceView(userFacilityCode, view, existing), id);
     }
     throw approvalServiceBase.getNotFoundException();
   }

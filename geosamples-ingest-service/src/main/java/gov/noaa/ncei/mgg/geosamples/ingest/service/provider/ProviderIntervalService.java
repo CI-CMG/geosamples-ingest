@@ -105,12 +105,14 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalView.setDhDevice(view.getDhDevice());
     intervalView.setCdTop(view.getCdTop());
     intervalView.setCdBot(view.getCdBot());
-    intervalView.setPublish(view.getPublish());
     intervalView.setIgsn(view.getIgsn());
     intervalView.setImlgs(view.getImlgs());
 
     if (existing != null) {
       intervalView.setApprovalState(existing.getApprovalState());
+      intervalView.setPublish(existing.getPublish());
+    } else {
+      intervalView.setPublish(false);
     }
     if (userCanAccessResource(userFacilityCode, intervalView)) {
       return intervalView;

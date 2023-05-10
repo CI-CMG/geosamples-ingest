@@ -77,11 +77,13 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     sampleView.setIgsn(view.getIgsn());
     sampleView.setLeg(view.getLeg());
     sampleView.setSampleComments(view.getSampleComments());
-    sampleView.setPublish(view.getPublish());
     sampleView.setShowSampl(view.getShowSampl());
 
     if (existing != null) {
+      sampleView.setPublish(existing.getPublish());
       sampleView.setApprovalState(existing.getApprovalState());
+    } else {
+      sampleView.setPublish(false);
     }
     return sampleView;
   }

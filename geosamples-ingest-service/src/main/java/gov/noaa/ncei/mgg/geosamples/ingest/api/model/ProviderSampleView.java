@@ -34,7 +34,6 @@ public class ProviderSampleView {
   private String igsn;
   private String leg;
   private String sampleComments;
-  private Boolean publish;
   private String showSampl;
 
   public String getImlgs() {
@@ -227,14 +226,6 @@ public class ProviderSampleView {
 
   public void setSampleComments(String sampleComments) {
     this.sampleComments = sampleComments;
-  }
-
-  public Boolean getPublish() {
-    return publish;
-  }
-
-  public void setPublish(Boolean publish) {
-    this.publish = publish;
   }
 
   public String getShowSampl() {

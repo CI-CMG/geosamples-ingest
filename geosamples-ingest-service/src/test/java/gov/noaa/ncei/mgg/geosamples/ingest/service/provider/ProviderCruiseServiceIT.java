@@ -174,7 +174,6 @@ public class ProviderCruiseServiceIT {
     ProviderCruiseView cruise = new ProviderCruiseView();
     cruise.setYear(2020);
     cruise.setCruiseName("Test Cruise");
-    cruise.setPublish(true);
     cruise.setPlatforms(Collections.singletonList(platformEntity.getPlatform()));
     cruise.setLegs(Collections.singletonList("TST"));
 
@@ -184,7 +183,6 @@ public class ProviderCruiseServiceIT {
 
     assertEquals(cruise.getYear(), created.getYear());
     assertEquals(cruise.getCruiseName(), created.getCruiseName());
-    assertEquals(cruise.getPublish(), created.getPublish());
     assertEquals(cruise.getPlatforms(), created.getPlatforms());
     assertEquals(cruise.getLegs(), created.getLegs());
 
@@ -195,7 +193,6 @@ public class ProviderCruiseServiceIT {
 
       assertEquals(created.getId(), cruiseEntity.getId());
       assertEquals(created.getCruiseName(), cruiseEntity.getCruiseName());
-      assertEquals(created.getPublish(), cruiseEntity.isPublish());
       assertEquals(created.getYear(), (int) cruiseEntity.getYear());
 
       assertEquals(1, cruiseEntity.getPlatformMappings().size());
@@ -275,7 +272,6 @@ public class ProviderCruiseServiceIT {
     ProviderCruiseView view = new ProviderCruiseView();
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName());
-    view.setPublish(cruiseEntity.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity.getPlatform()));
     view.setLegs(Collections.singletonList("TST-LEG"));
 
@@ -298,7 +294,6 @@ public class ProviderCruiseServiceIT {
     ProviderCruiseView cruise = new ProviderCruiseView();
     cruise.setYear(2020);
     cruise.setCruiseName("Test Cruise");
-    cruise.setPublish(true);
     cruise.setPlatforms(Collections.singletonList("TST"));
     cruise.setLegs(Collections.singletonList("TST"));
 
@@ -371,7 +366,6 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
       assertEquals(cruise.getCruiseName(), view.getCruiseName());
-      assertEquals(cruise.isPublish(), view.getPublish());
       assertEquals(1, view.getPlatforms().size());
       assertEquals(cruise.getPlatformMappings().get(0).getPlatform().getPlatform(), view.getPlatforms().get(0));
       assertEquals(1, view.getLegs().size());
@@ -636,7 +630,6 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruises.get(0).getId(), results.getItems().get(0).getId());
       assertEquals((int) cruises.get(0).getYear(), results.getItems().get(0).getYear());
       assertEquals(cruises.get(0).getCruiseName(), results.getItems().get(0).getCruiseName());
-      assertEquals(cruises.get(0).isPublish(), results.getItems().get(0).getPublish());
       assertEquals(1, results.getItems().get(0).getLegs().size());
       assertEquals(cruises.get(0).getLegs().get(0).getLegName(), results.getItems().get(0).getLegs().get(0));
       assertEquals(1, results.getItems().get(0).getPlatforms().size());
@@ -645,7 +638,6 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruises.get(1).getId(), results.getItems().get(1).getId());
       assertEquals((int) cruises.get(1).getYear(), results.getItems().get(1).getYear());
       assertEquals(cruises.get(1).getCruiseName(), results.getItems().get(1).getCruiseName());
-      assertEquals(cruises.get(1).isPublish(), results.getItems().get(1).getPublish());
       assertEquals(1, results.getItems().get(1).getLegs().size());
       assertEquals(cruises.get(1).getLegs().get(0).getLegName(), results.getItems().get(1).getLegs().get(0));
       assertEquals(1, results.getItems().get(1).getPlatforms().size());
@@ -872,7 +864,6 @@ public class ProviderCruiseServiceIT {
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
-    view.setPublish(!cruiseEntity.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity2.getPlatform()));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
@@ -883,7 +874,6 @@ public class ProviderCruiseServiceIT {
     assertEquals(cruiseEntity.getId(), updated.getId());
     assertEquals(view.getCruiseName(), updated.getCruiseName());
     assertEquals(view.getYear(), updated.getYear());
-    assertEquals(view.getPublish(), updated.getPublish());
     assertEquals(view.getPlatforms(), updated.getPlatforms());
     assertEquals(view.getLegs(), updated.getLegs());
 
@@ -894,7 +884,6 @@ public class ProviderCruiseServiceIT {
       assertEquals(view.getId(), cruise.getId());
       assertEquals(view.getYear(), (int) cruise.getYear());
       assertEquals(view.getCruiseName(), cruise.getCruiseName());
-      assertEquals(view.getPublish(), cruise.isPublish());
       assertEquals(1, cruise.getPlatformMappings().size());
       assertEquals(view.getPlatforms().get(0), cruise.getPlatformMappings().get(0).getPlatform().getPlatform());
       assertEquals(1, cruise.getLegs().size());
@@ -972,7 +961,6 @@ public class ProviderCruiseServiceIT {
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
-    view.setPublish(!cruiseEntity.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity2.getPlatform()));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
@@ -1011,7 +999,6 @@ public class ProviderCruiseServiceIT {
     view.setId(100L);
     view.setYear(2020);
     view.setCruiseName("TST-NEW-NAME");
-    view.setPublish(false);
     view.setPlatforms(Collections.singletonList("TST"));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
@@ -1100,7 +1087,6 @@ public class ProviderCruiseServiceIT {
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
-    view.setPublish(!cruiseEntity.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity2.getPlatform()));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
@@ -1214,7 +1200,6 @@ public class ProviderCruiseServiceIT {
     view.setId(cruiseEntity1.getId());
     view.setYear((int) cruiseEntity2.getYear());
     view.setCruiseName(cruiseEntity2.getCruiseName());
-    view.setPublish(!cruiseEntity1.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity.getPlatform()));
     view.setLegs(Collections.singletonList("TST-LEG"));
 
@@ -1304,7 +1289,6 @@ public class ProviderCruiseServiceIT {
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
-    view.setPublish(!cruiseEntity.isPublish());
     view.setPlatforms(Collections.singletonList(platformEntity2.getPlatform()));
     view.setLegs(Collections.singletonList("TST-NEW-LEG"));
 
@@ -1383,7 +1367,6 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
       assertEquals(cruise.getCruiseName(), view.getCruiseName());
-      assertEquals(cruise.isPublish(), view.getPublish());
       assertEquals(1, view.getPlatforms().size());
       assertEquals(cruise.getPlatformMappings().get(0).getPlatform().getPlatform(), view.getPlatforms().get(0));
       assertEquals(1, view.getLegs().size());

@@ -16,6 +16,8 @@ public class SampleView extends ProviderSampleView {
 
   private String facilityCode;
 
+  private Boolean publish;
+
   public ApprovalState getApprovalState() {
     return approvalState;
   }
@@ -30,5 +32,13 @@ public class SampleView extends ProviderSampleView {
 
   public void setFacilityCode(String facilityCode) {
     this.facilityCode = facilityCode;
+  }
+
+  public Boolean getPublish() {
+    return publish;
+  }
+
+  public void setPublish(Boolean publish) {
+    this.publish = publish;
   }
 }

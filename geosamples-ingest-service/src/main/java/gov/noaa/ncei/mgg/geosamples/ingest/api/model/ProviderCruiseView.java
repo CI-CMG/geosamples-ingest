@@ -25,8 +25,6 @@ public class ProviderCruiseView {
   @Size(max = 30)
   private String cruiseName;
 
-  private Boolean publish;
-
   private List<String> platforms = new ArrayList<>(0);
   private List<String> legs = new ArrayList<>(0);
 
@@ -55,14 +53,6 @@ public class ProviderCruiseView {
       cruiseName = cruiseName.trim().toUpperCase(Locale.ENGLISH);
     }
     this.cruiseName = cruiseName;
-  }
-
-  public Boolean getPublish() {
-    return publish;
-  }
-
-  public void setPublish(Boolean publish) {
-    this.publish = publish;
   }
 
   public List<String> getPlatforms() {

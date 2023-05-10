@@ -350,7 +350,6 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getDhDevice(), result.getDhDevice());
     assertEquals(intervalView.getCdTop(), result.getCdTop());
     assertEquals(intervalView.getCdBot(), result.getCdBot());
-    assertEquals(intervalView.getPublish(), result.getPublish());
     assertEquals(intervalView.getIgsn(), result.getIgsn());
     assertEquals(intervalView.getImlgs(), result.getImlgs());
 
@@ -563,7 +562,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(interval.getUnitNumber(), result.getUnitNumber());
       assertEquals(interval.getIntComments(), result.getIntComments());
       assertEquals(interval.getDhDevice(), result.getDhDevice());
-      assertEquals(interval.isPublish(), result.getPublish());
       assertEquals(interval.getIgsn(), result.getIgsn());
       assertEquals(interval.getSample().getImlgs(), result.getImlgs());
       assertTrue(interval.getCmcdTop() == null && result.getCdTop() == null);
@@ -764,7 +762,6 @@ public class ProviderIntervalServiceIT {
         assertEquals(interval.getUnitNumber(), view.getUnitNumber());
         assertEquals(interval.getIntComments(), view.getIntComments());
         assertEquals(interval.getDhDevice(), view.getDhDevice());
-        assertEquals(interval.isPublish(), view.getPublish());
         assertEquals(interval.getIgsn(), view.getIgsn());
         assertEquals(interval.getSample().getImlgs(), view.getImlgs());
       }
@@ -957,7 +954,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getDhDevice(), result.getDhDevice());
       assertEquals(view.getCdTop(), result.getCdTop());
       assertEquals(view.getCdBot(), result.getCdBot());
-      assertEquals(view.getPublish(), result.getPublish());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getImlgs(), result.getImlgs());
 
@@ -1002,7 +998,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getDhDevice(), interval.getDhDevice());
       assertEquals((int) Math.floor(result.getCdTop()), interval.getCmcdTop());
       assertEquals((int) Math.floor(result.getCdBot()), interval.getCmcdBot());
-      assertEquals(result.getPublish(), interval.isPublish());
       assertEquals(result.getIgsn(), interval.getIgsn());
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
     });

@@ -12,11 +12,21 @@ import java.util.List;
 public class IntervalView extends ProviderIntervalView {
   private ApprovalState approvalState;
 
+  private Boolean publish;
+
   public ApprovalState getApprovalState() {
     return approvalState;
   }
 
   public void setApprovalState(ApprovalState approvalState) {
     this.approvalState = approvalState;
+  }
+
+  public Boolean getPublish() {
+    return publish;
+  }
+
+  public void setPublish(Boolean publish) {
+    this.publish = publish;
   }
 }

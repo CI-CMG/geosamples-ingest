@@ -273,7 +273,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setPublish(true);
     view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
@@ -303,7 +302,6 @@ public class ProviderSampleServiceIT {
     assertEquals(view.getIgsn(), created.getIgsn());
     assertEquals(view.getLeg(), created.getLeg());
     assertEquals(view.getSampleComments(), created.getSampleComments());
-    assertEquals(view.getPublish(), created.getPublish());
     assertEquals(view.getShowSampl(), created.getShowSampl());
 
     transactionTemplate.executeWithoutResult(s -> {
@@ -334,7 +332,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getIgsn(), created.getIgsn());
       assertEquals(sample.getLeg().getLegName(), created.getLeg());
       assertEquals(sample.getSampleComments(), created.getSampleComments());
-      assertEquals(sample.isPublish(), created.getPublish());
       assertEquals(sample.getShowSampl(), created.getShowSampl());
       assertEquals(ApprovalState.PENDING, sample.getApproval().getApprovalState());
     });
@@ -438,7 +435,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setPublish(true);
     view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
@@ -535,7 +531,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
-      assertEquals(sample.isPublish(), result.getPublish());
       assertEquals(sample.getShowSampl(), result.getShowSampl());
     });
   }
@@ -692,7 +687,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample1.getOtherLink(), result.getItems().get(0).getOtherLink());
       assertEquals(sample1.getIgsn(), result.getItems().get(0).getIgsn());
       assertEquals(sample1.getSampleComments(), result.getItems().get(0).getSampleComments());
-      assertEquals(sample1.isPublish(), result.getItems().get(0).getPublish());
       assertEquals(sample1.getShowSampl(), result.getItems().get(0).getShowSampl());
 
       assertEquals(sample2.getImlgs(), result.getItems().get(1).getImlgs());
@@ -720,7 +714,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample2.getOtherLink(), result.getItems().get(1).getOtherLink());
       assertEquals(sample2.getIgsn(), result.getItems().get(1).getIgsn());
       assertEquals(sample2.getSampleComments(), result.getItems().get(1).getSampleComments());
-      assertEquals(sample2.isPublish(), result.getItems().get(1).getPublish());
       assertEquals(sample2.getShowSampl(), result.getItems().get(1).getShowSampl());
     });
   }
@@ -814,7 +807,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setPublish(sampleEntity.isPublish());
       view.setShowSampl(sampleEntity.getShowSampl());
 
       Authentication authentication = mock(Authentication.class);
@@ -843,7 +835,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getOtherLink(), result.getOtherLink());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
-      assertEquals(view.getPublish(), result.getPublish());
       assertEquals(view.getShowSampl(), result.getShowSampl());
 
       sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
@@ -873,7 +864,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
-      assertEquals(result.getPublish(), sampleEntity.isPublish());
       assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
     });
   }
@@ -928,7 +918,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setPublish(sampleEntity.isPublish());
       view.setShowSampl(sampleEntity.getShowSampl());
 
       return view;
@@ -990,7 +979,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setPublish(true);
     view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
@@ -1054,7 +1042,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setPublish(sampleEntity.isPublish());
       view.setShowSampl(sampleEntity.getShowSampl());
       return view;
     });
@@ -1164,7 +1151,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setPublish(sampleEntity.isPublish());
       view.setShowSampl(sampleEntity.getShowSampl());
       return view;
     });
@@ -1250,7 +1236,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
-      assertEquals(sample.isPublish(), result.getPublish());
       assertEquals(sample.getShowSampl(), result.getShowSampl());
 
       return result.getImlgs();

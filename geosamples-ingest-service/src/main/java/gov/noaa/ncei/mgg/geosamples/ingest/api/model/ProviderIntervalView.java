@@ -67,7 +67,6 @@ public class ProviderIntervalView {
   private String dhDevice;
   private Double cdTop;
   private Double cdBot;
-  private Boolean publish;
   private String igsn;
   private String imlgs;
 
@@ -362,14 +361,6 @@ public class ProviderIntervalView {
 
   public void setDhDevice(String dhDevice) {
     this.dhDevice = dhDevice;
-  }
-
-  public Boolean getPublish() {
-    return publish;
-  }
-
-  public void setPublish(Boolean publish) {
-    this.publish = publish;
   }
 
   public String getIgsn() {

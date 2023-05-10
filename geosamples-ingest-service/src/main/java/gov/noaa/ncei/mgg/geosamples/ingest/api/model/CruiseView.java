@@ -19,6 +19,8 @@ public class CruiseView extends ProviderCruiseView {
 
   private List<String> facilityCodes = new ArrayList<>(0);
 
+  private Boolean publish;
+
   public ApprovalState getApprovalState() {
     return approvalState;
   }
@@ -36,5 +38,13 @@ public class CruiseView extends ProviderCruiseView {
       facilityCodes = new ArrayList<>(0);
     }
     this.facilityCodes = facilityCodes.stream().map(v -> v.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
+  }
+
+  public Boolean getPublish() {
+    return publish;
+  }
+
+  public void setPublish(Boolean publish) {
+    this.publish = publish;
   }
 }

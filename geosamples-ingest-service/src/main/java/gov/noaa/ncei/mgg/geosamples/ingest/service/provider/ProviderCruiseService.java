@@ -59,12 +59,14 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
     cruiseView.setId(view.getId());
     cruiseView.setYear(view.getYear());
     cruiseView.setCruiseName(view.getCruiseName());
-    cruiseView.setPublish(view.getPublish());
     cruiseView.setPlatforms(view.getPlatforms());
     cruiseView.setLegs(view.getLegs());
 
     if (existing != null) {
+      cruiseView.setPublish(existing.getPublish());
       cruiseView.setApprovalState(existing.getApprovalState());
+    } else {
+      cruiseView.setPublish(false);
     }
     return cruiseView;
   }

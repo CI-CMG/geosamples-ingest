@@ -2,8 +2,10 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
@@ -76,6 +78,22 @@ public class PlatformService extends
     }
 
     return specs;
+  }
+
+  @Override
+  protected void updateEntityApproval(PlatformMasterEntity entity, ApprovalView view) {
+    boolean publish = entity.isPublish();
+    if (entity.getApproval() != null && entity.getApproval().getApprovalState().equals(ApprovalState.APPROVED) && !view.getApprovalState().equals(ApprovalState.APPROVED)) {
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder().error("Cannot revoke approval for platform").build()
+      );
+    }
+    super.updateEntityApproval(entity, view);
+    entity.setPublish(publish);
+    if (view.getApprovalState().equals(ApprovalState.APPROVED)) {
+      entity.setCreatedBy(null); // User no longer owns this platform
+    }
   }
 
   @Override

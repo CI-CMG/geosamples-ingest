@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<I>, S extends PagingAndSortingParameters, V, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> extends SearchServiceBase<E, I, S, V, R> {
 
-  private void updateEntityApproval(E entity, ApprovalView view) {
+  protected void updateEntityApproval(E entity, ApprovalView view) {
     if (entity.getApproval() != null) {
       entity.getApproval().setApprovalState(view.getApprovalState());
       entity.getApproval().setComment(view.getComment());

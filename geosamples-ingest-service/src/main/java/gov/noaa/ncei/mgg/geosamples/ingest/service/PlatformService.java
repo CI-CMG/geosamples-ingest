@@ -1,31 +1,42 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class PlatformService extends
-    SearchServiceBase<PlatformMasterEntity, Long, PlatformSearchParameters, PlatformView, PlatformMasterRepository> {
+    ApprovalResourceServiceBase<Long, PlatformMasterEntity, PlatformSearchParameters, PlatformView, PlatformMasterRepository> {
 
   private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(PlatformView.class);
 
   private final PlatformMasterRepository platformMasterRepository;
+  private final GeosamplesUserRepository geosamplesUserRepository;
 
   @Autowired
-  public PlatformService(PlatformMasterRepository platformMasterRepository) {
+  public PlatformService(PlatformMasterRepository platformMasterRepository,
+      GeosamplesUserRepository geosamplesUserRepository) {
     this.platformMasterRepository = platformMasterRepository;
+    this.geosamplesUserRepository = geosamplesUserRepository;
   }
 
   @Override
@@ -36,6 +47,7 @@ public class PlatformService extends
     List<String> platform = searchParameters.getPlatform();
     List<Integer> masterId = searchParameters.getMasterId();
     List<String> icesCode = searchParameters.getIcesCode();
+    List<String> createdBy = searchParameters.getCreatedBy();
 
     if (!id.isEmpty()){
       specs.add(SearchUtils.equal(id, PlatformMasterEntity_.ID));
@@ -50,6 +62,19 @@ public class PlatformService extends
       specs.add(SearchUtils.equal(icesCode, PlatformMasterEntity_.ICES_CODE));
     }
 
+    if (!createdBy.isEmpty()) {
+      Specification<PlatformMasterEntity> createdBySpec = SearchUtils.equal(
+          createdBy.stream().filter(Objects::nonNull).collect(Collectors.toList()),
+          (e) -> e.get(PlatformMasterEntity_.CREATED_BY).get(GeosamplesUserEntity_.USER_NAME)
+      );
+      if (createdBy.contains(null)) {
+        Specification<PlatformMasterEntity> nullSpec = (e, cq, cb) -> e.get(PlatformMasterEntity_.CREATED_BY).isNull();
+        specs.add(createdBySpec.or(nullSpec));
+      } else {
+        specs.add(createdBySpec);
+      }
+    }
+
     return specs;
   }
 
@@ -62,6 +87,8 @@ public class PlatformService extends
     view.setPrefix(entity.getPrefix());
     view.setIcesCode(entity.getIcesCode());
     view.setSourceUri(entity.getSourceUri());
+    view.setApprovalState(entity.getApproval() != null ? entity.getApproval().getApprovalState() : null);
+    view.setCreatedBy(entity.getCreatedBy() != null ? entity.getCreatedBy().getUserName() : null);
     return view;
   }
 
@@ -71,6 +98,9 @@ public class PlatformService extends
     entity.setPlatform(view.getPlatform());
     entity.setDateAdded(Instant.now());
     entity.setPublish(true);
+    if (view.getCreatedBy() != null) {
+      entity.setCreatedBy(getUser(view.getCreatedBy()));
+    }
     return entity;
   }
 
@@ -81,6 +111,15 @@ public class PlatformService extends
     entity.setPrefix(view.getPrefix());
     entity.setIcesCode(view.getIcesCode());
     entity.setSourceUri(view.getSourceUri());
+  }
+
+  private GeosamplesUserEntity getUser(String username) {
+    return geosamplesUserRepository.findById(username).orElseThrow(
+        () -> new ApiException(
+            HttpStatus.NOT_FOUND,
+            ApiError.builder().error(String.format("User not found: %s", username)).build()
+        )
+    );
   }
 
 

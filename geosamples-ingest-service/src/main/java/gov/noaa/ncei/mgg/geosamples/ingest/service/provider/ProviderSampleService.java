@@ -28,12 +28,12 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
   }
 
   @Override
-  protected boolean userCanAccessResource(String userFacilityCode, SampleView view) {
-    return userFacilityCode.equals(view.getFacilityCode());
+  protected boolean userCanAccessResource(String userInfo, SampleView view) {
+    return userInfo.equals(view.getFacilityCode());
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userFacilityCode, SampleView view) {
+  protected boolean userCannotModifyResource(String userInfo, SampleView view) {
     return view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
@@ -48,10 +48,10 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
   }
 
   @Override
-  protected SampleView toResourceView(String userFacilityCode, ProviderSampleView view, @Nullable SampleView existing) {
+  protected SampleView toResourceView(String userInfo, ProviderSampleView view, @Nullable SampleView existing) {
     SampleView sampleView = new SampleView();
 
-    sampleView.setFacilityCode(userFacilityCode); // Important
+    sampleView.setFacilityCode(userInfo); // Important
 
     sampleView.setImlgs(view.getImlgs());
     sampleView.setCruise(view.getCruise());
@@ -89,10 +89,10 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
   }
 
   @Override
-  protected SampleSearchParameters transformSearchParameters(ProviderSampleSearchParameters searchParameters, String userFacilityCode) {
+  protected SampleSearchParameters transformSearchParameters(ProviderSampleSearchParameters searchParameters, String userInfo) {
     SampleSearchParameters sampleSearchParameters = new SampleSearchParameters();
 
-    sampleSearchParameters.setFacilityCode(Collections.singletonList(userFacilityCode)); // Important
+    sampleSearchParameters.setFacilityCode(Collections.singletonList(userInfo)); // Important
 
     sampleSearchParameters.setPage(searchParameters.getPage());
     sampleSearchParameters.setItemsPerPage(searchParameters.getItemsPerPage());

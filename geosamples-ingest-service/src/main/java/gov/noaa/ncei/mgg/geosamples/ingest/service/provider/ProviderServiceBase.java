@@ -21,7 +21,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
 
   private final ApprovalResourceServiceBase<I, E, S, V, R> approvalServiceBase;
 
-  private final GeosamplesUserRepository geosamplesUserRepository;
+  protected final GeosamplesUserRepository geosamplesUserRepository;
 
   protected ProviderServiceBase(ApprovalResourceServiceBase<I, E, S, V, R> approvalResourceServiceBase,
       GeosamplesUserRepository geosamplesUserRepository) {
@@ -29,33 +29,33 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     this.geosamplesUserRepository = geosamplesUserRepository;
   }
 
-  protected abstract boolean userCanAccessResource(String userFacilityCode, V view);
-  protected abstract boolean userCannotModifyResource(String userFacilityCode, V view);
+  protected abstract boolean userCanAccessResource(String userInfo, V view);
+  protected abstract boolean userCannotModifyResource(String userInfo, V view);
   public abstract ApiException getIntegrityViolationException();
-  protected abstract V toResourceView(String userFacilityCode, PV view, @Nullable V existing);
-  protected abstract S transformSearchParameters(PS searchParameters, String userFacilityCode);
+  protected abstract V toResourceView(String userInfo, PV view, @Nullable V existing);
+  protected abstract S transformSearchParameters(PS searchParameters, String userInfo);
 
   public PV create(PV view, Authentication authentication) {
-    String userFacilityCode = getUserFacilityCode(authentication);
-    V resourceView = toResourceView(userFacilityCode, view, null);
-    if (userCanAccessResource(userFacilityCode, resourceView)) {
+    String userInfo = getUserInfo(authentication);
+    V resourceView = toResourceView(userInfo, view, null);
+    if (userCanAccessResource(userInfo, resourceView)) {
       return approvalServiceBase.createWithNewApproval(resourceView);
     }
     throw approvalServiceBase.getNotFoundException();
   }
 
   public PV get(I id, Authentication authentication) {
-    String userFacilityCode = getUserFacilityCode(authentication);
+    String userInfo = getUserInfo(authentication);
     V view = approvalServiceBase.get(id);
-    if (userCanAccessResource(userFacilityCode, view)) {
+    if (userCanAccessResource(userInfo, view)) {
       return view;
     }
     throw approvalServiceBase.getNotFoundException();
   }
 
   public PagedItemsView<PV> search(PS searchParameters, Authentication authentication) {
-    String userFacilityCode = getUserFacilityCode(authentication);
-    S sampleSearchParameters = transformSearchParameters(searchParameters, userFacilityCode);
+    String userInfo = getUserInfo(authentication);
+    S sampleSearchParameters = transformSearchParameters(searchParameters, userInfo);
     PagedItemsView<V> resultPage = approvalServiceBase.search(sampleSearchParameters);
     return new PagedItemsView.Builder<PV>()
         .withItemsPerPage(resultPage.getItemsPerPage())
@@ -67,22 +67,22 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
   }
 
   public PV update(I id, PV view, Authentication authentication) {
-    String userFacilityCode = getUserFacilityCode(authentication);
+    String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
-    if (userCanAccessResource(userFacilityCode, existing)) {
-      if (userCannotModifyResource(userFacilityCode, existing)) {
+    if (userCanAccessResource(userInfo, existing)) {
+      if (userCannotModifyResource(userInfo, existing)) {
         throw getCannotEditException();
       }
-      return approvalServiceBase.update(toResourceView(userFacilityCode, view, existing), id);
+      return approvalServiceBase.update(toResourceView(userInfo, view, existing), id);
     }
     throw approvalServiceBase.getNotFoundException();
   }
 
   public PV delete(I id, Authentication authentication) {
-    String userFacilityCode = getUserFacilityCode(authentication);
+    String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
-    if (userCanAccessResource(userFacilityCode, existing)) {
-      if (userCannotModifyResource(userFacilityCode, existing)) {
+    if (userCanAccessResource(userInfo, existing)) {
+      if (userCannotModifyResource(userInfo, existing)) {
         throw getCannotEditException();
       }
       return approvalServiceBase.delete(id);
@@ -90,7 +90,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     throw approvalServiceBase.getNotFoundException();
   }
 
-  private String getUserFacilityCode(Authentication authentication) {
+  protected String getUserInfo(Authentication authentication) {
     CuratorsFacilityEntity facility = geosamplesUserRepository.findById(authentication.getName()).orElseThrow(
         () -> new ApiException(HttpStatus.FORBIDDEN, ApiError.builder().build())
     ).getFacility();

@@ -37,17 +37,17 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
   }
 
   @Override
-  protected boolean userCanAccessResource(String userFacilityCode, IntervalView view) {
+  protected boolean userCanAccessResource(String userInfo, IntervalView view) {
     if (view.getImlgs() == null || view.getImlgs().isEmpty()) {
       return false;
     }
     return curatorsSampleTsqpRepository.findByImlgs(view.getImlgs())
-          .map(entity -> entity.getCruiseFacility().getFacility().getFacilityCode().equals(userFacilityCode))
+          .map(entity -> entity.getCruiseFacility().getFacility().getFacilityCode().equals(userInfo))
           .orElse(false);
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userFacilityCode, IntervalView view) {
+  protected boolean userCannotModifyResource(String userInfo, IntervalView view) {
     return view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
@@ -60,7 +60,7 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
   }
 
   @Override
-  protected IntervalView toResourceView(String userFacilityCode, ProviderIntervalView view, @Nullable IntervalView existing) {
+  protected IntervalView toResourceView(String userInfo, ProviderIntervalView view, @Nullable IntervalView existing) {
     if (view.getImlgs() == null || view.getImlgs().isEmpty()) {
       throw new ApiException(
           HttpStatus.BAD_REQUEST,
@@ -114,17 +114,17 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     } else {
       intervalView.setPublish(false);
     }
-    if (userCanAccessResource(userFacilityCode, intervalView)) {
+    if (userCanAccessResource(userInfo, intervalView)) {
       return intervalView;
     }
     throw intervalService.getNotFoundException();
   }
 
   @Override
-  protected IntervalSearchParameters transformSearchParameters(ProviderIntervalSearchParameters searchParameters, String userFacilityCode) {
+  protected IntervalSearchParameters transformSearchParameters(ProviderIntervalSearchParameters searchParameters, String userInfo) {
     IntervalSearchParameters intervalSearchParameters = new IntervalSearchParameters();
 
-    intervalSearchParameters.setFacilityCode(Collections.singletonList(userFacilityCode)); // Important
+    intervalSearchParameters.setFacilityCode(Collections.singletonList(userInfo)); // Important
 
     intervalSearchParameters.setPage(searchParameters.getPage());
     intervalSearchParameters.setItemsPerPage(searchParameters.getItemsPerPage());

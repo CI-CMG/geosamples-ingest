@@ -1,99 +1,21 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class PlatformSearchParameters implements PagingAndSortingParameters {
+public class PlatformSearchParameters extends ProviderPlatformSearchParameters {
 
   private static final List<String> DEFAULT_SORT = Collections.singletonList("platform:asc");
-
-  @Min(1)
-  private int page = 1;
-
-  @Min(1)
-  @Max(200)
-  private int itemsPerPage = 50;
 
   @NotNull
   @Size(min = 1)
   private List<@ValidSort(PlatformView.class) String> order = DEFAULT_SORT;
 
-
-  private List<String> platform = new ArrayList<>(0);
-  private List<Integer> masterId = new ArrayList<>(0);
-  private List<String> icesCode = new ArrayList<>(0);
-  private List<Long> id = new ArrayList<>(0);
-
-  public List<String> getPlatform() {
-    return platform;
-  }
-
-  public void setPlatform(List<String> platform) {
-    if(platform == null) {
-      platform = new ArrayList<>(0);
-    }
-    this.platform = platform;
-  }
-
-  public List<Integer> getMasterId() {
-    return masterId;
-  }
-
-  public void setMasterId(List<Integer> masterId) {
-    if(masterId == null) {
-      masterId = new ArrayList<>(0);
-    }
-    this.masterId = masterId;
-  }
-
-  public List<String> getIcesCode() {
-    return icesCode;
-  }
-
-  public void setIcesCode(List<String> icesCode) {
-    if(icesCode == null) {
-      icesCode = new ArrayList<>(0);
-    }
-    this.icesCode = icesCode;
-  }
-
-  public List<Long> getId() {
-    return id;
-  }
-
-  public void setId(List<Long> id) {
-    if(id == null) {
-      id = new ArrayList<>(0);
-    }
-    this.id = id;
-  }
-
-  @Override
-  public int getPage() {
-    return page;
-  }
-
-  @Override
-  public void setPage(int page) {
-    this.page = page;
-  }
-
-  @Override
-  public int getItemsPerPage() {
-    return itemsPerPage;
-  }
-
-  @Override
-  public void setItemsPerPage(int itemsPerPage) {
-    this.itemsPerPage = itemsPerPage;
-  }
+  private List<String> createdBy = new ArrayList<>(0);
 
   @Override
   public List<String> getOrder() {
@@ -106,5 +28,16 @@ public class PlatformSearchParameters implements PagingAndSortingParameters {
       sort = DEFAULT_SORT;
     }
     this.order = sort;
+  }
+
+  public List<String> getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(List<String> createdBy) {
+    if (createdBy == null) {
+      createdBy = new ArrayList<>(0);
+    }
+    this.createdBy = createdBy;
   }
 }

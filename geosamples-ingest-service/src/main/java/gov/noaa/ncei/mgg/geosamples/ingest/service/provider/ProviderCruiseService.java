@@ -31,12 +31,12 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected boolean userCanAccessResource(String userFacilityCode, CruiseView view) {
-    return view.getFacilityCodes().stream().anyMatch(facilityCode -> facilityCode.equals(userFacilityCode));
+  protected boolean userCanAccessResource(String userInfo, CruiseView view) {
+    return view.getFacilityCodes().stream().anyMatch(facilityCode -> facilityCode.equals(userInfo));
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userFacilityCode, CruiseView view) {
+  protected boolean userCannotModifyResource(String userInfo, CruiseView view) {
     return view.getFacilityCodes().size() > 1 || view.getApprovalState().equals(ApprovalState.APPROVED);
   }
 
@@ -51,10 +51,10 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected CruiseView toResourceView(String userFacilityCode, ProviderCruiseView view, @Nullable CruiseView existing) {
+  protected CruiseView toResourceView(String userInfo, ProviderCruiseView view, @Nullable CruiseView existing) {
     CruiseView cruiseView = new CruiseView();
 
-    cruiseView.setFacilityCodes(Collections.singletonList(userFacilityCode)); // Important
+    cruiseView.setFacilityCodes(Collections.singletonList(userInfo)); // Important
 
     cruiseView.setId(view.getId());
     cruiseView.setYear(view.getYear());
@@ -72,10 +72,10 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected CruiseSearchParameters transformSearchParameters(ProviderCruiseSearchParameters searchParameters, String userFacilityCode) {
+  protected CruiseSearchParameters transformSearchParameters(ProviderCruiseSearchParameters searchParameters, String userInfo) {
     CruiseSearchParameters cruiseSearchParameters = new CruiseSearchParameters();
 
-    cruiseSearchParameters.setFacilityCodeEquals(Collections.singletonList(userFacilityCode)); // Important
+    cruiseSearchParameters.setFacilityCodeEquals(Collections.singletonList(userInfo)); // Important
 
     cruiseSearchParameters.setPage(searchParameters.getPage());
     cruiseSearchParameters.setItemsPerPage(searchParameters.getItemsPerPage());

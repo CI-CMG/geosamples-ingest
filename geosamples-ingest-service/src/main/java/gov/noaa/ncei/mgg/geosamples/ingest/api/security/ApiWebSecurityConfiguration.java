@@ -64,6 +64,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/api/v1/platform", "/api/v1/platform/*").hasAuthority(Authorities.ROLE_PLATFORM_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/platform").hasAuthority(Authorities.ROLE_PLATFORM_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/platform/*").hasAuthority(Authorities.ROLE_PLATFORM_UPDATE.toString())
+        .antMatchers(HttpMethod.PATCH, "/api/v1/platform/review/*").hasAuthority(Authorities.ROLE_PLATFORM_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/platform/*").hasAuthority(Authorities.ROLE_PLATFORM_DELETE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/province", "/api/v1/province/*").hasAuthority(Authorities.ROLE_PROVINCE_READ.toString())

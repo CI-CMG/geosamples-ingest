@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/platform")
-public class PlatformController extends ControllerBase<PlatformView, PlatformSearchParameters, Long, PlatformService> {
+public class PlatformController extends ApprovalControllerBase<PlatformView, PlatformSearchParameters, Long, PlatformService> {
 
   @Autowired
   public PlatformController(PlatformService service) {

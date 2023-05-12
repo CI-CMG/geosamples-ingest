@@ -869,6 +869,122 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
       assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
       assertEquals(originalPublish, sampleEntity.isPublish());
+      assertEquals(ApprovalState.PENDING, sampleEntity.getApproval().getApprovalState());
+    });
+  }
+
+  @Test
+  public void testUpdateProviderSampleFromRejected() throws Exception {
+    createSamples();
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    transactionTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found")
+          );
+
+      final boolean originalPublish = sampleEntity.isPublish();
+
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.REJECTED);
+      sampleEntity.setApproval(approvalEntity);
+      sampleEntity = curatorsSampleTsqpRepository.save(sampleEntity);
+
+      ProviderSampleView view = new ProviderSampleView();
+      view.setImlgs(sampleEntity.getImlgs());
+      view.setCruise(sampleEntity.getCruise().getCruiseName());
+      view.setSample(sampleEntity.getSample());
+      view.setPlatform(sampleEntity.getCruisePlatform().getPlatform().getPlatform());
+      view.setDeviceCode(sampleEntity.getDevice().getDeviceCode());
+      view.setBeginDate(sampleEntity.getBeginDate());
+      view.setEndDate(sampleEntity.getEndDate());
+      view.setLat(sampleEntity.getLat() + 1);
+      view.setEndLat(sampleEntity.getEndLat() + 1);
+      view.setLon(sampleEntity.getLon() + 1);
+      view.setEndLon(sampleEntity.getEndLon() + 1);
+      view.setLatLonOrig(sampleEntity.getLatLonOrig());
+      view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
+      view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
+      view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
+      view.setCoredLength(Double.valueOf(sampleEntity.getCoredLength()));
+      view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
+      view.setPi(sampleEntity.getPi() + "-NEW");
+      view.setLake(sampleEntity.getLake() + "-NEW");
+      view.setOtherLink(sampleEntity.getOtherLink());
+      view.setIgsn(sampleEntity.getIgsn());
+      view.setSampleComments(sampleEntity.getSampleComments());
+      view.setShowSampl(sampleEntity.getShowSampl());
+
+      Authentication authentication = mock(Authentication.class);
+      when(authentication.getName()).thenReturn(userEntity.getUserName());
+      ProviderSampleView result = providerSampleService.update(sampleEntity.getImlgs(), view, authentication);
+
+      assertEquals(view.getImlgs(), result.getImlgs());
+      assertEquals(view.getCruise(), result.getCruise());
+      assertEquals(view.getSample(), result.getSample());
+      assertEquals(view.getPlatform(), result.getPlatform());
+      assertEquals(view.getDeviceCode(), result.getDeviceCode());
+      assertEquals(view.getBeginDate(), result.getBeginDate());
+      assertEquals(view.getEndDate(), result.getEndDate());
+      assertEquals(view.getLat(), result.getLat());
+      assertEquals(view.getEndLat(), result.getEndLat());
+      assertEquals(view.getLon(), result.getLon());
+      assertEquals(view.getEndLon(), result.getEndLon());
+      assertEquals(view.getLatLonOrig(), result.getLatLonOrig());
+      assertEquals(view.getWaterDepth(), result.getWaterDepth());
+      assertEquals(view.getEndWaterDepth(), result.getEndWaterDepth());
+      assertEquals(view.getStorageMethCode(), result.getStorageMethCode());
+      assertEquals(view.getCoredLength(), result.getCoredLength());
+      assertEquals(view.getCoredDiam(), result.getCoredDiam());
+      assertEquals(view.getPi(), result.getPi());
+      assertEquals(view.getLake(), result.getLake());
+      assertEquals(view.getOtherLink(), result.getOtherLink());
+      assertEquals(view.getIgsn(), result.getIgsn());
+      assertEquals(view.getSampleComments(), result.getSampleComments());
+      assertEquals(view.getShowSampl(), result.getShowSampl());
+
+      sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found")
+          );
+
+      assertEquals(result.getImlgs(), sampleEntity.getImlgs());
+      assertEquals(result.getCruise(), sampleEntity.getCruise().getCruiseName());
+      assertEquals(result.getSample(), sampleEntity.getSample());
+      assertEquals(result.getPlatform(), sampleEntity.getCruisePlatform().getPlatform().getPlatform());
+      assertEquals(result.getDeviceCode(), sampleEntity.getDevice().getDeviceCode());
+      assertEquals(result.getBeginDate(), sampleEntity.getBeginDate());
+      assertEquals(result.getEndDate(), sampleEntity.getEndDate());
+      assertEquals(result.getLat(), sampleEntity.getLat());
+      assertEquals(result.getEndLat(), sampleEntity.getEndLat());
+      assertEquals(result.getLon(), sampleEntity.getLon());
+      assertEquals(result.getEndLon(), sampleEntity.getEndLon());
+      assertEquals(result.getLatLonOrig(), sampleEntity.getLatLonOrig());
+      assertEquals(result.getWaterDepth(), sampleEntity.getWaterDepth());
+      assertEquals(result.getEndWaterDepth(), sampleEntity.getEndWaterDepth());
+      assertEquals(result.getStorageMethCode(), sampleEntity.getStorageMeth().getStorageMethCode());
+      assertEquals(result.getCoredLength(), Double.valueOf(sampleEntity.getCoredLength()));
+      assertEquals(result.getCoredDiam(), Double.valueOf(sampleEntity.getCoredDiam()));
+      assertEquals(result.getPi(), sampleEntity.getPi());
+      assertEquals(result.getLake(), sampleEntity.getLake());
+      assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
+      assertEquals(result.getIgsn(), sampleEntity.getIgsn());
+      assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
+      assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
+      assertEquals(originalPublish, sampleEntity.isPublish());
+      assertEquals(ApprovalState.PENDING, sampleEntity.getApproval().getApprovalState());
     });
   }
 

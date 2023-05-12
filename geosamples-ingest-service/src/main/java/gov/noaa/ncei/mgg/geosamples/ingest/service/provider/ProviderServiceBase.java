@@ -2,9 +2,11 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service.provider;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalResource;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ApprovalResourceServiceBase;
@@ -73,7 +75,10 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
       if (userCannotModifyResource(userInfo, existing)) {
         throw getCannotEditException();
       }
-      return approvalServiceBase.update(toResourceView(userInfo, view, existing), id);
+      approvalServiceBase.update(toResourceView(userInfo, view, existing), id);
+      ApprovalView approvalView = new ApprovalView();
+      approvalView.setApprovalState(ApprovalState.PENDING);
+      return approvalServiceBase.updateApproval(approvalView, id);
     }
     throw approvalServiceBase.getNotFoundException();
   }

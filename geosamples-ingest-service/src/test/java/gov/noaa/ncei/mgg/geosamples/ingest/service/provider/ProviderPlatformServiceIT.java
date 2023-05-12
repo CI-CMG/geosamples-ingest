@@ -621,6 +621,69 @@ public class ProviderPlatformServiceIT {
       assertEquals(updateView.getPrefix(), resultEntity.getPrefix());
       assertEquals(updateView.getIcesCode(), resultEntity.getIcesCode());
       assertEquals(updateView.getSourceUri(), resultEntity.getSourceUri());
+      assertEquals(ApprovalState.PENDING, resultEntity.getApproval().getApprovalState());
+    });
+  }
+
+  @Test
+  public void testUpdateProviderPlatformFromRejected() {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
+      geosamplesUserEntity.setUserName("gabby");
+      geosamplesUserEntity.setDisplayName("Gabby");
+      return geosamplesUserRepository.save(geosamplesUserEntity);
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMaster = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setMasterId(1);
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("http://example.com");
+      platform.setCreatedBy(userEntity);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.REJECTED);
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster);
+
+    ProviderPlatformView updateView = new ProviderPlatformView();
+    updateView.setId(platformMaster.getId());
+    updateView.setPlatform("TST2"); // not updatable
+    updateView.setMasterId(2);
+    updateView.setPrefix("TST2");
+    updateView.setIcesCode("TST2");
+    updateView.setSourceUri("http://example.com");
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ProviderPlatformView resultView = providerPlatformService.update(platformMaster.getId(), updateView, authentication);
+
+    assertEquals(updateView.getId(), resultView.getId());
+    assertNotEquals(updateView.getPlatform(), resultView.getPlatform());
+    assertEquals(platformMaster.getPlatform(), resultView.getPlatform());
+    assertEquals(updateView.getMasterId(), resultView.getMasterId());
+    assertEquals(updateView.getPrefix(), resultView.getPrefix());
+    assertEquals(updateView.getIcesCode(), resultView.getIcesCode());
+    assertEquals(updateView.getSourceUri(), resultView.getSourceUri());
+
+    transactionTemplate.executeWithoutResult(s -> {
+      PlatformMasterEntity resultEntity = platformMasterRepository.findById(platformMaster.getId()).orElseThrow(
+          () -> new RuntimeException("Platform not found")
+      );
+      assertEquals(updateView.getId(), resultEntity.getId());
+      assertNotEquals(updateView.getPlatform(), resultEntity.getPlatform());
+      assertEquals(resultView.getPlatform(), resultEntity.getPlatform());
+      assertEquals(updateView.getMasterId(), resultEntity.getMasterId());
+      assertEquals(updateView.getPrefix(), resultEntity.getPrefix());
+      assertEquals(updateView.getIcesCode(), resultEntity.getIcesCode());
+      assertEquals(updateView.getSourceUri(), resultEntity.getSourceUri());
+      assertEquals(ApprovalState.PENDING, resultEntity.getApproval().getApprovalState());
     });
   }
 

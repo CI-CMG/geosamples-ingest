@@ -34,13 +34,21 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
   }
 
   public V updateApproval(ApprovalView view, I id) {
-    if (!view.getApprovalState().equals(ApprovalState.APPROVED) && !view.getApprovalState().equals(ApprovalState.REJECTED)) {
+    E entity = getRequiredEntity(id);
+    if (entity.getApproval() == null) {
       throw new ApiException(
           HttpStatus.BAD_REQUEST,
-          ApiError.builder().fieldError("approvalState", String.format("Cannot update approval state to: %s", view.getApprovalState())).build()
+          ApiError.builder().error("Cannot update non-existent approval").build()
       );
     }
-    E entity = getRequiredEntity(id);
+    if (view.getApprovalState().equals(ApprovalState.PENDING)) {
+      if (!entity.getApproval().getApprovalState().equals(ApprovalState.REJECTED) && !entity.getApproval().getApprovalState().equals(ApprovalState.PENDING)) {
+        throw new ApiException(
+            HttpStatus.BAD_REQUEST,
+            ApiError.builder().error("Cannot update approved item").build()
+        );
+      }
+    }
     validateParentResourceApproval(entity);
     updateEntityApproval(entity, view);
     return toView(getRepository().save(entity));

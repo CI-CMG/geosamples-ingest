@@ -1000,6 +1000,208 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getIgsn(), interval.getIgsn());
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
       assertEquals(originalPublish, interval.isPublish());
+      assertEquals(ApprovalState.PENDING, interval.getApproval().getApprovalState());
+    });
+  }
+
+  @Test
+  public void testUpdateProviderIntervalFromRejected() throws Exception {
+    createSamples();
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    transactionTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-003"))
+          .findFirst()
+          .orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+
+      CuratorsIntervalEntity interval = sample.getIntervals().stream()
+          .filter(i -> i.getInterval().equals(3))
+          .findFirst()
+          .orElseThrow(
+              () -> new RuntimeException("Interval not found")
+          );
+
+      final boolean originalPublish = interval.isPublish();
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.REJECTED);
+      interval.setApproval(approval);
+      interval = curatorsIntervalRepository.save(interval);
+
+      ProviderIntervalView view = new IntervalView();
+      view.setId(interval.getId());
+      view.setInterval(interval.getInterval());
+      view.setDepthTop(0.);
+      view.setDepthBot(0.);
+      view.setDhCoreId(interval.getDhCoreId());
+      view.setDhCoreLength(1.0);
+      view.setDhCoreInterval(interval.getDhCoreInterval());
+      view.setdTopInDhCore(1.);
+      view.setdBotInDhCore(1.);
+      view.setLithCode1(curatorsLithologyRepository.findByLithologyCode("A").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setLithCode2(curatorsLithologyRepository.findByLithologyCode("B").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setTextCode1(curatorsTextureRepository.findByTextureCode("3").orElseThrow(
+          () -> new RuntimeException("Texture not found")
+      ).getTextureCode());
+      view.setTextCode2(curatorsTextureRepository.findByTextureCode("7").orElseThrow(
+          () -> new RuntimeException("Texture not found")
+      ).getTextureCode());
+      view.setCompCode1(curatorsLithologyRepository.findByLithologyCode("X").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode2(curatorsLithologyRepository.findByLithologyCode("Y").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode3(curatorsLithologyRepository.findByLithologyCode("C").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode4(curatorsLithologyRepository.findByLithologyCode("D").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode5(curatorsLithologyRepository.findByLithologyCode("E").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setCompCode6(curatorsLithologyRepository.findByLithologyCode("F").orElseThrow(
+          () -> new RuntimeException("Lithology not found")
+      ).getLithologyCode());
+      view.setDescription(interval.getDescription());
+      view.setAgeCodes(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
+      view.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
+      view.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
+      view.setWeight(interval.getWeight());
+      view.setRockLithCode(curatorsRockLithRepository.findByRockLithCode("6C").orElseThrow(
+          () -> new RuntimeException("Rock Lithology not found")
+      ).getRockLithCode());
+      view.setRockMinCode(curatorsRockMinRepository.findByRockMinCode("A").orElseThrow(
+          () -> new RuntimeException("Rock Mineralogy not found")
+      ).getRockMinCode());
+      view.setWeathMetaCode(curatorsWeathMetaRepository.findByWeathMetaCode("0").orElseThrow(
+          () -> new RuntimeException("Weathering Metamorphism not found")
+      ).getWeathMetaCode());
+      view.setRemarkCode(curatorsRemarkRepository.findByRemarkCode("0").orElseThrow(
+          () -> new RuntimeException("Remark not found")
+      ).getRemarkCode());
+      view.setMunsellCode(curatorsMunsellRepository.findById("10R 6/1").orElseThrow(
+          () -> new RuntimeException("Munsell not found")
+      ).getMunsellCode());
+      view.setExhausted(true);
+      view.setPhotoLink(interval.getPhotoLink());
+      view.setLake(interval.getLake());
+      view.setUnitNumber(interval.getUnitNumber());
+      view.setIntComments(interval.getIntComments());
+      view.setDhDevice(interval.getDhDevice());
+      view.setCdTop(1.0);
+      view.setCdBot(1.0);
+      view.setIgsn(interval.getIgsn());
+      view.setImlgs(interval.getSample().getImlgs());
+
+      Authentication authentication = mock(Authentication.class);
+      when(authentication.getName()).thenReturn(userEntity.getUserName());
+      ProviderIntervalView result = providerIntervalService.update(interval.getId(), view, authentication);
+
+      assertEquals(view.getId(), result.getId());
+      assertEquals(view.getInterval(), result.getInterval());
+      assertEquals(view.getDepthTop(), result.getDepthTop());
+      assertEquals(view.getDepthBot(), result.getDepthBot());
+      assertEquals(view.getDhCoreId(), result.getDhCoreId());
+      assertEquals(view.getDhCoreLength(), result.getDhCoreLength());
+      assertEquals(view.getDhCoreInterval(), result.getDhCoreInterval());
+      assertEquals(view.getdTopInDhCore(), Math.floor(result.getdTopInDhCore()));
+      assertEquals(view.getdBotInDhCore(), Math.floor(result.getdBotInDhCore()));
+      assertEquals(view.getLithCode1(), result.getLithCode1());
+      assertEquals(view.getLithCode2(), result.getLithCode2());
+      assertEquals(view.getTextCode1(), result.getTextCode1());
+      assertEquals(view.getTextCode2(), result.getTextCode2());
+      assertEquals(view.getCompCode1(), result.getCompCode1());
+      assertEquals(view.getCompCode2(), result.getCompCode2());
+      assertEquals(view.getCompCode3(), result.getCompCode3());
+      assertEquals(view.getCompCode4(), result.getCompCode4());
+      assertEquals(view.getCompCode5(), result.getCompCode5());
+      assertEquals(view.getCompCode6(), result.getCompCode6());
+      assertEquals(view.getDescription(), result.getDescription());
+      assertEquals(view.getAgeCodes(), result.getAgeCodes());
+      assertEquals(view.getAbsoluteAgeTop(), result.getAbsoluteAgeTop());
+      assertEquals(view.getAbsoluteAgeBot(), result.getAbsoluteAgeBot());
+      assertEquals(view.getWeight(), result.getWeight());
+      assertEquals(view.getRockLithCode(), result.getRockLithCode());
+      assertEquals(view.getRockMinCode(), result.getRockMinCode());
+      assertEquals(view.getWeathMetaCode(), result.getWeathMetaCode());
+      assertEquals(view.getRemarkCode(), result.getRemarkCode());
+      assertEquals(view.getMunsellCode(), result.getMunsellCode());
+      assertEquals(view.getExhausted(), result.getExhausted());
+      assertEquals(view.getPhotoLink(), result.getPhotoLink());
+      assertEquals(view.getLake(), result.getLake());
+      assertEquals(view.getUnitNumber(), result.getUnitNumber());
+      assertEquals(view.getIntComments(), result.getIntComments());
+      assertEquals(view.getDhDevice(), result.getDhDevice());
+      assertEquals(view.getCdTop(), result.getCdTop());
+      assertEquals(view.getCdBot(), result.getCdBot());
+      assertEquals(view.getIgsn(), result.getIgsn());
+      assertEquals(view.getImlgs(), result.getImlgs());
+
+      interval = curatorsIntervalRepository.findById(interval.getId()).orElseThrow(
+          () -> new RuntimeException("Interval not found")
+      );
+
+      assertEquals(result.getId(), interval.getId());
+      assertEquals(result.getInterval(), interval.getInterval());
+      assertEquals((int) Math.floor(result.getDepthTop()), interval.getDepthTop());
+      assertEquals((int) Math.floor(result.getDepthBot()), interval.getDepthBot());
+      assertEquals(result.getDhCoreId(), interval.getDhCoreId());
+      assertEquals((int) Math.floor(result.getDhCoreLength()), interval.getDhCoreLength());
+      assertEquals(result.getDhCoreInterval(), interval.getDhCoreInterval());
+      assertEquals((int) Math.floor(result.getdTopInDhCore()), interval.getdTopInDhCore());
+      assertEquals((int) Math.floor(result.getdBotInDhCore()), interval.getdBotInDhCore());
+      assertEquals(result.getLithCode1(), interval.getLith1().getLithologyCode());
+      assertEquals(result.getLithCode2(), interval.getLith2().getLithologyCode());
+      assertEquals(result.getTextCode1(), interval.getText1().getTextureCode());
+      assertEquals(result.getTextCode2(), interval.getText2().getTextureCode());
+      assertEquals(result.getCompCode1(), interval.getComp1().getLithologyCode());
+      assertEquals(result.getCompCode2(), interval.getComp2().getLithologyCode());
+      assertEquals(result.getCompCode3(), interval.getComp3().getLithologyCode());
+      assertEquals(result.getCompCode4(), interval.getComp4().getLithologyCode());
+      assertEquals(result.getCompCode5(), interval.getComp5().getLithologyCode());
+      assertEquals(result.getCompCode6(), interval.getComp6().getLithologyCode());
+      assertEquals(result.getDescription(), interval.getDescription());
+      assertEquals(result.getAgeCodes(), interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
+      assertEquals(result.getAbsoluteAgeTop(), interval.getAbsoluteAgeTop());
+      assertEquals(result.getAbsoluteAgeBot(), interval.getAbsoluteAgeBot());
+      assertEquals(result.getWeight(), interval.getWeight());
+      assertEquals(result.getRockLithCode(), interval.getRockLith().getRockLithCode());
+      assertEquals(result.getRockMinCode(), interval.getRockMin().getRockMinCode());
+      assertEquals(result.getWeathMetaCode(), interval.getWeathMeta().getWeathMetaCode());
+      assertEquals(result.getRemarkCode(), interval.getRemark().getRemarkCode());
+      assertEquals(result.getMunsellCode(), interval.getMunsellCode());
+      assertEquals(result.getExhausted(), interval.getExhaustCode().equals("X"));
+      assertEquals(result.getPhotoLink(), interval.getPhotoLink());
+      assertEquals(result.getLake(), interval.getLake());
+      assertEquals(result.getUnitNumber(), interval.getUnitNumber());
+      assertEquals(result.getIntComments(), interval.getIntComments());
+      assertEquals(result.getDhDevice(), interval.getDhDevice());
+      assertEquals((int) Math.floor(result.getCdTop()), interval.getCmcdTop());
+      assertEquals((int) Math.floor(result.getCdBot()), interval.getCmcdBot());
+      assertEquals(result.getIgsn(), interval.getIgsn());
+      assertEquals(result.getImlgs(), interval.getSample().getImlgs());
+      assertEquals(originalPublish, interval.isPublish());
+      assertEquals(ApprovalState.PENDING, interval.getApproval().getApprovalState());
     });
   }
 

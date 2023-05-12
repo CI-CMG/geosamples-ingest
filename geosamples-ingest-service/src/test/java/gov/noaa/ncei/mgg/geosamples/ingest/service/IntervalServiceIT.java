@@ -313,17 +313,38 @@ public class IntervalServiceIT {
   }
 
   @Test
-  public void testReviewIntervalChangeToPending() {
+  public void testReviewIntervalChangeToPending() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    Long intervalId = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found")
+          );
+
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval 1 not found")
+      );
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      interval.setApproval(approval);
+      return curatorsIntervalRepository.save(interval).getId();
+    });
+
     ApprovalView approvalView = new ApprovalView();
     approvalView.setApprovalState(ApprovalState.PENDING);
 
-    ApiException exception = assertThrows(ApiException.class, () -> intervalService.updateApproval(approvalView, 1L));
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.updateApproval(approvalView, intervalId));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
-    assertEquals(0, exception.getApiError().getFlashErrors().size());
-    assertEquals(1, exception.getApiError().getFormErrors().size());
-    assertEquals("approvalState", exception.getApiError().getFormErrors().keySet().stream().findFirst().orElse(null));
-    assertEquals(1, exception.getApiError().getFormErrors().get("approvalState").size());
-    assertEquals("Cannot update approval state to: PENDING", exception.getApiError().getFormErrors().get("approvalState").get(0));
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals("Cannot update approved item", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

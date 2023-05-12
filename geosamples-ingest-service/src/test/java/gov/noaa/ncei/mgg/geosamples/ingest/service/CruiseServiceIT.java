@@ -264,17 +264,29 @@ public class CruiseServiceIT {
   }
 
   @Test
-  public void testReviewCruiseChangeToPending() {
+  public void testReviewCruiseChangeToPending() throws Exception {
+    createCruise(Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    Long cruiseId = txTemplate.execute(s -> {
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      cruise.setApproval(approval);
+      cruise.setPublish(true);
+      return curatorsCruiseRepository.save(cruise).getId();
+    });
+
     ApprovalView approvalView = new ApprovalView();
     approvalView.setApprovalState(ApprovalState.PENDING);
 
-    ApiException exception = assertThrows(ApiException.class, () -> cruiseService.updateApproval(approvalView, 1L));
+    ApiException exception = assertThrows(ApiException.class, () -> cruiseService.updateApproval(approvalView, cruiseId));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
-    assertEquals(0, exception.getApiError().getFlashErrors().size());
-    assertEquals(1, exception.getApiError().getFormErrors().size());
-    assertEquals("approvalState", exception.getApiError().getFormErrors().keySet().stream().findFirst().orElse(null));
-    assertEquals(1, exception.getApiError().getFormErrors().get("approvalState").size());
-    assertEquals("Cannot update approval state to: PENDING", exception.getApiError().getFormErrors().get("approvalState").get(0));
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals("Cannot update approved item", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

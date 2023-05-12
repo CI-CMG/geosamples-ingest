@@ -371,17 +371,35 @@ public class SampleServiceIT {
   }
 
   @Test
-  public void testReviewSampleChangeToPending() {
+  public void testReviewSampleChangeToPending() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    String imlgs = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      sample.setApproval(approval);
+      return curatorsSampleTsqpRepository.save(sample).getImlgs();
+    });
+    assertNotNull(imlgs);
+
     ApprovalView approvalView = new ApprovalView();
     approvalView.setApprovalState(ApprovalState.PENDING);
 
-    ApiException exception = assertThrows(ApiException.class, () -> sampleService.updateApproval(approvalView, "TEST"));
+    ApiException exception = assertThrows(ApiException.class, () -> sampleService.updateApproval(approvalView, imlgs));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
-    assertEquals(0, exception.getApiError().getFlashErrors().size());
-    assertEquals(1, exception.getApiError().getFormErrors().size());
-    assertEquals("approvalState", exception.getApiError().getFormErrors().keySet().stream().findFirst().orElse(null));
-    assertEquals(1, exception.getApiError().getFormErrors().get("approvalState").size());
-    assertEquals("Cannot update approval state to: PENDING", exception.getApiError().getFormErrors().get("approvalState").get(0));
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals("Cannot update approved item", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

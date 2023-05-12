@@ -71,6 +71,7 @@ public class PlatformServiceIT {
 
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
       approval.setApprovalState(ApprovalState.PENDING);
+      platform.setApproval(approval);
 
       return platformMasterRepository.save(platform);
     });
@@ -126,16 +127,29 @@ public class PlatformServiceIT {
 
   @Test
   public void testReviewPlatformChangeToPending() {
+    PlatformMasterEntity platformEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("TST");
+      platform.setMasterId(1);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+
     ApprovalView approvalView = new ApprovalView();
     approvalView.setApprovalState(ApprovalState.PENDING);
 
-    ApiException exception = assertThrows(ApiException.class, () -> platformService.updateApproval(approvalView, 1L));
+    ApiException exception = assertThrows(ApiException.class, () -> platformService.updateApproval(approvalView, platformEntity.getId()));
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
-    assertEquals(0, exception.getApiError().getFlashErrors().size());
-    assertEquals(1, exception.getApiError().getFormErrors().size());
-    assertEquals("approvalState", exception.getApiError().getFormErrors().keySet().stream().findFirst().orElse(null));
-    assertEquals(1, exception.getApiError().getFormErrors().get("approvalState").size());
-    assertEquals("Cannot update approval state to: PENDING", exception.getApiError().getFormErrors().get("approvalState").get(0));
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals("Cannot update approved item", exception.getApiError().getFlashErrors().get(0));
   }
 
   private void cleanDB() {

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<I>, S extends PagingAndSortingParameters, V, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> extends SearchServiceBase<E, I, S, V, R> {
 
+  protected abstract void validateParentResourceApproval(E entity);
+
   protected void updateEntityApproval(E entity, ApprovalView view) {
     if (entity.getApproval() != null) {
       entity.getApproval().setApprovalState(view.getApprovalState());
@@ -39,6 +41,7 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
       );
     }
     E entity = getRequiredEntity(id);
+    validateParentResourceApproval(entity);
     updateEntityApproval(entity, view);
     return toView(getRepository().save(entity));
   }

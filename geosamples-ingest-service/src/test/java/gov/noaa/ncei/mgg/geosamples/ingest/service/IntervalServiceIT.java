@@ -151,6 +151,12 @@ public class IntervalServiceIT {
       }
       martin.setUserRole(role);
       geosamplesUserRepository.save(martin);
+      curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().ifPresent(sa -> {
+            sa.setApproval(null);
+            curatorsSampleTsqpRepository.save(sa);
+          });
     });
   }
 
@@ -163,6 +169,12 @@ public class IntervalServiceIT {
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
+      curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().ifPresent(sa -> {
+            sa.setApproval(null);
+            curatorsSampleTsqpRepository.save(sa);
+          });
     });
   }
 
@@ -204,6 +216,58 @@ public class IntervalServiceIT {
       assertEquals(ApprovalState.APPROVED, interval.getApproval().getApprovalState());
       assertEquals("Looks good to me", interval.getApproval().getComment());
     });
+  }
+
+  @Test
+  public void testReviewIntervalSampleNotApproved() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found")
+          );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+
+      curatorsSampleTsqpRepository.save(sample);
+    });
+
+    CuratorsIntervalEntity intervalEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found")
+          );
+
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval 1 not found")
+      );
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+
+      interval.setApproval(approval);
+      return curatorsIntervalRepository.save(interval);
+    });
+    assertNotNull(intervalEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.APPROVED);
+    approvalView.setComment("Looks good to me");
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.updateApproval(approvalView, intervalEntity.getId()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(String.format("Sample %s is not approved", intervalEntity.getSample().getImlgs()), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

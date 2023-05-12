@@ -26,6 +26,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseReposito
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
@@ -107,6 +108,9 @@ public class CruiseServiceIT {
   @Autowired
   private CuratorsCruiseRepository curatorsCruiseRepository;
 
+  @Autowired
+  private PlatformMasterRepository platformMasterRepository;
+
   @BeforeEach
   public void before() {
     txTemplate.executeWithoutResult(s -> {
@@ -126,6 +130,10 @@ public class CruiseServiceIT {
       }
       martin.setUserRole(role);
       geosamplesUserRepository.save(martin);
+      platformMasterRepository.findByPlatformNormalized("AFRICAN QUEEN").ifPresent((p) -> {
+        p.setApproval(null);
+        platformMasterRepository.save(p);
+      });
     });
   }
 
@@ -135,6 +143,10 @@ public class CruiseServiceIT {
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
+      platformMasterRepository.findByPlatformNormalized("AFRICAN QUEEN").ifPresent((p) -> {
+        p.setApproval(null);
+        platformMasterRepository.save(p);
+      });
     });
   }
 
@@ -177,6 +189,44 @@ public class CruiseServiceIT {
       assertEquals(ApprovalState.APPROVED, resultCruise.getApproval().getApprovalState());
       assertEquals("Looks good to me", resultCruise.getApproval().getComment());
     });
+  }
+
+  @Test
+  public void testReviewCruisePlatformNotApproved() throws Exception {
+    createCruise(Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    txTemplate.executeWithoutResult(s -> {
+      PlatformMasterEntity platform = platformMasterRepository.findByPlatformNormalized("AFRICAN QUEEN").orElseThrow(
+          () -> new RuntimeException("Platform not found")
+      );
+      GeosamplesApprovalEntity platformApproval = new GeosamplesApprovalEntity();
+      platformApproval.setApprovalState(ApprovalState.PENDING);
+      platform.setApproval(platformApproval);
+      platformMasterRepository.save(platform);
+    });
+
+    CuratorsCruiseEntity cruiseEntity = txTemplate.execute(s -> {
+
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+
+      GeosamplesApprovalEntity cruiseApproval = new GeosamplesApprovalEntity();
+      cruiseApproval.setApprovalState(ApprovalState.PENDING);
+      cruise.setApproval(cruiseApproval);
+
+      return curatorsCruiseRepository.save(cruise);
+    });
+    assertNotNull(cruiseEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.APPROVED);
+
+    ApiException exception = assertThrows(ApiException.class, () -> cruiseService.updateApproval(approvalView, cruiseEntity.getId()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Platform African Queen is not approved", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

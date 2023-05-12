@@ -367,4 +367,17 @@ public class SampleService extends
   protected CuratorsSampleTsqpRepository getRepository() {
     return curatorsSampleTsqpRepository;
   }
+
+  @Override
+  protected void validateParentResourceApproval(CuratorsSampleTsqpEntity entity) {
+    CuratorsCruiseEntity cruise = entity.getCruise();
+    if (cruise.getApproval() != null) {
+      if (!cruise.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+        throw new ApiException(
+            HttpStatus.BAD_REQUEST,
+            ApiError.builder().error(String.format("Cruise %s (%s) is not approved", cruise.getCruiseName(), cruise.getYear())).build()
+        );
+      }
+    }
+  }
 }

@@ -14,6 +14,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
@@ -156,6 +157,11 @@ public class SampleServiceIT {
       }
       martin.setUserRole(role);
       geosamplesUserRepository.save(martin);
+
+      curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).ifPresent((c) -> {
+        c.setApproval(null);
+        curatorsCruiseRepository.save(c);
+      });
     });
   }
 
@@ -168,6 +174,10 @@ public class SampleServiceIT {
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
+      curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).ifPresent((c) -> {
+        c.setApproval(null);
+        curatorsCruiseRepository.save(c);
+      });
     });
   }
 
@@ -273,6 +283,51 @@ public class SampleServiceIT {
       assertEquals(ApprovalState.APPROVED, sample.getApproval().getApprovalState());
       assertEquals("Looks good to me", sample.getApproval().getComment());
     });
+  }
+
+  @Test
+  public void testReviewSampleCruiseNotApproved() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+          () -> new IllegalStateException("Cruise does not exist: AQ-10")
+      );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      cruise.setApproval(approval);
+      curatorsCruiseRepository.save(cruise);
+    });
+
+    CuratorsSampleTsqpEntity sampleEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      sample.setApproval(approval);
+
+      return curatorsSampleTsqpRepository.save(sample);
+    });
+    assertNotNull(sampleEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.APPROVED);
+    approvalView.setComment("Looks good to me");
+
+    ApiException exception = assertThrows(ApiException.class, () -> sampleService.updateApproval(approvalView, sampleEntity.getImlgs()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Cruise AQ-10 (2021) is not approved", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

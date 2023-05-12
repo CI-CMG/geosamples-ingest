@@ -320,4 +320,16 @@ public class IntervalService extends
     return curatorsIntervalRepository;
   }
 
+  @Override
+  protected void validateParentResourceApproval(CuratorsIntervalEntity entity) {
+    CuratorsSampleTsqpEntity sample = entity.getSample();
+    if (sample.getApproval() != null) {
+      if (!sample.getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+        throw new ApiException(
+            HttpStatus.BAD_REQUEST,
+            ApiError.builder().error(String.format("Sample %s is not approved", sample.getImlgs())).build()
+        );
+      }
+    }
+  }
 }

@@ -220,4 +220,17 @@ public class CruiseService extends
   protected CuratorsCruiseRepository getRepository() {
     return curatorsCruiseRepository;
   }
+
+  @Override
+  protected void validateParentResourceApproval(CuratorsCruiseEntity entity) {
+    entity.getPlatformMappings().forEach(pm -> {
+      if (pm.getPlatform().getApproval() != null) {
+        if (!pm.getPlatform().getApproval().getApprovalState().equals(ApprovalState.APPROVED)) {
+          throw new ApiException(
+              HttpStatus.BAD_REQUEST,
+              ApiError.builder().error(String.format("Platform %s is not approved", pm.getPlatform().getPlatform())).build());
+        }
+      }
+    });
+  }
 }

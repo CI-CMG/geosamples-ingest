@@ -81,6 +81,11 @@ public class PlatformService extends
   }
 
   @Override
+  protected void validateParentResourceApproval(PlatformMasterEntity entity) {
+    // platforms have no parents
+  }
+
+  @Override
   protected void updateEntityApproval(PlatformMasterEntity entity, ApprovalView view) {
     boolean publish = entity.isPublish();
     if (entity.getApproval() != null && entity.getApproval().getApprovalState().equals(ApprovalState.APPROVED) && !view.getApprovalState().equals(ApprovalState.APPROVED)) {

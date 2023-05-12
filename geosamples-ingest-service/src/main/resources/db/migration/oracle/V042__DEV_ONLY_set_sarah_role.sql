@@ -1,0 +1,1 @@
+update ${schema_name}.GEOSAMPLES_USER set ROLE_ID = (select ROLE_ID from ${schema_name}.GEOSAMPLES_ROLE where ROLE_NAME = 'Admin') where USER_NAME = 'sarah';

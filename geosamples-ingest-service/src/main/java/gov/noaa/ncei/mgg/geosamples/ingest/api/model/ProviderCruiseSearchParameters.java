@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +23,15 @@ public class ProviderCruiseSearchParameters implements PagingAndSortingParameter
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(ProviderCruiseView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(ProviderCruiseWriteView.class) String> order = DEFAULT_SORT;
 
   private List<String> cruiseNameContains = new ArrayList<>(0);
   private List<String> cruiseNameEquals = new ArrayList<>(0);
   private List<Long> year = new ArrayList<>(0);
   private List<Boolean> publish = new ArrayList<>(0);
   private List<String> platformEquals = new ArrayList<>(0);
+
+  private List<ApprovalState> approvalState = new ArrayList<>(0);
   private List<Long> id = new ArrayList<>(0);
 
   public List<String> getCruiseNameContains() {
@@ -95,6 +98,17 @@ public class ProviderCruiseSearchParameters implements PagingAndSortingParameter
       id = new ArrayList<>(0);
     }
     this.id = id;
+  }
+
+  public List<ApprovalState> getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(List<ApprovalState> approvalState) {
+    if (approvalState == null) {
+      approvalState = new ArrayList<>(0);
+    }
+    this.approvalState = approvalState;
   }
 
   @Override

@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.JwksGenTest;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
@@ -55,6 +57,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -325,7 +328,104 @@ public class CruiseServiceIT {
     assertEquals(String.format("Cruise %s (%s) is not approved", updateCruiseView.getCruiseName(), updateCruiseView.getYear()), exception.getApiError().getFlashErrors().get(0));
   }
 
+  @Test
+  public void testGetApproval() throws Exception {
+    createCruise(Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    Long cruiseId = txTemplate.execute(s -> {
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      approval.setComment("Looks good");
+      cruise.setApproval(approval);
+      cruise.setPublish(true);
+      return curatorsCruiseRepository.save(cruise).getId();
+    });
+
+    ApprovalView approvalView = cruiseService.getApproval(cruiseId);
+    assertEquals(ApprovalState.APPROVED, approvalView.getApprovalState());
+    assertEquals("Looks good", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() throws Exception {
+    createCruise(Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    Long cruiseId = txTemplate.execute(s -> curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+        () -> new RuntimeException("Cruise not found")
+    ).getId());
+
+    ApiException exception = assertThrows(ApiException.class, () -> cruiseService.getApproval(cruiseId));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testSearchByApprovalState() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    txTemplate.executeWithoutResult(s -> {
+      CuratorsCruiseEntity cruise1 = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+      GeosamplesApprovalEntity approval1 = new GeosamplesApprovalEntity();
+      approval1.setApprovalState(ApprovalState.APPROVED);
+      cruise1.setApproval(approval1);
+      curatorsCruiseRepository.save(cruise1);
+
+      CuratorsCruiseEntity cruise2 = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-11", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+      GeosamplesApprovalEntity approval2 = new GeosamplesApprovalEntity();
+      approval2.setApprovalState(ApprovalState.APPROVED);
+      cruise2.setApproval(approval2);
+      curatorsCruiseRepository.save(cruise2);
+
+      CuratorsCruiseEntity cruise3 = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-12", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+      GeosamplesApprovalEntity approval3 = new GeosamplesApprovalEntity();
+      approval3.setApprovalState(ApprovalState.REJECTED);
+      cruise3.setApproval(approval3);
+      curatorsCruiseRepository.save(cruise3);
+
+      CuratorsCruiseEntity cruise4 = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-01", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+      GeosamplesApprovalEntity approval4 = new GeosamplesApprovalEntity();
+      approval4.setApprovalState(ApprovalState.PENDING);
+      cruise4.setApproval(approval4);
+      curatorsCruiseRepository.save(cruise4);
+    });
+
+    CruiseSearchParameters searchParameters = new CruiseSearchParameters();
+    searchParameters.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<CruiseView> cruiseViews = cruiseService.search(searchParameters);
+    assertEquals(2, cruiseViews.getItems().size());
+    assertEquals(2, cruiseViews.getTotalItems());
+    assertEquals(1, cruiseViews.getTotalPages());
+    assertEquals(1, cruiseViews.getPage());
+    assertEquals(10, cruiseViews.getItemsPerPage());
+
+    assertEquals("AQ-10", cruiseViews.getItems().get(0).getCruiseName());
+    assertEquals("AQ-11", cruiseViews.getItems().get(1).getCruiseName());
+  }
+
   private void createCruise(List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
+    createCruise("AQ-10", facilityCodes, platforms, legs);
+  }
+
+  private void createCruise(@Nullable String cruiseId, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -333,7 +433,7 @@ public class CruiseServiceIT {
     headers.setBearerAuth(JwksGenTest.createJwt("martin"));
 
     CruiseView cruiseView = new CruiseView();
-    cruiseView.setCruiseName("AQ-10");
+    cruiseView.setCruiseName(cruiseId);
     cruiseView.setYear(2021);
     cruiseView.setPublish(true);
     cruiseView.setFacilityCodes(facilityCodes);

@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
     "cruiseName",
     "publish"
 })
-public class ProviderCruiseView {
+public class ProviderCruiseWriteView {
   private Long id;
 
   @NotNull

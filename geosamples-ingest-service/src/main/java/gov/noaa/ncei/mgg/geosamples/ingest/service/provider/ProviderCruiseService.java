@@ -5,7 +5,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseSearchParameters;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseWriteView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 
-public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCruiseEntity, ProviderCruiseSearchParameters, CruiseSearchParameters, ProviderCruiseView, CruiseView, CuratorsCruiseRepository> {
+public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCruiseEntity, ProviderCruiseSearchParameters, CruiseSearchParameters, ProviderCruiseWriteView, CruiseView, CuratorsCruiseRepository> {
 
   @Autowired
   protected ProviderCruiseService(
@@ -51,7 +51,7 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected CruiseView toResourceView(String userInfo, ProviderCruiseView view, @Nullable CruiseView existing) {
+  protected CruiseView toResourceView(String userInfo, ProviderCruiseWriteView view, @Nullable CruiseView existing) {
     CruiseView cruiseView = new CruiseView();
 
     cruiseView.setFacilityCodes(Collections.singletonList(userInfo)); // Important
@@ -86,6 +86,7 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
     cruiseSearchParameters.setPublish(searchParameters.getPublish());
     cruiseSearchParameters.setPlatformEquals(searchParameters.getPlatformEquals());
     cruiseSearchParameters.setId(searchParameters.getId());
+    cruiseSearchParameters.setApprovalState(searchParameters.getApprovalState());
     return cruiseSearchParameters;
   }
 }

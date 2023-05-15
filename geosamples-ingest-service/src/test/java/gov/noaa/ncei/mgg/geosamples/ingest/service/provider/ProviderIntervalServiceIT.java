@@ -662,7 +662,7 @@ public class ProviderIntervalServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    PagedItemsView<ProviderIntervalView> result = providerIntervalService.search(searchParameters, authentication);
+    PagedItemsView<IntervalView> result = providerIntervalService.search(searchParameters, authentication);
 
     assertEquals(1, result.getPage());
     assertEquals(10, result.getItemsPerPage());
@@ -795,7 +795,7 @@ public class ProviderIntervalServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    PagedItemsView<ProviderIntervalView> result = providerIntervalService.search(searchParameters, authentication);
+    PagedItemsView<IntervalView> result = providerIntervalService.search(searchParameters, authentication);
     assertEquals(0, result.getItems().size());
     assertEquals(0, result.getTotalPages());
     assertEquals(0, result.getTotalItems());

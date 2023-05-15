@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
     "cruiseName",
     "publish"
 })
-public class CruiseView extends ProviderCruiseView {
+public class CruiseView extends ProviderCruiseWriteView {
   private ApprovalState approvalState;
 
   private List<String> facilityCodes = new ArrayList<>(0);

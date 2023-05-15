@@ -13,6 +13,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEnti
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
@@ -65,6 +66,7 @@ public class CruiseService extends
     List<String> facilityCodesEquals = searchParameters.getFacilityCodeEquals().stream().map(s -> s.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<String> platformsEquals = searchParameters.getPlatformEquals().stream().map(p -> p.trim().toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<Long> id = searchParameters.getId();
+    List<ApprovalState> approvalState = searchParameters.getApprovalState();
 
 
     if (!cruiseNameContains.isEmpty()) {
@@ -89,6 +91,12 @@ public class CruiseService extends
     }
     if (!id.isEmpty()) {
       specs.add(SearchUtils.equal(id, CuratorsCruiseEntity_.ID));
+    }
+    if (!approvalState.isEmpty()) {
+      specs.add(SearchUtils.equal(
+          approvalState.stream().map(ApprovalState::name).collect(Collectors.toList()),
+          (e) -> e.get(CuratorsCruiseEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
+      ));
     }
 
     return specs;

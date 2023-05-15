@@ -17,6 +17,21 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
 
   protected abstract void validateParentResourceApproval(E entity);
 
+  public ApprovalView getApproval(I id) {
+    E entity = getRequiredEntity(id);
+    ApprovalView view = new ApprovalView();
+    if (entity.getApproval() != null) {
+      view.setApprovalState(entity.getApproval().getApprovalState());
+      view.setComment(entity.getApproval().getComment());
+    } else {
+      throw new ApiException(
+          HttpStatus.NOT_FOUND,
+          ApiError.builder().error("Approval does not exist").build()
+      );
+    }
+    return view;
+  }
+
   protected void updateEntityApproval(E entity, ApprovalView view) {
     if (entity.getApproval() != null) {
       entity.getApproval().setApprovalState(view.getApprovalState());

@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller.provider;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.provider.ProviderServiceBase;
@@ -25,7 +26,7 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public PagedItemsView<PV> search(@Valid PS searchParameters, Authentication authentication) {
+  public PagedItemsView<V> search(@Valid PS searchParameters, Authentication authentication) {
     return service.search(searchParameters, authentication);
   }
 
@@ -37,12 +38,17 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
   }
 
   @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public PV get(@PathVariable("id") I id, Authentication authentication) {
+  public V get(@PathVariable("id") I id, Authentication authentication) {
     return service.get(replaceSlash(id), authentication);
   }
 
+  @GetMapping(path = "/approval/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ApprovalView getApproval(@PathVariable("id") I id, Authentication authentication) {
+    return service.getApproval(replaceSlash(id), authentication);
+  }
+
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public PV create(@Valid @RequestBody PV view, Authentication authentication) {
+  public V create(@Valid @RequestBody PV view, Authentication authentication) {
     try {
       return service.create(view, authentication);
     } catch (DataIntegrityViolationException e) {
@@ -51,7 +57,7 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
   }
 
   @PutMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public PV update(@Valid @RequestBody PV view, @PathVariable("id") I id, Authentication authentication) {
+  public V update(@Valid @RequestBody PV view, @PathVariable("id") I id, Authentication authentication) {
     try {
       return service.update(replaceSlash(id), view, authentication);
     } catch (DataIntegrityViolationException e) {
@@ -60,7 +66,7 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
   }
 
   @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public PV delete(@PathVariable("id") I id, Authentication authentication) {
+  public V delete(@PathVariable("id") I id, Authentication authentication) {
     return service.delete(replaceSlash(id), authentication);
   }
 

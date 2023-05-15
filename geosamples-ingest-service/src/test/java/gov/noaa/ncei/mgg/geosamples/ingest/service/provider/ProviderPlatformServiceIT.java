@@ -344,7 +344,7 @@ public class ProviderPlatformServiceIT {
     searchParameters.setOrder(Collections.singletonList("platform:asc"));
     searchParameters.setPlatform(Collections.singletonList("TST"));
 
-    PagedItemsView<ProviderPlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
+    PagedItemsView<PlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
     assertEquals(1, pagedItemsView.getPage());
     assertEquals(4, pagedItemsView.getItemsPerPage());
     assertEquals(4, pagedItemsView.getTotalItems());
@@ -454,7 +454,7 @@ public class ProviderPlatformServiceIT {
     searchParameters.setOrder(Collections.singletonList("platform:asc"));
     searchParameters.setPlatform(Collections.singletonList("TST"));
 
-    PagedItemsView<ProviderPlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
+    PagedItemsView<PlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
     assertEquals(1, pagedItemsView.getPage());
     assertEquals(4, pagedItemsView.getItemsPerPage());
     assertEquals(0, pagedItemsView.getTotalItems());
@@ -527,7 +527,7 @@ public class ProviderPlatformServiceIT {
     searchParameters.setOrder(Collections.singletonList("platform:asc"));
     searchParameters.setPlatform(Collections.singletonList("TST"));
 
-    PagedItemsView<ProviderPlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
+    PagedItemsView<PlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
     assertEquals(1, pagedItemsView.getPage());
     assertEquals(4, pagedItemsView.getItemsPerPage());
     assertEquals(4, pagedItemsView.getTotalItems());

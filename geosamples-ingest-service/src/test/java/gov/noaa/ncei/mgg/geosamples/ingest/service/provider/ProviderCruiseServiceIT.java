@@ -8,8 +8,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseSearchParameters;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseWriteView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
@@ -172,7 +174,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(platformEntity);
 
-    ProviderCruiseView cruise = new ProviderCruiseView();
+    ProviderCruiseWriteView cruise = new ProviderCruiseWriteView();
     cruise.setYear(2020);
     cruise.setCruiseName("Test Cruise");
     cruise.setPlatforms(Collections.singletonList(platformEntity.getPlatform()));
@@ -180,7 +182,7 @@ public class ProviderCruiseServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn("gabby");
-    ProviderCruiseView created = providerCruiseService.create(cruise, authentication);
+    ProviderCruiseWriteView created = providerCruiseService.create(cruise, authentication);
 
     assertEquals(cruise.getYear(), created.getYear());
     assertEquals(cruise.getCruiseName(), created.getCruiseName());
@@ -271,7 +273,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName());
     view.setPlatforms(Collections.singletonList(platformEntity.getPlatform()));
@@ -293,7 +295,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(userEntity);
 
-    ProviderCruiseView cruise = new ProviderCruiseView();
+    ProviderCruiseWriteView cruise = new ProviderCruiseWriteView();
     cruise.setYear(2020);
     cruise.setCruiseName("Test Cruise");
     cruise.setPlatforms(Collections.singletonList("TST"));
@@ -363,7 +365,7 @@ public class ProviderCruiseServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn("gabby");
-      ProviderCruiseView view = providerCruiseService.get(cruise.getId(), authentication);
+      ProviderCruiseWriteView view = providerCruiseService.get(cruise.getId(), authentication);
 
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
@@ -621,7 +623,7 @@ public class ProviderCruiseServiceIT {
       ProviderCruiseSearchParameters searchParameters = new ProviderCruiseSearchParameters();
       searchParameters.setPage(1);
       searchParameters.setItemsPerPage(10);
-      PagedItemsView<ProviderCruiseView> results = providerCruiseService.search(searchParameters, authentication);
+      PagedItemsView<CruiseView> results = providerCruiseService.search(searchParameters, authentication);
       assertNotNull(results);
       assertEquals(2, results.getTotalItems());
       assertEquals(1, results.getPage());
@@ -787,13 +789,230 @@ public class ProviderCruiseServiceIT {
     ProviderCruiseSearchParameters searchParameters = new ProviderCruiseSearchParameters();
     searchParameters.setPage(1);
     searchParameters.setItemsPerPage(10);
-    PagedItemsView<ProviderCruiseView> results = providerCruiseService.search(searchParameters, authentication);
+    PagedItemsView<CruiseView> results = providerCruiseService.search(searchParameters, authentication);
     assertNotNull(results);
     assertEquals(0, results.getTotalItems());
     assertEquals(1, results.getPage());
     assertEquals(10, results.getItemsPerPage());
     assertEquals(0, results.getTotalPages());
     assertEquals(0, results.getItems().size());
+  }
+
+  @Test
+  public void testGetApproval() {
+    CuratorsFacilityEntity facility = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST");
+      f.setFacility("Test Facility");
+      f.setInstCode("TST");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+    assertNotNull(facility);
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(facility);
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMasterEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMasterEntity);
+
+    CuratorsCruiseEntity cruiseEntity = transactionTemplate.execute(s -> {
+      CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(false);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      CuratorsCruisePlatformEntity platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformMasterEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      CuratorsLegEntity leg = new CuratorsLegEntity();
+      leg.setLegName("TST");
+      leg.setCruise(cruise);
+      leg.setPublish(false);
+      cruise.addLeg(leg);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("TEST");
+      cruise.setApproval(approval);
+
+      return curatorsCruiseRepository.save(cruise);
+    });
+    assertNotNull(cruiseEntity);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApprovalView approvalView = providerCruiseService.getApproval(cruiseEntity.getId(), authentication);
+    assertEquals(ApprovalState.PENDING, approvalView.getApprovalState());
+    assertEquals("TEST", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() {
+    CuratorsFacilityEntity facility = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST");
+      f.setFacility("Test Facility");
+      f.setInstCode("TST");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+    assertNotNull(facility);
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(facility);
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMasterEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMasterEntity);
+
+    CuratorsCruiseEntity cruiseEntity = transactionTemplate.execute(s -> {
+      CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(false);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      CuratorsCruisePlatformEntity platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformMasterEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      CuratorsLegEntity leg = new CuratorsLegEntity();
+      leg.setLegName("TST");
+      leg.setCruise(cruise);
+      leg.setPublish(false);
+      cruise.addLeg(leg);
+
+      return curatorsCruiseRepository.save(cruise);
+    });
+    assertNotNull(cruiseEntity);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerCruiseService.getApproval(cruiseEntity.getId(), authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApprovalCruiseDoesNotBelongToProvider() {
+    CuratorsFacilityEntity facility1 = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST");
+      f.setFacility("Test Facility");
+      f.setInstCode("TST");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+    assertNotNull(facility1);
+
+    CuratorsFacilityEntity facility2 = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST2");
+      f.setFacility("Test Facility 2");
+      f.setInstCode("TS2");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+
+    GeosamplesUserEntity userEntity1 = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(facility1);
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity1);
+
+    transactionTemplate.executeWithoutResult(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby2");
+      user.setDisplayName("Gabby2");
+      user.setFacility(facility2);
+      geosamplesUserRepository.save(user);
+    });
+
+    PlatformMasterEntity platformMasterEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMasterEntity);
+
+    CuratorsCruiseEntity cruiseEntity = transactionTemplate.execute(s -> {
+      CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(false);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility2);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      CuratorsCruisePlatformEntity platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformMasterEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      CuratorsLegEntity leg = new CuratorsLegEntity();
+      leg.setLegName("TST");
+      leg.setCruise(cruise);
+      leg.setPublish(false);
+      cruise.addLeg(leg);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("TEST");
+      cruise.setApproval(approval);
+
+      return curatorsCruiseRepository.save(cruise);
+    });
+    assertNotNull(cruiseEntity);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity1.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerCruiseService.getApproval(cruiseEntity.getId(), authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -862,7 +1081,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
@@ -874,7 +1093,7 @@ public class ProviderCruiseServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    ProviderCruiseView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
+    ProviderCruiseWriteView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
     assertEquals(cruiseEntity.getId(), updated.getId());
     assertEquals(view.getCruiseName(), updated.getCruiseName());
     assertEquals(view.getYear(), updated.getYear());
@@ -963,7 +1182,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
@@ -975,7 +1194,7 @@ public class ProviderCruiseServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    ProviderCruiseView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
+    ProviderCruiseWriteView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
     assertEquals(cruiseEntity.getId(), updated.getId());
     assertEquals(view.getCruiseName(), updated.getCruiseName());
     assertEquals(view.getYear(), updated.getYear());
@@ -1064,7 +1283,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
@@ -1102,7 +1321,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(userEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(100L);
     view.setYear(2020);
     view.setCruiseName("TST-NEW-NAME");
@@ -1190,7 +1409,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
@@ -1303,7 +1522,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity2);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity1.getId());
     view.setYear((int) cruiseEntity2.getYear());
     view.setCruiseName(cruiseEntity2.getCruiseName());
@@ -1392,7 +1611,7 @@ public class ProviderCruiseServiceIT {
     });
     assertNotNull(cruiseEntity);
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setId(cruiseEntity.getId());
     view.setYear((int) cruiseEntity.getYear());
     view.setCruiseName(cruiseEntity.getCruiseName() + "-NEW-NAME");
@@ -1470,7 +1689,7 @@ public class ProviderCruiseServiceIT {
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-      ProviderCruiseView view = providerCruiseService.delete(cruise.getId(), authentication);
+      ProviderCruiseWriteView view = providerCruiseService.delete(cruise.getId(), authentication);
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
       assertEquals(cruise.getCruiseName(), view.getCruiseName());

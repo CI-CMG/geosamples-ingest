@@ -142,6 +142,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/cruise/*").hasAuthority(Authorities.ROLE_CRUISE_DELETE.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/cruise/review/*").hasAuthority(Authorities.ROLE_CRUISE_UPDATE.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/cruise/approval/*").hasAnyAuthority(Authorities.ROLE_CRUISE_READ.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/cruise-link", "/api/v1/cruise-link/*").hasAuthority(Authorities.ROLE_CRUISE_LINK_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/cruise-link").hasAuthority(Authorities.ROLE_CRUISE_LINK_CREATE.toString())
@@ -157,6 +158,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.POST, "/api/v1/provider/cruise").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/provider/cruise/*").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/provider/cruise/*").hasAuthority(Authorities.ROLE_PROVIDER_CRUISE_DELETE.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/cruise/approval/*").hasAnyAuthority(Authorities.ROLE_PROVIDER_CRUISE_READ.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/provider/interval", "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/provider/interval").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_CREATE.toString())

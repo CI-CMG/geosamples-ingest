@@ -10,7 +10,6 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ApprovalResourceServiceBase;
-import java.util.stream.Collectors;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.HttpStatus;
@@ -37,7 +36,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
   protected abstract V toResourceView(String userInfo, PV view, @Nullable V existing);
   protected abstract S transformSearchParameters(PS searchParameters, String userInfo);
 
-  public PV create(PV view, Authentication authentication) {
+  public V create(PV view, Authentication authentication) {
     String userInfo = getUserInfo(authentication);
     V resourceView = toResourceView(userInfo, view, null);
     if (userCanAccessResource(userInfo, resourceView)) {
@@ -46,7 +45,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     throw approvalServiceBase.getNotFoundException();
   }
 
-  public PV get(I id, Authentication authentication) {
+  public V get(I id, Authentication authentication) {
     String userInfo = getUserInfo(authentication);
     V view = approvalServiceBase.get(id);
     if (userCanAccessResource(userInfo, view)) {
@@ -55,20 +54,13 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     throw approvalServiceBase.getNotFoundException();
   }
 
-  public PagedItemsView<PV> search(PS searchParameters, Authentication authentication) {
+  public PagedItemsView<V> search(PS searchParameters, Authentication authentication) {
     String userInfo = getUserInfo(authentication);
     S sampleSearchParameters = transformSearchParameters(searchParameters, userInfo);
-    PagedItemsView<V> resultPage = approvalServiceBase.search(sampleSearchParameters);
-    return new PagedItemsView.Builder<PV>()
-        .withItemsPerPage(resultPage.getItemsPerPage())
-        .withTotalPages(resultPage.getTotalPages())
-        .withPage(resultPage.getPage())
-        .withTotalItems(resultPage.getTotalItems())
-        .withItems(resultPage.getItems().stream().map(((i) -> (PV) i)).collect(Collectors.toList()))
-        .build();
+    return approvalServiceBase.search(sampleSearchParameters);
   }
 
-  public PV update(I id, PV view, Authentication authentication) {
+  public V update(I id, PV view, Authentication authentication) {
     String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
     if (userCanAccessResource(userInfo, existing)) {
@@ -83,7 +75,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     throw approvalServiceBase.getNotFoundException();
   }
 
-  public PV delete(I id, Authentication authentication) {
+  public V delete(I id, Authentication authentication) {
     String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
     if (userCanAccessResource(userInfo, existing)) {
@@ -91,6 +83,15 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
         throw getCannotEditException();
       }
       return approvalServiceBase.delete(id);
+    }
+    throw approvalServiceBase.getNotFoundException();
+  }
+
+  public ApprovalView getApproval(I id, Authentication authentication) {
+    String userInfo = getUserInfo(authentication);
+    V existing = approvalServiceBase.get(id);
+    if (userCanAccessResource(userInfo, existing)) {
+      return approvalServiceBase.getApproval(id);
     }
     throw approvalServiceBase.getNotFoundException();
   }

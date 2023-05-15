@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.JwksGenTest;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderCruiseWriteView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
@@ -149,10 +149,10 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
 
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setYear(2020);
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(view, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(view, headers);
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.POST, httpEntity, String.class);
     assertEquals(200, response.getStatusCodeValue());
   }
@@ -165,9 +165,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
     
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(view, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(view, headers);
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.POST, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
   }
@@ -181,10 +181,10 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(tokenValue);
     
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     view.setYear(2020);
     
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(view, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(view, headers);
     
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.POST, httpEntity, String.class);
     assertEquals(200, response.getStatusCodeValue());
@@ -199,9 +199,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(tokenValue);
     
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(view, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(view, headers);
     
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.POST, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
@@ -212,9 +212,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     
-    ProviderCruiseView view = new ProviderCruiseView();
+    ProviderCruiseWriteView view = new ProviderCruiseWriteView();
     
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(view, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(view, headers);
     
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.POST, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
@@ -357,6 +357,75 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise", HttpMethod.GET, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
   }
+
+  @Test
+  public void testGetApprovalCAS() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_PROVIDER_CRUISE_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalCASUnauthorized() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalToken() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_PROVIDER_CRUISE_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalTokenUnauthorized() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalNoAuth() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
   
   @Test
   public void testUpdateProviderCruiseCAS() throws JoseException, IOException {
@@ -366,10 +435,10 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
 
-    ProviderCruiseView providerCruiseView = new ProviderCruiseView();
-    providerCruiseView.setYear(2020);
+    ProviderCruiseWriteView providerCruiseWriteView = new ProviderCruiseWriteView();
+    providerCruiseWriteView.setYear(2020);
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(providerCruiseView, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(providerCruiseWriteView, headers);
 
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/1", HttpMethod.PUT, httpEntity, String.class);
     assertEquals(200, response.getStatusCodeValue());
@@ -383,9 +452,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
 
-    ProviderCruiseView providerCruiseView = new ProviderCruiseView();
+    ProviderCruiseWriteView providerCruiseWriteView = new ProviderCruiseWriteView();
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(providerCruiseView, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(providerCruiseWriteView, headers);
 
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/1", HttpMethod.PUT, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
@@ -400,10 +469,10 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(tokenValue);
 
-    ProviderCruiseView providerCruiseView = new ProviderCruiseView();
-    providerCruiseView.setYear(2020);
+    ProviderCruiseWriteView providerCruiseWriteView = new ProviderCruiseWriteView();
+    providerCruiseWriteView.setYear(2020);
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(providerCruiseView, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(providerCruiseWriteView, headers);
 
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/1", HttpMethod.PUT, httpEntity, String.class);
     assertEquals(200, response.getStatusCodeValue());
@@ -418,9 +487,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.setBearerAuth(tokenValue);
 
-    ProviderCruiseView providerCruiseView = new ProviderCruiseView();
+    ProviderCruiseWriteView providerCruiseWriteView = new ProviderCruiseWriteView();
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(providerCruiseView, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(providerCruiseWriteView, headers);
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/1", HttpMethod.PUT, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
   }
@@ -430,9 +499,9 @@ public class ProviderCruiseControllerIT { // Tests that proper status codes are 
     HttpHeaders headers = new HttpHeaders();
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
-    ProviderCruiseView providerCruiseView = new ProviderCruiseView();
+    ProviderCruiseWriteView providerCruiseWriteView = new ProviderCruiseWriteView();
 
-    HttpEntity<ProviderCruiseView> httpEntity = new HttpEntity<>(providerCruiseView, headers);
+    HttpEntity<ProviderCruiseWriteView> httpEntity = new HttpEntity<>(providerCruiseWriteView, headers);
     ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/cruise/1", HttpMethod.PUT, httpEntity, String.class);
     assertEquals(403, response.getStatusCodeValue());
   }

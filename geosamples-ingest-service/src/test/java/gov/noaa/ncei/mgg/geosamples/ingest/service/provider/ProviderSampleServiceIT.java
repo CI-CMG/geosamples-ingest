@@ -12,6 +12,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
@@ -655,7 +656,7 @@ public class ProviderSampleServiceIT {
       searchParameters.setPage(1);
       searchParameters.setItemsPerPage(10);
 
-      PagedItemsView<ProviderSampleView> result = providerSampleService.search(searchParameters, authentication);
+      PagedItemsView<SampleView> result = providerSampleService.search(searchParameters, authentication);
       assertNotNull(result);
       assertEquals(2, result.getItems().size());
       assertEquals(2, result.getTotalItems());
@@ -749,7 +750,7 @@ public class ProviderSampleServiceIT {
     searchParameters.setPage(1);
     searchParameters.setItemsPerPage(10);
 
-    PagedItemsView<ProviderSampleView> result = providerSampleService.search(searchParameters, authentication);
+    PagedItemsView<SampleView> result = providerSampleService.search(searchParameters, authentication);
     assertNotNull(result);
     assertEquals(0, result.getItems().size());
     assertEquals(0, result.getTotalItems());

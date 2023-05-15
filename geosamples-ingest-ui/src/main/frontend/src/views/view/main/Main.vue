@@ -84,6 +84,9 @@
               </AuthorizedContent>
             </b-nav-item-dropdown>
           </AuthorizedContent>
+          <AuthorizedContent :authorities="['ROLE_PROVIDER_CRUISE_READ']">
+            <b-nav-item :to="{ name: 'ProviderCruiseList' }">Cruises</b-nav-item>
+          </AuthorizedContent>
         </b-navbar-nav>
       </b-collapse>
 

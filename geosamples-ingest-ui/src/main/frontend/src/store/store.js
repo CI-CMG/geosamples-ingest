@@ -51,6 +51,9 @@ import cruiseLink from './modules/cruiseLinkModule';
 import cruiseLinkForm from './modules/cruiseLinkFormModule';
 import role from './modules/roleModule';
 import roleForm from './modules/roleFormModule';
+import providerCruise from './modules/provider/providerCruiseModule';
+import providerCruiseForm from './modules/provider/providerCruiseFormModule';
+import approvalForm from './modules/approvalFormModule';
 
 Vue.use(Vuex);
 
@@ -107,5 +110,8 @@ export default new Vuex.Store({
     tokenForm,
     role,
     roleForm,
+    providerCruise,
+    providerCruiseForm,
+    approvalForm,
   },
 });

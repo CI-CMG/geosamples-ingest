@@ -5,9 +5,7 @@ const defaultParams = {
   cruiseNameEquals: '',
   year: '',
   publish: '',
-  facilityCodeEquals: '',
   platformEquals: '',
-  id: '',
   approvalState: '',
 };
 
@@ -33,6 +31,7 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
+
   },
 
   mutations: {
@@ -73,9 +72,6 @@ export default {
       state.totalPages = 1;
       state.totalItems = 0;
     },
-    setId(state, id) {
-      state.params.id = id;
-    },
 
     setCruiseNameContains(state, value) {
       state.params.cruiseNameContains = value;
@@ -86,17 +82,14 @@ export default {
     setYear(state, value) {
       state.params.year = value;
     },
-    setPublish(state, value) {
-      state.params.publish = value;
-    },
-    setFacilityCodeEquals(state, value) {
-      state.params.facilityCodeEquals = value;
-    },
     setPlatformEquals(state, value) {
       state.params.platformEquals = value;
     },
     setApprovalState(state, value) {
       state.params.approvalState = value;
+    },
+    setPublish(state, value) {
+      state.params.publish = value;
     },
 
     setPage(state, page) {
@@ -132,7 +125,6 @@ export default {
       state.totalPages = 1;
       state.totalItems = 0;
     },
-
     loadApprovalRequest(state) {
       state.loadingApproval = true;
     },
@@ -166,7 +158,7 @@ export default {
           params[key] = value;
         }
       });
-      return apiService.get('/cruise', {
+      return apiService.get('/provider/cruise', {
         params:
           {
             ...params,
@@ -186,7 +178,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/cruise/${id}`)
+      return apiService.get(`/provider/cruise/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -200,7 +192,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/cruise/${id}`, provider) : () => apiService.post('/cruise', provider);
+      const req = id ? () => apiService.put(`/provider/cruise/${id}`, provider) : () => apiService.post('/provider/cruise', provider);
       return req()
         .then(
           (response) => {
@@ -230,7 +222,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/cruise/${id}`)
+      return apiService.delete(`/provider/cruise/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);
@@ -244,7 +236,7 @@ export default {
     },
     loadApproval({ commit }, id) {
       commit('loadApprovalRequest');
-      return apiService.get(`/cruise/approval/${id}`)
+      return apiService.get(`/provider/cruise/approval/${id}`)
         .then(
           (response) => {
             commit('loadApprovalComplete');
@@ -255,20 +247,6 @@ export default {
             throw error;
           },
         );
-    },
-
-    saveApproval({ commit }, { id, approval }) {
-      commit('loadApprovalRequest');
-      return apiService.patch(`/cruise/review/${id}`, approval).then(
-        (response) => {
-          commit('loadApprovalComplete');
-          return response.data;
-        },
-        (error) => {
-          commit('loadApprovalComplete');
-          throw error;
-        },
-      );
     },
   },
 };

@@ -69,6 +69,10 @@ import MeEdit from '@/views/view/main/me/edit/MeEdit.vue';
 import Role from '@/views/view/main/role/Role.vue';
 import RoleList from '@/views/view/main/role/list/RoleList.vue';
 import RoleEdit from '@/views/view/main/role/edit/RoleEdit.vue';
+import Provider from '@/views/view/main/provider/Provider.vue';
+import ProviderCruise from '@/views/view/main/provider/cruise/ProviderCruise.vue';
+import ProviderCruiseList from '@/views/view/main/provider/cruise/list/ProviderCruiseList.vue';
+import ProviderCruiseEdit from '@/views/view/main/provider/cruise/edit/ProviderCruiseEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -667,6 +671,36 @@ const routes = [
             path: 'home',
             name: 'Home',
             component: Home,
+          },
+          {
+            path: 'provider',
+            component: Provider,
+            name: 'Provider',
+            children: [
+              {
+                path: 'cruise',
+                component: ProviderCruise,
+                name: 'ProviderCruise',
+                children: [
+                  {
+                    path: 'list',
+                    name: 'ProviderCruiseList',
+                    component: ProviderCruiseList,
+                  },
+                  {
+                    path: 'add',
+                    name: 'ProviderCruiseAdd',
+                    component: ProviderCruiseEdit,
+                  },
+                  {
+                    path: 'edit/:id',
+                    name: 'ProviderCruiseEdit',
+                    component: ProviderCruiseEdit,
+                    props: true,
+                  },
+                ],
+              },
+            ],
           },
           {
             path: '*',

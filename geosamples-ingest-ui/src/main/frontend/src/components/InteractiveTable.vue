@@ -50,6 +50,11 @@
             <b-link :to="{ name: editRoute, params: { id: data.item[editParameter] }}">{{ data.item[editField] }}</b-link>
           </AuthorizedContent>
         </template>
+        <template v-if="isApproval" slot="cell(approvalState)" slot-scope="data">
+          <AuthorizedContent :authorities="[editAuthority]" :fallback-text="data.item.approvalState">
+            <b-link @click="showApproval(data.item)">{{ data.item.approvalState }}</b-link>
+          </AuthorizedContent>
+        </template>
       </b-table>
       <TextPagination
         :updated="(value) => $store.dispatch(`${module}/changePage`, value)"
@@ -59,6 +64,45 @@
         :total-pages="$store.state[module].totalPages"
       />
     </AuthorizedContent>
+    <b-modal ref="approval" :title="approvalText">
+      <div v-if="loadingApproval">
+        <b-spinner style="position: absolute; top: 50%; right: 50%"/>
+      </div>
+      <div v-else>
+        <div v-if="!isProviderTable">
+          <b-form-group label="Approval State">
+            <b-form-select v-model="approvalState" :options="[
+              { text: 'APPROVED', value: 'APPROVED' },
+              { text: 'REJECTED', value: 'REJECTED' },
+              { text: 'PENDING', value: 'PENDING' },
+            ]"
+                           :state="showError('approvalState')"
+            />
+            <b-form-invalid-feedback>{{ $store.getters['approvalForm/getError']('approvalState') }}</b-form-invalid-feedback>
+          </b-form-group>
+          <b-form-group label="Comment">
+            <b-form-textarea v-model="comment" :state="showError('comment')"/>
+            <b-form-invalid-feedback>{{ $store.getters['approvalForm/getError']('comment') }}</b-form-invalid-feedback>
+          </b-form-group>
+        </div>
+        <div v-else>
+          <strong>Approval State:</strong> {{ approvalState }}<br/><br/>
+          <strong>Comment:</strong><br/>
+          <b-textarea readonly :value="comment"/>
+        </div>
+      </div>
+      <template slot="modal-footer">
+        <b-button v-if="showSubmit && !isProviderTable" variant="primary" @click="saveApproval">
+          <b-icon icon="check" class="mr-2"/>Submit
+        </b-button>
+        <b-button variant="secondary" @click="hideApproval">
+          <b-icon icon="x" class="mr-2"/>Close
+        </b-button>
+        <b-button  v-if="$store.getters['approvalForm/formDirty'] && !isProviderTable" variant="danger" @click="resetApproval">
+          <b-icon icon="arrow-counterclockwise" class="mr-2"/>Reset
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -83,11 +127,15 @@ export default {
     'editParameter',
     'editAuthority',
     'editRoute',
+    'isApproval',
+    'approvalText',
+    'isProviderTable',
   ],
 
   data() {
     return {
       fieldIds: {},
+      currentItem: null,
     };
   },
 
@@ -116,6 +164,49 @@ export default {
     sortDesc() {
       return this.$store.state[this.module].sortDesc;
     },
+
+    loadingApproval() {
+      if (!this.isApproval) {
+        return false;
+      }
+      return this.$store.state[this.module].loadingApproval;
+    },
+
+    approvalState: {
+      get() {
+        if (!this.isApproval) {
+          return '';
+        }
+        return this.$store.getters['approvalForm/getValue']('approvalState');
+      },
+      set(value) {
+        if (this.isApproval) {
+          this.$store.commit('approvalForm/setValue', { path: 'approvalState', value });
+        }
+      },
+    },
+
+    comment: {
+      get() {
+        if (!this.isApproval) {
+          return '';
+        }
+        return this.$store.getters['approvalForm/getValue']('comment');
+      },
+      set(value) {
+        if (this.isApproval) {
+          this.$store.commit('approvalForm/setValue', { path: 'comment', value });
+        }
+      },
+    },
+
+    showError() {
+      return (path) => ((!this.$store.getters['approvalForm/isTouched'](path) && this.$store.getters['approvalForm/getError'](path)) ? false : null);
+    },
+
+    showSubmit() {
+      return this.$store.getters['approvalForm/formDirty'] && !this.$store.getters['approvalForm/formHasUntouchedErrors'];
+    },
   },
 
   methods: {
@@ -133,6 +224,41 @@ export default {
       this.$store.commit(`${this.module}/setSortBy`, sortBy);
       this.$store.commit(`${this.module}/setSortDesc`, sortDesc);
       this.search();
+    },
+
+    showApproval(item) {
+      this.currentItem = item;
+      this.$refs.approval.show();
+      this.$store.dispatch(`${this.module}/loadApproval`, item.id).then(
+        (data) => {
+          this.$store.commit('approvalForm/initialize', {
+            approvalState: data.approvalState,
+            comment: data.comment,
+          });
+        },
+      );
+    },
+
+    hideApproval() {
+      this.$refs.approval.hide();
+      this.currentItem = null;
+    },
+
+    saveApproval() {
+      this.$store.dispatch('approvalForm/submit').then(
+        (approval) => {
+          this.$store.dispatch(`${this.module}/saveApproval`, { id: this.currentItem.id, approval }).then(
+            () => {
+              this.hideApproval();
+              this.$store.dispatch(`${this.module}/searchPage`);
+            },
+          );
+        },
+      );
+    },
+
+    resetApproval() {
+      this.$store.commit('approvalForm/reset');
     },
   },
 };

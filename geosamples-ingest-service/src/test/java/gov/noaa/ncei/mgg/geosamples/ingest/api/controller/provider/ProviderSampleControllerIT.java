@@ -348,6 +348,75 @@ public class ProviderSampleControllerIT { // Tests that proper status codes are 
   }
 
   @Test
+  public void testGetApprovalCAS() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_PROVIDER_SAMPLE_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/sample/approval/1", HttpMethod.GET, entity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalCASUnauthorized() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/sample/approval/1", HttpMethod.GET, entity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalToken() {
+    String tokenValue = createUserWithAuthority(Authorities.ROLE_PROVIDER_SAMPLE_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/sample/approval/1", HttpMethod.GET, entity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalTokenUnauthorized() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/sample/approval/1", HttpMethod.GET, entity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalNoAuth() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/sample/approval/1", HttpMethod.GET, entity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
   public void testUpdateProviderSampleCAS() throws JoseException, IOException {
     createUserWithAuthority(Authorities.ROLE_PROVIDER_SAMPLE_UPDATE, true);
 

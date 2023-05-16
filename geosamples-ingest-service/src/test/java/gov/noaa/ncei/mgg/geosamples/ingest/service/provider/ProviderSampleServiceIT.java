@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleView;
@@ -465,6 +466,125 @@ public class ProviderSampleServiceIT {
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
     assertEquals(String.format("User %s has no assigned facility", userEntity.getUserName()), exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApproval() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(
+          curatorsFacilityRepository.findAll().stream()
+              .filter(f -> f.getFacilityCode().equals("GEOMAR"))
+              .findFirst()
+              .orElseThrow(() -> new RuntimeException("Unable to find facility"))
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    String sampleId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleTsqpEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(s1 -> s1.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Unable to find sample")
+          );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("TST");
+      sampleTsqpEntity.setApproval(approval);
+      return curatorsSampleTsqpRepository.save(sampleTsqpEntity).getId();
+    });
+    assertNotNull(sampleId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApprovalView view = providerSampleService.getApproval(sampleId, authentication);
+    assertEquals(ApprovalState.PENDING, view.getApprovalState());
+    assertEquals("TST", view.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(
+          curatorsFacilityRepository.findAll().stream()
+              .filter(f -> f.getFacilityCode().equals("GEOMAR"))
+              .findFirst()
+              .orElseThrow(() -> new RuntimeException("Unable to find facility"))
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    String sampleId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleTsqpEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(s1 -> s1.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Unable to find sample")
+          );
+      return sampleTsqpEntity.getId();
+    });
+    assertNotNull(sampleId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerSampleService.getApproval(sampleId, authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApprovalSampleDoesNotBelongToProvider() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(
+          curatorsFacilityRepository.findAll().stream()
+              .filter(f -> f.getFacilityCode().equals("AOML"))
+              .findFirst()
+              .orElseThrow(() -> new RuntimeException("Unable to find facility"))
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    String sampleId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleTsqpEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(s1 -> s1.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Unable to find sample")
+          );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("TST");
+      sampleTsqpEntity.setApproval(approval);
+      return curatorsSampleTsqpRepository.save(sampleTsqpEntity).getId();
+    });
+    assertNotNull(sampleId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerSampleService.getApproval(sampleId, authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1508,6 +1628,7 @@ public class ProviderSampleServiceIT {
       geosamplesUserRepository.findById("gabby").ifPresent(geosamplesUserRepository::delete);
       geosamplesUserRepository.findById("martin").ifPresent(geosamplesUserRepository::delete);
       curatorsFacilityRepository.findByFacilityCode("TST").ifPresent(curatorsFacilityRepository::delete);
+      curatorsFacilityRepository.findByFacilityCode("TS2").ifPresent(curatorsFacilityRepository::delete);
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
     });
   }

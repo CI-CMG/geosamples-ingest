@@ -94,6 +94,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PUT, "/api/v1/sample/*").hasAuthority(Authorities.ROLE_SAMPLE_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/sample/*").hasAuthority(Authorities.ROLE_SAMPLE_DELETE.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/sample/review/*").hasAuthority(Authorities.ROLE_SAMPLE_UPDATE.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/sample/approval/*").hasAuthority(Authorities.ROLE_SAMPLE_READ.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/storage-method", "/api/v1/storage-method/*").hasAuthority(Authorities.ROLE_STORAGE_METHOD_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/storage-method").hasAuthority(Authorities.ROLE_STORAGE_METHOD_CREATE.toString())

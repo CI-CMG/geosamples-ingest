@@ -498,6 +498,59 @@ public class SampleServiceIT {
     assertEquals(String.format("Sample %s is not approved", sampleView.getImlgs()), exception.getApiError().getFlashErrors().get(0));
   }
 
+  @Test
+  public void testGetApproval() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    String imlgs = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleTsqpEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("Test comment");
+      sampleTsqpEntity.setApproval(approval);
+
+      return curatorsSampleTsqpRepository.save(sampleTsqpEntity).getId();
+    });
+
+    ApprovalView approvalView = sampleService.getApproval(imlgs);
+    assertEquals(ApprovalState.PENDING, approvalView.getApprovalState());
+    assertEquals("Test comment", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    String imlgs = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleTsqpEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      return sampleTsqpEntity.getId();
+    });
+
+    ApiException exception = assertThrows(ApiException.class ,() -> sampleService.getApproval(imlgs));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
   private void createCruise(String cruiseName, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
 
     HttpHeaders headers = new HttpHeaders();

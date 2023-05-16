@@ -105,6 +105,7 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     sampleSearchParameters.setDeviceCode(searchParameters.getDeviceCode());
     sampleSearchParameters.setIgsn(searchParameters.getIgsn());
     sampleSearchParameters.setArea(searchParameters.getArea());
+    sampleSearchParameters.setApprovalState(searchParameters.getApprovalState());
     return sampleSearchParameters;
   }
 }

@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,8 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
   private List<String> platform = new ArrayList<>(0);
   private List<String> deviceCode = new ArrayList<>(0);
   private List<String> igsn = new ArrayList<>(0);
+
+  private List<ApprovalState> approvalState = new ArrayList<>(0);
   private Geometry area;
 
   public List<String> getImlgs() {
@@ -99,6 +102,17 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
       igsn = new ArrayList<>(0);
     }
     this.igsn = igsn;
+  }
+
+  public List<ApprovalState> getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(List<ApprovalState> approvalState) {
+    if(approvalState == null) {
+      approvalState = new ArrayList<>(0);
+    }
+    this.approvalState = approvalState;
   }
 
   public Geometry getArea() {

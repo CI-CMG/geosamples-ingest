@@ -18,6 +18,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacilityRepository;
@@ -144,6 +145,7 @@ public class SampleService extends
     List<String> platform = searchParameters.getPlatform();
     List<String> deviceCode = searchParameters.getDeviceCode();
     List<String> igsn = searchParameters.getIgsn();
+    List<ApprovalState> approvalState = searchParameters.getApprovalState();
     Geometry area = searchParameters.getArea();
 
     if (!imlgs.isEmpty()) {
@@ -180,6 +182,12 @@ public class SampleService extends
                           .get(PlatformMasterEntity_.PLATFORM)),
                       SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
+    }
+    if (!approvalState.isEmpty()) {
+      specs.add(SearchUtils.equal(
+          approvalState.stream().map(ApprovalState::name).collect(Collectors.toList()),
+          e -> e.join(CuratorsSampleTsqpEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
+      ));
     }
     if (area != null) {
       specs.add(within(normalizeArea(area)));

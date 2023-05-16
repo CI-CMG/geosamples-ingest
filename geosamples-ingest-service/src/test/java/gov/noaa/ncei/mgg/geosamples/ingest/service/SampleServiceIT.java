@@ -208,6 +208,43 @@ public class SampleServiceIT {
   }
 
   @Test
+  public void testSearchByApprovalState() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    txTemplate.executeWithoutResult(s -> curatorsSampleTsqpRepository.findAll().forEach(smpl -> {
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      if (smpl.getSample().equals("AQ-001") || smpl.getSample().equals("AQ-002")) {
+        approval.setApprovalState(ApprovalState.APPROVED);
+      } else {
+        approval.setApprovalState(ApprovalState.PENDING);
+      }
+      smpl.setApproval(approval);
+
+      curatorsSampleTsqpRepository.save(smpl);
+    }));
+
+    SampleSearchParameters searchParameters = new SampleSearchParameters();
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+    searchParameters.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+
+    PagedItemsView<SampleView> result = sampleService.search(searchParameters);
+    assertEquals(2, result.getTotalItems());
+    assertEquals(2, result.getItems().size());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(1, result.getPage());
+    assertEquals(10, result.getItemsPerPage());
+    assertEquals("AQ-001", result.getItems().get(0).getSample());
+    assertEquals("AQ-002", result.getItems().get(1).getSample());
+  }
+
+  @Test
   public void testSearchByArea() throws Exception {
     createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

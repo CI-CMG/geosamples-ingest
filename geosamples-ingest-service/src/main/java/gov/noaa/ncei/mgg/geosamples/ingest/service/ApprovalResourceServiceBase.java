@@ -64,7 +64,9 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
         );
       }
     }
-    validateParentResourceApproval(entity);
+    if (view.getApprovalState().equals(ApprovalState.APPROVED)) {
+      validateParentResourceApproval(entity);
+    }
     updateEntityApproval(entity, view);
     return toView(getRepository().save(entity));
   }

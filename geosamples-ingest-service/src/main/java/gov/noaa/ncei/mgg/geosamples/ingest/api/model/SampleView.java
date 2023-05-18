@@ -18,6 +18,8 @@ public class SampleView extends ProviderSampleView {
 
   private Boolean publish;
 
+  private String showSampl;
+
   public ApprovalState getApprovalState() {
     return approvalState;
   }
@@ -40,5 +42,13 @@ public class SampleView extends ProviderSampleView {
 
   public void setPublish(Boolean publish) {
     this.publish = publish;
+  }
+
+  public String getShowSampl() {
+    return showSampl;
+  }
+
+  public void setShowSampl(String showSampl) {
+    this.showSampl = showSampl;
   }
 }

@@ -34,7 +34,6 @@ public class ProviderSampleView {
   private String igsn;
   private String leg;
   private String sampleComments;
-  private String showSampl;
 
   public String getImlgs() {
     return imlgs;
@@ -226,13 +225,5 @@ public class ProviderSampleView {
 
   public void setSampleComments(String sampleComments) {
     this.sampleComments = sampleComments;
-  }
-
-  public String getShowSampl() {
-    return showSampl;
-  }
-
-  public void setShowSampl(String showSampl) {
-    this.showSampl = showSampl;
   }
 }

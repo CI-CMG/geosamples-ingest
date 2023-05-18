@@ -275,7 +275,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -304,7 +303,6 @@ public class ProviderSampleServiceIT {
     assertEquals(view.getIgsn(), created.getIgsn());
     assertEquals(view.getLeg(), created.getLeg());
     assertEquals(view.getSampleComments(), created.getSampleComments());
-    assertEquals(view.getShowSampl(), created.getShowSampl());
 
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findByImlgs(created.getImlgs()).orElseThrow(
@@ -334,7 +332,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getIgsn(), created.getIgsn());
       assertEquals(sample.getLeg().getLegName(), created.getLeg());
       assertEquals(sample.getSampleComments(), created.getSampleComments());
-      assertEquals(sample.getShowSampl(), created.getShowSampl());
       assertEquals(ApprovalState.PENDING, sample.getApproval().getApprovalState());
       assertFalse(sample.isPublish());
     });
@@ -438,7 +435,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -653,7 +649,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
-      assertEquals(sample.getShowSampl(), result.getShowSampl());
     });
   }
 
@@ -931,7 +926,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setShowSampl(sampleEntity.getShowSampl());
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -959,7 +953,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getOtherLink(), result.getOtherLink());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
-      assertEquals(view.getShowSampl(), result.getShowSampl());
 
       sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
           .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
@@ -988,7 +981,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
-      assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
       assertEquals(originalPublish, sampleEntity.isPublish());
       assertEquals(ApprovalState.PENDING, sampleEntity.getApproval().getApprovalState());
     });
@@ -1046,7 +1038,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setShowSampl(sampleEntity.getShowSampl());
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -1074,7 +1065,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getOtherLink(), result.getOtherLink());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
-      assertEquals(view.getShowSampl(), result.getShowSampl());
 
       sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
           .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
@@ -1103,7 +1093,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
-      assertEquals(result.getShowSampl(), sampleEntity.getShowSampl());
       assertEquals(originalPublish, sampleEntity.isPublish());
       assertEquals(ApprovalState.PENDING, sampleEntity.getApproval().getApprovalState());
     });
@@ -1159,7 +1148,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setShowSampl(sampleEntity.getShowSampl());
 
       return view;
     });
@@ -1220,7 +1208,6 @@ public class ProviderSampleServiceIT {
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
-    view.setShowSampl("TST");
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
@@ -1283,7 +1270,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setShowSampl(sampleEntity.getShowSampl());
       return view;
     });
     assertNotNull(sampleView);
@@ -1392,7 +1378,6 @@ public class ProviderSampleServiceIT {
       view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
-      view.setShowSampl(sampleEntity.getShowSampl());
       return view;
     });
     assertNotNull(providerSampleView);
@@ -1477,7 +1462,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
-      assertEquals(sample.getShowSampl(), result.getShowSampl());
 
       return result.getImlgs();
     });

@@ -226,6 +226,7 @@ public class SampleService extends
     SampleView view = new SampleView();
     view.setImlgs(entity.getImlgs());
     view.setCruise(entity.getCruise() == null ? null : entity.getCruise().getCruiseName());
+    view.setCruiseYear(entity.getCruise() == null ? null : Integer.valueOf(entity.getCruise().getYear()));
     view.setSample(entity.getSample());
     view.setFacilityCode(entity.getCruiseFacility().getFacility().getFacilityCode());
     view.setPlatform(entity.getCruisePlatform().getPlatform().getPlatform());
@@ -342,7 +343,6 @@ public class SampleService extends
     sample.setProvince(sampleDataUtils.getProvince(view.getProvinceCode()));
     sample.setIgsn(view.getIgsn());
     sample.setLake(view.getLake());
-    sample.setShowSampl(view.getShowSampl());
     sample.setSampleComments(view.getSampleComments());
     sample.setLastUpdate(Instant.now());
     sample.setLeg(leg);

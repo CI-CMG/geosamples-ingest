@@ -12,6 +12,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 public class ProviderSampleView {
   private String imlgs;
   private String cruise;
+
+  private Integer cruiseYear;
   private String sample;
   private String platform;
   private String deviceCode;
@@ -47,6 +49,14 @@ public class ProviderSampleView {
 
   public void setCruise(String cruise) {
     this.cruise = cruise;
+  }
+
+  public Integer getCruiseYear() {
+    return cruiseYear;
+  }
+
+  public void setCruiseYear(Integer cruiseYear) {
+    this.cruiseYear = cruiseYear;
   }
 
   public String getSample() {

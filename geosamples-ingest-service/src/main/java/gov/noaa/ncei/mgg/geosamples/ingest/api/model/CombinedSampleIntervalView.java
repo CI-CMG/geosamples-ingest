@@ -31,7 +31,6 @@ public class CombinedSampleIntervalView {
   private Double lon;
   private Double endLat;
   private Double endLon;
-  private String latLonOrig;
   private Integer waterDepth;
   private Integer endWaterDepth;
   private String storageMeth;
@@ -42,7 +41,6 @@ public class CombinedSampleIntervalView {
   private String pi;
   private String province;
   private String sampleLake;
-  private String otherLink;
   private Instant lastUpdate;
   private String igsn;
   private String leg;
@@ -198,14 +196,6 @@ public class CombinedSampleIntervalView {
     this.endLon = endLon;
   }
 
-  public String getLatLonOrig() {
-    return latLonOrig;
-  }
-
-  public void setLatLonOrig(String latLonOrig) {
-    this.latLonOrig = latLonOrig;
-  }
-
   public Integer getWaterDepth() {
     return waterDepth;
   }
@@ -284,14 +274,6 @@ public class CombinedSampleIntervalView {
 
   public void setSampleLake(String sampleLake) {
     this.sampleLake = sampleLake;
-  }
-
-  public String getOtherLink() {
-    return otherLink;
-  }
-
-  public void setOtherLink(String otherLink) {
-    this.otherLink = otherLink;
   }
 
   public Instant getLastUpdate() {

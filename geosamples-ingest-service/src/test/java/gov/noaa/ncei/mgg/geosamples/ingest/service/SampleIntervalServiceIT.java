@@ -299,7 +299,6 @@ public class SampleIntervalServiceIT {
       view1.setEndLat(sampleTsqp.getEndLat());
       view1.setLon(sampleTsqp.getLon());
       view1.setEndLon(sampleTsqp.getEndLon());
-      view1.setLatLonOrig(sampleTsqp.getLatLonOrig());
       view1.setWaterDepth(sampleTsqp.getWaterDepth());
       view1.setEndWaterDepth(sampleTsqp.getEndWaterDepth());
       view1.setStorageMeth(sampleTsqp.getStorageMeth().getStorageMeth());
@@ -309,7 +308,6 @@ public class SampleIntervalServiceIT {
       view1.setCoredDiamMm(sampleTsqp.getCoredDiamMm());
       view1.setPi(sampleTsqp.getPi());
       view1.setSampleLake(sampleTsqp.getLake());
-      view1.setOtherLink(sampleTsqp.getOtherLink());
       view1.setLastUpdate(sampleTsqp.getLastUpdate());
       view1.setIgsn(sampleTsqp.getIgsn());
       view1.setSampleComments(sampleTsqp.getSampleComments());
@@ -365,7 +363,6 @@ public class SampleIntervalServiceIT {
       view2.setEndLat(sampleTsqp.getEndLat());
       view2.setLon(sampleTsqp.getLon());
       view2.setEndLon(sampleTsqp.getEndLon());
-      view2.setLatLonOrig(sampleTsqp.getLatLonOrig());
       view2.setWaterDepth(sampleTsqp.getWaterDepth());
       view2.setEndWaterDepth(sampleTsqp.getEndWaterDepth());
       view2.setStorageMeth(sampleTsqp.getStorageMeth().getStorageMeth());
@@ -375,7 +372,6 @@ public class SampleIntervalServiceIT {
       view2.setCoredDiamMm(sampleTsqp.getCoredDiamMm());
       view2.setPi(sampleTsqp.getPi());
       view2.setSampleLake(sampleTsqp.getLake());
-      view2.setOtherLink(sampleTsqp.getOtherLink());
       view2.setLastUpdate(sampleTsqp.getLastUpdate());
       view2.setIgsn(sampleTsqp.getIgsn());
       view2.setSampleComments(sampleTsqp.getSampleComments());
@@ -487,7 +483,6 @@ public class SampleIntervalServiceIT {
       view1.setEndLat(sampleTsqp.getEndLat());
       view1.setLon(sampleTsqp.getLon());
       view1.setEndLon(sampleTsqp.getEndLon());
-      view1.setLatLonOrig(sampleTsqp.getLatLonOrig());
       view1.setWaterDepth(sampleTsqp.getWaterDepth());
       view1.setEndWaterDepth(sampleTsqp.getEndWaterDepth());
       view1.setStorageMeth(sampleTsqp.getStorageMeth().getStorageMeth());
@@ -497,7 +492,6 @@ public class SampleIntervalServiceIT {
       view1.setCoredDiamMm(sampleTsqp.getCoredDiamMm());
       view1.setPi(sampleTsqp.getPi());
       view1.setSampleLake(sampleTsqp.getLake());
-      view1.setOtherLink(sampleTsqp.getOtherLink());
       view1.setLastUpdate(sampleTsqp.getLastUpdate());
       view1.setIgsn(sampleTsqp.getIgsn());
       view1.setSampleComments(sampleTsqp.getSampleComments());
@@ -553,7 +547,6 @@ public class SampleIntervalServiceIT {
       view2.setEndLat(sampleTsqp.getEndLat());
       view2.setLon(sampleTsqp.getLon());
       view2.setEndLon(sampleTsqp.getEndLon());
-      view2.setLatLonOrig(sampleTsqp.getLatLonOrig());
       view2.setWaterDepth(sampleTsqp.getWaterDepth());
       view2.setEndWaterDepth(sampleTsqp.getEndWaterDepth());
       view2.setStorageMeth(sampleTsqp.getStorageMeth().getStorageMeth());
@@ -563,7 +556,6 @@ public class SampleIntervalServiceIT {
       view2.setCoredDiamMm(sampleTsqp.getCoredDiamMm());
       view2.setPi(sampleTsqp.getPi());
       view2.setSampleLake(sampleTsqp.getLake());
-      view2.setOtherLink(sampleTsqp.getOtherLink());
       view2.setLastUpdate(sampleTsqp.getLastUpdate());
       view2.setIgsn(sampleTsqp.getIgsn());
       view2.setSampleComments(sampleTsqp.getSampleComments());

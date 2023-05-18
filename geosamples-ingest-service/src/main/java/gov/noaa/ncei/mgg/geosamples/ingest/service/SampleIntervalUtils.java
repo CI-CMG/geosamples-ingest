@@ -270,7 +270,6 @@ public final class SampleIntervalUtils {
     view.setEndLat(sampleEntity.getEndLat());
     view.setLon(sampleEntity.getLon());
     view.setEndLon(sampleEntity.getEndLon());
-    view.setLatLonOrig(sampleEntity.getLatLonOrig());
     view.setWaterDepth(sampleEntity.getWaterDepth());
     view.setEndWaterDepth(sampleEntity.getEndWaterDepth());
     view.setStorageMeth(sampleEntity.getStorageMeth() == null ? null : sampleEntity.getStorageMeth().getStorageMethCode());
@@ -281,7 +280,6 @@ public final class SampleIntervalUtils {
     view.setPi(sampleEntity.getPi());
     view.setProvince(sampleEntity.getProvince() == null ? null : sampleEntity.getProvince().getProvinceCode());
     view.setSampleLake(sampleEntity.getLake());
-    view.setOtherLink(sampleEntity.getOtherLink());
     view.setLastUpdate(sampleEntity.getLastUpdate());
     view.setIgsn(sampleEntity.getIgsn());
     view.setLeg(sampleEntity.getLeg() == null ? null : sampleEntity.getLeg().getLegName());

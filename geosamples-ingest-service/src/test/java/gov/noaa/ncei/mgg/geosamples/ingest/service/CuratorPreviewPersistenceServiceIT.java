@@ -282,10 +282,8 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(40.684161537, view.getEndLat(), 0.0001);
     assertEquals(26.97946201, view.getLon(), 0.0001);
     assertEquals(27.979462008, view.getEndLon(), 0.0001);
-    assertEquals("D", view.getLatLonOrig());
     assertEquals(14, view.getWaterDepth());
     assertEquals(15, view.getEndWaterDepth());
-    assertEquals("D", view.getLatLonOrig());
     assertEquals(536, view.getCoredLength());
     assertEquals(4, view.getCoredLengthMm());
     assertEquals(10, view.getCoredDiam());
@@ -293,7 +291,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(null, view.getPi());
     assertEquals(null, view.getProvince());
     assertEquals(null, view.getSampleLake());
-    assertEquals(null, view.getOtherLink());
     assertNotNull(view.getLastUpdate());
     assertEquals(null, view.getIgsn());
     assertEquals(null, view.getLeg());
@@ -363,10 +360,8 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(39.684161537, view.getEndLat(), 0.0001);
     assertEquals(25.97946201, view.getLon(), 0.0001);
     assertEquals(26.979462008, view.getEndLon(), 0.0001);
-    assertEquals("D", view.getLatLonOrig());
     assertEquals(14, view.getWaterDepth());
     assertEquals(15, view.getEndWaterDepth());
-    assertEquals("D", view.getLatLonOrig());
     assertEquals(537, view.getCoredLength());
     assertEquals(6, view.getCoredLengthMm());
     assertEquals(10, view.getCoredDiam());
@@ -374,7 +369,6 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("Rocky", view.getPi());
     assertEquals("11", view.getProvince());
     assertEquals(null, view.getSampleLake());
-    assertEquals(null, view.getOtherLink());
     assertNotNull(view.getLastUpdate());
     assertEquals("aasw32111", view.getIgsn());
     assertEquals("AQ-LEFT-LEG", view.getLeg());

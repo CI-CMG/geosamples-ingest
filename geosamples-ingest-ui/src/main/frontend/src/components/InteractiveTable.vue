@@ -229,7 +229,7 @@ export default {
     showApproval(item) {
       this.currentItem = item;
       this.$refs.approval.show();
-      this.$store.dispatch(`${this.module}/loadApproval`, item.id).then(
+      this.$store.dispatch(`${this.module}/loadApproval`, item[this.editParameter]).then(
         (data) => {
           this.$store.commit('approvalForm/initialize', {
             approvalState: data.approvalState,

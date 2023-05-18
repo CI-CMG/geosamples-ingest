@@ -262,7 +262,6 @@ public class ProviderSampleServiceIT {
     view.setEndLat(1.);
     view.setLon(1.);
     view.setEndLon(1.);
-    view.setLatLonOrig("TST");
     view.setWaterDepth(1);
     view.setEndWaterDepth(1);
     view.setStorageMethCode("A");
@@ -289,7 +288,6 @@ public class ProviderSampleServiceIT {
     assertEquals(view.getEndLat(), created.getEndLat());
     assertEquals(view.getLon(), created.getLon());
     assertEquals(view.getEndLon(), created.getEndLon());
-    assertEquals("D", created.getLatLonOrig());
     assertEquals(view.getWaterDepth(), created.getWaterDepth());
     assertEquals(view.getEndWaterDepth(), created.getEndWaterDepth());
     assertEquals(view.getStorageMethCode(), created.getStorageMethCode());
@@ -419,7 +417,6 @@ public class ProviderSampleServiceIT {
     view.setEndLat(1.);
     view.setLon(1.);
     view.setEndLon(1.);
-    view.setLatLonOrig("TST");
     view.setWaterDepth(1);
     view.setEndWaterDepth(1);
     view.setStorageMethCode("A");
@@ -631,7 +628,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getEndLat(), result.getEndLat());
       assertEquals(sample.getLon(), result.getLon());
       assertEquals(sample.getEndLon(), result.getEndLon());
-      assertEquals(sample.getLatLonOrig(), result.getLatLonOrig());
       assertEquals(sample.getWaterDepth(), result.getWaterDepth());
       assertEquals(sample.getEndWaterDepth(), result.getEndWaterDepth());
       assertEquals(sample.getStorageMeth().getStorageMethCode(), result.getStorageMethCode());
@@ -785,7 +781,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample1.getEndLat(), result.getItems().get(0).getEndLat());
       assertEquals(sample1.getLon(), result.getItems().get(0).getLon());
       assertEquals(sample1.getEndLon(), result.getItems().get(0).getEndLon());
-      assertEquals(sample1.getLatLonOrig(), result.getItems().get(0).getLatLonOrig());
       assertEquals(sample1.getWaterDepth(), result.getItems().get(0).getWaterDepth());
       assertEquals(sample1.getEndWaterDepth(), result.getItems().get(0).getEndWaterDepth());
       assertEquals(sample1.getStorageMeth().getStorageMethCode(), result.getItems().get(0).getStorageMethCode());
@@ -811,7 +806,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample2.getEndLat(), result.getItems().get(1).getEndLat());
       assertEquals(sample2.getLon(), result.getItems().get(1).getLon());
       assertEquals(sample2.getEndLon(), result.getItems().get(1).getEndLon());
-      assertEquals(sample2.getLatLonOrig(), result.getItems().get(1).getLatLonOrig());
       assertEquals(sample2.getWaterDepth(), result.getItems().get(1).getWaterDepth());
       assertEquals(sample2.getEndWaterDepth(), result.getItems().get(1).getEndWaterDepth());
       assertEquals(sample2.getStorageMeth().getStorageMethCode(), result.getItems().get(1).getStorageMethCode());
@@ -908,7 +902,6 @@ public class ProviderSampleServiceIT {
       view.setEndLat(sampleEntity.getEndLat() + 1);
       view.setLon(sampleEntity.getLon() + 1);
       view.setEndLon(sampleEntity.getEndLon() + 1);
-      view.setLatLonOrig(sampleEntity.getLatLonOrig());
       view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
       view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
       view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
@@ -934,7 +927,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getEndLat(), result.getEndLat());
       assertEquals(view.getLon(), result.getLon());
       assertEquals(view.getEndLon(), result.getEndLon());
-      assertEquals(view.getLatLonOrig(), result.getLatLonOrig());
       assertEquals(view.getWaterDepth(), result.getWaterDepth());
       assertEquals(view.getEndWaterDepth(), result.getEndWaterDepth());
       assertEquals(view.getStorageMethCode(), result.getStorageMethCode());
@@ -961,7 +953,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getEndLat(), sampleEntity.getEndLat());
       assertEquals(result.getLon(), sampleEntity.getLon());
       assertEquals(result.getEndLon(), sampleEntity.getEndLon());
-      assertEquals(result.getLatLonOrig(), sampleEntity.getLatLonOrig());
       assertEquals(result.getWaterDepth(), sampleEntity.getWaterDepth());
       assertEquals(result.getEndWaterDepth(), sampleEntity.getEndWaterDepth());
       assertEquals(result.getStorageMethCode(), sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1017,7 +1008,6 @@ public class ProviderSampleServiceIT {
       view.setEndLat(sampleEntity.getEndLat() + 1);
       view.setLon(sampleEntity.getLon() + 1);
       view.setEndLon(sampleEntity.getEndLon() + 1);
-      view.setLatLonOrig(sampleEntity.getLatLonOrig());
       view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
       view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
       view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1043,7 +1033,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getEndLat(), result.getEndLat());
       assertEquals(view.getLon(), result.getLon());
       assertEquals(view.getEndLon(), result.getEndLon());
-      assertEquals(view.getLatLonOrig(), result.getLatLonOrig());
       assertEquals(view.getWaterDepth(), result.getWaterDepth());
       assertEquals(view.getEndWaterDepth(), result.getEndWaterDepth());
       assertEquals(view.getStorageMethCode(), result.getStorageMethCode());
@@ -1070,7 +1059,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getEndLat(), sampleEntity.getEndLat());
       assertEquals(result.getLon(), sampleEntity.getLon());
       assertEquals(result.getEndLon(), sampleEntity.getEndLon());
-      assertEquals(result.getLatLonOrig(), sampleEntity.getLatLonOrig());
       assertEquals(result.getWaterDepth(), sampleEntity.getWaterDepth());
       assertEquals(result.getEndWaterDepth(), sampleEntity.getEndWaterDepth());
       assertEquals(result.getStorageMethCode(), sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1124,7 +1112,6 @@ public class ProviderSampleServiceIT {
       view.setEndLat(sampleEntity.getEndLat() + 1);
       view.setLon(sampleEntity.getLon() + 1);
       view.setEndLon(sampleEntity.getEndLon() + 1);
-      view.setLatLonOrig(sampleEntity.getLatLonOrig());
       view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
       view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
       view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1181,7 +1168,6 @@ public class ProviderSampleServiceIT {
     view.setEndLat(1.);
     view.setLon(1.);
     view.setEndLon(1.);
-    view.setLatLonOrig("TST");
     view.setWaterDepth(1);
     view.setEndWaterDepth(1);
     view.setStorageMethCode("A");
@@ -1244,7 +1230,6 @@ public class ProviderSampleServiceIT {
       view.setEndLat(sampleEntity.getEndLat() + 1);
       view.setLon(sampleEntity.getLon() + 1);
       view.setEndLon(sampleEntity.getEndLon() + 1);
-      view.setLatLonOrig(sampleEntity.getLatLonOrig());
       view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
       view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
       view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1351,7 +1336,6 @@ public class ProviderSampleServiceIT {
       view.setEndLat(sampleEntity.getEndLat() + 1);
       view.setLon(sampleEntity.getLon() + 1);
       view.setEndLon(sampleEntity.getEndLon() + 1);
-      view.setLatLonOrig(sampleEntity.getLatLonOrig());
       view.setWaterDepth(sampleEntity.getWaterDepth() + 1);
       view.setEndWaterDepth(sampleEntity.getEndWaterDepth() + 1);
       view.setStorageMethCode(sampleEntity.getStorageMeth().getStorageMethCode());
@@ -1431,7 +1415,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getEndLat(), result.getEndLat());
       assertEquals(sample.getLon(), result.getLon());
       assertEquals(sample.getEndLon(), result.getEndLon());
-      assertEquals(sample.getLatLonOrig(), result.getLatLonOrig());
       assertEquals(sample.getWaterDepth(), result.getWaterDepth());
       assertEquals(sample.getEndWaterDepth(), result.getEndWaterDepth());
       assertEquals(sample.getStorageMeth().getStorageMethCode(), result.getStorageMethCode());

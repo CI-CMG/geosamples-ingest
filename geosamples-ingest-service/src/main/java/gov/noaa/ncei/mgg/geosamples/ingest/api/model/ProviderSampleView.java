@@ -21,7 +21,6 @@ public class ProviderSampleView {
   private Double endLat;
   private Double lon;
   private Double endLon;
-  private String latLonOrig;
   private Integer waterDepth;
   private Integer endWaterDepth;
   private String storageMethCode;
@@ -120,14 +119,6 @@ public class ProviderSampleView {
 
   public void setEndLon(Double endLon) {
     this.endLon = endLon;
-  }
-
-  public String getLatLonOrig() {
-    return latLonOrig;
-  }
-
-  public void setLatLonOrig(String latLonOrig) {
-    this.latLonOrig = latLonOrig;
   }
 
   public Integer getWaterDepth() {

@@ -64,7 +64,6 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     sampleView.setEndLat(view.getEndLat());
     sampleView.setLon(view.getLon());
     sampleView.setEndLon(view.getEndLon());
-    sampleView.setLatLonOrig(view.getLatLonOrig());
     sampleView.setWaterDepth(view.getWaterDepth());
     sampleView.setEndWaterDepth(view.getEndWaterDepth());
     sampleView.setStorageMethCode(view.getStorageMethCode());

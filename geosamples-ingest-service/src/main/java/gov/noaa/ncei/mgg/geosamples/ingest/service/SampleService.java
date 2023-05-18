@@ -236,7 +236,6 @@ public class SampleService extends
     view.setEndLat(entity.getEndLat());
     view.setLon(entity.getLon());
     view.setEndLon(entity.getEndLon());
-    view.setLatLonOrig(entity.getLatLonOrig());
     view.setWaterDepth(entity.getWaterDepth());
     view.setEndWaterDepth(entity.getEndWaterDepth());
     view.setStorageMethCode(entity.getStorageMeth() == null ? null : entity.getStorageMeth().getStorageMethCode());

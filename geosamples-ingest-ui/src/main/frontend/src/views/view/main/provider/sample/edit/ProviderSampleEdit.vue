@@ -136,11 +136,12 @@
                 <b-col>
                   <b-form-group label="Begin Date" :label-for="beginDateId">
                     <b-form-input
-                      type="date"
+                      type="text"
                       :id="beginDateId"
-                      :value="currentBeginDate"
-                      @input="(value) => setDateValue('beginDate', value)"
-                      :state="showError('beginDate')"
+                      :value="getValue('beginDate')"
+                      @input="(value) => setValue({ path: 'beginDate', value })"
+                      :state="showError('beginDate') || isValidDate(getValue('beginDate'))"
+                      placeholder="MMDDYYYY"
                     />
                     <b-form-invalid-feedback>{{ getError('beginDate') }}</b-form-invalid-feedback>
                   </b-form-group>
@@ -148,11 +149,12 @@
                 <b-col>
                   <b-form-group label="End Date" :label-for="endDateId">
                     <b-form-input
-                      type="date"
+                      type="text"
                       :id="endDateId"
-                      :value="currentEndDate"
-                      @input="(value) => setDateValue('endDate', value)"
-                      :state="showError('endDate')"
+                      :value="getValue('endDate')"
+                      @input="(value) => setValue({ path: 'endDate', value })"
+                      :state="showError('endDate') || isValidDate(getValue('endDate'))"
+                      placeholder="MMDDYYYY"
                     />
                     <b-form-invalid-feedback>{{ getError('endDate') }}</b-form-invalid-feedback>
                   </b-form-group>
@@ -388,6 +390,21 @@ export default {
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
 
+    isValidDate(value) {
+      if (value) {
+        const month = Number(value.substring(0, 2).replace(/^0+/, '') - 1);
+        const day = Number(value.substring(2, 4).replace(/^0+/, ''));
+        const year = Number(value.substring(4, 8));
+
+        const date = new Date(year, month, day);
+        console.log(year, month, day, date);
+        console.log(date.getFullYear(), date.getMonth(), date.getDate());
+        console.log('');
+        return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day && date.getTime() < Date.now() ? null : false;
+      }
+      return null;
+    },
+
     showModal() {
       this.$refs['delete-modal'].show();
     },
@@ -414,10 +431,6 @@ export default {
       this.setValue({ path: 'leg', value: [] });
       this.setValue({ path: 'platform', value: value.value });
       this.loadCruiseOptions(value.value);
-    },
-
-    setDateValue(path, value) {
-      this.setValue({ path, value: value ? value.replace(/-/g, '') : null });
     },
   },
 
@@ -459,16 +472,6 @@ export default {
     optionsProvinceCode() {
       const { provinceCode: field } = this.options;
       return field || [];
-    },
-
-    currentEndDate() {
-      const date = this.getValue('endDate');
-      return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`;
-    },
-
-    currentBeginDate() {
-      const date = this.getValue('beginDate');
-      return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}`;
     },
   },
 

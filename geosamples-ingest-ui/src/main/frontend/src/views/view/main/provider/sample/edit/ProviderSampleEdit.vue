@@ -290,11 +290,14 @@
                 <b-form-invalid-feedback>{{ getError('igsn') }}</b-form-invalid-feedback>
               </b-form-group>
               <b-form-group label="Sample Comments" :label-for="sampleCommentsId">
+                <template #label>
+                  Sample Comments<span style="color: gray"> (limit 2000 characters)</span>
+                </template>
                 <b-form-textarea
                   :id="sampleCommentsId"
                   :value="getValue('sampleComments')"
                   @input="(value) => setValue({ path: 'sampleComments', value })"
-                  :state="showError('sampleComments')"
+                  :state="showError('sampleComments') || (getValue('sampleComments').length < 2000 ? null : false)"
                 />
                 <b-form-invalid-feedback>{{ getError('sampleComment') }}</b-form-invalid-feedback>
               </b-form-group>

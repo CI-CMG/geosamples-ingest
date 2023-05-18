@@ -214,10 +214,6 @@ export default {
           label: 'End Longitude',
         },
         {
-          key: 'latLonOrig',
-          label: 'Lat. Lon. Orig.',
-        },
-        {
           key: 'waterDepth',
           label: 'Water Depth',
         },
@@ -248,10 +244,6 @@ export default {
         {
           key: 'lake',
           label: 'Sample Lake',
-        },
-        {
-          key: 'otherLink',
-          label: 'Other Link',
         },
         {
           key: 'leg',

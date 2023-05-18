@@ -132,17 +132,6 @@
           <b-form-invalid-feedback>{{ getError('endLon') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Lat / Lon Original Type" :label-for="latLonOrigId">
-          <b-form-input
-            :id="latLonOrigId"
-            type="text" @blur="() => setTouched({path: 'latLonOrig', touched: true})"
-            :value="getValue('latLonOrig')"
-            @update="(value) => setValue({ path: 'latLonOrig', value })"
-            :state="showError('latLonOrig')"
-          />
-          <b-form-invalid-feedback>{{ getError('latLonOrig') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Water Depth" :label-for="waterDepthId">
           <b-form-input
             :id="waterDepthId"
@@ -229,17 +218,6 @@
             :state="showError('lake')"
           />
           <b-form-invalid-feedback>{{ getError('lake') }}</b-form-invalid-feedback>
-        </b-form-group>
-
-        <b-form-group label="Other Link" :label-for="otherLinkId">
-          <b-form-input
-            :id="otherLinkId"
-            type="text" @blur="() => setTouched({path: 'otherLink', touched: true})"
-            :value="getValue('otherLink')"
-            @update="(value) => setValue({ path: 'otherLink', value })"
-            :state="showError('otherLink')"
-          />
-          <b-form-invalid-feedback>{{ getError('otherLink') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="IGSN" :label-for="igsnId">
@@ -330,7 +308,6 @@ export default {
       endLatId: '',
       lonId: '',
       endLonId: '',
-      latLonOrigId: '',
       waterDepthId: '',
       endWaterDepthId: '',
       storageMethCodeId: '',
@@ -339,7 +316,6 @@ export default {
       piId: '',
       provinceCodeId: '',
       lakeId: '',
-      otherLinkId: '',
       igsnId: '',
       legId: '',
       sampleCommentsId: '',
@@ -377,7 +353,6 @@ export default {
     this.endLatId = genId();
     this.lonId = genId();
     this.endLonId = genId();
-    this.latLonOrigId = genId();
     this.waterDepthId = genId();
     this.endWaterDepthId = genId();
     this.storageMethCodeId = genId();
@@ -386,7 +361,6 @@ export default {
     this.piId = genId();
     this.provinceCodeId = genId();
     this.lakeId = genId();
-    this.otherLinkId = genId();
     this.igsnId = genId();
     this.legId = genId();
     this.sampleCommentsId = genId();

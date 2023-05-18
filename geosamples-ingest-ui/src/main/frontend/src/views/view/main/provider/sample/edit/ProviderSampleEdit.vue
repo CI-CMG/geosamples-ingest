@@ -109,6 +109,7 @@
                   <b-form-group label="Core Length (cm)" :label-for="coredLengthId">
                     <b-form-input
                       type="number"
+                      min="0"
                       :id="coredLengthId"
                       :value="getValue('coredLength')"
                       @input="(value) => setValue({ path: 'coredLength', value })"
@@ -121,6 +122,7 @@
                   <b-form-group label="Core Diameter (cm)" :label-for="coredDiamId">
                     <b-form-input
                       type="number"
+                      min="0"
                       :id="coredDiamId"
                       :value="getValue('coredDiam')"
                       @input="(value) => setValue({ path: 'coredDiam', value })"
@@ -173,6 +175,8 @@
                     <b-form-input
                       required
                       type="number"
+                      min="-90"
+                      max="90"
                       :id="latId"
                       :value="getValue('lat')"
                       @input="(value) => setValue({ path: 'lat', value })"
@@ -185,6 +189,8 @@
                   <b-form-group label="End Latitude (DD.DDDDD)" :label-for="endLatId">
                     <b-form-input
                       type="number"
+                      min="-90"
+                      max="90"
                       :id="endLatId"
                       :value="getValue('endLat')"
                       @input="(value) => setValue({ path: 'endLat', value })"
@@ -203,6 +209,8 @@
                     <b-form-input
                       required
                       type="number"
+                      min="-180"
+                      max="180"
                       :id="lonId"
                       :value="getValue('lon')"
                       @input="(value) => setValue({ path: 'lon', value })"
@@ -215,6 +223,8 @@
                   <b-form-group label="End Longitude (DD.DDDDD)" :label-for="endLonId">
                     <b-form-input
                       type="number"
+                      min="-180"
+                      max="180"
                       :id="endLonId"
                       :value="getValue('endLon')"
                       @input="(value) => setValue({ path: 'endLon', value })"
@@ -239,6 +249,7 @@
                   <b-form-group label="Water Depth (m)" :label-for="waterDepthId">
                     <b-form-input
                       type="number"
+                      min="0"
                       :id="waterDepthId"
                       :value="getValue('waterDepth')"
                       @input="(value) => setValue({ path: 'waterDepth', value })"
@@ -251,6 +262,7 @@
                   <b-form-group label="End Water Depth (m)" :label-for="endWaterDepthId">
                     <b-form-input
                       type="number"
+                      min="0"
                       :id="endWaterDepthId"
                       :value="getValue('endWaterDepth')"
                       @input="(value) => setValue({ path: 'endWaterDepth', value })"

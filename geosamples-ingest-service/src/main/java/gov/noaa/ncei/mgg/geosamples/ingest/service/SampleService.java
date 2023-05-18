@@ -262,7 +262,6 @@ public class SampleService extends
     view.setPi(entity.getPi());
     view.setProvinceCode(entity.getProvince() == null ? null : entity.getProvince().getProvinceCode());
     view.setLake(entity.getLake());
-    view.setOtherLink(entity.getOtherLink());
     view.setIgsn(entity.getIgsn());
     view.setLeg(entity.getLeg() == null ? null : entity.getLeg().getLegName());
     view.setSampleComments(entity.getSampleComments());
@@ -344,7 +343,6 @@ public class SampleService extends
     sample.setProvince(sampleDataUtils.getProvince(view.getProvinceCode()));
     sample.setIgsn(view.getIgsn());
     sample.setLake(view.getLake());
-    sample.setOtherLink(view.getOtherLink());
     sample.setShowSampl(view.getShowSampl());
     sample.setSampleComments(view.getSampleComments());
     sample.setLastUpdate(Instant.now());

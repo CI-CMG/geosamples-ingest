@@ -30,7 +30,6 @@ public class ProviderSampleView {
   private String pi;
   private String provinceCode;
   private String lake;
-  private String otherLink;
   private String igsn;
   private String leg;
   private String sampleComments;
@@ -193,14 +192,6 @@ public class ProviderSampleView {
 
   public void setLake(String lake) {
     this.lake = lake;
-  }
-
-  public String getOtherLink() {
-    return otherLink;
-  }
-
-  public void setOtherLink(String otherLink) {
-    this.otherLink = otherLink;
   }
 
   public String getIgsn() {

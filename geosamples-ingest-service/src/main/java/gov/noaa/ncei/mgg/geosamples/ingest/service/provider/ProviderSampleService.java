@@ -73,7 +73,6 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     sampleView.setPi(view.getPi());
     sampleView.setProvinceCode(view.getProvinceCode());
     sampleView.setLake(view.getLake());
-    sampleView.setOtherLink(view.getOtherLink());
     sampleView.setIgsn(view.getIgsn());
     sampleView.setLeg(view.getLeg());
     sampleView.setSampleComments(view.getSampleComments());

@@ -271,7 +271,6 @@ public class ProviderSampleServiceIT {
     view.setPi("TST");
     view.setProvinceCode("01");
     view.setLake("TST");
-    view.setOtherLink("TST");
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
@@ -299,7 +298,6 @@ public class ProviderSampleServiceIT {
     assertEquals(view.getPi(), created.getPi());
     assertEquals(view.getProvinceCode(), created.getProvinceCode());
     assertEquals(view.getLake(), created.getLake());
-    assertEquals(view.getOtherLink(), created.getOtherLink());
     assertEquals(view.getIgsn(), created.getIgsn());
     assertEquals(view.getLeg(), created.getLeg());
     assertEquals(view.getSampleComments(), created.getSampleComments());
@@ -328,7 +326,6 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getPi(), created.getPi());
       assertEquals(sample.getProvince().getProvinceCode(), created.getProvinceCode());
       assertEquals(sample.getLake(), created.getLake());
-      assertEquals(sample.getOtherLink(), created.getOtherLink());
       assertEquals(sample.getIgsn(), created.getIgsn());
       assertEquals(sample.getLeg().getLegName(), created.getLeg());
       assertEquals(sample.getSampleComments(), created.getSampleComments());
@@ -431,7 +428,6 @@ public class ProviderSampleServiceIT {
     view.setPi("TST");
     view.setProvinceCode("01");
     view.setLake("TST");
-    view.setOtherLink("TST");
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
@@ -646,7 +642,6 @@ public class ProviderSampleServiceIT {
         assertEquals(sample.getProvince().getProvinceCode(), result.getProvinceCode());
       }
       assertEquals(sample.getLake(), result.getLake());
-      assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
     });
@@ -801,7 +796,6 @@ public class ProviderSampleServiceIT {
         assertEquals(sample1.getProvince().getProvinceCode(), result.getItems().get(0).getProvinceCode());
       }
       assertEquals(sample1.getLake(), result.getItems().get(0).getLake());
-      assertEquals(sample1.getOtherLink(), result.getItems().get(0).getOtherLink());
       assertEquals(sample1.getIgsn(), result.getItems().get(0).getIgsn());
       assertEquals(sample1.getSampleComments(), result.getItems().get(0).getSampleComments());
       assertEquals(sample1.getShowSampl(), result.getItems().get(0).getShowSampl());
@@ -828,7 +822,6 @@ public class ProviderSampleServiceIT {
         assertEquals(sample2.getProvince().getProvinceCode(), result.getItems().get(1).getProvinceCode());
       }
       assertEquals(sample2.getLake(), result.getItems().get(1).getLake());
-      assertEquals(sample2.getOtherLink(), result.getItems().get(1).getOtherLink());
       assertEquals(sample2.getIgsn(), result.getItems().get(1).getIgsn());
       assertEquals(sample2.getSampleComments(), result.getItems().get(1).getSampleComments());
       assertEquals(sample2.getShowSampl(), result.getItems().get(1).getShowSampl());
@@ -923,7 +916,6 @@ public class ProviderSampleServiceIT {
       view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
       view.setPi(sampleEntity.getPi() + "-NEW");
       view.setLake(sampleEntity.getLake() + "-NEW");
-      view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
 
@@ -950,7 +942,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getCoredDiam(), result.getCoredDiam());
       assertEquals(view.getPi(), result.getPi());
       assertEquals(view.getLake(), result.getLake());
-      assertEquals(view.getOtherLink(), result.getOtherLink());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
 
@@ -978,7 +969,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getCoredDiam(), Double.valueOf(sampleEntity.getCoredDiam()));
       assertEquals(result.getPi(), sampleEntity.getPi());
       assertEquals(result.getLake(), sampleEntity.getLake());
-      assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
       assertEquals(originalPublish, sampleEntity.isPublish());
@@ -1035,7 +1025,6 @@ public class ProviderSampleServiceIT {
       view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
       view.setPi(sampleEntity.getPi() + "-NEW");
       view.setLake(sampleEntity.getLake() + "-NEW");
-      view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
 
@@ -1062,7 +1051,6 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getCoredDiam(), result.getCoredDiam());
       assertEquals(view.getPi(), result.getPi());
       assertEquals(view.getLake(), result.getLake());
-      assertEquals(view.getOtherLink(), result.getOtherLink());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
 
@@ -1090,7 +1078,6 @@ public class ProviderSampleServiceIT {
       assertEquals(result.getCoredDiam(), Double.valueOf(sampleEntity.getCoredDiam()));
       assertEquals(result.getPi(), sampleEntity.getPi());
       assertEquals(result.getLake(), sampleEntity.getLake());
-      assertEquals(result.getOtherLink(), sampleEntity.getOtherLink());
       assertEquals(result.getIgsn(), sampleEntity.getIgsn());
       assertEquals(result.getSampleComments(), sampleEntity.getSampleComments());
       assertEquals(originalPublish, sampleEntity.isPublish());
@@ -1145,7 +1132,6 @@ public class ProviderSampleServiceIT {
       view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
       view.setPi(sampleEntity.getPi() + "-NEW");
       view.setLake(sampleEntity.getLake() + "-NEW");
-      view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
 
@@ -1204,7 +1190,6 @@ public class ProviderSampleServiceIT {
     view.setPi("TST");
     view.setProvinceCode("01");
     view.setLake("TST");
-    view.setOtherLink("TST");
     view.setIgsn("TST");
     view.setLeg("TST");
     view.setSampleComments("TST");
@@ -1267,7 +1252,6 @@ public class ProviderSampleServiceIT {
       view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
       view.setPi(sampleEntity.getPi() + "-NEW");
       view.setLake(sampleEntity.getLake() + "-NEW");
-      view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
       return view;
@@ -1375,7 +1359,6 @@ public class ProviderSampleServiceIT {
       view.setCoredDiam(Double.valueOf(sampleEntity.getCoredDiam()));
       view.setPi(sampleEntity.getPi() + "-NEW");
       view.setLake(sampleEntity.getLake() + "-NEW");
-      view.setOtherLink(sampleEntity.getOtherLink());
       view.setIgsn(sampleEntity.getIgsn());
       view.setSampleComments(sampleEntity.getSampleComments());
       return view;
@@ -1459,7 +1442,6 @@ public class ProviderSampleServiceIT {
         assertEquals(sample.getProvince().getProvinceCode(), result.getProvinceCode());
       }
       assertEquals(sample.getLake(), result.getLake());
-      assertEquals(sample.getOtherLink(), result.getOtherLink());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
 

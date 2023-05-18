@@ -519,7 +519,6 @@ public class SampleServiceIT {
       view.setPi(sample.getPi());
       view.setProvinceCode(sample.getProvince().getProvinceCode());
       view.setLake(sample.getLake());
-      view.setOtherLink(sample.getOtherLink());
       view.setIgsn(sample.getIgsn());
       view.setLeg(sample.getLeg().getLegName());
       view.setSampleComments(sample.getSampleComments());

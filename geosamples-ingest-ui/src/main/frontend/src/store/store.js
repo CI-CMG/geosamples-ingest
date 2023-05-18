@@ -54,6 +54,8 @@ import roleForm from './modules/roleFormModule';
 import providerCruise from './modules/provider/providerCruiseModule';
 import providerCruiseForm from './modules/provider/providerCruiseFormModule';
 import approvalForm from './modules/approvalFormModule';
+import providerSample from './modules/provider/providerSampleModule';
+import providerSampleForm from './modules/provider/providerSampleForm';
 
 Vue.use(Vuex);
 
@@ -113,5 +115,7 @@ export default new Vuex.Store({
     providerCruise,
     providerCruiseForm,
     approvalForm,
+    providerSample,
+    providerSampleForm,
   },
 });

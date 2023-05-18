@@ -122,10 +122,17 @@ export default {
     sampleItem: null,
     sampleLoading: false,
     sampleSaving: false,
-
+    loadingApproval: false,
   },
 
   mutations: {
+    loadApprovalRequest(state) {
+      state.loadingApproval = true;
+    },
+    loadApprovalComplete(state) {
+      state.loadingApproval = false;
+    },
+
     updateOptions(state, options) {
       state.options = options;
     },
@@ -417,6 +424,36 @@ export default {
           },
           (error) => {
             commit('deleteSampleFailure');
+            throw error;
+          },
+        );
+    },
+
+    loadApproval({ commit }, imlgs) {
+      commit('loadApprovalRequest');
+      return apiService.get(`/sample/approval/${imlgs}`)
+        .then(
+          (response) => {
+            commit('loadApprovalComplete');
+            return response.data;
+          },
+          (error) => {
+            commit('loadApprovalComplete');
+            throw error;
+          },
+        );
+    },
+
+    saveApproval({ commit }, { imlgs, approval }) {
+      commit('loadApprovalRequest');
+      return apiService.patch(`/sample/review/${imlgs}`, approval)
+        .then(
+          (response) => {
+            commit('loadApprovalComplete');
+            return response.data;
+          },
+          (error) => {
+            commit('loadApprovalComplete');
             throw error;
           },
         );

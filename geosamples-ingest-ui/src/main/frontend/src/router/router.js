@@ -73,6 +73,9 @@ import Provider from '@/views/view/main/provider/Provider.vue';
 import ProviderCruise from '@/views/view/main/provider/cruise/ProviderCruise.vue';
 import ProviderCruiseList from '@/views/view/main/provider/cruise/list/ProviderCruiseList.vue';
 import ProviderCruiseEdit from '@/views/view/main/provider/cruise/edit/ProviderCruiseEdit.vue';
+import ProviderSample from '@/views/view/main/provider/sample/ProviderSample.vue';
+import ProviderSampleList from '@/views/view/main/provider/sample/list/ProviderSampleList.vue';
+import ProviderSampleEdit from '@/views/view/main/provider/sample/edit/ProviderSampleEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -696,6 +699,29 @@ const routes = [
                     path: 'edit/:id',
                     name: 'ProviderCruiseEdit',
                     component: ProviderCruiseEdit,
+                    props: true,
+                  },
+                ],
+              },
+              {
+                path: 'sample',
+                component: ProviderSample,
+                name: 'ProviderSample',
+                children: [
+                  {
+                    path: 'list',
+                    name: 'ProviderSampleList',
+                    component: ProviderSampleList,
+                  },
+                  {
+                    path: 'add',
+                    name: 'ProviderSampleAdd',
+                    component: ProviderSampleEdit,
+                  },
+                  {
+                    path: 'edit/:id',
+                    name: 'ProviderSampleEdit',
+                    component: ProviderSampleEdit,
                     props: true,
                   },
                 ],

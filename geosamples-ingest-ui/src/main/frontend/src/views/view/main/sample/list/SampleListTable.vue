@@ -1,14 +1,15 @@
 <template>
-  <b-table
-    sticky-header="500px"
-    head-variant="dark"
-    striped
-    bordered
-    small
-    hover
-    :items="items"
-    :fields="fields">
-    <template #head()="data">
+  <div>
+    <b-table
+      sticky-header="500px"
+      head-variant="dark"
+      striped
+      bordered
+      small
+      hover
+      :items="items"
+      :fields="fields">
+      <template #head()="data">
       <span :style="{
         width: '100%',
       }">
@@ -18,10 +19,10 @@
         <span v-if="sorted(data.column).index >= 0">{{ sorted(data.column).index }}</span>
       </span>
 
-    </template>
-    <template #cell(selected)="data">
-      <b-form-checkbox plain :checked="data.item.selected" @change="() => toggleSelect(data.index)"/>
-    </template>
+      </template>
+      <template #cell(selected)="data">
+        <b-form-checkbox plain :checked="data.item.selected" @change="() => toggleSelect(data.index)"/>
+      </template>
       <template #cell(publish)="data">
         <b-form-checkbox :disabled="true" plain :checked="data.item.publish"/>
       </template>
@@ -31,7 +32,38 @@
       <template #cell(interval)="data">
         <b-link :to="{ name: 'IntervalEdit', params: { imlgs: data.item.imlgs, id: data.item.interval }}">{{ data.item.interval }}</b-link>
       </template>
-  </b-table>
+      <template #cell(approvalState)="data">
+        <b-link @click="showApproval(data.item)">{{ data.item.approvalState }}</b-link>
+      </template>
+    </b-table>
+    <b-modal ref="approval" title="Review Sample">
+      <b-form-group label="Approval State">
+        <b-form-select v-model="approvalState" :options="[
+              { text: 'APPROVED', value: 'APPROVED' },
+              { text: 'REJECTED', value: 'REJECTED' },
+              { text: 'PENDING', value: 'PENDING' },
+            ]"
+                       :state="showError('approvalState')"
+        />
+        <b-form-invalid-feedback>{{ $store.getters['approvalForm/getError']('approvalState') }}</b-form-invalid-feedback>
+      </b-form-group>
+      <b-form-group label="Comment">
+        <b-form-textarea v-model="comment" :state="showError('comment')"/>
+        <b-form-invalid-feedback>{{ $store.getters['approvalForm/getError']('comment') }}</b-form-invalid-feedback>
+      </b-form-group>
+      <template #modal-footer>
+        <b-button v-if="showSubmit" variant="primary" @click="saveApproval">
+          <b-icon icon="check" class="mr-2"/>Submit
+        </b-button>
+        <b-button variant="secondary" @click="hideApproval">
+          <b-icon icon="x" class="mr-2"/>Close
+        </b-button>
+        <b-button  v-if="$store.getters['approvalForm/formDirty']" variant="danger" @click="resetApproval">
+          <b-icon icon="arrow-counterclockwise" class="mr-2"/>Reset
+        </b-button>
+      </template>
+    </b-modal>
+  </div>
 </template>
 
 <script>
@@ -44,6 +76,13 @@ export default {
     'fields',
     'toggleSelect',
   ],
+
+  data() {
+    return {
+      currentItem: null,
+    };
+  },
+
   computed: {
     indexes() {
       const indexMap = {};
@@ -68,9 +107,66 @@ export default {
         return { sorted: '', index: -1 };
       };
     },
+    approvalState: {
+      get() {
+        return this.$store.getters['approvalForm/getValue']('approvalState');
+      },
+      set(value) {
+        this.$store.commit('approvalForm/setValue', { path: 'approvalState', value });
+      },
+    },
+
+    comment: {
+      get() {
+        return this.$store.getters['approvalForm/getValue']('comment');
+      },
+      set(value) {
+        this.$store.commit('approvalForm/setValue', { path: 'comment', value });
+      },
+    },
+
+    showError() {
+      return (path) => ((!this.$store.getters['approvalForm/isTouched'](path) && this.$store.getters['approvalForm/getError'](path)) ? false : null);
+    },
+    showSubmit() {
+      return this.$store.getters['approvalForm/formDirty'] && !this.$store.getters['approvalForm/formHasUntouchedErrors'];
+    },
   },
   methods: {
+    resetApproval() {
+      this.$store.commit('approvalForm/reset');
+    },
 
+    showApproval(item) {
+      this.currentItem = item;
+      this.$refs.approval.show();
+      this.$store.dispatch('sample/loadApproval', item.imlgs).then(
+        (data) => {
+          this.$store.commit('approvalForm/initialize', {
+            approvalState: data.approvalState,
+            comment: data.comment,
+          });
+        },
+      );
+    },
+
+    hideApproval() {
+      this.$refs.approval.hide();
+      this.currentItem = null;
+    },
+
+    saveApproval() {
+      this.$store.dispatch('approvalForm/submit').then(
+        (approval) => {
+          this.$store.dispatch('sample/saveApproval', { imlgs: this.currentItem.imlgs, approval }).then(
+            () => {
+              this.hideApproval();
+              this.$store.dispatch('sample/searchPage');
+            },
+          );
+        },
+      );
+    },
   },
 };
 </script>

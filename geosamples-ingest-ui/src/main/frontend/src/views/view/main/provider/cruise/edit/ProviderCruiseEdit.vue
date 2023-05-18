@@ -12,7 +12,7 @@
       <h1 v-if="isEdit" class="text-primary">Edit Cruise - {{ getValue('cruiseName') }} {{ getValue('year') }}</h1>
       <h1 v-else class="text-primary">Add New Cruise</h1>
 
-      <b-button v-if="isEdit" type="button" variant="danger" @click="showModal" >Delete</b-button>
+      <b-button v-if="isEdit" type="button" variant="danger" class="mb-2" @click="showModal" >Delete</b-button>
       <b-modal ref="delete-modal" title="Delete Cruise" ok-variant="danger" ok-title="Delete" @ok="doDelete">
         <p class="my-4">Are you sure you want to delete this cruise?</p>
       </b-modal>

@@ -150,6 +150,10 @@ export default {
     return {
       fields: [
         {
+          key: 'approvalState',
+          label: 'Approval State',
+        },
+        {
           key: 'selected',
           label: 'Selected',
         },

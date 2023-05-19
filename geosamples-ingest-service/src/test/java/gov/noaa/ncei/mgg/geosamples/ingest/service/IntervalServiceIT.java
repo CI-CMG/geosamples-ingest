@@ -179,6 +179,60 @@ public class IntervalServiceIT {
   }
 
   @Test
+  public void testGetApproval() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    Long intervalId = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(() -> new RuntimeException("Sample not found"));
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval not found"));
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      approval.setComment("Looks good to me");
+      interval.setApproval(approval);
+      return curatorsIntervalRepository.save(interval).getId();
+    });
+    assertNotNull(intervalId);
+
+    ApprovalView approvalView = intervalService.getApproval(intervalId);
+    assertEquals(ApprovalState.APPROVED, approvalView.getApprovalState());
+    assertEquals("Looks good to me", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    Long intervalId = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(() -> new RuntimeException("Sample not found"));
+      return curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval not found")).getId();
+    });
+    assertNotNull(intervalId);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.getApproval(intervalId));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
   public void testReviewInterval() throws Exception {
     createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

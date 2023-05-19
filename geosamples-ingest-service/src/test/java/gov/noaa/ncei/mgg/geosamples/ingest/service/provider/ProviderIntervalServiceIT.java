@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.IntervalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderIntervalSearchParameters;
@@ -496,6 +497,130 @@ public class ProviderIntervalServiceIT {
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
     assertEquals(String.format("User %s has no assigned facility", userEntity.getUserName()), exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApproval() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+          () -> new RuntimeException("Facility not found")
+        )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    Long intervalId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(() -> new RuntimeException("Sample not found"));
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval not found")
+        );
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      approval.setComment("Looks good to me");
+      interval.setApproval(approval);
+
+      return curatorsIntervalRepository.save(interval).getId();
+    });
+    assertNotNull(intervalId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApprovalView approvalView = providerIntervalService.getApproval(intervalId, authentication);
+    assertEquals(ApprovalState.APPROVED, approvalView.getApprovalState());
+    assertEquals("Looks good to me", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    Long intervalId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(() -> new RuntimeException("Sample not found"));
+      return curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval not found")
+      ).getId();
+    });
+    assertNotNull(intervalId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerIntervalService.getApproval(intervalId, authentication));
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApprovalIntervalDoesNotBelongToUser() throws Exception {
+    CuratorsFacilityEntity facility = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST");
+      f.setFacility("Test Facility");
+      f.setInstCode("TST");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+    assertNotNull(facility);
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(facility);
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    Long intervalId = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(() -> new RuntimeException("Sample not found"));
+
+      CuratorsIntervalEntity interval = curatorsIntervalRepository.findBySampleAndInterval(sample, 1).orElseThrow(
+          () -> new RuntimeException("Interval not found")
+      );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      approval.setComment("Looks good to me");
+      interval.setApproval(approval);
+
+      return curatorsIntervalRepository.save(interval).getId();
+    });
+    assertNotNull(intervalId);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+    ApiException exception = assertThrows(ApiException.class, () -> providerIntervalService.getApproval(intervalId, authentication));
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

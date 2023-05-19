@@ -351,6 +351,71 @@ public class ProviderIntervalControllerIT { // Tests that proper status codes ar
   }
 
   @Test
+  public void testGetApprovalCAS() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/interval/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalCASUnauthorized() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/interval/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalToken() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/interval/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalTokenUnauthorized() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/interval/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalNoAuth() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+    HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/interval/approval/1", HttpMethod.GET, httpEntity, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
   public void testUpdateProviderIntervalCAS() throws JoseException, IOException {
     createUserWithAuthority(Authorities.ROLE_PROVIDER_INTERVAL_UPDATE, false);
 

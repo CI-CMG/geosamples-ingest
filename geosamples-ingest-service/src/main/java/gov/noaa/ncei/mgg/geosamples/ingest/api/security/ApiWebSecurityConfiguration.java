@@ -163,6 +163,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/api/v1/provider/cruise/approval/*").hasAnyAuthority(Authorities.ROLE_PROVIDER_CRUISE_READ.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/provider/interval", "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/interval/approval/*").hasAnyAuthority(Authorities.ROLE_PROVIDER_INTERVAL_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/provider/interval").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_DELETE.toString())

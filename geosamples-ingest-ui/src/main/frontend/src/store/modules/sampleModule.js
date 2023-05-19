@@ -29,6 +29,7 @@ const fields = [
   'showSampl',
   'neCoordinate',
   'swCoordinate',
+  'approvalState',
 ];
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {

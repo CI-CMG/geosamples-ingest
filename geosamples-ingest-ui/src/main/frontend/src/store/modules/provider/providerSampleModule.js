@@ -8,6 +8,7 @@ const defaultParams = {
   deviceCode: '',
   igsn: '',
   approvalState: '',
+  publish: '',
 };
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
@@ -109,6 +110,10 @@ export default {
 
     setApprovalState(state, approvalState) {
       state.params.approvalState = approvalState;
+    },
+
+    setPublish(state, publish) {
+      state.params.publish = publish;
     },
 
     setImlgs(state, imlgs) {

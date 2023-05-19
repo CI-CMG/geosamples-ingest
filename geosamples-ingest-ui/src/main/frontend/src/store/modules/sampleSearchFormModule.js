@@ -26,6 +26,8 @@ const model = {
   platform: ['string'],
   deviceCode: ['string'],
   igsn: ['string'],
+  publish: ['boolean'],
+  approvalState: ['string'],
   area: 'string',
   swCoordinate: 'string',
   neCoordinate: 'string',

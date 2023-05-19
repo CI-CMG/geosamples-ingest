@@ -17,7 +17,11 @@
         'PENDING',
         'APPROVED',
         'REJECTED',
-      ] }
+      ] },
+      { label: 'Published', value: params.publish, set: setPublish, options: [
+        true,
+        false,
+      ]}
     ]"
     :table-fields="tableFields"
     create-route="ProviderSampleAdd"
@@ -172,6 +176,7 @@ export default {
       'setDeviceCode',
       'setIgsn',
       'setApprovalState',
+      'setPublish',
     ]),
   },
 };

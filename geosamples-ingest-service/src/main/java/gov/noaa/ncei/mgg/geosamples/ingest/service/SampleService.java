@@ -146,6 +146,7 @@ public class SampleService extends
     List<String> deviceCode = searchParameters.getDeviceCode();
     List<String> igsn = searchParameters.getIgsn();
     List<ApprovalState> approvalState = searchParameters.getApprovalState();
+    List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
     Geometry area = searchParameters.getArea();
 
     if (!imlgs.isEmpty()) {
@@ -191,6 +192,9 @@ public class SampleService extends
     }
     if (area != null) {
       specs.add(within(normalizeArea(area)));
+    }
+    if (!publish.isEmpty()) {
+      specs.add(SearchUtils.equal(publish, CuratorsSampleTsqpEntity_.PUBLISH));
     }
 
     return specs;

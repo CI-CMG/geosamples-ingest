@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.Dispatcher;
@@ -205,6 +206,53 @@ public class SampleServiceIT {
     assertEquals("AQ-002", result.getItems().get(1).getSample());
     assertEquals("AQ-003", result.getItems().get(2).getSample());
     assertEquals("AQ-01-01", result.getItems().get(3).getSample());
+  }
+
+  @Test
+  public void testSearchByPublished() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    txTemplate.executeWithoutResult(s -> {
+      curatorsSampleTsqpRepository.findAll().stream().filter(t -> t.getSample().equals("AQ-001")).findFirst().ifPresent(t -> {
+        t.setPublish(true);
+        curatorsSampleTsqpRepository.save(t);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(t -> t.getSample().equals("AQ-002")).findFirst().ifPresent(t -> {
+        t.setPublish(true);
+        curatorsSampleTsqpRepository.save(t);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(t -> t.getSample().equals("AQ-003")).findFirst().ifPresent(t -> {
+        t.setPublish(false);
+        curatorsSampleTsqpRepository.save(t);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(t -> t.getSample().equals("AQ-01-01")).findFirst().ifPresent(t -> {
+        t.setPublish(false);
+        curatorsSampleTsqpRepository.save(t);
+      });
+    });
+
+    SampleSearchParameters searchParameters = new SampleSearchParameters();
+    searchParameters.setPublish(Collections.singletonList(true));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<SampleView> result = sampleService.search(searchParameters);
+
+    assertEquals(2, result.getTotalItems());
+    assertEquals(2, result.getItems().size());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(1, result.getPage());
+    assertEquals(10, result.getItemsPerPage());
+    assertEquals("AQ-001", result.getItems().get(0).getSample());
+    assertEquals("AQ-002", result.getItems().get(1).getSample());
   }
 
   @Test

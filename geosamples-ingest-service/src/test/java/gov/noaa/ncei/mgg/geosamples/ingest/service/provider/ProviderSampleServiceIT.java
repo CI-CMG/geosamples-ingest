@@ -710,6 +710,126 @@ public class ProviderSampleServiceIT {
   }
 
   @Test
+  public void testSearchByApprovalState() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+          () -> new RuntimeException("Facility GEOMAR not found")
+      ));
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    transactionTemplate.executeWithoutResult(s -> {
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-01-01")).findFirst().ifPresent(sample -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.APPROVED);
+        sample.setApproval(approval);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-001")).findFirst().ifPresent(sample -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.REJECTED);
+        sample.setApproval(approval);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-002")).findFirst().ifPresent(sample -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.PENDING);
+        sample.setApproval(approval);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-003")).findFirst().ifPresent(sample -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.APPROVED);
+        sample.setApproval(approval);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+    });
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ProviderSampleSearchParameters searchParameters = new ProviderSampleSearchParameters();
+    searchParameters.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<SampleView> samples = providerSampleService.search(searchParameters, authentication);
+    assertEquals(2, samples.getItems().size());
+    assertEquals(1, samples.getPage());
+    assertEquals(10, samples.getItemsPerPage());
+    assertEquals(2, samples.getTotalItems());
+    assertEquals(1, samples.getTotalPages());
+
+    assertEquals("AQ-003", samples.getItems().get(0).getSample());
+    assertEquals("AQ-01-01", samples.getItems().get(1).getSample());
+  }
+
+  @Test
+  public void testSearchByPublished() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+          () -> new RuntimeException("Facility GEOMAR not found")
+      ));
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    transactionTemplate.executeWithoutResult(s -> {
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-01-01")).findFirst().ifPresent(sample -> {
+        sample.setPublish(true);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-001")).findFirst().ifPresent(sample -> {
+        sample.setPublish(false);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-002")).findFirst().ifPresent(sample -> {
+        sample.setPublish(false);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+
+      curatorsSampleTsqpRepository.findAll().stream().filter(sample -> sample.getSample().equals("AQ-003")).findFirst().ifPresent(sample -> {
+        sample.setPublish(true);
+        curatorsSampleTsqpRepository.save(sample);
+      });
+    });
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ProviderSampleSearchParameters searchParameters = new ProviderSampleSearchParameters();
+    searchParameters.setPublish(Collections.singletonList(true));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+
+    PagedItemsView<SampleView> samples = providerSampleService.search(searchParameters, authentication);
+    assertEquals(2, samples.getItems().size());
+    assertEquals(1, samples.getPage());
+    assertEquals(10, samples.getItemsPerPage());
+    assertEquals(2, samples.getTotalItems());
+    assertEquals(1, samples.getTotalPages());
+
+    assertEquals("AQ-003", samples.getItems().get(0).getSample());
+    assertEquals("AQ-01-01", samples.getItems().get(1).getSample());
+  }
+
+  @Test
   public void testSearchProviderSamplesWithinUserFacility() throws Exception {
     CuratorsFacilityEntity facility = transactionTemplate.execute(s -> {
       CuratorsFacilityEntity f = new CuratorsFacilityEntity();

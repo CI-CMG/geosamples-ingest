@@ -35,6 +35,8 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
   private List<String> deviceCode = new ArrayList<>(0);
   private List<String> igsn = new ArrayList<>(0);
 
+  private List<Boolean> publish = new ArrayList<>(0);
+
   private List<ApprovalState> approvalState = new ArrayList<>(0);
   private Geometry area;
 
@@ -113,6 +115,17 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
       approvalState = new ArrayList<>(0);
     }
     this.approvalState = approvalState;
+  }
+
+  public List<Boolean> getPublish() {
+    return publish;
+  }
+
+  public void setPublish(List<Boolean> publish) {
+    if(publish == null) {
+      publish = new ArrayList<>(0);
+    }
+    this.publish = publish;
   }
 
   public Geometry getArea() {

@@ -18,7 +18,7 @@
             <b-card title="Sample Information" border-variant="dark" bg-variant="light" class="mb-4">
               <b-form-group :label-for="sampleId">
                 <template #label>
-                  Sample<span><strong style="color: red"> *</strong></span>
+                  Sample ID<span><strong style="color: red"> *</strong></span>
                 </template>
                 <b-form-input
                   required
@@ -32,7 +32,7 @@
               </b-form-group>
               <b-form-group :label-for="platformId">
                 <template #label>
-                  Platform<span><strong style="color: red"> *</strong></span>
+                  Ship Name<span><strong style="color: red"> *</strong></span>
                 </template>
                 <b-form-select
                   required
@@ -48,7 +48,7 @@
                 <b-col>
                   <b-form-group :label-for="cruiseId">
                     <template #label>
-                      Cruise<span><strong style="color: red"> *</strong></span>
+                      Cruise ID<span><strong style="color: red"> *</strong></span>
                     </template>
                     <b-form-select
                       required
@@ -65,7 +65,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Leg" :label-for="legId">
+                  <b-form-group label="Alternate Cruise/Leg" :label-for="legId">
                     <b-form-select
                       v-if="!loadingLegs"
                       :disabled="!getValue('cruise')"
@@ -82,7 +82,7 @@
               </b-row>
               <b-form-group :label-for="deviceCodeId">
                 <template #label>
-                  Device<span><strong style="color: red"> *</strong></span>
+                  Sampling Device<span><strong style="color: red"> *</strong></span>
                 </template>
                 <b-form-select
                   required
@@ -133,17 +133,17 @@
                 </b-col>
               </b-row>
             </b-card>
-            <b-card title="Date" border-variant="dark" bg-variant="light" class="mb-4">
+            <b-card title="Sample Collection Date" border-variant="dark" bg-variant="light" class="mb-4">
               <b-row>
                 <b-col>
-                  <b-form-group label="Begin Date" :label-for="beginDateId">
+                  <b-form-group label="Date Collected" :label-for="beginDateId">
                     <b-form-input
                       type="text"
                       :id="beginDateId"
                       :value="getValue('beginDate')"
                       @input="(value) => setValue({ path: 'beginDate', value })"
                       :state="showError('beginDate') || isValidDate(getValue('beginDate'))"
-                      placeholder="MMDDYYYY"
+                      placeholder="YYYYMMDD"
                     />
                     <b-form-invalid-feedback>{{ getError('beginDate') }}</b-form-invalid-feedback>
                   </b-form-group>
@@ -156,7 +156,7 @@
                       :value="getValue('endDate')"
                       @input="(value) => setValue({ path: 'endDate', value })"
                       :state="showError('endDate') || isValidDate(getValue('endDate'))"
-                      placeholder="MMDDYYYY"
+                      placeholder="YYYYMMDD"
                     />
                     <b-form-invalid-feedback>{{ getError('endDate') }}</b-form-invalid-feedback>
                   </b-form-group>
@@ -165,12 +165,12 @@
             </b-card>
           </b-col>
           <b-col>
-            <b-card title="Location" border-variant="dark" bg-variant="light" class="mb-4">
+            <b-card title="Sample Location" border-variant="dark" bg-variant="light" class="mb-4">
               <b-row>
                 <b-col>
                   <b-form-group :label-for="latId">
                     <template #label>
-                      Latitude (DD.DDDDD)<span><strong style="color: red"> *</strong></span>
+                      Beginning Latitude (-99.99999, south is negative)<span><strong style="color: red"> *</strong></span>
                     </template>
                     <b-form-input
                       required
@@ -186,7 +186,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="End Latitude (DD.DDDDD)" :label-for="endLatId">
+                  <b-form-group label="Ending Latitude (-99.99999, south is negative)" :label-for="endLatId">
                     <b-form-input
                       type="number"
                       min="-90"
@@ -204,7 +204,7 @@
                 <b-col>
                   <b-form-group :label-for="lonId">
                     <template #label>
-                      Longitude (DD.DDDDD)<span><strong style="color: red"> *</strong></span>
+                      Beginning Longitude (-99.99999, west is negative)<span><strong style="color: red"> *</strong></span>
                     </template>
                     <b-form-input
                       required
@@ -220,7 +220,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="End Longitude (DD.DDDDD)" :label-for="endLonId">
+                  <b-form-group label="Ending Longitude (-99.99999, west is negative)" :label-for="endLonId">
                     <b-form-input
                       type="number"
                       min="-180"
@@ -234,7 +234,7 @@
                   </b-form-group>
                 </b-col>
               </b-row>
-              <b-form-group label="Province" :label-for="provinceCodeId">
+              <b-form-group label="Physiographic Province" :label-for="provinceCodeId">
                 <b-form-select
                   :id="provinceCodeId"
                   :options="optionsProvinceCode"
@@ -246,7 +246,7 @@
               </b-form-group>
               <b-row>
                 <b-col>
-                  <b-form-group label="Water Depth (m)" :label-for="waterDepthId">
+                  <b-form-group label="Beginning Water Depth (m)" :label-for="waterDepthId">
                     <b-form-input
                       type="number"
                       min="0"
@@ -259,7 +259,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="End Water Depth (m)" :label-for="endWaterDepthId">
+                  <b-form-group label="Ending Water Depth (m)" :label-for="endWaterDepthId">
                     <b-form-input
                       type="number"
                       min="0"
@@ -272,7 +272,7 @@
                   </b-form-group>
                 </b-col>
               </b-row>
-              <b-form-group label="Lake" :label-for="lakeId">
+              <b-form-group label="Lake (if applicable)" :label-for="lakeId">
                 <b-form-input
                   type="text"
                   :id="lakeId"
@@ -282,7 +282,7 @@
                 />
               </b-form-group>
             </b-card>
-            <b-card title="Additional Information" border-variant="dark" bg-variant="light">
+            <b-card title="Additional Sample Information" border-variant="dark" bg-variant="light">
               <b-form-group label="Principal Investigator" :label-for="piId">
                 <b-form-input
                   type="text"
@@ -303,9 +303,9 @@
                 />
                 <b-form-invalid-feedback>{{ getError('igsn') }}</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group label="Sample Comments" :label-for="sampleCommentsId">
+              <b-form-group :label-for="sampleCommentsId">
                 <template #label>
-                  Sample Comments<span style="color: gray"> (limit 2000 characters)</span>
+                  Free-Form Description of Composition<span style="color: gray"> (limit 2000 characters)</span>
                 </template>
                 <b-form-textarea
                   :id="sampleCommentsId"

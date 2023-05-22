@@ -15,10 +15,10 @@
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
         <b-row>
           <b-col>
-            <b-card title="Interval Information" border-variant="dark" bg-variant="light" class="mb-4">
+            <b-card title="Geologic Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
               <b-row>
                 <b-col>
-                  <b-form-group label="Sample Name" :label-for="imlgsId">
+                  <b-form-group label="Sample ID" :label-for="imlgsId">
                     <b-form-select
                       required
                       :id="imlgsId"
@@ -31,7 +31,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Interval" :label-for="intervalId">
+                  <b-form-group label="Interval #" :label-for="intervalId">
                     <b-form-input
                       required
                       type="number"
@@ -47,7 +47,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Depth to Top of Interval" :label-for="depthTopId">
+                  <b-form-group label="Depth to Top of Interval (cm)" :label-for="depthTopId">
                     <b-form-input
                       type="number"
                       step="any"
@@ -61,7 +61,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Depth to Bottom of Interval" :label-for="depthBotId">
+                  <b-form-group label="Depth to Bottom of Interval (cm)" :label-for="depthBotId">
                     <b-form-input
                       type="number"
                       step="any"
@@ -77,7 +77,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Primary Lithology" :label-for="lithCode1Id">
+                  <b-form-group label="Primary Lithologic Composition" :label-for="lithCode1Id">
                     <b-form-select
                       type="text"
                       :id="lithCode1Id"
@@ -90,7 +90,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Secondary Lithology" :label-for="lithCode2Id">
+                  <b-form-group label="Secondary Lithologic Composition" :label-for="lithCode2Id">
                     <b-form-select
                       type="text"
                       :id="lithCode2Id"
@@ -133,7 +133,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 1" :label-for="compCode1Id">
+                  <b-form-group label="Other Component 1" :label-for="compCode1Id">
                     <b-form-select
                       type="text"
                       :id="compCode1Id"
@@ -146,7 +146,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 2" :label-for="compCode2Id">
+                  <b-form-group label="Other Component 2" :label-for="compCode2Id">
                     <b-form-select
                       type="text"
                       :id="compCode2Id"
@@ -159,7 +159,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 3" :label-for="compCode3Id">
+                  <b-form-group label="Other Component 3" :label-for="compCode3Id">
                     <b-form-select
                       type="text"
                       :id="compCode3Id"
@@ -172,7 +172,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 4" :label-for="compCode4Id">
+                  <b-form-group label="Other Component 4" :label-for="compCode4Id">
                     <b-form-select
                       type="text"
                       :id="compCode4Id"
@@ -185,7 +185,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 5" :label-for="compCode5Id">
+                  <b-form-group label="Other Component 5" :label-for="compCode5Id">
                     <b-form-select
                       type="text"
                       :id="compCode5Id"
@@ -198,7 +198,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Lithologic Composition 6" :label-for="compCode6Id">
+                  <b-form-group label="Other Component 6" :label-for="compCode6Id">
                     <b-form-select
                       type="text"
                       :id="compCode6Id"
@@ -213,7 +213,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Geologic Age Codes" :label-for="ageCodesId">
+                  <b-form-group label="Geologic Age" :label-for="ageCodesId">
                     <b-form-select
                       :id="ageCodesId"
                       @blur="() => setTouched({path: 'ageCodes', touched: true})"
@@ -280,7 +280,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Weathering/Metamorphism" :label-for="weathMetaCodeId">
+                  <b-form-group label="Rock Weathering/Metamorphism" :label-for="weathMetaCodeId">
                     <b-form-select
                       type="text"
                       :id="weathMetaCodeId"
@@ -295,7 +295,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Remark" :label-for="remarkCodeId">
+                  <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkCodeId">
                     <b-form-select
                       type="text"
                       :id="remarkCodeId"
@@ -308,7 +308,7 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Munsell" :label-for="munsellCodeId">
+                  <b-form-group label="Munsell Color" :label-for="munsellCodeId">
                     <b-form-select
                       type="text"
                       :id="munsellCodeId"
@@ -323,7 +323,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Weight" :label-for="weightId">
+                  <b-form-group label="Bulk Weight (kg)" :label-for="weightId">
                     <b-form-input
                       type="number"
                       step="any"
@@ -492,8 +492,8 @@
             </b-row>
             <b-row>
               <b-col>
-                <b-card title="Additional Information" border-variant="dark" bg-variant="light" class="mb-4">
-                  <b-form-group label="Exhausted" :label-for="exhaustedId">
+                <b-card title="Additional Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
+                  <b-form-group label="Sample Not Available (exhausted)" :label-for="exhaustedId">
                     <b-form-checkbox
                       :id="exhaustedId"
                       :checked="getValue('exhausted')"
@@ -513,16 +513,16 @@
                     />
                     <b-form-invalid-feedback>{{ getError('unitNumber') }}</b-form-invalid-feedback>
                   </b-form-group>
-                  <b-form-group label="Interval Comments" :label-for="intervalId">
+                  <b-form-group label="Comments on Sub-Sample/Interval (limit 2000 characters)" :label-for="intCommentsId">
                     <b-form-textarea
-                      :id="intervalId"
-                      :value="getValue('interval')"
-                      @input="(value) => setValue({ path: 'interval', value })"
-                      :state="showError('interval')"
+                      :id="intCommentsId"
+                      :value="getValue('intComments')"
+                      @input="(value) => setValue({ path: 'intComments', value })"
+                      :state="showError('intComments')"
                     />
-                    <b-form-invalid-feedback>{{ getError('interval') }}</b-form-invalid-feedback>
+                    <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
                   </b-form-group>
-                  <b-form-group label="IGSN" :label-for="igsnId">
+                  <b-form-group label="Child IGSN" :label-for="igsnId">
                     <b-form-input
                       type="text"
                       :id="igsnId"

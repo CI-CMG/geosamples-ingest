@@ -56,6 +56,8 @@ import providerCruiseForm from './modules/provider/providerCruiseFormModule';
 import approvalForm from './modules/approvalFormModule';
 import providerSample from './modules/provider/providerSampleModule';
 import providerSampleForm from './modules/provider/providerSampleForm';
+import providerInterval from './modules/provider/providerIntervalModule';
+import providerIntervalForm from './modules/provider/providerIntervalFormModule';
 
 Vue.use(Vuex);
 
@@ -117,5 +119,7 @@ export default new Vuex.Store({
     approvalForm,
     providerSample,
     providerSampleForm,
+    providerInterval,
+    providerIntervalForm,
   },
 });

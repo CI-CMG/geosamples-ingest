@@ -108,6 +108,8 @@ export default {
 
     options: {},
 
+    loadingApproval: false,
+
     itemsPerPage: 200,
 
     items: [],
@@ -298,9 +300,45 @@ export default {
       state.totalPages = 1;
       state.totalItems = 0;
     },
+    loadApprovalRequest(state) {
+      state.loadingApproval = true;
+    },
+    loadApprovalComplete(state) {
+      state.loadingApproval = false;
+    },
   },
 
   actions: {
+    loadApproval({ commit }, id) {
+      commit('loadApprovalRequest');
+      return apiService.get(`/interval/approval/${id}`)
+        .then(
+          (response) => {
+            commit('loadApprovalComplete');
+            return response.data;
+          },
+          (error) => {
+            commit('loadApprovalComplete');
+            throw error;
+          },
+        );
+    },
+
+    saveApproval({ commit }, { id, approval }) {
+      commit('loadApprovalRequest');
+      return apiService.patch(`/interval/review/${id}`, approval)
+        .then(
+          (response) => {
+            commit('loadApprovalComplete');
+            return response.data;
+          },
+          (error) => {
+            commit('loadApprovalComplete');
+            throw error;
+          },
+        );
+    },
+
     loadOptions({ commit }) {
       commit('updateOptions', {});
       const nextOpts = {};

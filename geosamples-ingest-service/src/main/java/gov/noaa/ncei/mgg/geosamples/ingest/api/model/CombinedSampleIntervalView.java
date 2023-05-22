@@ -1,6 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,8 @@ public class CombinedSampleIntervalView {
   private String intervalIgsn;
   private String intervalParentIsgn;
   private Boolean publish;
+
+  private ApprovalState approvalState;
 
   public String getCruise() {
     return cruise;
@@ -709,5 +712,13 @@ public class CombinedSampleIntervalView {
 
   public void setPublish(Boolean publish) {
     this.publish = publish;
+  }
+
+  public ApprovalState getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(ApprovalState approvalState) {
+    this.approvalState = approvalState;
   }
 }

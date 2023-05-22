@@ -210,8 +210,8 @@ export default {
                   const paths = Object.keys(formErrors);
                   paths.forEach((path) => {
                     const message = formErrors[path].join(', ');
-                    commit('cruiseForm/setTouched', { path, touched: false }, { root: true });
-                    commit('cruiseForm/setError', { path, error: message }, { root: true });
+                    commit('providerCruiseForm/setTouched', { path, touched: false }, { root: true });
+                    commit('providerCruiseForm/setError', { path, error: message }, { root: true });
                   });
                 }
               }

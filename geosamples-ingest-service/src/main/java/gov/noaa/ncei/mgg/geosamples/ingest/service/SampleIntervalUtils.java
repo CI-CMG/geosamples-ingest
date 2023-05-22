@@ -340,6 +340,10 @@ public final class SampleIntervalUtils {
     view.setIntervalIgsn(entity.getIgsn());
     view.setIntervalParentIsgn(sampleEntity.getIgsn());
 
+    if (entity.getApproval() != null) {
+      view.setApprovalState(entity.getApproval().getApprovalState());
+    }
+
     view.setPublish(sampleEntity.isPublish() && entity.isPublish());
 
     return view;

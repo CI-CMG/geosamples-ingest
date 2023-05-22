@@ -1,15 +1,6 @@
 import { apiService } from '@/api';
 
-const defaultParams = {
-  imlgs: '',
-  cruise: '',
-  sample: '',
-  platform: '',
-  deviceCode: '',
-  igsn: '',
-  approvalState: '',
-  publish: '',
-};
+const defaultParams = {};
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
   params: { page },
@@ -52,7 +43,7 @@ export default {
 
     params: { ...defaultParams },
 
-    sortBy: 'cruise',
+    sortBy: 'interval',
     sortDesc: false,
 
     item: null,
@@ -60,13 +51,9 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
-    loadingLegs: false,
 
     options: {},
-    legOptions: [],
     loadingOptions: false,
-    cruiseOptions: [],
-    loadingCruises: false,
   },
 
   mutations: {
@@ -106,38 +93,6 @@ export default {
       state.page = 1;
       state.totalPages = 1;
       state.totalItems = 0;
-    },
-
-    setApprovalState(state, approvalState) {
-      state.params.approvalState = approvalState;
-    },
-
-    setPublish(state, publish) {
-      state.params.publish = publish;
-    },
-
-    setImlgs(state, imlgs) {
-      state.params.imlgs = imlgs;
-    },
-
-    setCruise(state, cruise) {
-      state.params.cruise = cruise;
-    },
-
-    setSample(state, sample) {
-      state.params.sample = sample;
-    },
-
-    setPlatform(state, platform) {
-      state.params.platform = platform;
-    },
-
-    setDeviceCode(state, deviceCode) {
-      state.params.deviceCode = deviceCode;
-    },
-
-    setIgsn(state, igsn) {
-      state.params.igsn = igsn;
     },
 
     setSortBy(state, sortBy) {
@@ -188,30 +143,6 @@ export default {
     updateOptions(state, options) {
       state.options = options;
     },
-
-    loadLegOptionsRequest(state) {
-      state.loadingLegs = true;
-    },
-
-    loadLegOptionsComplete(state) {
-      state.loadingLegs = false;
-    },
-
-    updateLegOptions(state, legOptions) {
-      state.legOptions = legOptions;
-    },
-
-    loadCruiseOptionsRequest(state) {
-      state.loadingCruises = true;
-    },
-
-    loadCruiseOptionsComplete(state) {
-      state.loadingCruises = false;
-    },
-
-    updateCruiseOptions(state, cruiseOptions) {
-      state.cruiseOptions = cruiseOptions;
-    },
   },
 
   actions: {
@@ -221,36 +152,19 @@ export default {
       const nextOpts = {};
 
       Promise.all([
-        loadAll('/provider/platform', ({ platform }) => ({ value: platform, text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
-        loadAll('/device', ({ deviceCode, device }) => ({ value: deviceCode, text: device })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
-        loadAll('/storage-method', ({ storageMethodCode, storageMethod }) => ({ value: storageMethodCode, text: storageMethod })).then(sortOptions).then((options) => { nextOpts.storageMethCode = options; return options; }),
-        loadAll('/province', ({ provinceCode, province }) => ({ value: provinceCode, text: province })).then(sortOptions).then((options) => { nextOpts.provinceCode = options; return options; }),
+        loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: lithology })).then(sortOptions).then((options) => { nextOpts.lithologyCode = options; return options; }),
+        loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: texture })).then(sortOptions).then((options) => { nextOpts.textureCode = options; return options; }),
+        loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: age })).then(sortOptions).then((options) => { nextOpts.ageCode = options; return options; }),
+        loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: rockMineral })).then(sortOptions).then((options) => { nextOpts.rockMineralCode = options; return options; }),
+        loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: weathering })).then(sortOptions).then((options) => { nextOpts.weathMetaCode = options; return options; }),
+        loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: remark })).then(sortOptions).then((options) => { nextOpts.remarkCode = options; return options; }),
+        loadAll('/munsell', ({ munsellCode }) => ({ value: munsellCode, text: munsellCode })).then(sortOptions).then((options) => { nextOpts.munsellCode = options; return options; }),
+        loadAll('/device', ({ device, deviceCode }) => ({ value: deviceCode, text: device })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
+        loadAll('/provider/sample', ({ sample, cruise, imlgs }) => ({ value: imlgs, text: `${sample} (${cruise})` })).then(sortOptions).then((options) => { nextOpts.imlgs = options; return options; }),
       ]).then(() => {
         commit('updateOptions', nextOpts);
         commit('loadOptionsComplete');
       });
-    },
-
-    loadLegOptions({ commit }, { cruiseName, year }) {
-      commit('loadLegOptionsRequest');
-      commit('updateLegOptions', []);
-      return apiService.get(`/provider/cruise?cruiseNameEquals=${cruiseName}&year=${year}&page=1&itemsPerPage=1`).then((response) => {
-        if (response.data.items.length !== 0) {
-          commit('updateLegOptions', response.data.items[0].legs);
-        }
-        commit('loadLegOptionsComplete');
-      });
-    },
-
-    loadCruiseOptions({ commit }, platformName) {
-      commit('loadCruiseOptionsRequest');
-      commit('updateCruiseOptions', []);
-      return loadAll(`/provider/cruise?platformEquals=${platformName}`, ({ cruiseName, year }) => ({ text: `${cruiseName} (${year})`, value: { cruiseName, year } })).then(sortOptions).then(
-        (options) => {
-          commit('updateCruiseOptions', options);
-          commit('loadCruiseOptionsComplete');
-        },
-      );
     },
 
     // eslint-disable-next-line no-unused-vars
@@ -277,7 +191,7 @@ export default {
           params[key] = value;
         }
       });
-      return apiService.get('/provider/sample', {
+      return apiService.get('/provider/interval', {
         params:
           {
             ...params,
@@ -297,7 +211,7 @@ export default {
     },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/provider/sample/${id}`)
+      return apiService.get(`/provider/interval/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -311,7 +225,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/provider/sample/${id}`, provider) : () => apiService.post('/provider/sample', provider);
+      const req = id ? () => apiService.put(`/provider/interval/${id}`, provider) : () => apiService.post('/provider/interval', provider);
       return req()
         .then(
           (response) => {
@@ -329,8 +243,8 @@ export default {
                   const paths = Object.keys(formErrors);
                   paths.forEach((path) => {
                     const message = formErrors[path].join(', ');
-                    commit('providerSampleForm/setTouched', { path, touched: false }, { root: true });
-                    commit('providerSampleForm/setError', { path, error: message }, { root: true });
+                    commit('providerIntervalForm/setTouched', { path, touched: false }, { root: true });
+                    commit('providerIntervalForm/setError', { path, error: message }, { root: true });
                   });
                 }
               }
@@ -341,7 +255,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/provider/sample/${id}`)
+      return apiService.delete(`/provider/interval/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);
@@ -355,7 +269,7 @@ export default {
     },
     loadApproval({ commit }, id) {
       commit('loadApprovalRequest');
-      return apiService.get(`/provider/sample/approval/${id}`)
+      return apiService.get(`/provider/interval/approval/${id}`)
         .then(
           (response) => {
             commit('loadApprovalComplete');

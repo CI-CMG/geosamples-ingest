@@ -90,6 +90,9 @@
           <AuthorizedContent :authorities="['ROLE_PROVIDER_SAMPLE_READ']">
             <b-nav-item :to="{ name: 'ProviderSampleList' }">Samples</b-nav-item>
           </AuthorizedContent>
+          <AuthorizedContent :authorities="['ROLE_PROVIDER_INTERVAL_READ']">
+            <b-nav-item :to="{ name: 'ProviderIntervalList' }">Intervals</b-nav-item>
+          </AuthorizedContent>
         </b-navbar-nav>
       </b-collapse>
 

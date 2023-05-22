@@ -216,6 +216,65 @@ public class PlatformControllerIT {
     assertEquals(403, response.getStatusCodeValue());
   }
 
+  @Test
+  public void testGetApprovalCAS() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_PLATFORM_READ, true);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("martin"));
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/platform/approval/1", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalCASUnauthorized() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("martin"));
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/platform/approval/1", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalToken() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_PLATFORM_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/platform/approval/1", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalTokenUnauthorized() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/platform/approval/1", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testGetApprovalNoAuth() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/platform/approval/1", HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
   private void cleanDB() {
     transactionTemplate.execute(status -> {
       userRepository.findById("martin").ifPresent(userRepository::delete);

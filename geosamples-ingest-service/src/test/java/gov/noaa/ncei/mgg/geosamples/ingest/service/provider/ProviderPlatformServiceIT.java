@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderPlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderPlatformView;
@@ -154,6 +155,112 @@ public class ProviderPlatformServiceIT {
   }
 
   @Test
+  public void testGetApproval() {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
+      geosamplesUserEntity.setUserName("gabby");
+      geosamplesUserEntity.setDisplayName("Gabby");
+      return geosamplesUserRepository.save(geosamplesUserEntity);
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMaster = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setMasterId(1);
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("http://example.com");
+      platform.setCreatedBy(userEntity);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("comment");
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ApprovalView approvalView = providerPlatformService.getApproval(platformMaster.getId(), authentication);
+    assertEquals(ApprovalState.PENDING, approvalView.getApprovalState());
+    assertEquals("comment", approvalView.getComment());
+  }
+
+  @Test
+  public void testGetApprovalNotFound() {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
+      geosamplesUserEntity.setUserName("gabby");
+      geosamplesUserEntity.setDisplayName("Gabby");
+      return geosamplesUserRepository.save(geosamplesUserEntity);
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMaster = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setMasterId(1);
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("http://example.com");
+      platform.setCreatedBy(userEntity);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ApiException exception = assertThrows(ApiException.class, () -> providerPlatformService.getApproval(platformMaster.getId(), authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
+  public void testGetApprovalPlatformDoesNotBelongToUser() {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
+      geosamplesUserEntity.setUserName("gabby");
+      geosamplesUserEntity.setDisplayName("Gabby");
+      return geosamplesUserRepository.save(geosamplesUserEntity);
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMaster = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setMasterId(1);
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("http://example.com");
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("comment");
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ApiException exception = assertThrows(ApiException.class, () -> providerPlatformService.getApproval(platformMaster.getId(), authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
   public void testGetProviderPlatform() {
     GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
       GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
@@ -210,14 +317,11 @@ public class ProviderPlatformServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    ProviderPlatformView resultView = providerPlatformService.get(platformMaster.getId(), authentication);
-
-    assertEquals(platformMaster.getId(), resultView.getId());
-    assertEquals(platformMaster.getPlatform(), resultView.getPlatform());
-    assertEquals(platformMaster.getMasterId(), resultView.getMasterId());
-    assertEquals(platformMaster.getPrefix(), resultView.getPrefix());
-    assertEquals(platformMaster.getIcesCode(), resultView.getIcesCode());
-    assertEquals(platformMaster.getSourceUri(), resultView.getSourceUri());
+    ApiException exception = assertThrows(ApiException.class, () -> providerPlatformService.get(platformMaster.getId(), authentication));
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -843,10 +947,10 @@ public class ProviderPlatformServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
     ApiException exception = assertThrows(ApiException.class, () -> providerPlatformService.update(platformMaster.getId(), updateView, authentication));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1061,10 +1165,10 @@ public class ProviderPlatformServiceIT {
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
     ApiException exception = assertThrows(ApiException.class, () -> providerPlatformService.delete(platformMaster.getId(), authentication));
-    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(HttpStatus.NOT_FOUND.getReasonPhrase(), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

@@ -51,6 +51,53 @@ public class PlatformServiceIT {
   }
 
   @Test
+  public void testGetApproval() {
+    PlatformMasterEntity platformEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("TST");
+      platform.setMasterId(1);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("Pending approval");
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformEntity);
+
+    ApprovalView approvalView = platformService.getApproval(platformEntity.getId());
+    assertEquals(ApprovalState.PENDING, approvalView.getApprovalState());
+    assertEquals("Pending approval", approvalView.getComment());
+  }
+
+  @Test
+  public void tetGetApprovalNotFound() {
+    PlatformMasterEntity platformEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("TST");
+      platform.setMasterId(1);
+
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformEntity);
+
+    ApiException exception = assertThrows(ApiException.class, () -> {
+      platformService.getApproval(platformEntity.getId());
+    });
+    assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Approval does not exist", exception.getApiError().getFlashErrors().get(0));
+  }
+
+  @Test
   public void testReviewPlatform() {
     GeosamplesUserEntity user = transactionTemplate.execute(s -> {
       GeosamplesUserEntity geosamplesUser = new GeosamplesUserEntity();

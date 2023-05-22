@@ -45,7 +45,7 @@ public class ProviderPlatformService extends ProviderServiceBase<Long, PlatformM
 
   @Override
   protected boolean userCanAccessResource(String userInfo, PlatformView view) {
-    return view.getCreatedBy() == null || view.getCreatedBy().equals(userInfo);
+    return view.getCreatedBy() != null && view.getCreatedBy().equals(userInfo);
   }
 
   @Override

@@ -62,6 +62,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.DELETE, "/api/v1/munsell/*").hasAuthority(Authorities.ROLE_MUNSELL_DELETE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/platform", "/api/v1/platform/*").hasAuthority(Authorities.ROLE_PLATFORM_READ.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/platform/approval/*").hasAuthority(Authorities.ROLE_PLATFORM_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/platform").hasAuthority(Authorities.ROLE_PLATFORM_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/platform/*").hasAuthority(Authorities.ROLE_PLATFORM_UPDATE.toString())
         .antMatchers(HttpMethod.PATCH, "/api/v1/platform/review/*").hasAuthority(Authorities.ROLE_PLATFORM_UPDATE.toString())
@@ -169,6 +170,7 @@ public class ApiWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.DELETE, "/api/v1/provider/interval/*").hasAuthority(Authorities.ROLE_PROVIDER_INTERVAL_DELETE.toString())
 
         .antMatchers(HttpMethod.GET, "/api/v1/provider/platform", "/api/v1/provider/platform/*").hasAuthority(Authorities.ROLE_PROVIDER_PLATFORM_READ.toString())
+        .antMatchers(HttpMethod.GET, "/api/v1/provider/platform/approval/*").hasAnyAuthority(Authorities.ROLE_PROVIDER_PLATFORM_READ.toString())
         .antMatchers(HttpMethod.POST, "/api/v1/provider/platform").hasAuthority(Authorities.ROLE_PROVIDER_PLATFORM_CREATE.toString())
         .antMatchers(HttpMethod.PUT, "/api/v1/provider/platform/*").hasAuthority(Authorities.ROLE_PROVIDER_PLATFORM_UPDATE.toString())
         .antMatchers(HttpMethod.DELETE, "/api/v1/provider/platform/*").hasAuthority(Authorities.ROLE_PROVIDER_PLATFORM_DELETE.toString())

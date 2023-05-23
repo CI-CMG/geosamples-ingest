@@ -18,7 +18,10 @@
             <b-card title="Geologic Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
               <b-row>
                 <b-col>
-                  <b-form-group label="Sample ID" :label-for="imlgsId">
+                  <b-form-group :label-for="imlgsId">
+                    <template #label>
+                      Sample ID<span><strong style="color: red"> *</strong></span>
+                    </template>
                     <b-form-select
                       :disabled="Boolean(imlgs)"
                       required
@@ -32,7 +35,8 @@
                   </b-form-group>
                 </b-col>
                 <b-col>
-                  <b-form-group label="Interval #" :label-for="intervalId">
+                  <b-form-group :label-for="intervalId">
+                    Interval #<span><strong style="color: red"> *</strong></span>
                     <b-form-input
                       required
                       type="number"

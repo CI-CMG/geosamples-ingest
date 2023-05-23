@@ -23,7 +23,6 @@ const model = {
   interval: 'int',
   depthTop: 'float',
   depthBot: 'float',
-  dhCoreId: 'string',
   lithCode1: 'string',
   textCode1: 'string',
   lithCode2: 'string',

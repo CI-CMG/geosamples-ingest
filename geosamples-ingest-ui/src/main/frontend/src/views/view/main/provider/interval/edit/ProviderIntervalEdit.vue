@@ -330,26 +330,6 @@
           <b-col>
             <b-row>
               <b-col>
-                <b-card title="Core Information" border-variant="dark" bg-variant="light" class="mb-4">
-                  <b-row>
-                    <b-col>
-                      <b-form-group label="Down Hole Core ID" :label-for="dhCoreIdId">
-                        <b-form-input
-                          type="text"
-                          :id="dhCoreIdId"
-                          :value="getValue('dhCoreId')"
-                          @input="(value) => setValue({ path: 'dhCoreId', value })"
-                          :state="showError('dhCoreId')"
-                        />
-                        <b-form-invalid-feedback>{{ getError('dhCoreId') }}</b-form-invalid-feedback>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-card>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col>
                 <b-card title="Additional Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
                   <b-form-group label="Subsample/Interval Not Available (exhausted)" :label-for="exhaustedId">
                     <b-form-checkbox
@@ -418,7 +398,6 @@ export default {
       intervalId: null,
       depthTopId: null,
       depthBotId: null,
-      dhCoreIdId: null,
       lithCode1Id: null,
       lithCode2Id: null,
       textCode1Id: null,
@@ -448,7 +427,6 @@ export default {
     this.intervalId = genId();
     this.depthTopId = genId();
     this.depthBotId = genId();
-    this.dhCoreIdId = genId();
     this.lithCode1Id = genId();
     this.lithCode2Id = genId();
     this.textCode1Id = genId();

@@ -37,17 +37,6 @@
           <b-form-invalid-feedback>{{ getError('depthBot') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="DH Core ID" :label-for="dhCoreIdId">
-          <b-form-input
-            :id="dhCoreIdId"
-            type="text" @blur="() => setTouched({path: 'dhCoreId', touched: true})"
-            :value="getValue('dhCoreId')"
-            @update="(value) => setValue({ path: 'dhCoreId', value })"
-            :state="showError('dhCoreId')"
-          />
-          <b-form-invalid-feedback>{{ getError('dhCoreId') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Primary Lithologic Composition Code" :label-for="lithCode1Id">
           <b-form-input
             :id="lithCode1Id"
@@ -335,7 +324,6 @@ export default {
       intervalId: '',
       depthTopId: '',
       depthBotId: '',
-      dhCoreIdId: '',
       lithCode1Id: '',
       textCode1Id: '',
       lithCode2Id: '',
@@ -365,7 +353,6 @@ export default {
     this.intervalId = genId();
     this.depthTopId = genId();
     this.depthBotId = genId();
-    this.dhCoreIdId = genId();
     this.lithCode1Id = genId();
     this.textCode1Id = genId();
     this.lithCode2Id = genId();

@@ -72,7 +72,6 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalView.setInterval(view.getInterval());
     intervalView.setDepthTop(view.getDepthTop());
     intervalView.setDepthBot(view.getDepthBot());
-    intervalView.setDhCoreId(view.getDhCoreId());
     intervalView.setLithCode1(view.getLithCode1());
     intervalView.setLithCode2(view.getLithCode2());
     intervalView.setTextCode1(view.getTextCode1());

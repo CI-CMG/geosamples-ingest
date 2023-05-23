@@ -302,10 +302,6 @@ export default {
           label: 'Depth Bot. (mm)',
         },
         {
-          key: 'dhCoreId',
-          label: 'DH Core Id',
-        },
-        {
           key: 'lith1',
           label: 'Primary Lithologic Composition',
         },

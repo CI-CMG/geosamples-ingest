@@ -293,7 +293,6 @@ public final class SampleIntervalUtils {
     view.setDepthTopMm(entity.getDepthTopMm());
     view.setDepthBot(entity.getDepthBot());
     view.setDepthBotMm(entity.getDepthBotMm());
-    view.setDhCoreId(entity.getDhCoreId());
     view.setLith1(entity.getLith1() == null ? null : entity.getLith1().getLithologyCode());
     view.setText1(entity.getText1() == null ? null : entity.getText1().getTextureCode());
     view.setLith2(entity.getLith2() == null ? null : entity.getLith2().getLithologyCode());

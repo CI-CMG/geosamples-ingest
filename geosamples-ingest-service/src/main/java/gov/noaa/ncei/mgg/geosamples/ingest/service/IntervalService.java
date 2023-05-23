@@ -139,7 +139,6 @@ public class IntervalService extends
     view.setDhCoreInterval(entity.getDhCoreInterval());
 
     setCombinedCmMm(entity::getdTopInDhCore, entity::getdTopInDhCore, view::setdTopInDhCore);
-    setCombinedCmMm(entity::getdBotInDhCore, entity::getdBotInDhCore, view::setdBotInDhCore);
 
     view.setLithCode1(entity.getLith1() == null ? null : entity.getLith1().getLithologyCode());
     view.setTextCode1(entity.getText1() == null ? null : entity.getText1().getTextureCode());
@@ -220,7 +219,6 @@ public class IntervalService extends
     entity.setDhCoreInterval(view.getDhCoreInterval());
 
     setCmMm(view::getdTopInDhCore, entity::setdTopInDhCore, entity::setdTopMmInDhCore);
-    setCmMm(view::getdBotInDhCore, entity::setdBotInDhCore, entity::setdBotMmInDhCore);
 
     setRelation(view::getLithCode1, curatorsLithologyRepository::findByLithologyCode, entity::setLith1);
     setRelation(view::getTextCode1, curatorsTextureRepository::findByTextureCode, entity::setText1);

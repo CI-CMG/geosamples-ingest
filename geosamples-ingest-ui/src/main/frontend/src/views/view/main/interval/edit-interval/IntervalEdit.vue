@@ -81,17 +81,6 @@
           <b-form-invalid-feedback>{{ getError('dTopInDhCore') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Bot DH Core" :label-for="dBotInDhCoreId">
-          <b-form-input
-            :id="dBotInDhCoreId"
-            type="text" @blur="() => setTouched({path: 'dBotInDhCore', touched: true})"
-            :value="getValue('dBotInDhCore')"
-            @update="(value) => setValue({ path: 'dBotInDhCore', value })"
-            :state="showError('dBotInDhCore')"
-          />
-          <b-form-invalid-feedback>{{ getError('dBotInDhCore') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Primary Lithologic Composition Code" :label-for="lithCode1Id">
           <b-form-input
             :id="lithCode1Id"
@@ -383,7 +372,6 @@ export default {
       dhCoreLengthId: '',
       dhCoreIntervalId: '',
       dTopInDhCoreId: '',
-      dBotInDhCoreId: '',
       lithCode1Id: '',
       textCode1Id: '',
       lithCode2Id: '',
@@ -417,7 +405,6 @@ export default {
     this.dhCoreLengthId = genId();
     this.dhCoreIntervalId = genId();
     this.dTopInDhCoreId = genId();
-    this.dBotInDhCoreId = genId();
     this.lithCode1Id = genId();
     this.textCode1Id = genId();
     this.lithCode2Id = genId();

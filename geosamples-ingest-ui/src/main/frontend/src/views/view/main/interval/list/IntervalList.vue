@@ -326,14 +326,6 @@ export default {
           label: 'D Top In DH Core (mm)',
         },
         {
-          key: 'dBotInDhCore',
-          label: 'D Bot. In DH Core',
-        },
-        {
-          key: 'dBotMmInDhCore',
-          label: 'D Bot. In DH Core (mm)',
-        },
-        {
           key: 'lith1',
           label: 'Primary Lithologic Composition',
         },

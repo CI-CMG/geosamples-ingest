@@ -163,6 +163,29 @@
                 </b-col>
               </b-row>
             </b-card>
+            <b-card title="Subsamples" border-variant="dark" bg-variant="light" class="mb-4">
+              <b-list-group horizontal v-if="!loadingIntervals">
+                <b-row>
+                  <b-col v-for="(interval, i) in intervals" :key="i">
+                    <b-list-group-item class="interval-button">
+                      <b-button pill variant="primary" @click="showEditIntervalModal(i)">
+                        {{ interval.interval }}
+                      </b-button>
+                    </b-list-group-item>
+                  </b-col>
+                  <b-col>
+                    <b-list-group-item class="interval-button">
+                      <b-button pill variant="secondary" @click="showAddIntervalModal" :disabled="!isEdit">
+                        <b-icon icon="plus"/>
+                      </b-button>
+                    </b-list-group-item>
+                  </b-col>
+                </b-row>
+              </b-list-group>
+              <div v-else>
+                <b-spinner style="position:absolute; top: 50%; right: 50%"/>
+              </div>
+            </b-card>
           </b-col>
           <b-col>
             <b-card title="Sample Location" border-variant="dark" bg-variant="light" class="mb-4">
@@ -327,6 +350,12 @@
           </b-button>
         </div>
       </b-form>
+      <b-modal ref="edit-interval-modal" size="xl" hide-header hide-footer>
+        <ProviderIntervalEdit v-if="intervals[currentInterval]" :id="intervals[currentInterval].id" :within-modal="true" :post-save="closeEditAndRefreshIntervals" :imlgs="id" :interval-number="intervals[currentInterval].interval"/>
+      </b-modal>
+      <b-modal ref="add-interval-modal" size="xl" hide-header hide-footer>
+        <ProviderIntervalEdit :within-modal="true" :post-save="closeAddAndRefreshIntervals" :imlgs="id" :interval-number="intervals.length === 0 ? 1 : intervals[intervals.length - 1].interval + 1"/>
+      </b-modal>
     </div>
     <div v-else>
       <b-spinner style="position:absolute; top: 50%; right: 50%"/>
@@ -342,8 +371,11 @@ import {
   mapState,
 } from 'vuex';
 import genId from '@/components/idGenerator';
+import ProviderIntervalEdit
+  from '@/views/view/main/provider/interval/edit/ProviderIntervalEdit.vue';
 
 export default {
+  components: { ProviderIntervalEdit },
   props: ['id'],
 
   data() {
@@ -370,6 +402,8 @@ export default {
       legId: '',
       sampleCommentsId: '',
       currentItem: null,
+      currentInterval: null,
+      intervals: [],
     };
   },
 
@@ -399,6 +433,7 @@ export default {
 
   methods: {
     ...mapActions('providerSample', ['delete', 'save', 'loadOptions', 'loadLegOptions', 'loadCruiseOptions', 'load']),
+    ...mapActions('providerInterval', ['searchByImlgs']),
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
 
@@ -412,6 +447,16 @@ export default {
         return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day && date.getTime() < Date.now() ? null : false;
       }
       return null;
+    },
+
+    showEditIntervalModal(index) {
+      this.$refs['edit-interval-modal'].show();
+      this.currentInterval = index;
+    },
+
+    showAddIntervalModal() {
+      this.$refs['add-interval-modal'].show();
+      this.currentInterval = this.intervals.length;
     },
 
     showModal() {
@@ -441,14 +486,35 @@ export default {
       this.setValue({ path: 'platform', value: value.value });
       this.loadCruiseOptions(value.value);
     },
+
+    closeAddAndRefreshIntervals() {
+      this.$refs['add-interval-modal'].hide();
+      this.searchByImlgs(this.id).then(
+        (intervals) => {
+          this.intervals = intervals;
+        },
+      );
+    },
+
+    closeEditAndRefreshIntervals() {
+      this.$refs['edit-interval-modal'].hide();
+      this.searchByImlgs(this.id).then(
+        (intervals) => {
+          this.intervals = intervals;
+        },
+      );
+    },
   },
 
   computed: {
     ...mapState('providerSample', ['loading', 'options', 'legOptions', 'loadingOptions', 'loadingLegs', 'saving', 'cruiseOptions', 'loadingCruises']),
+    ...mapState({
+      loadingIntervals: (state) => state.providerInterval.loadingSampleIntervals,
+    }),
     ...mapGetters('providerSampleForm', ['getValue', 'formDirty', 'formHasUntouchedErrors', 'getError', 'isTouched']),
 
     ready() {
-      return !this.loading && !this.loadingOptions && !this.saving;
+      return !this.loading && !this.loadingOptions && !this.saving && !this.loadingIntervals;
     },
 
     isEdit() {
@@ -493,6 +559,11 @@ export default {
           this.initialize(sample);
           this.loadCruiseOptions(sample.platform);
           this.selectCruise(this.currentItem);
+          this.searchByImlgs(sample.imlgs).then(
+            (intervals) => {
+              this.intervals = intervals;
+            },
+          );
         },
       );
     } else {
@@ -501,3 +572,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.interval-button {
+  background: none;
+  border: none;
+}
+</style>

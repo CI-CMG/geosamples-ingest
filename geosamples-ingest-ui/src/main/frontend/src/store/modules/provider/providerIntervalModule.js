@@ -51,6 +51,7 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
+    loadingSampleIntervals: false,
 
     options: {},
     loadingOptions: false,
@@ -143,6 +144,13 @@ export default {
     updateOptions(state, options) {
       state.options = options;
     },
+
+    loadSampleIntervalsRequest(state) {
+      state.loadingSampleIntervals = true;
+    },
+    loadSampleIntervalsComplete(state) {
+      state.loadingSampleIntervals = false;
+    },
   },
 
   actions: {
@@ -208,6 +216,13 @@ export default {
           throw error;
         },
       );
+    },
+    searchByImlgs({ commit }, imlgs) {
+      commit('loadSampleIntervalsRequest');
+      return loadAll(`/provider/interval?imlgs=${imlgs}`, ({ id, interval }) => ({ id, interval })).then((options) => {
+        commit('loadSampleIntervalsComplete');
+        return options;
+      });
     },
     load({ commit }, id) {
       commit('loadRequest');

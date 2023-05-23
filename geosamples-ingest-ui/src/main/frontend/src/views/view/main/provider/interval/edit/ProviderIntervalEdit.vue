@@ -1,6 +1,6 @@
 <template>
   <div class="m-2">
-    <b-breadcrumb :items="[
+    <b-breadcrumb v-if="!withinModal" :items="[
       { text: 'Geosamples Ingest', to: { name: 'Home' } },
       { text: 'Intervals', to: { name: 'ProviderIntervalList' } },
       { text: 'Edit Interval', active: false }
@@ -20,6 +20,7 @@
                 <b-col>
                   <b-form-group label="Sample ID" :label-for="imlgsId">
                     <b-form-select
+                      :disabled="Boolean(imlgs)"
                       required
                       :id="imlgsId"
                       :options="optionsIMLGS"
@@ -390,7 +391,7 @@ import {
 import genId from '@/components/idGenerator';
 
 export default {
-  props: ['id'],
+  props: ['id', 'withinModal', 'postSave', 'imlgs', 'intervalNumber'],
 
   data() {
     return {
@@ -459,7 +460,10 @@ export default {
         },
       );
     } else {
-      this.initialize();
+      this.initialize({
+        imlgs: this.imlgs,
+      });
+      this.setValue({ path: 'interval', value: this.intervalNumber });
     }
   },
 
@@ -473,13 +477,25 @@ export default {
     },
 
     doDelete() {
-      this.delete(this.id).then(() => this.$router.push({ name: 'ProviderIntervalList' }));
+      this.delete(this.id).then(() => {
+        if (!this.withinModal) {
+          this.$router.push({ name: 'ProviderIntervalList' });
+        } else if (this.postSave) {
+          this.postSave();
+        }
+      });
     },
 
     saveForm() {
       this.submit().then(
         (sample) => this.save({ provider: sample, id: this.id }).then(
-          () => this.$router.push({ name: 'ProviderIntervalList' }),
+          () => {
+            if (!this.withinModal) {
+              this.$router.push({ name: 'ProviderIntervalList' });
+            } else if (this.postSave) {
+              this.postSave();
+            }
+          },
         ),
       );
     },

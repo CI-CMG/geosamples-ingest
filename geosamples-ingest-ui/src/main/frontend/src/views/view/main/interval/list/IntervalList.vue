@@ -429,14 +429,6 @@ export default {
           key: 'mmcdTop',
           label: 'mmcdTop',
         },
-        {
-          key: 'cmcdBot',
-          label: 'cmcdBot',
-        },
-        {
-          key: 'mmcdBot',
-          label: 'mmcdBot',
-        },
       ],
     };
   },

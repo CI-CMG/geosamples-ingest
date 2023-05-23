@@ -341,17 +341,6 @@
           <b-form-invalid-feedback>{{ getError('cdTop') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="CD Bot" :label-for="cdBotId">
-          <b-form-input
-            :id="cdBotId"
-            type="text" @blur="() => setTouched({path: 'cdBot', touched: true})"
-            :value="getValue('cdBot')"
-            @update="(value) => setValue({ path: 'cdBot', value })"
-            :state="showError('cdBot')"
-          />
-          <b-form-invalid-feedback>{{ getError('cdBot') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="IGSN" :label-for="igsnId">
           <b-form-input
             :id="igsnId"

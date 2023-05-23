@@ -49,7 +49,6 @@ const model = {
   exhausted: 'boolean',
   intComments: 'string',
   cdTop: 'float',
-  cdBot: 'float',
   igsn: 'string',
   imlgs: 'string',
 };

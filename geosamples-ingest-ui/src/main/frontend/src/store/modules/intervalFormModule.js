@@ -49,7 +49,6 @@ const model = {
   photoLink: 'string',
   intComments: 'string',
   cdTop: 'float',
-  cdBot: 'float',
   publish: 'boolean',
   igsn: 'string',
   imlgs: 'string',

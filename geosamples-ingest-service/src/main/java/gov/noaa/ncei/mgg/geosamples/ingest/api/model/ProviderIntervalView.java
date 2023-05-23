@@ -61,7 +61,6 @@ public class ProviderIntervalView {
   private String photoLink;
   private String intComments;
   private Double cdTop;
-  private Double cdBot;
   private String igsn;
   private String imlgs;
 
@@ -332,14 +331,6 @@ public class ProviderIntervalView {
 
   public void setCdTop(Double cdTop) {
     this.cdTop = cdTop;
-  }
-
-  public Double getCdBot() {
-    return cdBot;
-  }
-
-  public void setCdBot(Double cdBot) {
-    this.cdBot = cdBot;
   }
 
 }

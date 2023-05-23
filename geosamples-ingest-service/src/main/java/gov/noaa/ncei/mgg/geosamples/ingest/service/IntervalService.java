@@ -169,7 +169,6 @@ public class IntervalService extends
     view.setIntComments(entity.getIntComments());
 
     setCombinedCmMm(entity::getCmcdTop, entity::getMmcdTop, view::setCdTop);
-    setCombinedCmMm(entity::getCmcdBot, entity::getMmcdBot, view::setCdBot);
 
     view.setPublish(entity.isPublish());
     view.setIgsn(entity.getIgsn());
@@ -276,7 +275,6 @@ public class IntervalService extends
 
 
     setCmMm(view::getCdTop, entity::setCmcdTop, entity::setMmcdTop);
-    setCmMm(view::getCdBot, entity::setCmcdBot, entity::setMmcdBot);
 
 
     boolean publish = view.getPublish() != null && view.getPublish();

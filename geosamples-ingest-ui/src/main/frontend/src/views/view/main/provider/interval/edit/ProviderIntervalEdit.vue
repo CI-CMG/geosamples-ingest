@@ -417,20 +417,6 @@
                         <b-form-invalid-feedback>{{ getError('cdTop') }}</b-form-invalid-feedback>
                       </b-form-group>
                     </b-col>
-                    <b-col>
-                      <b-form-group label="Core Depth (Bottom)" :label-for="cdBotId">
-                        <b-form-input
-                          type="number"
-                          step="any"
-                          :id="cdBotId"
-                          min="0"
-                          :value="getValue('cdBot')"
-                          @input="(value) => setValue({ path: 'cdBot', value })"
-                          :state="showError('cdBot')"
-                        />
-                        <b-form-invalid-feedback>{{ getError('cdBot') }}</b-form-invalid-feedback>
-                      </b-form-group>
-                    </b-col>
                   </b-row>
                 </b-card>
               </b-col>
@@ -531,7 +517,6 @@ export default {
       exhaustedId: null,
       intCommentsId: null,
       cdTopId: null,
-      cdBotId: null,
       igsnId: null,
     };
   },
@@ -567,7 +552,6 @@ export default {
     this.exhaustedId = genId();
     this.intCommentsId = genId();
     this.cdTopId = genId();
-    this.cdBotId = genId();
     this.igsnId = genId();
   },
 

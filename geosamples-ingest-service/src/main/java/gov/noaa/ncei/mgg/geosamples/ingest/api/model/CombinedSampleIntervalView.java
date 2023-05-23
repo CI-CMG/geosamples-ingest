@@ -89,8 +89,6 @@ public class CombinedSampleIntervalView {
   private String intComments;
   private Integer cmcdTop;
   private Integer mmcdTop;
-  private Integer cmcdBot;
-  private Integer mmcdBot;
   private String intervalIgsn;
   private String intervalParentIsgn;
   private Boolean publish;
@@ -627,22 +625,6 @@ public class CombinedSampleIntervalView {
 
   public void setMmcdTop(Integer mmcdTop) {
     this.mmcdTop = mmcdTop;
-  }
-
-  public Integer getCmcdBot() {
-    return cmcdBot;
-  }
-
-  public void setCmcdBot(Integer cmcdBot) {
-    this.cmcdBot = cmcdBot;
-  }
-
-  public Integer getMmcdBot() {
-    return mmcdBot;
-  }
-
-  public void setMmcdBot(Integer mmcdBot) {
-    this.mmcdBot = mmcdBot;
   }
 
   public String getIntervalIgsn() {

@@ -330,8 +330,6 @@ public final class SampleIntervalUtils {
     view.setIntComments(entity.getIntComments());
     view.setCmcdTop(entity.getCmcdTop());
     view.setMmcdTop(entity.getMmcdTop());
-    view.setCmcdBot(entity.getCmcdBot());
-    view.setMmcdBot(entity.getMmcdBot());
     view.setIntervalIgsn(entity.getIgsn());
     view.setIntervalParentIsgn(sampleEntity.getIgsn());
 

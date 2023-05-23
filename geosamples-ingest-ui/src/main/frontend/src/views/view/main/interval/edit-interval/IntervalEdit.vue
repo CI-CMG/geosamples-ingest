@@ -319,17 +319,6 @@
           <b-form-invalid-feedback>{{ getError('photoLink') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="Unit Number" :label-for="unitNumberId">
-          <b-form-input
-            :id="unitNumberId"
-            type="text" @blur="() => setTouched({path: 'unitNumber', touched: true})"
-            :value="getValue('unitNumber')"
-            @update="(value) => setValue({ path: 'unitNumber', value })"
-            :state="showError('unitNumber')"
-          />
-          <b-form-invalid-feedback>{{ getError('unitNumber') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Comments" :label-for="intCommentsId">
           <b-form-input
             :id="intCommentsId"
@@ -448,7 +437,6 @@ export default {
       munsellCodeId: '',
       exhaustedId: '',
       photoLinkId: '',
-      unitNumberId: '',
       intCommentsId: '',
       dhDeviceId: '',
       cdTopId: '',
@@ -486,7 +474,6 @@ export default {
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
     this.photoLinkId = genId();
-    this.unitNumberId = genId();
     this.intCommentsId = genId();
     this.dhDeviceId = genId();
     this.cdTopId = genId();

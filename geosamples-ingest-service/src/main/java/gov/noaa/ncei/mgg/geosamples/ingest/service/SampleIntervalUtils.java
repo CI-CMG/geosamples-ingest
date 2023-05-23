@@ -318,8 +318,6 @@ public final class SampleIntervalUtils {
             .sorted()
             .collect(Collectors.toList())
     );
-    view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
-    view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());
     view.setWeight(entity.getWeight());
     view.setRockLith(entity.getRockLith() == null ? null : entity.getRockLith().getRockLithCode());
     view.setRockMin(entity.getRockMin() == null ? null : entity.getRockMin().getRockMinCode());
@@ -329,7 +327,6 @@ public final class SampleIntervalUtils {
     view.setMunsell(entity.getMunsell());
     view.setExhaustCode(entity.getExhaustCode());
     view.setPhotoLink(entity.getPhotoLink());
-    view.setUnitNumber(entity.getUnitNumber());
     view.setIntComments(entity.getIntComments());
     view.setDhDevice(entity.getDhDevice());
     view.setCmcdTop(entity.getCmcdTop());

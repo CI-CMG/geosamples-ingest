@@ -59,7 +59,6 @@ public class ProviderIntervalView {
   private String munsellCode;
   private Boolean exhausted;
   private String photoLink;
-  private String unitNumber;
   private String intComments;
   private String dhDevice;
   private Double cdTop;
@@ -310,14 +309,6 @@ public class ProviderIntervalView {
 
   public void setPhotoLink(String photoLink) {
     this.photoLink = photoLink;
-  }
-
-  public String getUnitNumber() {
-    return unitNumber;
-  }
-
-  public void setUnitNumber(String unitNumber) {
-    this.unitNumber = unitNumber;
   }
 
   public String getIntComments() {

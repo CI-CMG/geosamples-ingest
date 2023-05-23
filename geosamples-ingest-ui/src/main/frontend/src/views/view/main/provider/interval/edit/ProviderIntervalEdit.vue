@@ -462,17 +462,6 @@
                     />
                     <b-form-invalid-feedback>{{ getError('exhausted') }}</b-form-invalid-feedback>
                   </b-form-group>
-                  <b-form-group label="Unit Number" :label-for="unitNumberId">
-                    <b-form-input
-                      type="number"
-                      :id="unitNumberId"
-                      min="0"
-                      :value="getValue('unitNumber')"
-                      @input="(value) => setValue({ path: 'unitNumber', value })"
-                      :state="showError('unitNumber')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('unitNumber') }}</b-form-invalid-feedback>
-                  </b-form-group>
                   <b-form-group :label-for="intCommentsId">
                     <template #label>
                       Comments on Subsample/Interval<span style="color: gray"> (limit 2000 characters)</span>
@@ -555,7 +544,6 @@ export default {
       remarkCodeId: null,
       munsellCodeId: null,
       exhaustedId: null,
-      unitNumberId: null,
       intCommentsId: null,
       dhDeviceId: null,
       cdTopId: null,
@@ -593,7 +581,6 @@ export default {
     this.remarkCodeId = genId();
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
-    this.unitNumberId = genId();
     this.intCommentsId = genId();
     this.dhDeviceId = genId();
     this.cdTopId = genId();

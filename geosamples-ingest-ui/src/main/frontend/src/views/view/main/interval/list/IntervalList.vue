@@ -418,10 +418,6 @@ export default {
           label: 'Photo Link',
         },
         {
-          key: 'Unit Number',
-          label: 'Unit Number',
-        },
-        {
           key: 'intComments',
           label: 'Int. Comments',
         },

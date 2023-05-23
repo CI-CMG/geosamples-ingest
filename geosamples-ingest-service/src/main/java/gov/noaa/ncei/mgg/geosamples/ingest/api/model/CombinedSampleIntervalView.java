@@ -77,8 +77,6 @@ public class CombinedSampleIntervalView {
   private String comp6;
   private String description;
   private List<String> ages = new ArrayList<>(0);
-  private String absoluteAgeTop;
-  private String absoluteAgeBot;
   private Double weight;
   private String rockLith;
   private String rockMin;
@@ -88,7 +86,6 @@ public class CombinedSampleIntervalView {
   private String munsell;
   private String exhaustCode;
   private String photoLink;
-  private String unitNumber;
   private String intComments;
   private String dhDevice;
   private Integer cmcdTop;
@@ -537,22 +534,6 @@ public class CombinedSampleIntervalView {
     this.ages = ages;
   }
 
-  public String getAbsoluteAgeTop() {
-    return absoluteAgeTop;
-  }
-
-  public void setAbsoluteAgeTop(String absoluteAgeTop) {
-    this.absoluteAgeTop = absoluteAgeTop;
-  }
-
-  public String getAbsoluteAgeBot() {
-    return absoluteAgeBot;
-  }
-
-  public void setAbsoluteAgeBot(String absoluteAgeBot) {
-    this.absoluteAgeBot = absoluteAgeBot;
-  }
-
   public Double getWeight() {
     return weight;
   }
@@ -623,14 +604,6 @@ public class CombinedSampleIntervalView {
 
   public void setPhotoLink(String photoLink) {
     this.photoLink = photoLink;
-  }
-
-  public String getUnitNumber() {
-    return unitNumber;
-  }
-
-  public void setUnitNumber(String unitNumber) {
-    this.unitNumber = unitNumber;
   }
 
   public String getIntComments() {

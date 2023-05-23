@@ -47,7 +47,6 @@ const model = {
   remarkCode: 'string',
   munsellCode: 'string',
   exhausted: 'boolean',
-  unitNumber: 'string',
   intComments: 'string',
   dhDevice: 'string',
   cdTop: 'float',

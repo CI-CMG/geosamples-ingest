@@ -47,7 +47,6 @@ const model = {
   munsellCode: 'string',
   exhausted: 'boolean',
   photoLink: 'string',
-  unitNumber: 'string',
   intComments: 'string',
   dhDevice: 'string',
   cdTop: 'float',

@@ -353,7 +353,7 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Description of Interval" :label-for="descriptionId">
+                  <b-form-group label="Free-Form Description of Composition" :label-for="descriptionId">
                     <b-form-textarea
                       type="text"
                       :id="descriptionId"
@@ -493,7 +493,7 @@
             <b-row>
               <b-col>
                 <b-card title="Additional Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
-                  <b-form-group label="Sample Not Available (exhausted)" :label-for="exhaustedId">
+                  <b-form-group label="Subsample/Interval Not Available (exhausted)" :label-for="exhaustedId">
                     <b-form-checkbox
                       :id="exhaustedId"
                       :checked="getValue('exhausted')"
@@ -513,7 +513,10 @@
                     />
                     <b-form-invalid-feedback>{{ getError('unitNumber') }}</b-form-invalid-feedback>
                   </b-form-group>
-                  <b-form-group label="Comments on Sub-Sample/Interval (limit 2000 characters)" :label-for="intCommentsId">
+                  <b-form-group :label-for="intCommentsId">
+                    <template #label>
+                      Comments on Subsample/Interval<span style="color: gray"> (limit 2000 characters)</span>
+                    </template>
                     <b-form-textarea
                       :id="intCommentsId"
                       :value="getValue('intComments')"
@@ -522,7 +525,7 @@
                     />
                     <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
                   </b-form-group>
-                  <b-form-group label="Child IGSN" :label-for="igsnId">
+                  <b-form-group label="Subsample/Interval (Child) IGSN" :label-for="igsnId">
                     <b-form-input
                       type="text"
                       :id="igsnId"

@@ -293,7 +293,7 @@
                 />
                 <b-form-invalid-feedback>{{ getError('pi') }}</b-form-invalid-feedback>
               </b-form-group>
-              <b-form-group label="IGSN" :label-for="igsnId">
+              <b-form-group label="Sample (Parent) IGSN" :label-for="igsnId">
                 <b-form-input
                   type="text"
                   :id="igsnId"
@@ -305,7 +305,7 @@
               </b-form-group>
               <b-form-group :label-for="sampleCommentsId">
                 <template #label>
-                  Free-Form Description of Composition<span style="color: gray"> (limit 2000 characters)</span>
+                  Ancillary Comments<span style="color: gray"> (limit 2000 characters)</span>
                 </template>
                 <b-form-textarea
                   :id="sampleCommentsId"
@@ -404,14 +404,11 @@ export default {
 
     isValidDate(value) {
       if (value) {
-        const month = Number(value.substring(0, 2).replace(/^0+/, '') - 1);
-        const day = Number(value.substring(2, 4).replace(/^0+/, ''));
-        const year = Number(value.substring(4, 8));
+        const month = Number(value.substring(4, 6).replace(/^0+/, '') - 1);
+        const day = Number(value.substring(6, 8).replace(/^0+/, ''));
+        const year = Number(value.substring(0, 4));
 
         const date = new Date(year, month, day);
-        console.log(year, month, day, date);
-        console.log(date.getFullYear(), date.getMonth(), date.getDate());
-        console.log('');
         return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day && date.getTime() < Date.now() ? null : false;
       }
       return null;

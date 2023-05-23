@@ -294,8 +294,6 @@ public final class SampleIntervalUtils {
     view.setDepthBot(entity.getDepthBot());
     view.setDepthBotMm(entity.getDepthBotMm());
     view.setDhCoreId(entity.getDhCoreId());
-    view.setDhCoreLength(entity.getDhCoreLength());
-    view.setDhCoreLengthMm(entity.getDhCoreLengthMm());
     view.setDhCoreInterval(entity.getDhCoreInterval());
     view.setLith1(entity.getLith1() == null ? null : entity.getLith1().getLithologyCode());
     view.setText1(entity.getText1() == null ? null : entity.getText1().getTextureCode());

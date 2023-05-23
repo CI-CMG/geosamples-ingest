@@ -358,22 +358,6 @@
                       </b-form-group>
                     </b-col>
                   </b-row>
-                  <b-row>
-                    <b-col>
-                      <b-form-group label="Down Hole Core Length" :label-for="dhCoreLengthId">
-                        <b-form-input
-                          type="number"
-                          step="any"
-                          min="0"
-                          :id="dhCoreLengthId"
-                          :value="getValue('dhCoreLength')"
-                          @input="(value) => setValue({ path: 'dhCoreLength', value })"
-                          :state="showError('dhCoreLength')"
-                        />
-                        <b-form-invalid-feedback>{{ getError('dhCoreLength') }}</b-form-invalid-feedback>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
                 </b-card>
               </b-col>
             </b-row>
@@ -448,7 +432,6 @@ export default {
       depthTopId: null,
       depthBotId: null,
       dhCoreIdId: null,
-      dhCoreLengthId: null,
       dhCoreIntervalId: null,
       lithCode1Id: null,
       lithCode2Id: null,
@@ -480,7 +463,6 @@ export default {
     this.depthTopId = genId();
     this.depthBotId = genId();
     this.dhCoreIdId = genId();
-    this.dhCoreLengthId = genId();
     this.dhCoreIntervalId = genId();
     this.lithCode1Id = genId();
     this.lithCode2Id = genId();

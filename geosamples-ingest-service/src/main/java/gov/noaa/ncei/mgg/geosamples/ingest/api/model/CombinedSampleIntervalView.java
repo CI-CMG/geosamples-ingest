@@ -58,8 +58,6 @@ public class CombinedSampleIntervalView {
   private Integer depthBot;
   private Integer depthBotMm;
   private String dhCoreId;
-  private Integer dhCoreLength;
-  private Integer dhCoreLengthMm;
   private Integer dhCoreInterval;
   private String lith1;
   private String text1;
@@ -368,22 +366,6 @@ public class CombinedSampleIntervalView {
 
   public void setDhCoreId(String dhCoreId) {
     this.dhCoreId = dhCoreId;
-  }
-
-  public Integer getDhCoreLength() {
-    return dhCoreLength;
-  }
-
-  public void setDhCoreLength(Integer dhCoreLength) {
-    this.dhCoreLength = dhCoreLength;
-  }
-
-  public Integer getDhCoreLengthMm() {
-    return dhCoreLengthMm;
-  }
-
-  public void setDhCoreLengthMm(Integer dhCoreLengthMm) {
-    this.dhCoreLengthMm = dhCoreLengthMm;
   }
 
   public Integer getDhCoreInterval() {

@@ -134,8 +134,6 @@ public class IntervalService extends
 
     view.setDhCoreId(entity.getDhCoreId());
 
-    setCombinedCmMm(entity::getDhCoreLength, entity::getDhCoreLengthMm, view::setDhCoreLength);
-
     view.setDhCoreInterval(entity.getDhCoreInterval());
 
     view.setLithCode1(entity.getLith1() == null ? null : entity.getLith1().getLithologyCode());
@@ -211,8 +209,6 @@ public class IntervalService extends
     setCmMm(view::getDepthBot, entity::setDepthBot, entity::setDepthBotMm);
 
     entity.setDhCoreId(view.getDhCoreId());
-
-    setCmMm(view::getDhCoreLength, entity::setDhCoreLength, entity::setDhCoreLengthMm);
 
     entity.setDhCoreInterval(view.getDhCoreInterval());
 

@@ -48,17 +48,6 @@
           <b-form-invalid-feedback>{{ getError('dhCoreId') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="DH Core Length" :label-for="dhCoreLengthId">
-          <b-form-input
-            :id="dhCoreLengthId"
-            type="text" @blur="() => setTouched({path: 'dhCoreLength', touched: true})"
-            :value="getValue('dhCoreLength')"
-            @update="(value) => setValue({ path: 'dhCoreLength', value })"
-            :state="showError('dhCoreLength')"
-          />
-          <b-form-invalid-feedback>{{ getError('dhCoreLength') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="DH Core Interval" :label-for="dhCoreIntervalId">
           <b-form-input
             :id="dhCoreIntervalId"
@@ -358,7 +347,6 @@ export default {
       depthTopId: '',
       depthBotId: '',
       dhCoreIdId: '',
-      dhCoreLengthId: '',
       dhCoreIntervalId: '',
       lithCode1Id: '',
       textCode1Id: '',
@@ -390,7 +378,6 @@ export default {
     this.depthTopId = genId();
     this.depthBotId = genId();
     this.dhCoreIdId = genId();
-    this.dhCoreLengthId = genId();
     this.dhCoreIntervalId = genId();
     this.lithCode1Id = genId();
     this.textCode1Id = genId();

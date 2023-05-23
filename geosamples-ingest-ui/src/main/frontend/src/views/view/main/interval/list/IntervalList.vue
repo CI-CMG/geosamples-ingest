@@ -306,14 +306,6 @@ export default {
           label: 'DH Core Id',
         },
         {
-          key: 'dhCoreLength',
-          label: 'DH Core Length',
-        },
-        {
-          key: 'dhCoreLengthMm',
-          label: 'DH Core Length (mm)',
-        },
-        {
           key: 'dhCoreInterval',
           label: 'DH Core Interval',
         },

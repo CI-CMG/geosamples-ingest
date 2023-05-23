@@ -24,7 +24,6 @@ const model = {
   depthTop: 'float',
   depthBot: 'float',
   dhCoreId: 'string',
-  dhCoreLength: 'float',
   dhCoreInterval: 'int',
   lithCode1: 'string',
   textCode1: 'string',

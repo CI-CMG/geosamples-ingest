@@ -60,7 +60,6 @@ public class ProviderIntervalView {
   private Boolean exhausted;
   private String photoLink;
   private String intComments;
-  private String dhDevice;
   private Double cdTop;
   private Double cdBot;
   private String igsn;
@@ -317,14 +316,6 @@ public class ProviderIntervalView {
 
   public void setIntComments(String intComments) {
     this.intComments = intComments;
-  }
-
-  public String getDhDevice() {
-    return dhDevice;
-  }
-
-  public void setDhDevice(String dhDevice) {
-    this.dhDevice = dhDevice;
   }
 
   public String getIgsn() {

@@ -167,7 +167,6 @@ public class IntervalService extends
     view.setExhausted("X".equals(entity.getExhaustCode()));
     view.setPhotoLink(entity.getPhotoLink());
     view.setIntComments(entity.getIntComments());
-    view.setDhDevice(entity.getDhDevice());
 
     setCombinedCmMm(entity::getCmcdTop, entity::getMmcdTop, view::setCdTop);
     setCombinedCmMm(entity::getCmcdBot, entity::getMmcdBot, view::setCdBot);
@@ -274,7 +273,6 @@ public class IntervalService extends
     entity.setExhaustCode(view.getExhausted() == null || !view.getExhausted() ? null : "X");
     entity.setPhotoLink(view.getPhotoLink());
     entity.setIntComments(view.getIntComments());
-    entity.setDhDevice(view.getDhDevice());
 
 
     setCmMm(view::getCdTop, entity::setCmcdTop, entity::setMmcdTop);

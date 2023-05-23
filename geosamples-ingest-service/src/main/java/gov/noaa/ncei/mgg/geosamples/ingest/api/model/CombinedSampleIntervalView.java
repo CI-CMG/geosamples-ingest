@@ -87,7 +87,6 @@ public class CombinedSampleIntervalView {
   private String exhaustCode;
   private String photoLink;
   private String intComments;
-  private String dhDevice;
   private Integer cmcdTop;
   private Integer mmcdTop;
   private Integer cmcdBot;
@@ -612,14 +611,6 @@ public class CombinedSampleIntervalView {
 
   public void setIntComments(String intComments) {
     this.intComments = intComments;
-  }
-
-  public String getDhDevice() {
-    return dhDevice;
-  }
-
-  public void setDhDevice(String dhDevice) {
-    this.dhDevice = dhDevice;
   }
 
   public Integer getCmcdTop() {

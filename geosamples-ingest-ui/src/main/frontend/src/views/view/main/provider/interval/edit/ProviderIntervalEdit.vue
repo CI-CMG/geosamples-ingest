@@ -432,21 +432,6 @@
                       </b-form-group>
                     </b-col>
                   </b-row>
-                  <b-row>
-                    <b-col>
-                      <b-form-group label="Down Hole Device" :label-for="dhDeviceId">
-                        <b-form-select
-                          type="text"
-                          :id="dhDeviceId"
-                          :options="optionsDeviceCode"
-                          :value="getValue('dhDevice')"
-                          @change="(value) => setValue({ path: 'dhDevice', value })"
-                          :state="showError('dhDevice')"
-                        />
-                        <b-form-invalid-feedback>{{ getError('dhDevice') }}</b-form-invalid-feedback>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
                 </b-card>
               </b-col>
             </b-row>
@@ -545,7 +530,6 @@ export default {
       munsellCodeId: null,
       exhaustedId: null,
       intCommentsId: null,
-      dhDeviceId: null,
       cdTopId: null,
       cdBotId: null,
       igsnId: null,
@@ -582,7 +566,6 @@ export default {
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
     this.intCommentsId = genId();
-    this.dhDeviceId = genId();
     this.cdTopId = genId();
     this.cdBotId = genId();
     this.igsnId = genId();

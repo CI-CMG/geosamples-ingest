@@ -330,17 +330,6 @@
           <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="DH Device" :label-for="dhDeviceId">
-          <b-form-input
-            :id="dhDeviceId"
-            type="text" @blur="() => setTouched({path: 'dhDevice', touched: true})"
-            :value="getValue('dhDevice')"
-            @update="(value) => setValue({ path: 'dhDevice', value })"
-            :state="showError('dhDevice')"
-          />
-          <b-form-invalid-feedback>{{ getError('dhDevice') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="CD Top" :label-for="cdTopId">
           <b-form-input
             :id="cdTopId"

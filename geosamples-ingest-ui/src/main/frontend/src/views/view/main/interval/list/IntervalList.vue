@@ -422,10 +422,6 @@ export default {
           label: 'Int. Comments',
         },
         {
-          key: 'dhDevice',
-          label: 'DH Device',
-        },
-        {
           key: 'cmcdTop',
           label: 'cmcdTop',
         },

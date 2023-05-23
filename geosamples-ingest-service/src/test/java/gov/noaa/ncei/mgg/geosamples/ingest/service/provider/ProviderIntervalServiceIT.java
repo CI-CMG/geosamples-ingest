@@ -274,11 +274,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
-    intervalView.setDhCoreId("TST");
-    intervalView.setDhCoreLength(1.0);
-    intervalView.setDhCoreInterval(1);
-    intervalView.setdTopInDhCore(0.0);
-    intervalView.setdBotInDhCore(1.0);
     intervalView.setLithCode1("A");
     intervalView.setTextCode1("3");
     intervalView.setLithCode2("B");
@@ -291,8 +286,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setCompCode6("H");
     intervalView.setDescription("Test interval");
     intervalView.setAgeCodes(Collections.singletonList("00"));
-    intervalView.setAbsoluteAgeTop("0");
-    intervalView.setAbsoluteAgeBot("1");
     intervalView.setWeight(1.0);
     intervalView.setRockLithCode("6C");
     intervalView.setRockMinCode("A");
@@ -301,12 +294,7 @@ public class ProviderIntervalServiceIT {
     intervalView.setMunsellCode("10R 6/1");
     intervalView.setExhausted(true);
     intervalView.setPhotoLink("http://example.com");
-    intervalView.setLake("TST");
-    intervalView.setUnitNumber("TST");
     intervalView.setIntComments("TST");
-    intervalView.setDhDevice("TST");
-    intervalView.setCdTop(0.0);
-    intervalView.setCdBot(1.0);
     intervalView.setIgsn("TST");
     intervalView.setImlgs(sample.getImlgs());
 
@@ -317,11 +305,6 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getInterval(), result.getInterval());
     assertEquals(intervalView.getDepthTop(), result.getDepthTop());
     assertEquals(intervalView.getDepthBot(), result.getDepthBot());
-    assertEquals(intervalView.getDhCoreId(), result.getDhCoreId());
-    assertEquals(intervalView.getDhCoreLength(), result.getDhCoreLength());
-    assertEquals(intervalView.getDhCoreInterval(), result.getDhCoreInterval());
-    assertEquals(intervalView.getdTopInDhCore(), result.getdTopInDhCore());
-    assertEquals(intervalView.getdBotInDhCore() + 0.1, result.getdBotInDhCore());
     assertEquals(intervalView.getLithCode1(), result.getLithCode1());
     assertEquals(intervalView.getTextCode1(), result.getTextCode1());
     assertEquals(intervalView.getLithCode2(), result.getLithCode2());
@@ -334,8 +317,6 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getCompCode6(), result.getCompCode6());
     assertEquals(intervalView.getDescription(), result.getDescription());
     assertEquals(intervalView.getAgeCodes(), result.getAgeCodes());
-    assertEquals(intervalView.getAbsoluteAgeTop(), result.getAbsoluteAgeTop());
-    assertEquals(intervalView.getAbsoluteAgeBot(), result.getAbsoluteAgeBot());
     assertEquals(intervalView.getWeight(), result.getWeight());
     assertEquals(intervalView.getRockLithCode(), result.getRockLithCode());
     assertEquals(intervalView.getRockMinCode(), result.getRockMinCode());
@@ -344,12 +325,7 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getMunsellCode(), result.getMunsellCode());
     assertEquals(intervalView.getExhausted(), result.getExhausted());
     assertEquals(intervalView.getPhotoLink(), result.getPhotoLink());
-    assertEquals(intervalView.getLake(), result.getLake());
-    assertEquals(intervalView.getUnitNumber(), result.getUnitNumber());
     assertEquals(intervalView.getIntComments(), result.getIntComments());
-    assertEquals(intervalView.getDhDevice(), result.getDhDevice());
-    assertEquals(intervalView.getCdTop(), result.getCdTop());
-    assertEquals(intervalView.getCdBot(), result.getCdBot());
     assertEquals(intervalView.getIgsn(), result.getIgsn());
     assertEquals(intervalView.getImlgs(), result.getImlgs());
 
@@ -393,11 +369,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
-    intervalView.setDhCoreId("TST");
-    intervalView.setDhCoreLength(1.0);
-    intervalView.setDhCoreInterval(1);
-    intervalView.setdTopInDhCore(0.0);
-    intervalView.setdBotInDhCore(1.0);
     intervalView.setLithCode1("A");
     intervalView.setTextCode1("3");
     intervalView.setLithCode2("B");
@@ -410,8 +381,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setCompCode6("H");
     intervalView.setDescription("Test interval");
     intervalView.setAgeCodes(Collections.singletonList("00"));
-    intervalView.setAbsoluteAgeTop("0");
-    intervalView.setAbsoluteAgeBot("1");
     intervalView.setWeight(1.0);
     intervalView.setRockLithCode("6C");
     intervalView.setRockMinCode("A");
@@ -420,12 +389,7 @@ public class ProviderIntervalServiceIT {
     intervalView.setMunsellCode("10R 6/1");
     intervalView.setExhausted(true);
     intervalView.setPhotoLink("http://example.com");
-    intervalView.setLake("TST");
-    intervalView.setUnitNumber("TST");
     intervalView.setIntComments("TST");
-    intervalView.setDhDevice("TST");
-    intervalView.setCdTop(0.0);
-    intervalView.setCdBot(1.0);
     intervalView.setIgsn("TST");
     intervalView.setImlgs(sample.getImlgs());
 
@@ -453,11 +417,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setInterval(3);
     intervalView.setDepthTop(0.0);
     intervalView.setDepthBot(1.0);
-    intervalView.setDhCoreId("TST");
-    intervalView.setDhCoreLength(1.0);
-    intervalView.setDhCoreInterval(1);
-    intervalView.setdTopInDhCore(0.0);
-    intervalView.setdBotInDhCore(1.0);
     intervalView.setLithCode1("A");
     intervalView.setTextCode1("3");
     intervalView.setLithCode2("B");
@@ -470,8 +429,6 @@ public class ProviderIntervalServiceIT {
     intervalView.setCompCode6("H");
     intervalView.setDescription("Test interval");
     intervalView.setAgeCodes(Collections.singletonList("00"));
-    intervalView.setAbsoluteAgeTop("0");
-    intervalView.setAbsoluteAgeBot("1");
     intervalView.setWeight(1.0);
     intervalView.setRockLithCode("6C");
     intervalView.setRockMinCode("A");
@@ -480,12 +437,7 @@ public class ProviderIntervalServiceIT {
     intervalView.setMunsellCode("10R 6/1");
     intervalView.setExhausted(true);
     intervalView.setPhotoLink("http://example.com");
-    intervalView.setLake("TST");
-    intervalView.setUnitNumber("TST");
     intervalView.setIntComments("TST");
-    intervalView.setDhDevice("TST");
-    intervalView.setCdTop(0.0);
-    intervalView.setCdBot(1.0);
     intervalView.setIgsn("TST");
     intervalView.setImlgs("TEST");
 
@@ -657,8 +609,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(interval.getInterval(), result.getInterval());
       assertEquals((double) interval.getDepthTop() + 0.5, result.getDepthTop());
       assertEquals((double) interval.getDepthBot() + 0.5, result.getDepthBot());
-      assertEquals(interval.getDhCoreId(), result.getDhCoreId());
-      assertEquals(interval.getDhCoreInterval(), result.getDhCoreInterval());
       assertEquals(interval.getLith1().getLithologyCode(), result.getLithCode1());
       assertEquals(interval.getText1().getTextureCode(), result.getTextCode1());
       assertEquals(interval.getLith2().getLithologyCode(), result.getLithCode2());
@@ -671,8 +621,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(interval.getComp6().getLithologyCode(), result.getCompCode6());
       assertEquals(interval.getDescription(), result.getDescription());
       assertEquals(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()), result.getAgeCodes());
-      assertEquals(interval.getAbsoluteAgeTop(), result.getAbsoluteAgeTop());
-      assertEquals(interval.getAbsoluteAgeBot(), result.getAbsoluteAgeBot());
       assertEquals(interval.getWeight(), result.getWeight());
       assertEquals(interval.getRockLith().getRockLithCode(), result.getRockLithCode());
       assertEquals(interval.getRockMin().getRockMinCode(), result.getRockMinCode());
@@ -681,19 +629,9 @@ public class ProviderIntervalServiceIT {
       assertEquals(interval.getMunsellCode(), result.getMunsellCode());
       assertEquals(interval.getExhaustCode().equals("X"), result.getExhausted());
       assertEquals(interval.getPhotoLink(), result.getPhotoLink());
-      assertEquals(interval.getLake(), result.getLake());
-      assertEquals(interval.getUnitNumber(), result.getUnitNumber());
       assertEquals(interval.getIntComments(), result.getIntComments());
-      assertEquals(interval.getDhDevice(), result.getDhDevice());
       assertEquals(interval.getIgsn(), result.getIgsn());
       assertEquals(interval.getSample().getImlgs(), result.getImlgs());
-      assertTrue(interval.getCmcdTop() == null && result.getCdTop() == null);
-      assertTrue(interval.getCmcdBot() == null && result.getCdBot() == null);
-      assertTrue(interval.getCmcdTop() == null && result.getCdTop() == null);
-      assertTrue(interval.getCmcdBot() == null && result.getCdBot() == null);
-      assertTrue(interval.getDhCoreLength() == null && result.getDhCoreLength() == null);
-      assertTrue(interval.getdTopInDhCore() == null && result.getdTopInDhCore() == null);
-      assertTrue(interval.getdBotInDhCore() == null && result.getdBotInDhCore() == null);
     });
   }
 
@@ -812,23 +750,6 @@ public class ProviderIntervalServiceIT {
         if (interval.getDepthBot() != null) {
           assertEquals(interval.getDepthBot(), (int) Math.floor(view.getDepthBot()));
         }
-        if (interval.getCmcdTop() != null) {
-          assertEquals(interval.getCmcdTop(), (int) Math.floor(view.getCdTop()));
-        }
-        if (interval.getCmcdBot() != null) {
-          assertEquals(interval.getCmcdBot(), (int) Math.floor(view.getCdBot()));
-        }
-        if (interval.getDhCoreLength() != null) {
-          assertEquals(interval.getDhCoreLength(), (int) Math.floor(view.getDhCoreLength()));
-        }
-        if (interval.getdTopInDhCore() != null) {
-          assertEquals(interval.getdTopInDhCore(), (int) Math.floor(view.getdTopInDhCore()));
-        }
-        if (interval.getdBotInDhCore() != null) {
-          assertEquals(interval.getdBotInDhCore(), (int) Math.floor(view.getdBotInDhCore()));
-        }
-        assertEquals(interval.getDhCoreId(), view.getDhCoreId());
-        assertEquals(interval.getDhCoreInterval(), view.getDhCoreInterval());
         if (interval.getLith1() != null) {
           assertEquals(interval.getLith1().getLithologyCode(), view.getLithCode1());
         }
@@ -861,8 +782,6 @@ public class ProviderIntervalServiceIT {
         }
         assertEquals(interval.getDescription(), view.getDescription());
         assertEquals(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()), view.getAgeCodes());
-        assertEquals(interval.getAbsoluteAgeTop(), view.getAbsoluteAgeTop());
-        assertEquals(interval.getAbsoluteAgeBot(), view.getAbsoluteAgeBot());
         assertEquals(interval.getWeight(), view.getWeight());
         if (interval.getRockLith() != null) {
           assertEquals(interval.getRockLith().getRockLithCode(), view.getRockLithCode());
@@ -881,10 +800,7 @@ public class ProviderIntervalServiceIT {
           assertEquals(interval.getExhaustCode().equals("X"), view.getExhausted());
         }
         assertEquals(interval.getPhotoLink(), view.getPhotoLink());
-        assertEquals(interval.getLake(), view.getLake());
-        assertEquals(interval.getUnitNumber(), view.getUnitNumber());
         assertEquals(interval.getIntComments(), view.getIntComments());
-        assertEquals(interval.getDhDevice(), view.getDhDevice());
         assertEquals(interval.getIgsn(), view.getIgsn());
         assertEquals(interval.getSample().getImlgs(), view.getImlgs());
       }
@@ -971,11 +887,6 @@ public class ProviderIntervalServiceIT {
       view.setInterval(interval.getInterval());
       view.setDepthTop(0.);
       view.setDepthBot(0.);
-      view.setDhCoreId(interval.getDhCoreId());
-      view.setDhCoreLength(1.0);
-      view.setDhCoreInterval(interval.getDhCoreInterval());
-      view.setdTopInDhCore(1.);
-      view.setdBotInDhCore(1.);
       view.setLithCode1(curatorsLithologyRepository.findByLithologyCode("A").orElseThrow(
           () -> new RuntimeException("Lithology not found")
       ).getLithologyCode());
@@ -1008,8 +919,6 @@ public class ProviderIntervalServiceIT {
       ).getLithologyCode());
       view.setDescription(interval.getDescription());
       view.setAgeCodes(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
-      view.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
-      view.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
       view.setWeight(interval.getWeight());
       view.setRockLithCode(curatorsRockLithRepository.findByRockLithCode("6C").orElseThrow(
           () -> new RuntimeException("Rock Lithology not found")
@@ -1028,12 +937,7 @@ public class ProviderIntervalServiceIT {
       ).getMunsellCode());
       view.setExhausted(true);
       view.setPhotoLink(interval.getPhotoLink());
-      view.setLake(interval.getLake());
-      view.setUnitNumber(interval.getUnitNumber());
       view.setIntComments(interval.getIntComments());
-      view.setDhDevice(interval.getDhDevice());
-      view.setCdTop(1.0);
-      view.setCdBot(1.0);
       view.setIgsn(interval.getIgsn());
       view.setImlgs(interval.getSample().getImlgs());
 
@@ -1045,11 +949,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getInterval(), result.getInterval());
       assertEquals(view.getDepthTop(), result.getDepthTop());
       assertEquals(view.getDepthBot(), result.getDepthBot());
-      assertEquals(view.getDhCoreId(), result.getDhCoreId());
-      assertEquals(view.getDhCoreLength(), result.getDhCoreLength());
-      assertEquals(view.getDhCoreInterval(), result.getDhCoreInterval());
-      assertEquals(view.getdTopInDhCore(), Math.floor(result.getdTopInDhCore()));
-      assertEquals(view.getdBotInDhCore(), Math.floor(result.getdBotInDhCore()));
       assertEquals(view.getLithCode1(), result.getLithCode1());
       assertEquals(view.getLithCode2(), result.getLithCode2());
       assertEquals(view.getTextCode1(), result.getTextCode1());
@@ -1062,8 +961,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getCompCode6(), result.getCompCode6());
       assertEquals(view.getDescription(), result.getDescription());
       assertEquals(view.getAgeCodes(), result.getAgeCodes());
-      assertEquals(view.getAbsoluteAgeTop(), result.getAbsoluteAgeTop());
-      assertEquals(view.getAbsoluteAgeBot(), result.getAbsoluteAgeBot());
       assertEquals(view.getWeight(), result.getWeight());
       assertEquals(view.getRockLithCode(), result.getRockLithCode());
       assertEquals(view.getRockMinCode(), result.getRockMinCode());
@@ -1072,12 +969,7 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getMunsellCode(), result.getMunsellCode());
       assertEquals(view.getExhausted(), result.getExhausted());
       assertEquals(view.getPhotoLink(), result.getPhotoLink());
-      assertEquals(view.getLake(), result.getLake());
-      assertEquals(view.getUnitNumber(), result.getUnitNumber());
       assertEquals(view.getIntComments(), result.getIntComments());
-      assertEquals(view.getDhDevice(), result.getDhDevice());
-      assertEquals(view.getCdTop(), result.getCdTop());
-      assertEquals(view.getCdBot(), result.getCdBot());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getImlgs(), result.getImlgs());
 
@@ -1089,11 +981,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getInterval(), interval.getInterval());
       assertEquals((int) Math.floor(result.getDepthTop()), interval.getDepthTop());
       assertEquals((int) Math.floor(result.getDepthBot()), interval.getDepthBot());
-      assertEquals(result.getDhCoreId(), interval.getDhCoreId());
-      assertEquals((int) Math.floor(result.getDhCoreLength()), interval.getDhCoreLength());
-      assertEquals(result.getDhCoreInterval(), interval.getDhCoreInterval());
-      assertEquals((int) Math.floor(result.getdTopInDhCore()), interval.getdTopInDhCore());
-      assertEquals((int) Math.floor(result.getdBotInDhCore()), interval.getdBotInDhCore());
       assertEquals(result.getLithCode1(), interval.getLith1().getLithologyCode());
       assertEquals(result.getLithCode2(), interval.getLith2().getLithologyCode());
       assertEquals(result.getTextCode1(), interval.getText1().getTextureCode());
@@ -1106,8 +993,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getCompCode6(), interval.getComp6().getLithologyCode());
       assertEquals(result.getDescription(), interval.getDescription());
       assertEquals(result.getAgeCodes(), interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
-      assertEquals(result.getAbsoluteAgeTop(), interval.getAbsoluteAgeTop());
-      assertEquals(result.getAbsoluteAgeBot(), interval.getAbsoluteAgeBot());
       assertEquals(result.getWeight(), interval.getWeight());
       assertEquals(result.getRockLithCode(), interval.getRockLith().getRockLithCode());
       assertEquals(result.getRockMinCode(), interval.getRockMin().getRockMinCode());
@@ -1116,12 +1001,7 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getMunsellCode(), interval.getMunsellCode());
       assertEquals(result.getExhausted(), interval.getExhaustCode().equals("X"));
       assertEquals(result.getPhotoLink(), interval.getPhotoLink());
-      assertEquals(result.getLake(), interval.getLake());
-      assertEquals(result.getUnitNumber(), interval.getUnitNumber());
       assertEquals(result.getIntComments(), interval.getIntComments());
-      assertEquals(result.getDhDevice(), interval.getDhDevice());
-      assertEquals((int) Math.floor(result.getCdTop()), interval.getCmcdTop());
-      assertEquals((int) Math.floor(result.getCdBot()), interval.getCmcdBot());
       assertEquals(result.getIgsn(), interval.getIgsn());
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
       assertEquals(originalPublish, interval.isPublish());
@@ -1172,11 +1052,6 @@ public class ProviderIntervalServiceIT {
       view.setInterval(interval.getInterval());
       view.setDepthTop(0.);
       view.setDepthBot(0.);
-      view.setDhCoreId(interval.getDhCoreId());
-      view.setDhCoreLength(1.0);
-      view.setDhCoreInterval(interval.getDhCoreInterval());
-      view.setdTopInDhCore(1.);
-      view.setdBotInDhCore(1.);
       view.setLithCode1(curatorsLithologyRepository.findByLithologyCode("A").orElseThrow(
           () -> new RuntimeException("Lithology not found")
       ).getLithologyCode());
@@ -1209,8 +1084,6 @@ public class ProviderIntervalServiceIT {
       ).getLithologyCode());
       view.setDescription(interval.getDescription());
       view.setAgeCodes(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
-      view.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
-      view.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
       view.setWeight(interval.getWeight());
       view.setRockLithCode(curatorsRockLithRepository.findByRockLithCode("6C").orElseThrow(
           () -> new RuntimeException("Rock Lithology not found")
@@ -1229,12 +1102,7 @@ public class ProviderIntervalServiceIT {
       ).getMunsellCode());
       view.setExhausted(true);
       view.setPhotoLink(interval.getPhotoLink());
-      view.setLake(interval.getLake());
-      view.setUnitNumber(interval.getUnitNumber());
       view.setIntComments(interval.getIntComments());
-      view.setDhDevice(interval.getDhDevice());
-      view.setCdTop(1.0);
-      view.setCdBot(1.0);
       view.setIgsn(interval.getIgsn());
       view.setImlgs(interval.getSample().getImlgs());
 
@@ -1246,11 +1114,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getInterval(), result.getInterval());
       assertEquals(view.getDepthTop(), result.getDepthTop());
       assertEquals(view.getDepthBot(), result.getDepthBot());
-      assertEquals(view.getDhCoreId(), result.getDhCoreId());
-      assertEquals(view.getDhCoreLength(), result.getDhCoreLength());
-      assertEquals(view.getDhCoreInterval(), result.getDhCoreInterval());
-      assertEquals(view.getdTopInDhCore(), Math.floor(result.getdTopInDhCore()));
-      assertEquals(view.getdBotInDhCore(), Math.floor(result.getdBotInDhCore()));
       assertEquals(view.getLithCode1(), result.getLithCode1());
       assertEquals(view.getLithCode2(), result.getLithCode2());
       assertEquals(view.getTextCode1(), result.getTextCode1());
@@ -1263,8 +1126,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getCompCode6(), result.getCompCode6());
       assertEquals(view.getDescription(), result.getDescription());
       assertEquals(view.getAgeCodes(), result.getAgeCodes());
-      assertEquals(view.getAbsoluteAgeTop(), result.getAbsoluteAgeTop());
-      assertEquals(view.getAbsoluteAgeBot(), result.getAbsoluteAgeBot());
       assertEquals(view.getWeight(), result.getWeight());
       assertEquals(view.getRockLithCode(), result.getRockLithCode());
       assertEquals(view.getRockMinCode(), result.getRockMinCode());
@@ -1273,12 +1134,7 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getMunsellCode(), result.getMunsellCode());
       assertEquals(view.getExhausted(), result.getExhausted());
       assertEquals(view.getPhotoLink(), result.getPhotoLink());
-      assertEquals(view.getLake(), result.getLake());
-      assertEquals(view.getUnitNumber(), result.getUnitNumber());
       assertEquals(view.getIntComments(), result.getIntComments());
-      assertEquals(view.getDhDevice(), result.getDhDevice());
-      assertEquals(view.getCdTop(), result.getCdTop());
-      assertEquals(view.getCdBot(), result.getCdBot());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getImlgs(), result.getImlgs());
 
@@ -1290,11 +1146,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getInterval(), interval.getInterval());
       assertEquals((int) Math.floor(result.getDepthTop()), interval.getDepthTop());
       assertEquals((int) Math.floor(result.getDepthBot()), interval.getDepthBot());
-      assertEquals(result.getDhCoreId(), interval.getDhCoreId());
-      assertEquals((int) Math.floor(result.getDhCoreLength()), interval.getDhCoreLength());
-      assertEquals(result.getDhCoreInterval(), interval.getDhCoreInterval());
-      assertEquals((int) Math.floor(result.getdTopInDhCore()), interval.getdTopInDhCore());
-      assertEquals((int) Math.floor(result.getdBotInDhCore()), interval.getdBotInDhCore());
       assertEquals(result.getLithCode1(), interval.getLith1().getLithologyCode());
       assertEquals(result.getLithCode2(), interval.getLith2().getLithologyCode());
       assertEquals(result.getTextCode1(), interval.getText1().getTextureCode());
@@ -1307,8 +1158,6 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getCompCode6(), interval.getComp6().getLithologyCode());
       assertEquals(result.getDescription(), interval.getDescription());
       assertEquals(result.getAgeCodes(), interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
-      assertEquals(result.getAbsoluteAgeTop(), interval.getAbsoluteAgeTop());
-      assertEquals(result.getAbsoluteAgeBot(), interval.getAbsoluteAgeBot());
       assertEquals(result.getWeight(), interval.getWeight());
       assertEquals(result.getRockLithCode(), interval.getRockLith().getRockLithCode());
       assertEquals(result.getRockMinCode(), interval.getRockMin().getRockMinCode());
@@ -1317,12 +1166,7 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getMunsellCode(), interval.getMunsellCode());
       assertEquals(result.getExhausted(), interval.getExhaustCode().equals("X"));
       assertEquals(result.getPhotoLink(), interval.getPhotoLink());
-      assertEquals(result.getLake(), interval.getLake());
-      assertEquals(result.getUnitNumber(), interval.getUnitNumber());
       assertEquals(result.getIntComments(), interval.getIntComments());
-      assertEquals(result.getDhDevice(), interval.getDhDevice());
-      assertEquals((int) Math.floor(result.getCdTop()), interval.getCmcdTop());
-      assertEquals((int) Math.floor(result.getCdBot()), interval.getCmcdBot());
       assertEquals(result.getIgsn(), interval.getIgsn());
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
       assertEquals(originalPublish, interval.isPublish());
@@ -1371,11 +1215,6 @@ public class ProviderIntervalServiceIT {
       view.setInterval(interval.getInterval());
       view.setDepthTop(0.);
       view.setDepthBot(0.);
-      view.setDhCoreId(interval.getDhCoreId());
-      view.setDhCoreLength(1.0);
-      view.setDhCoreInterval(interval.getDhCoreInterval());
-      view.setdTopInDhCore(1.);
-      view.setdBotInDhCore(1.);
       view.setLithCode1(curatorsLithologyRepository.findByLithologyCode("A").orElseThrow(
           () -> new RuntimeException("Lithology not found")
       ).getLithologyCode());
@@ -1408,8 +1247,6 @@ public class ProviderIntervalServiceIT {
       ).getLithologyCode());
       view.setDescription(interval.getDescription());
       view.setAgeCodes(interval.getAges().stream().map(CuratorsAgeEntity::getAgeCode).collect(Collectors.toList()));
-      view.setAbsoluteAgeTop(interval.getAbsoluteAgeTop());
-      view.setAbsoluteAgeBot(interval.getAbsoluteAgeBot());
       view.setWeight(interval.getWeight());
       view.setRockLithCode(curatorsRockLithRepository.findByRockLithCode("6C").orElseThrow(
           () -> new RuntimeException("Rock Lithology not found")
@@ -1428,12 +1265,7 @@ public class ProviderIntervalServiceIT {
       ).getMunsellCode());
       view.setExhausted(true);
       view.setPhotoLink(interval.getPhotoLink());
-      view.setLake(interval.getLake());
-      view.setUnitNumber(interval.getUnitNumber());
       view.setIntComments(interval.getIntComments());
-      view.setDhDevice(interval.getDhDevice());
-      view.setCdTop(1.0);
-      view.setCdBot(1.0);
       view.setIgsn(interval.getIgsn());
       view.setImlgs(interval.getSample().getImlgs());
 

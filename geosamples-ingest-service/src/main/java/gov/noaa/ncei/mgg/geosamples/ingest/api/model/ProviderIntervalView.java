@@ -60,7 +60,6 @@ public class ProviderIntervalView {
   private Boolean exhausted;
   private String photoLink;
   private String intComments;
-  private Double cdTop;
   private String igsn;
   private String imlgs;
 
@@ -323,14 +322,6 @@ public class ProviderIntervalView {
 
   public void setIgsn(String igsn) {
     this.igsn = igsn;
-  }
-
-  public Double getCdTop() {
-    return cdTop;
-  }
-
-  public void setCdTop(Double cdTop) {
-    this.cdTop = cdTop;
   }
 
 }

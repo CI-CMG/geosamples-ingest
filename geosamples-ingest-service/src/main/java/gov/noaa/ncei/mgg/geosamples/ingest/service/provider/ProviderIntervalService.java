@@ -98,7 +98,6 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalView.setExhausted(view.getExhausted());
     intervalView.setPhotoLink(view.getPhotoLink());
     intervalView.setIntComments(view.getIntComments());
-    intervalView.setCdTop(view.getCdTop());
     intervalView.setIgsn(view.getIgsn());
     intervalView.setImlgs(view.getImlgs());
 

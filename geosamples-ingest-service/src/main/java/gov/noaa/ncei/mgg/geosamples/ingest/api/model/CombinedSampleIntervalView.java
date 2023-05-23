@@ -87,8 +87,6 @@ public class CombinedSampleIntervalView {
   private String exhaustCode;
   private String photoLink;
   private String intComments;
-  private Integer cmcdTop;
-  private Integer mmcdTop;
   private String intervalIgsn;
   private String intervalParentIsgn;
   private Boolean publish;
@@ -609,22 +607,6 @@ public class CombinedSampleIntervalView {
 
   public void setIntComments(String intComments) {
     this.intComments = intComments;
-  }
-
-  public Integer getCmcdTop() {
-    return cmcdTop;
-  }
-
-  public void setCmcdTop(Integer cmcdTop) {
-    this.cmcdTop = cmcdTop;
-  }
-
-  public Integer getMmcdTop() {
-    return mmcdTop;
-  }
-
-  public void setMmcdTop(Integer mmcdTop) {
-    this.mmcdTop = mmcdTop;
   }
 
   public String getIntervalIgsn() {

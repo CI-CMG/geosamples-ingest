@@ -330,17 +330,6 @@
           <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group label="CD Top" :label-for="cdTopId">
-          <b-form-input
-            :id="cdTopId"
-            type="text" @blur="() => setTouched({path: 'cdTop', touched: true})"
-            :value="getValue('cdTop')"
-            @update="(value) => setValue({ path: 'cdTop', value })"
-            :state="showError('cdTop')"
-          />
-          <b-form-invalid-feedback>{{ getError('cdTop') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="IGSN" :label-for="igsnId">
           <b-form-input
             :id="igsnId"
@@ -416,9 +405,6 @@ export default {
       exhaustedId: '',
       photoLinkId: '',
       intCommentsId: '',
-      dhDeviceId: '',
-      cdTopId: '',
-      cdBotId: '',
       publishId: '',
       igsnId: '',
     };
@@ -453,9 +439,6 @@ export default {
     this.exhaustedId = genId();
     this.photoLinkId = genId();
     this.intCommentsId = genId();
-    this.dhDeviceId = genId();
-    this.cdTopId = genId();
-    this.cdBotId = genId();
     this.publishId = genId();
     this.igsnId = genId();
   },

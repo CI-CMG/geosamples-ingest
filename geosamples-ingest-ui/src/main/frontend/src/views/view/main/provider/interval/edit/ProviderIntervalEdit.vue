@@ -402,22 +402,6 @@
                       </b-form-group>
                     </b-col>
                   </b-row>
-                  <b-row>
-                    <b-col>
-                      <b-form-group label="Core Depth (Top)" :label-for="cdTopId">
-                        <b-form-input
-                          type="number"
-                          step="any"
-                          :id="cdTopId"
-                          min="0"
-                          :value="getValue('cdTop')"
-                          @input="(value) => setValue({ path: 'cdTop', value })"
-                          :state="showError('cdTop')"
-                        />
-                        <b-form-invalid-feedback>{{ getError('cdTop') }}</b-form-invalid-feedback>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
                 </b-card>
               </b-col>
             </b-row>
@@ -516,7 +500,6 @@ export default {
       munsellCodeId: null,
       exhaustedId: null,
       intCommentsId: null,
-      cdTopId: null,
       igsnId: null,
     };
   },
@@ -551,7 +534,6 @@ export default {
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
     this.intCommentsId = genId();
-    this.cdTopId = genId();
     this.igsnId = genId();
   },
 

@@ -421,14 +421,6 @@ export default {
           key: 'intComments',
           label: 'Int. Comments',
         },
-        {
-          key: 'cmcdTop',
-          label: 'cmcdTop',
-        },
-        {
-          key: 'mmcdTop',
-          label: 'mmcdTop',
-        },
       ],
     };
   },

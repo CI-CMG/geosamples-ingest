@@ -48,7 +48,6 @@ const model = {
   munsellCode: 'string',
   exhausted: 'boolean',
   intComments: 'string',
-  cdTop: 'float',
   igsn: 'string',
   imlgs: 'string',
 };

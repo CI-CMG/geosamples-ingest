@@ -328,8 +328,6 @@ public final class SampleIntervalUtils {
     view.setExhaustCode(entity.getExhaustCode());
     view.setPhotoLink(entity.getPhotoLink());
     view.setIntComments(entity.getIntComments());
-    view.setCmcdTop(entity.getCmcdTop());
-    view.setMmcdTop(entity.getMmcdTop());
     view.setIntervalIgsn(entity.getIgsn());
     view.setIntervalParentIsgn(sampleEntity.getIgsn());
 

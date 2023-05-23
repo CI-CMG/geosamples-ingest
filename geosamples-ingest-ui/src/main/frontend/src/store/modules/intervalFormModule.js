@@ -48,7 +48,6 @@ const model = {
   exhausted: 'boolean',
   photoLink: 'string',
   intComments: 'string',
-  cdTop: 'float',
   publish: 'boolean',
   igsn: 'string',
   imlgs: 'string',

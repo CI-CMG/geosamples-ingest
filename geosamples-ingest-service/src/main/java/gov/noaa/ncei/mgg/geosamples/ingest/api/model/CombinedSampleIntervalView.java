@@ -58,7 +58,6 @@ public class CombinedSampleIntervalView {
   private Integer depthBot;
   private Integer depthBotMm;
   private String dhCoreId;
-  private Integer dhCoreInterval;
   private String lith1;
   private String text1;
   private String lith2;
@@ -366,14 +365,6 @@ public class CombinedSampleIntervalView {
 
   public void setDhCoreId(String dhCoreId) {
     this.dhCoreId = dhCoreId;
-  }
-
-  public Integer getDhCoreInterval() {
-    return dhCoreInterval;
-  }
-
-  public void setDhCoreInterval(Integer dhCoreInterval) {
-    this.dhCoreInterval = dhCoreInterval;
   }
 
   public String getLith1() {

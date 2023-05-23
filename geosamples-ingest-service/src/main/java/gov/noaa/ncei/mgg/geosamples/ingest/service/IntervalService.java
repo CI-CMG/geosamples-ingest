@@ -134,8 +134,6 @@ public class IntervalService extends
 
     view.setDhCoreId(entity.getDhCoreId());
 
-    view.setDhCoreInterval(entity.getDhCoreInterval());
-
     view.setLithCode1(entity.getLith1() == null ? null : entity.getLith1().getLithologyCode());
     view.setTextCode1(entity.getText1() == null ? null : entity.getText1().getTextureCode());
     view.setLithCode2(entity.getLith2() == null ? null : entity.getLith2().getLithologyCode());
@@ -209,8 +207,6 @@ public class IntervalService extends
     setCmMm(view::getDepthBot, entity::setDepthBot, entity::setDepthBotMm);
 
     entity.setDhCoreId(view.getDhCoreId());
-
-    entity.setDhCoreInterval(view.getDhCoreInterval());
 
     setRelation(view::getLithCode1, curatorsLithologyRepository::findByLithologyCode, entity::setLith1);
     setRelation(view::getTextCode1, curatorsTextureRepository::findByTextureCode, entity::setText1);

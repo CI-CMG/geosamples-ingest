@@ -306,10 +306,6 @@ export default {
           label: 'DH Core Id',
         },
         {
-          key: 'dhCoreInterval',
-          label: 'DH Core Interval',
-        },
-        {
           key: 'lith1',
           label: 'Primary Lithologic Composition',
         },

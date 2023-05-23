@@ -25,7 +25,6 @@ const model = {
   dhCoreId: 'string',
   dhCoreLength: 'float',
   dhCoreInterval: 'int',
-  dTopInDhCore: 'float',
   lithCode1: 'string',
   textCode1: 'string',
   lithCode2: 'string',

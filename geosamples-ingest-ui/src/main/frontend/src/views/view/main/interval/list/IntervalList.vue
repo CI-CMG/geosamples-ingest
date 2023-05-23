@@ -318,14 +318,6 @@ export default {
           label: 'DH Core Interval',
         },
         {
-          key: 'dTopInDhCore',
-          label: 'D Top In DH Core',
-        },
-        {
-          key: 'dTopMmInDhCore',
-          label: 'D Top In DH Core (mm)',
-        },
-        {
           key: 'lith1',
           label: 'Primary Lithologic Composition',
         },

@@ -37,7 +37,6 @@ public class ProviderIntervalView {
   private String dhCoreId;
   private Double dhCoreLength;
   private Integer dhCoreInterval;
-  private Double dTopInDhCore;
   private String lithCode1;
   private String textCode1;
   private String lithCode2;
@@ -126,14 +125,6 @@ public class ProviderIntervalView {
 
   public void setDhCoreInterval(Integer dhCoreInterval) {
     this.dhCoreInterval = dhCoreInterval;
-  }
-
-  public Double getdTopInDhCore() {
-    return dTopInDhCore;
-  }
-
-  public void setdTopInDhCore(Double dTopInDhCore) {
-    this.dTopInDhCore = dTopInDhCore;
   }
 
   public String getLithCode1() {

@@ -61,8 +61,6 @@ public class CombinedSampleIntervalView {
   private Integer dhCoreLength;
   private Integer dhCoreLengthMm;
   private Integer dhCoreInterval;
-  private Integer dTopInDhCore;
-  private Integer dTopMmInDhCore;
   private String lith1;
   private String text1;
   private String lith2;
@@ -394,22 +392,6 @@ public class CombinedSampleIntervalView {
 
   public void setDhCoreInterval(Integer dhCoreInterval) {
     this.dhCoreInterval = dhCoreInterval;
-  }
-
-  public Integer getdTopInDhCore() {
-    return dTopInDhCore;
-  }
-
-  public void setdTopInDhCore(Integer dTopInDhCore) {
-    this.dTopInDhCore = dTopInDhCore;
-  }
-
-  public Integer getdTopMmInDhCore() {
-    return dTopMmInDhCore;
-  }
-
-  public void setdTopMmInDhCore(Integer dTopMmInDhCore) {
-    this.dTopMmInDhCore = dTopMmInDhCore;
   }
 
   public String getLith1() {

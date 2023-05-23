@@ -313,20 +313,6 @@
               </b-row>
               <b-row>
                 <b-col>
-                  <b-form-group label="Lake" :label-for="lakeId">
-                    <b-form-input
-                      type="text"
-                      :id="lakeId"
-                      :value="getValue('lake')"
-                      @input="(value) => setValue({ path: 'lake', value })"
-                      :state="showError('lake')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('lake') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
                   <b-form-group label="Free-Form Description of Composition" :label-for="descriptionId">
                     <b-form-textarea
                       type="text"
@@ -569,7 +555,6 @@ export default {
       remarkCodeId: null,
       munsellCodeId: null,
       exhaustedId: null,
-      lakeId: null,
       unitNumberId: null,
       intCommentsId: null,
       dhDeviceId: null,
@@ -608,7 +593,6 @@ export default {
     this.remarkCodeId = genId();
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
-    this.lakeId = genId();
     this.unitNumberId = genId();
     this.intCommentsId = genId();
     this.dhDeviceId = genId();

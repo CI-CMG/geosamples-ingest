@@ -418,10 +418,6 @@ export default {
           label: 'Photo Link',
         },
         {
-          key: 'intervalLake',
-          label: 'Interval Lake',
-        },
-        {
           key: 'Unit Number',
           label: 'Unit Number',
         },

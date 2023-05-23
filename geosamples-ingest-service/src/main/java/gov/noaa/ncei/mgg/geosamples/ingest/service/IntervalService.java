@@ -166,7 +166,6 @@ public class IntervalService extends
     view.setMunsellCode(entity.getMunsellCode());
     view.setExhausted("X".equals(entity.getExhaustCode()));
     view.setPhotoLink(entity.getPhotoLink());
-    view.setLake(entity.getLake());
     view.setUnitNumber(entity.getUnitNumber());
     view.setIntComments(entity.getIntComments());
     view.setDhDevice(entity.getDhDevice());
@@ -275,7 +274,6 @@ public class IntervalService extends
 
     entity.setExhaustCode(view.getExhausted() == null || !view.getExhausted() ? null : "X");
     entity.setPhotoLink(view.getPhotoLink());
-    entity.setLake(view.getLake());
     entity.setUnitNumber(view.getUnitNumber());
     entity.setIntComments(view.getIntComments());
     entity.setDhDevice(view.getDhDevice());

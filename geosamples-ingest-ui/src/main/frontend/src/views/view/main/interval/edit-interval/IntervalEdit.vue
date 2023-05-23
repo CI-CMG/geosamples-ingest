@@ -232,28 +232,6 @@
           </div>
         </b-form-group>
 
-        <b-form-group label="Absolute Age Top" :label-for="absoluteAgeTopId">
-          <b-form-input
-            :id="absoluteAgeTopId"
-            type="text" @blur="() => setTouched({path: 'absoluteAgeTop', touched: true})"
-            :value="getValue('absoluteAgeTop')"
-            @update="(value) => setValue({ path: 'absoluteAgeTop', value })"
-            :state="showError('absoluteAgeTop')"
-          />
-          <b-form-invalid-feedback>{{ getError('absoluteAgeTop') }}</b-form-invalid-feedback>
-        </b-form-group>
-
-        <b-form-group label="Absolute Age Bot" :label-for="absoluteAgeBotId">
-          <b-form-input
-            :id="absoluteAgeBotId"
-            type="text" @blur="() => setTouched({path: 'absoluteAgeBot', touched: true})"
-            :value="getValue('absoluteAgeBot')"
-            @update="(value) => setValue({ path: 'absoluteAgeBot', value })"
-            :state="showError('absoluteAgeBot')"
-          />
-          <b-form-invalid-feedback>{{ getError('absoluteAgeBot') }}</b-form-invalid-feedback>
-        </b-form-group>
-
         <b-form-group label="Weight" :label-for="weightId">
           <b-form-input
             :id="weightId"
@@ -339,17 +317,6 @@
             :state="showError('photoLink')"
           />
           <b-form-invalid-feedback>{{ getError('photoLink') }}</b-form-invalid-feedback>
-        </b-form-group>
-
-        <b-form-group label="Lake" :label-for="lakeId">
-          <b-form-input
-            :id="lakeId"
-            type="text" @blur="() => setTouched({path: 'lake', touched: true})"
-            :value="getValue('lake')"
-            @update="(value) => setValue({ path: 'lake', value })"
-            :state="showError('lake')"
-          />
-          <b-form-invalid-feedback>{{ getError('lake') }}</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group label="Unit Number" :label-for="unitNumberId">
@@ -473,8 +440,6 @@ export default {
       compCode6Id: '',
       descriptionId: '',
       ageCodeId: '',
-      absoluteAgeTopId: '',
-      absoluteAgeBotId: '',
       weightId: '',
       rockLithCodeId: '',
       rockMinCodeId: '',
@@ -483,7 +448,6 @@ export default {
       munsellCodeId: '',
       exhaustedId: '',
       photoLinkId: '',
-      lakeId: '',
       unitNumberId: '',
       intCommentsId: '',
       dhDeviceId: '',
@@ -514,8 +478,6 @@ export default {
     this.compCode6Id = genId();
     this.descriptionId = genId();
     this.ageCodeId = genId();
-    this.absoluteAgeTopId = genId();
-    this.absoluteAgeBotId = genId();
     this.weightId = genId();
     this.rockLithCodeId = genId();
     this.rockMinCodeId = genId();
@@ -524,7 +486,6 @@ export default {
     this.munsellCodeId = genId();
     this.exhaustedId = genId();
     this.photoLinkId = genId();
-    this.lakeId = genId();
     this.unitNumberId = genId();
     this.intCommentsId = genId();
     this.dhDeviceId = genId();

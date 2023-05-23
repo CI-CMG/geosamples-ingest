@@ -329,7 +329,6 @@ public final class SampleIntervalUtils {
     view.setMunsell(entity.getMunsell());
     view.setExhaustCode(entity.getExhaustCode());
     view.setPhotoLink(entity.getPhotoLink());
-    view.setIntervalLake(entity.getLake());
     view.setUnitNumber(entity.getUnitNumber());
     view.setIntComments(entity.getIntComments());
     view.setDhDevice(entity.getDhDevice());

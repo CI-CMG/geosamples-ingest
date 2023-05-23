@@ -88,7 +88,6 @@ public class CombinedSampleIntervalView {
   private String munsell;
   private String exhaustCode;
   private String photoLink;
-  private String intervalLake;
   private String unitNumber;
   private String intComments;
   private String dhDevice;
@@ -624,14 +623,6 @@ public class CombinedSampleIntervalView {
 
   public void setPhotoLink(String photoLink) {
     this.photoLink = photoLink;
-  }
-
-  public String getIntervalLake() {
-    return intervalLake;
-  }
-
-  public void setIntervalLake(String intervalLake) {
-    this.intervalLake = intervalLake;
   }
 
   public String getUnitNumber() {

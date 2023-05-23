@@ -97,7 +97,6 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalView.setMunsellCode(view.getMunsellCode());
     intervalView.setExhausted(view.getExhausted());
     intervalView.setPhotoLink(view.getPhotoLink());
-    intervalView.setLake(view.getLake());
     intervalView.setUnitNumber(view.getUnitNumber());
     intervalView.setIntComments(view.getIntComments());
     intervalView.setDhDevice(view.getDhDevice());

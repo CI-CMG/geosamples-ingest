@@ -382,14 +382,6 @@ export default {
           label: 'Geologic Ages',
         },
         {
-          key: 'absoluteAgeTop',
-          label: 'Absolute Age Top',
-        },
-        {
-          key: 'absoluteAgeBot',
-          label: 'Absolute Age Bot.',
-        },
-        {
           key: 'weight',
           label: 'Weight',
         },

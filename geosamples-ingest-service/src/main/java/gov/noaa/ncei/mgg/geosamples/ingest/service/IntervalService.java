@@ -158,8 +158,6 @@ public class IntervalService extends
             .sorted()
             .collect(Collectors.toList())
     );
-    view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
-    view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());
     view.setWeight(entity.getWeight());
     view.setRockLithCode(entity.getRockLith() == null ? null : entity.getRockLith().getRockLithCode());
     view.setRockMinCode(entity.getRockMin() == null ? null : entity.getRockMin().getRockMinCode());
@@ -255,8 +253,6 @@ public class IntervalService extends
     );
 
 
-    entity.setAbsoluteAgeTop(view.getAbsoluteAgeTop());
-    entity.setAbsoluteAgeBot(view.getAbsoluteAgeBot());
     entity.setWeight(view.getWeight());
 
     setRelation(view::getRockLithCode, curatorsRockLithRepository::findByRockLithCode, entity::setRockLith);

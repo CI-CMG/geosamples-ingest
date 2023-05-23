@@ -51,8 +51,6 @@ public class ProviderIntervalView {
   private String compCode6;
   private String description;
   private List<String> ageCodes = new ArrayList<>(0);
-  private String absoluteAgeTop;
-  private String absoluteAgeBot;
   private Double weight;
   private String rockLithCode;
   private String rockMinCode;
@@ -249,22 +247,6 @@ public class ProviderIntervalView {
       ageCodes = new ArrayList<>(0);
     }
     this.ageCodes = ageCodes;
-  }
-
-  public String getAbsoluteAgeTop() {
-    return absoluteAgeTop;
-  }
-
-  public void setAbsoluteAgeTop(String absoluteAgeTop) {
-    this.absoluteAgeTop = absoluteAgeTop;
-  }
-
-  public String getAbsoluteAgeBot() {
-    return absoluteAgeBot;
-  }
-
-  public void setAbsoluteAgeBot(String absoluteAgeBot) {
-    this.absoluteAgeBot = absoluteAgeBot;
   }
 
   public Double getWeight() {

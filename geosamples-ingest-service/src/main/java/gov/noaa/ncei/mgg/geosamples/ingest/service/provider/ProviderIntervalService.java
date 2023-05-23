@@ -89,8 +89,6 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalView.setCompCode6(view.getCompCode6());
     intervalView.setDescription(view.getDescription());
     intervalView.setAgeCodes(view.getAgeCodes());
-    intervalView.setAbsoluteAgeTop(view.getAbsoluteAgeTop());
-    intervalView.setAbsoluteAgeBot(view.getAbsoluteAgeBot());
     intervalView.setWeight(view.getWeight());
     intervalView.setRockLithCode(view.getRockLithCode());
     intervalView.setRockMinCode(view.getRockMinCode());

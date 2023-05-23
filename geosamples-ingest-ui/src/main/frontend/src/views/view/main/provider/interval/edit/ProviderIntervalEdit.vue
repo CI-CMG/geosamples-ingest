@@ -225,32 +225,6 @@
                     <b-form-invalid-feedback>{{ getError('ageCodes') }}</b-form-invalid-feedback>
                   </b-form-group>
                 </b-col>
-                <b-col>
-                  <b-form-group label="Absolute Geologic Age of Top" :label-for="absoluteAgeTopId">
-                    <b-form-select
-                      type="text"
-                      :id="absoluteAgeTopId"
-                      :options="optionsAgeCode"
-                      :value="getValue('absoluteAgeTop')"
-                      @change="(value) => setValue({ path: 'absoluteAgeTop', value })"
-                      :state="showError('absoluteAgeTop')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('absoluteAgeTop') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Absolute Geologic Age of Bottom" :label-for="absoluteAgeBotId">
-                    <b-form-select
-                      type="text"
-                      :id="absoluteAgeBotId"
-                      :options="optionsAgeCode"
-                      :value="getValue('absoluteAgeBot')"
-                      @change="(value) => setValue({ path: 'absoluteAgeBot', value })"
-                      :state="showError('absoluteAgeBot')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('absoluteAgeBot') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
               </b-row>
               <b-row>
                 <b-col>
@@ -588,8 +562,6 @@ export default {
       compCode6Id: null,
       descriptionId: null,
       ageCodesId: null,
-      absoluteAgeTopId: null,
-      absoluteAgeBotId: null,
       weightId: null,
       rockLithCodeId: null,
       rockMinCodeId: null,
@@ -629,8 +601,6 @@ export default {
     this.compCode6Id = genId();
     this.descriptionId = genId();
     this.ageCodesId = genId();
-    this.absoluteAgeTopId = genId();
-    this.absoluteAgeBotId = genId();
     this.weightId = genId();
     this.rockLithCodeId = genId();
     this.rockMinCodeId = genId();

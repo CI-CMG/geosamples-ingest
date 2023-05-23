@@ -40,8 +40,6 @@ const model = {
   compCode6: 'string',
   description: 'string',
   ageCodes: ['string'],
-  absoluteAgeTop: 'string',
-  absoluteAgeBot: 'string',
   weight: 'float',
   rockLithCode: 'string',
   rockMinCode: 'string',

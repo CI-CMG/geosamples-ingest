@@ -13,365 +13,355 @@
         <p class="my-4">Are you sure you want to delete this interval?</p>
       </b-modal>
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
-        <b-row>
-          <b-col>
-            <b-card title="Geologic Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
-              <b-row>
-                <b-col>
-                  <b-form-group :label-for="imlgsId">
-                    <template #label>
-                      Sample ID<span><strong style="color: red"> *</strong></span>
-                    </template>
-                    <b-form-select
-                      :disabled="Boolean(imlgs)"
-                      required
-                      :id="imlgsId"
-                      :options="optionsIMLGS"
-                      :value="getValue('imlgs')"
-                      @change="(value) => setValue({ path: 'imlgs', value })"
-                      :state="showError('imlgs')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('imlgs') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group :label-for="intervalId">
-                    Interval #<span><strong style="color: red"> *</strong></span>
-                    <b-form-input
-                      required
-                      type="number"
-                      min="1"
-                      :id="intervalId"
-                      :value="getValue('interval')"
-                      @input="(value) => setValue({ path: 'interval', value })"
-                      :state="showError('interval')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('interval') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Depth to Top of Interval (cm)" :label-for="depthTopId">
-                    <b-form-input
-                      type="number"
-                      step="any"
-                      min="0"
-                      :id="depthTopId"
-                      :value="getValue('depthTop')"
-                      @input="(value) => setValue({ path: 'depthTop', value })"
-                      :state="showError('depthTop')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('depthTop') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Depth to Bottom of Interval (cm)" :label-for="depthBotId">
-                    <b-form-input
-                      type="number"
-                      step="any"
-                      min="0"
-                      :id="depthBotId"
-                      :value="getValue('depthBot')"
-                      @input="(value) => setValue({ path: 'depthBot', value })"
-                      :state="showError('depthBot')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('depthBot') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Primary Lithologic Composition" :label-for="lithCode1Id">
-                    <b-form-select
-                      type="text"
-                      :id="lithCode1Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('lithCode1')"
-                      @change="(value) => setValue({ path: 'lithCode1', value })"
-                      :state="showError('lithCode1')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('lithCode1') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Secondary Lithologic Composition" :label-for="lithCode2Id">
-                    <b-form-select
-                      type="text"
-                      :id="lithCode2Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('lithCode2')"
-                      @change="(value) => setValue({ path: 'lithCode2', value })"
-                      :state="showError('lithCode2')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('lithCode2') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Primary Texture" :label-for="textCode1Id">
-                    <b-form-select
-                      type="text"
-                      :id="textCode1Id"
-                      :options="optionsTextureCode"
-                      :value="getValue('textCode1')"
-                      @change="(value) => setValue({ path: 'textCode1', value })"
-                      :state="showError('textCode1')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('textCode1') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Secondary Texture" :label-for="textCode2Id">
-                    <b-form-select
-                      type="text"
-                      :id="textCode2Id"
-                      :options="optionsTextureCode"
-                      :value="getValue('textCode2')"
-                      @change="(value) => setValue({ path: 'textCode2', value })"
-                      :state="showError('textCode2')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('textCode2') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Other Component 1" :label-for="compCode1Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode1Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode1')"
-                      @change="(value) => setValue({ path: 'compCode1', value })"
-                      :state="showError('compCode1')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode1') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Other Component 2" :label-for="compCode2Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode2Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode2')"
-                      @change="(value) => setValue({ path: 'compCode2', value })"
-                      :state="showError('compCode2')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode2') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Other Component 3" :label-for="compCode3Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode3Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode3')"
-                      @change="(value) => setValue({ path: 'compCode3', value })"
-                      :state="showError('compCode3')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode3') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Other Component 4" :label-for="compCode4Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode4Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode4')"
-                      @change="(value) => setValue({ path: 'compCode4', value })"
-                      :state="showError('compCode4')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode4') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Other Component 5" :label-for="compCode5Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode5Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode5')"
-                      @change="(value) => setValue({ path: 'compCode5', value })"
-                      :state="showError('compCode5')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode5') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Other Component 6" :label-for="compCode6Id">
-                    <b-form-select
-                      type="text"
-                      :id="compCode6Id"
-                      :options="optionsLithologyCode"
-                      :value="getValue('compCode6')"
-                      @change="(value) => setValue({ path: 'compCode6', value })"
-                      :state="showError('compCode6')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('compCode6') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Geologic Age" :label-for="ageCodesId">
-                    <b-form-select
-                      :id="ageCodesId"
-                      @blur="() => setTouched({path: 'ageCodes', touched: true})"
-                      :value="selectedAges"
-                      :options="optionsAgeCode"
-                      @change="setGeologicAgeValues"
-                      multiple
-                    />
-                    <b-form-invalid-feedback>{{ getError('ageCodes') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Rock Lithology" :label-for="rockLithCodeId">
-                    <b-form-select
-                      type="text"
-                      :id="rockLithCodeId"
-                      :options="optionsLithologyCode"
-                      :value="getValue('rockLithCode')"
-                      @change="(value) => setValue({ path: 'rockLithCode', value })"
-                      :state="showError('rockLithCode')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('rockLithCode') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Rock Mineralogy" :label-for="rockMinCodeId">
-                    <b-form-select
-                      type="text"
-                      :id="rockMinCodeId"
-                      :options="optionsRockMineralCode"
-                      :value="getValue('rockMinCode')"
-                      @change="(value) => setValue({ path: 'rockMinCode', value })"
-                      :state="showError('rockMinCode')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('rockMinCode') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Rock Weathering/Metamorphism" :label-for="weathMetaCodeId">
-                    <b-form-select
-                      type="text"
-                      :id="weathMetaCodeId"
-                      :options="optionsWeathMetaCode"
-                      :value="getValue('weathMetaCode')"
-                      @change="(value) => setValue({ path: 'weathMetaCode', value })"
-                      :state="showError('weathMetaCode')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('weathMetaCode') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkCodeId">
-                    <b-form-select
-                      type="text"
-                      :id="remarkCodeId"
-                      :options="optionsRemarkCode"
-                      :value="getValue('remarkCode')"
-                      @change="(value) => setValue({ path: 'remarkCode', value })"
-                      :state="showError('remarkCode')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('remarkCode') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Munsell Color" :label-for="munsellCodeId">
-                    <b-form-select
-                      type="text"
-                      :id="munsellCodeId"
-                      :options="optionsMunsellCode"
-                      :value="getValue('munsellCode')"
-                      @change="(value) => setValue({ path: 'munsellCode', value })"
-                      :state="showError('munsellCode')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('munsellCode') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Bulk Weight (kg)" :label-for="weightId">
-                    <b-form-input
-                      type="number"
-                      step="any"
-                      :id="weightId"
-                      min="0"
-                      :value="getValue('weight')"
-                      @input="(value) => setValue({ path: 'weight', value })"
-                      :state="showError('weight')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('weight') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-form-group label="Free-Form Description of Composition" :label-for="descriptionId">
-                    <b-form-textarea
-                      type="text"
-                      :id="descriptionId"
-                      :value="getValue('description')"
-                      @input="(value) => setValue({ path: 'description', value })"
-                      :state="showError('description')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('description') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-row>
-              <b-col>
-                <b-card title="Additional Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
-                  <b-form-group label="Subsample/Interval Not Available (exhausted)" :label-for="exhaustedId">
-                    <b-form-checkbox
-                      :id="exhaustedId"
-                      :checked="getValue('exhausted')"
-                      @change="(value) => setValue({ path: 'exhausted', value })"
-                      :state="showError('exhausted')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('exhausted') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                  <b-form-group :label-for="intCommentsId">
-                    <template #label>
-                      Comments on Subsample/Interval<span style="color: gray"> (limit 2000 characters)</span>
-                    </template>
-                    <b-form-textarea
-                      :id="intCommentsId"
-                      :value="getValue('intComments')"
-                      @input="(value) => setValue({ path: 'intComments', value })"
-                      :state="showError('intComments')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                  <b-form-group label="Subsample/Interval (Child) IGSN" :label-for="igsnId">
-                    <b-form-input
-                      type="text"
-                      :id="igsnId"
-                      :value="getValue('igsn')"
-                      @input="(value) => setValue({ path: 'igsn', value })"
-                      :state="showError('igsn')"
-                    />
-                    <b-form-invalid-feedback>{{ getError('igsn') }}</b-form-invalid-feedback>
-                  </b-form-group>
-                </b-card>
-              </b-col>
-            </b-row>
-          </b-col>
-        </b-row>
+        <b-card title="Geologic Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
+          <b-row>
+            <b-col>
+              <b-form-group :label-for="imlgsId">
+                <template #label>
+                  Sample ID<span><strong style="color: red"> *</strong></span>
+                </template>
+                <b-form-select
+                  :disabled="Boolean(imlgs)"
+                  required
+                  :id="imlgsId"
+                  :options="optionsIMLGS"
+                  :value="getValue('imlgs')"
+                  @change="(value) => setValue({ path: 'imlgs', value })"
+                  :state="showError('imlgs')"
+                />
+                <b-form-invalid-feedback>{{ getError('imlgs') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group :label-for="intervalId">
+                Interval #<span><strong style="color: red"> *</strong></span>
+                <b-form-input
+                  required
+                  type="number"
+                  min="1"
+                  :id="intervalId"
+                  :value="getValue('interval')"
+                  @input="(value) => setValue({ path: 'interval', value })"
+                  :state="showError('interval')"
+                />
+                <b-form-invalid-feedback>{{ getError('interval') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Depth to Top of Interval (cm)" :label-for="depthTopId">
+                <b-form-input
+                  type="number"
+                  step="any"
+                  min="0"
+                  :id="depthTopId"
+                  :value="getValue('depthTop')"
+                  @input="(value) => setValue({ path: 'depthTop', value })"
+                  :state="showError('depthTop')"
+                />
+                <b-form-invalid-feedback>{{ getError('depthTop') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Depth to Bottom of Interval (cm)" :label-for="depthBotId">
+                <b-form-input
+                  type="number"
+                  step="any"
+                  min="0"
+                  :id="depthBotId"
+                  :value="getValue('depthBot')"
+                  @input="(value) => setValue({ path: 'depthBot', value })"
+                  :state="showError('depthBot')"
+                />
+                <b-form-invalid-feedback>{{ getError('depthBot') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Primary Lithologic Composition" :label-for="lithCode1Id">
+                <b-form-select
+                  type="text"
+                  :id="lithCode1Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('lithCode1')"
+                  @change="(value) => setValue({ path: 'lithCode1', value })"
+                  :state="showError('lithCode1')"
+                />
+                <b-form-invalid-feedback>{{ getError('lithCode1') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Secondary Lithologic Composition" :label-for="lithCode2Id">
+                <b-form-select
+                  type="text"
+                  :id="lithCode2Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('lithCode2')"
+                  @change="(value) => setValue({ path: 'lithCode2', value })"
+                  :state="showError('lithCode2')"
+                />
+                <b-form-invalid-feedback>{{ getError('lithCode2') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Primary Texture" :label-for="textCode1Id">
+                <b-form-select
+                  type="text"
+                  :id="textCode1Id"
+                  :options="optionsTextureCode"
+                  :value="getValue('textCode1')"
+                  @change="(value) => setValue({ path: 'textCode1', value })"
+                  :state="showError('textCode1')"
+                />
+                <b-form-invalid-feedback>{{ getError('textCode1') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Secondary Texture" :label-for="textCode2Id">
+                <b-form-select
+                  type="text"
+                  :id="textCode2Id"
+                  :options="optionsTextureCode"
+                  :value="getValue('textCode2')"
+                  @change="(value) => setValue({ path: 'textCode2', value })"
+                  :state="showError('textCode2')"
+                />
+                <b-form-invalid-feedback>{{ getError('textCode2') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Other Component 1" :label-for="compCode1Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode1Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode1')"
+                  @change="(value) => setValue({ path: 'compCode1', value })"
+                  :state="showError('compCode1')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode1') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Other Component 2" :label-for="compCode2Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode2Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode2')"
+                  @change="(value) => setValue({ path: 'compCode2', value })"
+                  :state="showError('compCode2')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode2') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Other Component 3" :label-for="compCode3Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode3Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode3')"
+                  @change="(value) => setValue({ path: 'compCode3', value })"
+                  :state="showError('compCode3')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode3') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Other Component 4" :label-for="compCode4Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode4Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode4')"
+                  @change="(value) => setValue({ path: 'compCode4', value })"
+                  :state="showError('compCode4')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode4') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Other Component 5" :label-for="compCode5Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode5Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode5')"
+                  @change="(value) => setValue({ path: 'compCode5', value })"
+                  :state="showError('compCode5')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode5') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Other Component 6" :label-for="compCode6Id">
+                <b-form-select
+                  type="text"
+                  :id="compCode6Id"
+                  :options="optionsLithologyCode"
+                  :value="getValue('compCode6')"
+                  @change="(value) => setValue({ path: 'compCode6', value })"
+                  :state="showError('compCode6')"
+                />
+                <b-form-invalid-feedback>{{ getError('compCode6') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Geologic Age" :label-for="ageCodesId">
+                <b-form-select
+                  :id="ageCodesId"
+                  @blur="() => setTouched({path: 'ageCodes', touched: true})"
+                  :value="selectedAges"
+                  :options="optionsAgeCode"
+                  @change="setGeologicAgeValues"
+                  multiple
+                />
+                <b-form-invalid-feedback>{{ getError('ageCodes') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Rock Lithology" :label-for="rockLithCodeId">
+                <b-form-select
+                  type="text"
+                  :id="rockLithCodeId"
+                  :options="optionsLithologyCode"
+                  :value="getValue('rockLithCode')"
+                  @change="(value) => setValue({ path: 'rockLithCode', value })"
+                  :state="showError('rockLithCode')"
+                />
+                <b-form-invalid-feedback>{{ getError('rockLithCode') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Rock Mineralogy" :label-for="rockMinCodeId">
+                <b-form-select
+                  type="text"
+                  :id="rockMinCodeId"
+                  :options="optionsRockMineralCode"
+                  :value="getValue('rockMinCode')"
+                  @change="(value) => setValue({ path: 'rockMinCode', value })"
+                  :state="showError('rockMinCode')"
+                />
+                <b-form-invalid-feedback>{{ getError('rockMinCode') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Rock Weathering/Metamorphism" :label-for="weathMetaCodeId">
+                <b-form-select
+                  type="text"
+                  :id="weathMetaCodeId"
+                  :options="optionsWeathMetaCode"
+                  :value="getValue('weathMetaCode')"
+                  @change="(value) => setValue({ path: 'weathMetaCode', value })"
+                  :state="showError('weathMetaCode')"
+                />
+                <b-form-invalid-feedback>{{ getError('weathMetaCode') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkCodeId">
+                <b-form-select
+                  type="text"
+                  :id="remarkCodeId"
+                  :options="optionsRemarkCode"
+                  :value="getValue('remarkCode')"
+                  @change="(value) => setValue({ path: 'remarkCode', value })"
+                  :state="showError('remarkCode')"
+                />
+                <b-form-invalid-feedback>{{ getError('remarkCode') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+            <b-col>
+              <b-form-group label="Munsell Color" :label-for="munsellCodeId">
+                <b-form-select
+                  type="text"
+                  :id="munsellCodeId"
+                  :options="optionsMunsellCode"
+                  :value="getValue('munsellCode')"
+                  @change="(value) => setValue({ path: 'munsellCode', value })"
+                  :state="showError('munsellCode')"
+                />
+                <b-form-invalid-feedback>{{ getError('munsellCode') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Bulk Weight (kg)" :label-for="weightId">
+                <b-form-input
+                  type="number"
+                  step="any"
+                  :id="weightId"
+                  min="0"
+                  :value="getValue('weight')"
+                  @input="(value) => setValue({ path: 'weight', value })"
+                  :state="showError('weight')"
+                />
+                <b-form-invalid-feedback>{{ getError('weight') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col>
+              <b-form-group label="Free-Form Description of Composition" :label-for="descriptionId">
+                <b-form-textarea
+                  type="text"
+                  :id="descriptionId"
+                  :value="getValue('description')"
+                  @input="(value) => setValue({ path: 'description', value })"
+                  :state="showError('description')"
+                />
+                <b-form-invalid-feedback>{{ getError('description') }}</b-form-invalid-feedback>
+              </b-form-group>
+            </b-col>
+          </b-row>
+        </b-card>
+        <b-card title="Additional Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
+          <b-form-group label="Subsample/Interval Not Available (exhausted)" :label-for="exhaustedId">
+            <b-form-checkbox
+              :id="exhaustedId"
+              :checked="getValue('exhausted')"
+              @change="(value) => setValue({ path: 'exhausted', value })"
+              :state="showError('exhausted')"
+            />
+            <b-form-invalid-feedback>{{ getError('exhausted') }}</b-form-invalid-feedback>
+          </b-form-group>
+          <b-form-group :label-for="intCommentsId">
+            <template #label>
+              Comments on Subsample/Interval<span style="color: gray"> (limit 2000 characters)</span>
+            </template>
+            <b-form-textarea
+              :id="intCommentsId"
+              :value="getValue('intComments')"
+              @input="(value) => setValue({ path: 'intComments', value })"
+              :state="showError('intComments')"
+            />
+            <b-form-invalid-feedback>{{ getError('intComments') }}</b-form-invalid-feedback>
+          </b-form-group>
+          <b-form-group label="Subsample/Interval (Child) IGSN" :label-for="igsnId">
+            <b-form-input
+              type="text"
+              :id="igsnId"
+              :value="getValue('igsn')"
+              @input="(value) => setValue({ path: 'igsn', value })"
+              :state="showError('igsn')"
+            />
+            <b-form-invalid-feedback>{{ getError('igsn') }}</b-form-invalid-feedback>
+          </b-form-group>
+        </b-card>
         <div>
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
             <b-icon icon="check" class="mr-2"/>Submit

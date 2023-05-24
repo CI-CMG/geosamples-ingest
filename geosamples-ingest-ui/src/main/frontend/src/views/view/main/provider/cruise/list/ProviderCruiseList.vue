@@ -41,6 +41,11 @@ export default {
     return {
       tableFields: [
         {
+          key: 'approvalState',
+          label: 'Approval State',
+          sortable: false,
+        },
+        {
           key: 'cruiseName',
           label: 'Cruise Name',
           sortable: true,
@@ -59,11 +64,6 @@ export default {
           key: 'platforms',
           label: 'Platforms',
           sortable: true,
-        },
-        {
-          key: 'approvalState',
-          label: 'Approval State',
-          sortable: false,
         },
       ],
     };

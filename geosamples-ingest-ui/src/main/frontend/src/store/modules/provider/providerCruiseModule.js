@@ -9,6 +9,33 @@ const defaultParams = {
   approvalState: '',
 };
 
+const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
+  params: { page },
+}).then(
+  (response) => {
+    const { items, totalPages } = response.data;
+    items.forEach((item) => result.push(transform(item)));
+    if (page < totalPages) {
+      return loadAll(endpoint, transform, result, page + 1);
+    }
+    return result;
+  },
+);
+
+const sortOptions = (options) => {
+  options.sort((a, b) => {
+    const atxt = a.text.toLowerCase();
+    const btxt = b.text.toLowerCase();
+    if (atxt === btxt) {
+      return 0;
+    } if (atxt > btxt) {
+      return 1;
+    }
+    return -1;
+  });
+  return options;
+};
+
 export default {
 
   namespaced: true,
@@ -31,10 +58,24 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
+    options: {},
+    loadingOptions: false,
 
   },
 
   mutations: {
+    loadOptionsRequest(state) {
+      state.loadingOptions = true;
+    },
+
+    loadOptionsComplete(state) {
+      state.loadingOptions = false;
+    },
+
+    updateOptions(state, options) {
+      state.options = options;
+    },
+
     loadRequest(state) {
       state.loading = true;
     },
@@ -134,6 +175,19 @@ export default {
   },
 
   actions: {
+    loadOptions({ commit }) {
+      commit('loadOptionsRequest');
+      commit('updateOptions', {});
+      const nextOpts = {};
+
+      Promise.all([
+        loadAll('/provider/platform', ({ platform }) => ({ value: platform.toUpperCase(), text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
+      ]).then(() => {
+        commit('updateOptions', nextOpts);
+        commit('loadOptionsComplete');
+      });
+    },
+
     // eslint-disable-next-line no-unused-vars
     changePage({ dispatch, commit }, page) {
       commit('setPage', page);

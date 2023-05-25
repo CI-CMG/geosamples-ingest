@@ -1,17 +1,17 @@
 <template>
   <div class="m-2">
-    <b-breadcrumb v-if="!withinModal" :items="[
+    <b-breadcrumb v-if="!withinModal" :items="isEdit ? [
       { text: 'Geosamples Ingest', to: { name: 'Home' } },
-      { text: 'Intervals', to: { name: 'ProviderIntervalList' } },
-      { text: 'Edit Interval', active: false }
+      { text: 'Subsamples/Intervals', to: { name: 'ProviderIntervalList' } },
+      { text: 'Edit Subsample/Interval', active: false }
+    ] : [
+      { text: 'Geosamples Ingest', to: { name: 'Home' } },
+      { text: 'Subsamples/Intervals', to: { name: 'ProviderIntervalList' } },
+      { text: 'Add Subsample/Interval', active: false }
     ]"/>
-    <div v-if="ready">
-      <h1 v-if="isEdit" class="text-primary">Edit Interval - {{ getValue('id') }}</h1>
-      <h1 v-else class="text-primary">Add Interval</h1>
-      <b-button v-if="isEdit" type="button" variant="danger" class="mb-3" @click="showModal">Delete</b-button>
-      <b-modal ref="delete-modal" title="Delete Sample" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-        <p class="my-4">Are you sure you want to delete this interval?</p>
-      </b-modal>
+    <div>
+      <h1 v-if="isEdit" class="text-primary">Edit Subsample/Interval - {{ getValue('id') }}</h1>
+      <h1 v-else class="text-primary">Add Subsample/Interval</h1>
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
         <b-card title="Geologic Descriptive Information" border-variant="dark" bg-variant="light" class="mb-4">
           <b-row>
@@ -22,6 +22,7 @@
                 </template>
                 <b-form-select
                   :disabled="Boolean(imlgs)"
+                  v-if="!loadingOptions"
                   required
                   :id="imlgsId"
                   :options="optionsIMLGS"
@@ -29,6 +30,7 @@
                   @change="(value) => setValue({ path: 'imlgs', value })"
                   :state="showError('imlgs')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('imlgs') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -83,12 +85,14 @@
               <b-form-group label="Primary Lithologic Composition" :label-for="lithCode1Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="lithCode1Id"
                   :options="optionsLithologyCode"
                   :value="getValue('lithCode1')"
                   @change="(value) => setValue({ path: 'lithCode1', value })"
                   :state="showError('lithCode1')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('lithCode1') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -96,12 +100,14 @@
               <b-form-group label="Secondary Lithologic Composition" :label-for="lithCode2Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="lithCode2Id"
                   :options="optionsLithologyCode"
                   :value="getValue('lithCode2')"
                   @change="(value) => setValue({ path: 'lithCode2', value })"
                   :state="showError('lithCode2')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('lithCode2') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -111,12 +117,14 @@
               <b-form-group label="Primary Texture" :label-for="textCode1Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="textCode1Id"
                   :options="optionsTextureCode"
                   :value="getValue('textCode1')"
                   @change="(value) => setValue({ path: 'textCode1', value })"
                   :state="showError('textCode1')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('textCode1') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -124,12 +132,14 @@
               <b-form-group label="Secondary Texture" :label-for="textCode2Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="textCode2Id"
                   :options="optionsTextureCode"
                   :value="getValue('textCode2')"
                   @change="(value) => setValue({ path: 'textCode2', value })"
                   :state="showError('textCode2')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('textCode2') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -139,12 +149,14 @@
               <b-form-group label="Other Component 1" :label-for="compCode1Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode1Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode1')"
                   @change="(value) => setValue({ path: 'compCode1', value })"
                   :state="showError('compCode1')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode1') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -152,12 +164,14 @@
               <b-form-group label="Other Component 2" :label-for="compCode2Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode2Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode2')"
                   @change="(value) => setValue({ path: 'compCode2', value })"
                   :state="showError('compCode2')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode2') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -165,12 +179,14 @@
               <b-form-group label="Other Component 3" :label-for="compCode3Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode3Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode3')"
                   @change="(value) => setValue({ path: 'compCode3', value })"
                   :state="showError('compCode3')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode3') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -178,12 +194,14 @@
               <b-form-group label="Other Component 4" :label-for="compCode4Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode4Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode4')"
                   @change="(value) => setValue({ path: 'compCode4', value })"
                   :state="showError('compCode4')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode4') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -191,12 +209,14 @@
               <b-form-group label="Other Component 5" :label-for="compCode5Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode5Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode5')"
                   @change="(value) => setValue({ path: 'compCode5', value })"
                   :state="showError('compCode5')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode5') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -204,12 +224,14 @@
               <b-form-group label="Other Component 6" :label-for="compCode6Id">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="compCode6Id"
                   :options="optionsLithologyCode"
                   :value="getValue('compCode6')"
                   @change="(value) => setValue({ path: 'compCode6', value })"
                   :state="showError('compCode6')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('compCode6') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -219,12 +241,15 @@
               <b-form-group label="Geologic Age" :label-for="ageCodesId">
                 <b-form-select
                   :id="ageCodesId"
+                  v-if="!loadingOptions"
+                  :state="showError('ageCodes')"
                   @blur="() => setTouched({path: 'ageCodes', touched: true})"
                   :value="selectedAges"
                   :options="optionsAgeCode"
                   @change="setGeologicAgeValues"
                   multiple
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('ageCodes') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -234,12 +259,14 @@
               <b-form-group label="Rock Lithology" :label-for="rockLithCodeId">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="rockLithCodeId"
                   :options="optionsLithologyCode"
                   :value="getValue('rockLithCode')"
                   @change="(value) => setValue({ path: 'rockLithCode', value })"
                   :state="showError('rockLithCode')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('rockLithCode') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -247,12 +274,14 @@
               <b-form-group label="Rock Mineralogy" :label-for="rockMinCodeId">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="rockMinCodeId"
                   :options="optionsRockMineralCode"
                   :value="getValue('rockMinCode')"
                   @change="(value) => setValue({ path: 'rockMinCode', value })"
                   :state="showError('rockMinCode')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('rockMinCode') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -260,12 +289,14 @@
               <b-form-group label="Rock Weathering/Metamorphism" :label-for="weathMetaCodeId">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="weathMetaCodeId"
                   :options="optionsWeathMetaCode"
                   :value="getValue('weathMetaCode')"
                   @change="(value) => setValue({ path: 'weathMetaCode', value })"
                   :state="showError('weathMetaCode')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('weathMetaCode') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -275,12 +306,14 @@
               <b-form-group label="Rock Glass Remarks & Mn/Fe Oxide" :label-for="remarkCodeId">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="remarkCodeId"
                   :options="optionsRemarkCode"
                   :value="getValue('remarkCode')"
                   @change="(value) => setValue({ path: 'remarkCode', value })"
                   :state="showError('remarkCode')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('remarkCode') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -288,12 +321,14 @@
               <b-form-group label="Munsell Color" :label-for="munsellCodeId">
                 <b-form-select
                   type="text"
+                  v-if="!loadingOptions"
                   :id="munsellCodeId"
                   :options="optionsMunsellCode"
                   :value="getValue('munsellCode')"
                   @change="(value) => setValue({ path: 'munsellCode', value })"
                   :state="showError('munsellCode')"
                 />
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('munsellCode') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -366,14 +401,17 @@
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
             <b-icon icon="check" class="mr-2"/>Submit
           </b-button>
-          <b-button v-if="formDirty" type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">
+          <b-button v-if="formDirty" type="reset" variant="secondary" class="mb-2 mr-sm-2 mb-sm-0">
             <b-icon icon="arrow-counterclockwise" class="mr-2"/>Reset
           </b-button>
+          <b-button v-if="isEdit" variant="danger" class="mb-2 mr-sm-2 mb-sm-0" @click="showModal">
+            <b-icon icon="trash" class="mr-2"/>Delete
+          </b-button>
+          <b-modal ref="delete-modal" title="Delete Interval" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+            <p class="my-4">Are you sure you want to delete this interval?</p>
+          </b-modal>
         </div>
       </b-form>
-    </div>
-    <div v-else>
-      <b-spinner style="position:absolute; top: 50%; right: 50%"/>
     </div>
   </div>
 </template>
@@ -385,7 +423,7 @@ import {
 import genId from '@/components/idGenerator';
 
 export default {
-  props: ['id', 'withinModal', 'postSave', 'imlgs', 'intervalNumber'],
+  props: ['id', 'withinModal', 'postSave', 'postDelete', 'imlgs', 'intervalNumber'],
 
   data() {
     return {
@@ -458,6 +496,11 @@ export default {
         imlgs: this.imlgs,
       });
       this.setValue({ path: 'interval', value: this.intervalNumber });
+      this.submit().then(
+        (i) => {
+          this.initialize(i);
+        },
+      );
     }
   },
 
@@ -474,8 +517,8 @@ export default {
       this.delete(this.id).then(() => {
         if (!this.withinModal) {
           this.$router.push({ name: 'ProviderIntervalList' });
-        } else if (this.postSave) {
-          this.postSave();
+        } else if (this.postDelete) {
+          this.postDelete();
         }
       });
     },

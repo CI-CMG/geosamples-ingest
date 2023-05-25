@@ -98,6 +98,7 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
 
     sampleSearchParameters.setImlgs(searchParameters.getImlgs());
     sampleSearchParameters.setCruise(searchParameters.getCruise());
+    sampleSearchParameters.setCruiseYear(searchParameters.getCruiseYear());
     sampleSearchParameters.setSample(searchParameters.getSample());
     sampleSearchParameters.setPlatform(searchParameters.getPlatform());
     sampleSearchParameters.setDeviceCode(searchParameters.getDeviceCode());

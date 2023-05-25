@@ -2,7 +2,7 @@
   <InteractiveTable
     :breadcrumbs="[
       { text: 'Geosamples Ingest', to: { name: 'Home' } },
-      { text: 'Intervals', active: true },
+      { text: 'Subsamples/Intervals', active: true },
     ]"
     module="providerInterval"
     read-authority="ROLE_PROVIDER_INTERVAL_READ"

@@ -1,17 +1,17 @@
 <template>
   <div class="m-2">
-    <b-breadcrumb :items="[
+    <b-breadcrumb v-if="!withinModal" :items="isEdit ? [
           { text: 'Geosamples Ingest', to: { name: 'Home' } },
           { text: 'Samples', to: { name: 'ProviderSampleList' } },
           { text: 'Edit Sample', active: false },
+        ] : [
+          { text: 'Geosamples Ingest', to: { name: 'Home' } },
+          { text: 'Samples', to: { name: 'ProviderSampleList' } },
+          { text: 'Add Sample', active: false },
         ]"/>
-    <div v-if="ready">
+    <div>
       <h1 v-if="isEdit" class="text-primary">Edit Sample - {{ getValue('imlgs') }}</h1>
       <h1 v-else class="text-primary">Add New Sample</h1>
-      <b-button v-if="isEdit" type="button" variant="danger" class="mb-3" @click="showModal">Delete</b-button>
-      <b-modal ref="delete-modal" title="Delete Sample" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-        <p class="my-4">Are you sure you want to delete this sample?</p>
-      </b-modal>
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
         <b-card title="Sample Information" border-variant="dark" bg-variant="light" class="mb-4">
           <b-form-group :label-for="sampleId">
@@ -33,6 +33,7 @@
               Ship Name<span><strong style="color: red"> *</strong></span>
             </template>
             <b-form-select
+              v-if="!loadingOptions"
               required
               :id="platformId"
               :options="optionsPlatform"
@@ -40,6 +41,7 @@
               @change="(value) => selectPlatform({ path: 'platform', value })"
               :state="showError('platform')"
             />
+            <b-skeleton v-else/>
             <b-form-invalid-feedback>{{ getError('platform') }}</b-form-invalid-feedback>
           </b-form-group>
           <b-row>
@@ -51,14 +53,14 @@
                 <b-form-select
                   required
                   v-if="!loadingCruises"
-                  :disabled="!getValue('platform')"
+                  :disabled="Boolean(cruise) || !getValue('platform')"
                   :id="cruiseId"
                   :options="cruiseOptions"
                   :value="this.currentItem"
                   @change="(value) => selectCruise(value)"
                   :state="showError('cruise')"
                 />
-                <b-spinner v-else small style="position:absolute; top: 50%; right: 50%"/>
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('cruise') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -66,14 +68,14 @@
               <b-form-group label="Alternate Cruise/Leg" :label-for="legId">
                 <b-form-select
                   v-if="!loadingLegs"
-                  :disabled="!getValue('cruise')"
+                  :disabled="!getValue('cruise') || legOptions.length === 0"
                   :id="legId"
                   :options="legOptions"
                   :value="getValue('leg')"
                   @change="(value) => setValue({ path: 'leg', value })"
                   :state="showError('leg')"
                 />
-                <b-spinner v-else small style="position:absolute; top: 50%; right: 50%"/>
+                <b-skeleton v-else/>
                 <b-form-invalid-feedback>{{ getError('leg') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -84,22 +86,26 @@
             </template>
             <b-form-select
               required
+              v-if="!loadingOptions"
               :id="deviceCodeId"
               :options="optionsDeviceCode"
               :value="getValue('deviceCode')"
               @input="(value) => setValue({ path: 'deviceCode', value })"
               :state="showError('deviceCode')"
             />
+            <b-skeleton v-else/>
             <b-form-invalid-feedback>{{ getError('deviceCode') }}</b-form-invalid-feedback>
           </b-form-group>
           <b-form-group label="Storage Method" :label-for="storageMethCodeId">
             <b-form-select
+              v-if="!loadingOptions"
               :id="storageMethCodeId"
               :options="optionsStorageMethCode"
               :value="getValue('storageMethCode')"
               @input="(value) => setValue({ path: 'storageMethCode', value })"
               :state="showError('storageMethCode')"
             />
+            <b-skeleton v-else/>
             <b-form-invalid-feedback>{{ getError('storageMethCode') }}</b-form-invalid-feedback>
           </b-form-group>
           <b-row>
@@ -232,12 +238,14 @@
           </b-row>
           <b-form-group label="Physiographic Province" :label-for="provinceCodeId">
             <b-form-select
+              v-if="!loadingOptions"
               :id="provinceCodeId"
               :options="optionsProvinceCode"
               :value="getValue('provinceCode')"
               @input="(value) => setValue({ path: 'provinceCode', value })"
               :state="showError('provinceCode')"
             />
+            <b-skeleton v-else/>
             <b-form-invalid-feedback>{{ getError('provinceCode') }}</b-form-invalid-feedback>
           </b-form-group>
           <b-row>
@@ -307,12 +315,12 @@
               :id="sampleCommentsId"
               :value="getValue('sampleComments')"
               @input="(value) => setValue({ path: 'sampleComments', value })"
-              :state="showError('sampleComments') || (getValue('sampleComments').length < 2000 ? null : false)"
+              :state="showError('sampleComments') || (!getValue('sampleComments') || getValue('sampleComments').length < 2000 ? null : false)"
             />
             <b-form-invalid-feedback>{{ getError('sampleComment') }}</b-form-invalid-feedback>
           </b-form-group>
         </b-card>
-        <b-card title="Subsamples" border-variant="dark" bg-variant="light" class="mb-4">
+        <b-card title="Subsamples/Intervals" border-variant="dark" bg-variant="light" class="mb-4">
           <b-list-group horizontal v-if="!loadingIntervals">
             <b-row>
               <b-col v-for="(interval, i) in intervals" :key="i">
@@ -339,20 +347,23 @@
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
             <b-icon icon="check" class="mr-2"/>Submit
           </b-button>
-          <b-button v-if="formDirty" type="reset" variant="danger" class="mb-2 mr-sm-2 mb-sm-0">
+          <b-button v-if="formDirty" type="reset" variant="secondary" class="mb-2 mr-sm-2 mb-sm-0">
             <b-icon icon="arrow-counterclockwise" class="mr-2"/>Reset
           </b-button>
+          <b-button v-if="isEdit" variant="danger" class="mb-2 mr-sm-2 mb-sm-0" @click="showModal">
+            <b-icon icon="trash" class="mr-2"/>Delete
+          </b-button>
+          <b-modal ref="delete-modal" title="Delete Sample" ok-variant="danger" ok-title="Delete" @ok="doDelete">
+            <p class="my-4">Are you sure you want to delete this sample?</p>
+          </b-modal>
         </div>
       </b-form>
       <b-modal ref="edit-interval-modal" size="xl" hide-header hide-footer>
-        <ProviderIntervalEdit v-if="intervals[currentInterval]" :id="intervals[currentInterval].id" :within-modal="true" :post-save="closeEditAndRefreshIntervals" :imlgs="id" :interval-number="intervals[currentInterval].interval"/>
+        <ProviderIntervalEdit v-if="intervals[currentInterval]" :id="intervals[currentInterval].id" :within-modal="true" :post-save="closeEditAndRefreshIntervals" :post-delete="closeEditAfterDeleteAndRefreshSamples" :imlgs="id" :interval-number="intervals[currentInterval].interval"/>
       </b-modal>
       <b-modal ref="add-interval-modal" size="xl" hide-header hide-footer>
-        <ProviderIntervalEdit :within-modal="true" :post-save="closeAddAndRefreshIntervals" :imlgs="id" :interval-number="intervals.length === 0 ? 1 : intervals[intervals.length - 1].interval + 1"/>
+        <ProviderIntervalEdit :within-modal="true" :post-save="closeAddAndRefreshIntervals" :post-delete="closeAddAfterDeleteAndRefreshSamples" :imlgs="id" :interval-number="intervals.length === 0 ? 1 : intervals[intervals.length - 1].interval + 1"/>
       </b-modal>
-    </div>
-    <div v-else>
-      <b-spinner style="position:absolute; top: 50%; right: 50%"/>
     </div>
   </div>
 </template>
@@ -370,7 +381,7 @@ import ProviderIntervalEdit
 
 export default {
   components: { ProviderIntervalEdit },
-  props: ['id'],
+  props: ['id', 'withinModal', 'postSave', 'postDelete', 'cruise'],
 
   data() {
     return {
@@ -430,6 +441,7 @@ export default {
     ...mapActions('providerInterval', ['searchByImlgs']),
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
+    ...mapMutations('providerSample', ['updateCruiseOptions']),
 
     isValidDate(value) {
       if (value) {
@@ -458,13 +470,63 @@ export default {
     },
 
     doDelete() {
-      this.delete(this.id).then(() => this.$router.push({ name: 'ProviderSampleList' }));
+      this.delete(this.id).then(
+        () => {
+          if (!this.withinModal) {
+            this.$router.push({ name: 'ProviderSampleList' });
+          } else if (this.postDelete) {
+            this.postDelete();
+          }
+        },
+      );
+    },
+
+    makeSuccessToast() {
+      this.$bvToast.hide();
+      this.$bvToast.toast('Sample saved successfully', {
+        title: 'Success',
+        variant: 'success',
+        solid: true,
+        toaster: 'b-toaster-bottom-center',
+      });
+    },
+
+    makeIntervalSuccessToast() {
+      this.$bvToast.hide();
+      this.$bvToast.toast('Subsample/Interval saved successfully', {
+        title: 'Success',
+        variant: 'success',
+        solid: true,
+        toaster: 'b-toaster-bottom-center',
+      });
+    },
+
+    makeIntervalDeleteToast() {
+      this.$bvToast.hide();
+      this.$bvToast.toast('Subsample/Interval deleted successfully', {
+        title: 'Success',
+        variant: 'success',
+        solid: true,
+        toaster: 'b-toaster-bottom-center',
+      });
     },
 
     saveForm() {
       this.submit().then(
         (sample) => this.save({ provider: sample, id: this.id }).then(
-          () => this.$router.push({ name: 'ProviderSampleList' }),
+          (s) => {
+            if (!this.withinModal) {
+              this.$router.push({ name: 'ProviderSampleList' });
+            } else if (this.postSave) {
+              this.postSave(s);
+              this.$forceUpdate();
+              this.initialize({
+                ...s,
+                platform: s.platform.toUpperCase(),
+              });
+              this.makeSuccessToast();
+            }
+          },
         ),
       );
     },
@@ -475,10 +537,12 @@ export default {
     },
 
     selectPlatform(value) {
-      this.setValue({ path: 'cruise', value: null });
-      this.setValue({ path: 'leg', value: [] });
       this.setValue({ path: 'platform', value: value.value });
-      this.loadCruiseOptions(value.value);
+      if (!this.cruise) {
+        this.setValue({ path: 'cruise', value: null });
+        this.setValue({ path: 'leg', value: [] });
+        this.loadCruiseOptions(value.value);
+      }
     },
 
     closeAddAndRefreshIntervals() {
@@ -488,6 +552,7 @@ export default {
           this.intervals = intervals;
         },
       );
+      this.makeIntervalSuccessToast();
     },
 
     closeEditAndRefreshIntervals() {
@@ -497,6 +562,27 @@ export default {
           this.intervals = intervals;
         },
       );
+      this.makeIntervalSuccessToast();
+    },
+
+    closeEditAfterDeleteAndRefreshSamples() {
+      this.$refs['edit-interval-modal'].hide();
+      this.searchByImlgs(this.id).then(
+        (intervals) => {
+          this.intervals = intervals;
+        },
+      );
+      this.makeIntervalDeleteToast();
+    },
+
+    closeAddAfterDeleteAndRefreshSamples() {
+      this.$refs['add-interval-modal'].hide();
+      this.searchByImlgs(this.id).then(
+        (intervals) => {
+          this.intervals = intervals;
+        },
+      );
+      this.makeIntervalDeleteToast();
     },
   },
 
@@ -525,7 +611,12 @@ export default {
 
     optionsPlatform() {
       const { platform: field } = this.options;
-      return field || [];
+      if (!field) {
+        return [];
+      } if (this.cruise) {
+        return field.filter((option) => this.cruise.platforms.includes(option.value));
+      }
+      return field;
     },
 
     optionsDeviceCode() {
@@ -552,16 +643,33 @@ export default {
           this.currentItem = { cruiseName: sample.cruise, year: sample.cruiseYear };
           this.initialize(sample);
           this.loadCruiseOptions(sample.platform);
+          this.selectPlatform({ value: sample.platform.toUpperCase() });
           this.selectCruise(this.currentItem);
           this.searchByImlgs(sample.imlgs).then(
             (intervals) => {
               this.intervals = intervals;
             },
           );
+          this.submit().then(
+            (s) => {
+              this.initialize(s);
+            },
+          );
         },
       );
     } else {
       this.initialize();
+      if (this.cruise) {
+        this.currentItem = { cruiseName: this.cruise.cruiseName, year: this.cruise.year };
+        this.updateCruiseOptions([{ text: `${this.cruise.cruiseName} (${this.cruise.year})`, value: { cruiseName: this.cruise.cruiseName, year: this.cruise.year } }]);
+        this.selectPlatform({ value: this.cruise.platforms ? this.cruise.platforms[0] : null });
+        this.selectCruise(this.cruise);
+      }
+      this.submit().then(
+        (sample) => {
+          this.initialize(sample);
+        },
+      );
     }
   },
 };

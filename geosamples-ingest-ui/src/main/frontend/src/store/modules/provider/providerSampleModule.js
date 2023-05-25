@@ -67,6 +67,7 @@ export default {
     loadingOptions: false,
     cruiseOptions: [],
     loadingCruises: false,
+    loadingCruiseSamples: false,
   },
 
   mutations: {
@@ -212,16 +213,32 @@ export default {
     updateCruiseOptions(state, cruiseOptions) {
       state.cruiseOptions = cruiseOptions;
     },
+
+    loadCruiseSamplesRequest(state) {
+      state.loadingCruiseSamples = true;
+    },
+
+    loadCruiseSamplesComplete(state) {
+      state.loadingCruiseSamples = false;
+    },
   },
 
   actions: {
+    searchByCruiseNameAndCruiseYear({ commit }, { cruiseName, cruiseYear }) {
+      commit('loadCruiseSamplesRequest');
+      return loadAll(`provider/sample?cruise=${cruiseName}&cruiseYear=${cruiseYear}`, ({ imlgs, sample }) => ({ imlgs, sample })).then((options) => {
+        commit('loadCruiseSamplesComplete');
+        return options;
+      });
+    },
+
     loadOptions({ commit }) {
       commit('loadOptionsRequest');
       commit('updateOptions', {});
       const nextOpts = {};
 
       Promise.all([
-        loadAll('/provider/platform', ({ platform }) => ({ value: platform, text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
+        loadAll('/provider/platform', ({ platform }) => ({ value: platform.toUpperCase(), text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
         loadAll('/device', ({ deviceCode, device }) => ({ value: deviceCode, text: device })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
         loadAll('/storage-method', ({ storageMethodCode, storageMethod }) => ({ value: storageMethodCode, text: storageMethod })).then(sortOptions).then((options) => { nextOpts.storageMethCode = options; return options; }),
         loadAll('/province', ({ provinceCode, province }) => ({ value: provinceCode, text: province })).then(sortOptions).then((options) => { nextOpts.provinceCode = options; return options; }),

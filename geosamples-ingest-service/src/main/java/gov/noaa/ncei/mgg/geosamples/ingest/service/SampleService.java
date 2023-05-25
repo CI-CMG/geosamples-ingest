@@ -140,6 +140,7 @@ public class SampleService extends
 
     List<String> imlgs = searchParameters.getImlgs();
     List<String> cruise = searchParameters.getCruise();
+    List<Integer> cruiseYear = searchParameters.getCruiseYear();
     List<String> sample = searchParameters.getSample();
     List<String> facilityCode = searchParameters.getFacilityCode();
     List<String> platform = searchParameters.getPlatform();
@@ -154,6 +155,9 @@ public class SampleService extends
     }
     if (!cruise.isEmpty()) {
       specs.add(SearchUtils.contains(cruise, e -> e.join(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.CRUISE_NAME)));
+    }
+    if (!cruiseYear.isEmpty()) {
+      specs.add(SearchUtils.equal(cruiseYear, e -> e.join(CuratorsSampleTsqpEntity_.CRUISE).get(CuratorsCruiseEntity_.YEAR)));
     }
     if (!sample.isEmpty()) {
       specs.add(SearchUtils.contains(sample, CuratorsSampleTsqpEntity_.SAMPLE));

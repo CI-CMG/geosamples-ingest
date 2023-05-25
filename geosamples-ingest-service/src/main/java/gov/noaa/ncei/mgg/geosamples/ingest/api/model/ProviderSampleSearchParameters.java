@@ -30,6 +30,8 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
 
   private List<String> imlgs = new ArrayList<>(0);
   private List<String> cruise = new ArrayList<>(0);
+
+  private List<Integer> cruiseYear = new ArrayList<>(0);
   private List<String> sample = new ArrayList<>(0);
   private List<String> platform = new ArrayList<>(0);
   private List<String> deviceCode = new ArrayList<>(0);
@@ -60,6 +62,17 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
       cruise = new ArrayList<>(0);
     }
     this.cruise = cruise;
+  }
+
+  public List<Integer> getCruiseYear() {
+    return cruiseYear;
+  }
+
+  public void setCruiseYear(List<Integer> cruiseYear) {
+    if(cruiseYear == null) {
+      cruiseYear = new ArrayList<>(0);
+    }
+    this.cruiseYear = cruiseYear;
   }
 
   public List<String> getSample() {

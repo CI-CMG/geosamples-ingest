@@ -257,7 +257,7 @@ public class SampleService extends
     CuratorsSampleTsqpEntity entity = new CuratorsSampleTsqpEntity();
 //    entity.setObjectId(sampleDataUtils.getObjectId());
     entity.setImlgs(sampleDataUtils.getImlgs(sampleDataUtils.getObjectId()));
-    entity.setShowSampl(serviceProperties.getShowSampleBaseUrl() + "?" + entity.getImlgs());
+    entity.setShowSampl(serviceProperties.getShowSampleBaseUrl() + entity.getImlgs());
     entity.setPublish(true);
     return entity;
   }

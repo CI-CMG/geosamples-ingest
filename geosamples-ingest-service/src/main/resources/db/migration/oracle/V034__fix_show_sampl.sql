@@ -1,0 +1,2 @@
+update ${schema_name}.CURATORS_SAMPLE_TSQP SET SHOW_SAMPL = REPLACE(SHOW_SAMPL, 'http://maps.ngdc.noaa.gov/viewers/imlgs/samples/imlgs=', 'http://maps.ngdc.noaa.gov/viewers/imlgs/samples/')
+where REGEXP_LIKE(SHOW_SAMPL, 'http://maps.ngdc.noaa.gov/viewers/imlgs/samples/imlgs=');

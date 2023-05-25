@@ -15,6 +15,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleSearchParamet
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ProviderSampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
+import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEntity;
@@ -115,6 +116,9 @@ public class ProviderSampleServiceIT {
   public static void tearDownAll() throws IOException {
     mockCas.shutdown();
   }
+
+  @Autowired
+  private ServiceProperties serviceProperties;
 
   @Autowired
   private TransactionTemplate transactionTemplate;
@@ -329,6 +333,8 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getSampleComments(), created.getSampleComments());
       assertEquals(ApprovalState.PENDING, sample.getApproval().getApprovalState());
       assertFalse(sample.isPublish());
+
+      assertEquals(sample.getShowSampl(), serviceProperties.getShowSampleBaseUrl() + created.getImlgs());
     });
   }
 

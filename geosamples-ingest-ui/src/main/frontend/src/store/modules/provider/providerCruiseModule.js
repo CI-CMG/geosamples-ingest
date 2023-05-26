@@ -134,7 +134,11 @@ export default {
     },
 
     setPage(state, page) {
-      state.page = page;
+      if (page == null || page < 1) {
+        state.page = 1;
+      } else {
+        state.page = page;
+      }
     },
     setSortBy(state, sortBy) {
       state.sortBy = sortBy;

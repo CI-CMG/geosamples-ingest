@@ -221,6 +221,14 @@ export default {
     loadCruiseSamplesComplete(state) {
       state.loadingCruiseSamples = false;
     },
+
+    setPage(state, page) {
+      if (page == null || page < 1) {
+        state.page = 1;
+      } else {
+        state.page = page;
+      }
+    },
   },
 
   actions: {

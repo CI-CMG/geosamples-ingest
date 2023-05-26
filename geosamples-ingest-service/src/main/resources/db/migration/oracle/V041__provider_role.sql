@@ -139,8 +139,3 @@ insert into ${schema_name}.GEOSAMPLES_ROLE_AUTHORITY (ROLE_ID, AUTHORITY_NAME) v
   (select ROLE_ID from ${schema_name}.GEOSAMPLES_ROLE where ROLE_NAME = 'Provider'),
   'ROLE_WEATHERING_READ'
 );
-
-insert into ${schema_name}.GEOSAMPLES_ROLE_AUTHORITY (ROLE_ID, AUTHORITY_NAME) values (
-  (select ROLE_ID from ${schema_name}.GEOSAMPLES_ROLE where ROLE_NAME = 'Provider'),
-  'ROLE_PLATFORM_READ'
-);

@@ -1,32 +1,11 @@
 import { apiService } from '@/api';
 
-const defaultParams = {};
-
-const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
-  params: { page },
-}).then(
-  (response) => {
-    const { items, totalPages } = response.data;
-    items.forEach((item) => result.push(transform(item)));
-    if (page < totalPages) {
-      return loadAll(endpoint, transform, result, page + 1);
-    }
-    return result;
-  },
-);
-
-const sortOptions = (options) => {
-  options.sort((a, b) => {
-    const atxt = a.text.toLowerCase();
-    const btxt = b.text.toLowerCase();
-    if (atxt === btxt) {
-      return 0;
-    } if (atxt > btxt) {
-      return 1;
-    }
-    return -1;
-  });
-  return options;
+const defaultParams = {
+  platform: '',
+  masterId: '',
+  icesCode: '',
+  id: '',
+  approvalState: '',
 };
 
 export default {
@@ -43,7 +22,7 @@ export default {
 
     params: { ...defaultParams },
 
-    sortBy: 'interval',
+    sortBy: 'platform',
     sortDesc: false,
 
     item: null,
@@ -51,10 +30,6 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
-    loadingSampleIntervals: false,
-
-    options: {},
-    loadingOptions: false,
   },
 
   mutations: {
@@ -96,6 +71,26 @@ export default {
       state.totalItems = 0;
     },
 
+    setPlatform(state, platform) {
+      state.params.platform = platform;
+    },
+
+    setMasterId(state, masterId) {
+      state.params.masterId = masterId;
+    },
+
+    setIcesCode(state, icesCode) {
+      state.params.icesCode = icesCode;
+    },
+
+    setId(state, id) {
+      state.params.id = id;
+    },
+
+    setApprovalState(state, approvalState) {
+      state.params.approvalState = approvalState;
+    },
+
     setSortBy(state, sortBy) {
       state.sortBy = sortBy;
     },
@@ -132,56 +127,12 @@ export default {
     loadApprovalComplete(state) {
       state.loadingApproval = false;
     },
-
-    loadOptionsRequest(state) {
-      state.loadingOptions = true;
-    },
-
-    loadOptionsComplete(state) {
-      state.loadingOptions = false;
-    },
-
-    updateOptions(state, options) {
-      state.options = options;
-    },
-
-    loadSampleIntervalsRequest(state) {
-      state.loadingSampleIntervals = true;
-    },
-    loadSampleIntervalsComplete(state) {
-      state.loadingSampleIntervals = false;
-    },
     setPage(state, page) {
-      if (page == null || page < 1) {
-        state.page = 1;
-      } else {
-        state.page = page;
-      }
+      state.page = page;
     },
   },
 
   actions: {
-    loadOptions({ commit }) {
-      commit('loadOptionsRequest');
-      commit('updateOptions', {});
-      const nextOpts = {};
-
-      Promise.all([
-        loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: lithology })).then(sortOptions).then((options) => { nextOpts.lithologyCode = options; return options; }),
-        loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: texture })).then(sortOptions).then((options) => { nextOpts.textureCode = options; return options; }),
-        loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: age })).then(sortOptions).then((options) => { nextOpts.ageCode = options; return options; }),
-        loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: rockMineral })).then(sortOptions).then((options) => { nextOpts.rockMineralCode = options; return options; }),
-        loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: weathering })).then(sortOptions).then((options) => { nextOpts.weathMetaCode = options; return options; }),
-        loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: remark })).then(sortOptions).then((options) => { nextOpts.remarkCode = options; return options; }),
-        loadAll('/munsell', ({ munsellCode }) => ({ value: munsellCode, text: munsellCode })).then(sortOptions).then((options) => { nextOpts.munsellCode = options; return options; }),
-        loadAll('/device', ({ device, deviceCode }) => ({ value: deviceCode, text: device })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
-        loadAll('/provider/sample', ({ sample, cruise, imlgs }) => ({ value: imlgs, text: `${sample} (${cruise})` })).then(sortOptions).then((options) => { nextOpts.imlgs = options; return options; }),
-      ]).then(() => {
-        commit('updateOptions', nextOpts);
-        commit('loadOptionsComplete');
-      });
-    },
-
     // eslint-disable-next-line no-unused-vars
     changePage({ dispatch, commit }, page) {
       commit('setPage', page);
@@ -206,7 +157,7 @@ export default {
           params[key] = value;
         }
       });
-      return apiService.get('/provider/interval', {
+      return apiService.get('/provider/platform/unapproved', {
         params:
           {
             ...params,
@@ -224,16 +175,9 @@ export default {
         },
       );
     },
-    searchByImlgs({ commit }, imlgs) {
-      commit('loadSampleIntervalsRequest');
-      return loadAll(`/provider/interval?imlgs=${imlgs}`, ({ id, interval }) => ({ id, interval })).then((options) => {
-        commit('loadSampleIntervalsComplete');
-        return options;
-      });
-    },
     load({ commit }, id) {
       commit('loadRequest');
-      return apiService.get(`/provider/interval/${id}`)
+      return apiService.get(`/provider/platform/${id}`)
         .then(
           (response) => {
             commit('loadSuccess', response.data);
@@ -247,7 +191,7 @@ export default {
     },
     save({ commit }, { provider, id }) {
       commit('saveRequest');
-      const req = id ? () => apiService.put(`/provider/interval/${id}`, provider) : () => apiService.post('/provider/interval', provider);
+      const req = id ? () => apiService.put(`/provider/platform/${id}`, provider) : () => apiService.post('/provider/platform', provider);
       return req()
         .then(
           (response) => {
@@ -265,8 +209,8 @@ export default {
                   const paths = Object.keys(formErrors);
                   paths.forEach((path) => {
                     const message = formErrors[path].join(', ');
-                    commit('providerIntervalForm/setTouched', { path, touched: false }, { root: true });
-                    commit('providerIntervalForm/setError', { path, error: message }, { root: true });
+                    commit('platformForm/setTouched', { path, touched: false }, { root: true });
+                    commit('platformForm/setError', { path, error: message }, { root: true });
                   });
                 }
               }
@@ -277,7 +221,7 @@ export default {
     },
     delete({ commit }, id) {
       commit('deleteRequest');
-      return apiService.delete(`/provider/interval/${id}`)
+      return apiService.delete(`/provider/platform/${id}`)
         .then(
           (response) => {
             commit('deleteSuccess', response.data);
@@ -291,7 +235,7 @@ export default {
     },
     loadApproval({ commit }, id) {
       commit('loadApprovalRequest');
-      return apiService.get(`/provider/interval/approval/${id}`)
+      return apiService.get(`/provider/platform/approval/${id}`)
         .then(
           (response) => {
             commit('loadApprovalComplete');

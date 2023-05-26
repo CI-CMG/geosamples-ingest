@@ -79,6 +79,9 @@ import ProviderSampleEdit from '@/views/view/main/provider/sample/edit/ProviderS
 import ProviderInterval from '@/views/view/main/provider/interval/ProviderInterval.vue';
 import ProviderIntervalList from '@/views/view/main/provider/interval/list/ProviderIntervalList.vue';
 import ProviderIntervalEdit from '@/views/view/main/provider/interval/edit/ProviderIntervalEdit.vue';
+import ProviderPlatform from '@/views/view/main/provider/platform/ProviderPlatform.vue';
+import ProviderPlatformList from '@/views/view/main/provider/platform/list/ProviderPlatformList.vue';
+import ProviderPlatformEdit from '@/views/view/main/provider/platform/edit/ProviderPlatformEdit.vue';
 
 Vue.use(VueRouter);
 
@@ -683,6 +686,29 @@ const routes = [
             component: Provider,
             name: 'Provider',
             children: [
+              {
+                path: 'platform',
+                component: ProviderPlatform,
+                name: 'ProviderPlatform',
+                children: [
+                  {
+                    path: 'list',
+                    name: 'ProviderPlatformList',
+                    component: ProviderPlatformList,
+                  },
+                  {
+                    path: 'add',
+                    name: 'ProviderPlatformAdd',
+                    component: ProviderPlatformEdit,
+                  },
+                  {
+                    path: 'edit/:id',
+                    name: 'ProviderPlatformEdit',
+                    component: ProviderPlatformEdit,
+                    props: true,
+                  },
+                ],
+              },
               {
                 path: 'cruise',
                 component: ProviderCruise,

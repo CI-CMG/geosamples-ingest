@@ -58,6 +58,7 @@ import providerSample from './modules/provider/providerSampleModule';
 import providerSampleForm from './modules/provider/providerSampleForm';
 import providerInterval from './modules/provider/providerIntervalModule';
 import providerIntervalForm from './modules/provider/providerIntervalFormModule';
+import providerPlatform from './modules/provider/providerPlatformModule';
 
 Vue.use(Vuex);
 
@@ -121,5 +122,6 @@ export default new Vuex.Store({
     providerSampleForm,
     providerInterval,
     providerIntervalForm,
+    providerPlatform,
   },
 });

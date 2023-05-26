@@ -5,6 +5,7 @@ const defaultParams = {
   platform: '',
   masterId: '',
   icesCode: '',
+  approvalState: '',
 };
 
 export default {
@@ -28,7 +29,7 @@ export default {
     loading: false,
     saving: false,
     deleting: false,
-
+    loadingApproval: false,
   },
 
   mutations: {
@@ -81,6 +82,9 @@ export default {
     setMasterId(state, masterId) {
       state.params.masterId = masterId;
     },
+    setApprovalState(state, approvalState) {
+      state.params.approvalState = approvalState;
+    },
     setPage(state, page) {
       state.page = page;
     },
@@ -113,6 +117,12 @@ export default {
       state.page = 1;
       state.totalPages = 1;
       state.totalItems = 0;
+    },
+    loadApprovalRequest(state) {
+      state.loadingApproval = true;
+    },
+    loadApprovalComplete(state) {
+      state.loadingApproval = false;
     },
   },
 
@@ -216,6 +226,34 @@ export default {
             throw error;
           },
         );
+    },
+    loadApproval({ commit }, id) {
+      commit('loadApprovalRequest');
+      return apiService.get(`/platform/approval/${id}`)
+        .then(
+          (response) => {
+            commit('loadApprovalComplete');
+            return response.data;
+          },
+          (error) => {
+            commit('loadApprovalComplete');
+            throw error;
+          },
+        );
+    },
+
+    saveApproval({ commit }, { id, approval }) {
+      commit('loadApprovalRequest');
+      return apiService.patch(`/platform/review/${id}`, approval).then(
+        (response) => {
+          commit('loadApprovalComplete');
+          return response.data;
+        },
+        (error) => {
+          commit('loadApprovalComplete');
+          throw error;
+        },
+      );
     },
   },
 };

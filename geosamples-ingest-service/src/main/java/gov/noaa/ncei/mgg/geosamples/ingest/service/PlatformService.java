@@ -6,6 +6,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
@@ -50,6 +52,7 @@ public class PlatformService extends
     List<Integer> masterId = searchParameters.getMasterId();
     List<String> icesCode = searchParameters.getIcesCode();
     List<String> createdBy = searchParameters.getCreatedBy();
+    List<ApprovalState> approvalState = searchParameters.getApprovalState();
 
     if (!id.isEmpty()){
       specs.add(SearchUtils.equal(id, PlatformMasterEntity_.ID));
@@ -75,6 +78,13 @@ public class PlatformService extends
       } else {
         specs.add(createdBySpec);
       }
+    }
+
+    if (!approvalState.isEmpty()) {
+      specs.add(SearchUtils.equal(
+          approvalState.stream().map(ApprovalState::name).collect(Collectors.toList()),
+          (e) -> e.get(CuratorsCruiseEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
+      ));
     }
 
     return specs;

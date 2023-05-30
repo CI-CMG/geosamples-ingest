@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -15,12 +14,10 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 public class ExcelWorkbookWriter implements Closeable {
 
   private final SXSSFSheet singleValuedSheet;
-  private final SXSSFSheet otherComponentsSheet;
 
   private final SXSSFWorkbook workbook;
   private final OutputStream outputStream;
   private int rowNum = 1;
-  private int nOtherComponents = 0;
 
   public ExcelWorkbookWriter(OutputStream outputStream) {
     this.workbook = new SXSSFWorkbook();
@@ -29,13 +26,23 @@ public class ExcelWorkbookWriter implements Closeable {
     this.singleValuedSheet = workbook.createSheet(SheetName.SINGLE_VALUE);
     this.singleValuedSheet.setRandomAccessWindowSize(100); // keep 100 rows in memory at once, the rest are kept in compressed tmp files on disk
 
-    this.otherComponentsSheet = workbook.createSheet(SheetName.OTHER_COMPONENTS);
-    this.otherComponentsSheet.setRandomAccessWindowSize(100);
-
     this.outputStream = outputStream;
   }
 
-
+  public void writeHeader() {
+    Row row = singleValuedSheet.createRow(0);
+    int cellNum = 0;
+    for (HeaderNames headerName : HeaderNames.values()) {
+      if (!headerName.equals(HeaderNames.OTHER_COMPONENT_CODE)) {
+        row.createCell(cellNum).setCellValue(headerName.getText());
+        cellNum += 1;
+      }
+    }
+    for (int i = 0; i < 6; i++) {
+      row.createCell(cellNum).setCellValue(String.format("%s (%s)", HeaderNames.OTHER_COMPONENT_CODE.getText(), i + 1));
+      cellNum += 1;
+    }
+  }
 
   public void writeToSheet(List<SampleRow> sampleRows) throws IOException {
     workbook.setActiveSheet(workbook.getSheetIndex(SheetName.SINGLE_VALUE));
@@ -158,15 +165,12 @@ public class ExcelWorkbookWriter implements Closeable {
       if (sampleRow.getComments() != null) {
        row.createCell(36).setCellValue(sampleRow.getComments());
       }
-
-      Row otherComponentsRow = otherComponentsSheet.createRow(rowNum);
       if (sampleRow.getOtherComponentCodes() != null) {
-        int cellNum = 0;
+        int currentCellNum = 37;
         for (String otherComponent : sampleRow.getOtherComponentCodes()) {
-          otherComponentsRow.createCell(cellNum).setCellValue(otherComponent);
-          cellNum += 1;
+          row.createCell(currentCellNum).setCellValue(otherComponent);
+          currentCellNum += 1;
         }
-        nOtherComponents = Math.max(cellNum, nOtherComponents);
       }
 
       rowNum += 1;
@@ -175,38 +179,6 @@ public class ExcelWorkbookWriter implements Closeable {
 
   @Override
   public void close() throws IOException {
-    Row row = singleValuedSheet.createRow(0);
-    int cellNum = 0;
-    for (HeaderNames headerName : HeaderNames.values()) {
-      if (!headerName.equals(HeaderNames.OTHER_COMPONENT_CODE)) {
-        row.createCell(cellNum).setCellValue(headerName.getText());
-        cellNum += 1;
-      }
-    }
-    if (nOtherComponents > 1) {
-      for (int i = 0; i < nOtherComponents; i++) {
-        row.createCell(cellNum).setCellValue(String.format("%s (%s)", HeaderNames.OTHER_COMPONENT_CODE.getText(), i + 1));
-        cellNum += 1;
-      }
-    } else {
-      row.createCell(cellNum).setCellValue(HeaderNames.OTHER_COMPONENT_CODE.getText());
-    }
-
-    for (int i = 1; i < rowNum; i++) {
-      row = singleValuedSheet.getRow(i);
-
-      Row multiValueRow = otherComponentsSheet.getRow(i);
-      for (int j = 0; j < nOtherComponents; j++) {
-        Cell multiValueCell = multiValueRow.getCell(j);
-        if (multiValueCell != null) {
-          row.createCell(37 + j).setCellValue(multiValueCell.getStringCellValue());
-        }
-        multiValueRow.removeCell(multiValueCell);
-      }
-    }
-
-    otherComponentsSheet.flushRows();
-    workbook.removeSheetAt(workbook.getSheetIndex(SheetName.OTHER_COMPONENTS));
     workbook.write(outputStream);
 
     workbook.dispose(); // cleans up temporary files
@@ -215,7 +187,6 @@ public class ExcelWorkbookWriter implements Closeable {
 
   public static class SheetName {
     public static final String SINGLE_VALUE = "Data Output";
-    public static final String OTHER_COMPONENTS = "Other Components";
 
   }
 }

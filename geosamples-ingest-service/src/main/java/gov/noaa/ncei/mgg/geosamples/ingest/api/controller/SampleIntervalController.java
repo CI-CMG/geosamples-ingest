@@ -61,6 +61,7 @@ public class SampleIntervalController {
         OutputStream outputStream = response.getOutputStream();
         ExcelWorkbookWriter excelWorkBookWriter = new ExcelWorkbookWriter(outputStream)
     ) {
+      excelWorkBookWriter.writeHeader();
       while (page.getPage() <= page.getTotalPages()) {
         excelWorkBookWriter.writeToSheet(
             page.getItems().stream()

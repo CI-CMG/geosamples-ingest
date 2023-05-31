@@ -31,7 +31,7 @@ export default {
     return {
       tableFields: [
         { key: 'approvalState', label: 'Approval State', sortable: true },
-        { key: 'publish', label: 'Publish' },
+        { key: 'publish', label: 'Published' },
         { key: 'imlgs', label: 'IMLGS' },
         { key: 'igsn', label: 'IGSN' },
         { key: 'interval', label: 'Interval' },

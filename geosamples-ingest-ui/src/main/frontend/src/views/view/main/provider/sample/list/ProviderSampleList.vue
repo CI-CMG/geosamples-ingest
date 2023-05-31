@@ -57,7 +57,7 @@ export default {
         },
         {
           key: 'publish',
-          label: 'Publish',
+          label: 'Published',
         },
         {
           key: 'imlgs',

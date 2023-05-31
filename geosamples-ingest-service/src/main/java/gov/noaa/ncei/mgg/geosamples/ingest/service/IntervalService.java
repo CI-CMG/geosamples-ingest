@@ -12,6 +12,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsIntervalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsAgeRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLithologyRepository;
@@ -24,6 +25,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsTextureReposit
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsWeathMetaRepository;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +46,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntervalService extends
     ApprovalResourceServiceBase<Long, CuratorsIntervalEntity, IntervalSearchParameters, IntervalView, CuratorsIntervalRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(IntervalView.class);
+  private static final Map<String, String> viewToEntitySortMapping;
+
+  static {
+
+    Map<String, String> map = new HashMap<>();
+    map.put("interval", CuratorsIntervalEntity_.INTERVAL);
+    map.put("approvalState", String.format("%s.%s", CuratorsIntervalEntity_.APPROVAL, GeosamplesApprovalEntity_.APPROVAL_STATE));
+    viewToEntitySortMapping = Collections.unmodifiableMap(map);
+
+  }
 
 
   private final CuratorsIntervalRepository curatorsIntervalRepository;

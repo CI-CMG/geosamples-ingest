@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Sortable({
-    "interval"
+    "interval",
+    "approvalState",
 })
 public class IntervalView extends ProviderIntervalView {
   private ApprovalState approvalState;

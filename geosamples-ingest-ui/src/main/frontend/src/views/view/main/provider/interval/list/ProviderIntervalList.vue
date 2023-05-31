@@ -30,7 +30,7 @@ export default {
   data() {
     return {
       tableFields: [
-        { key: 'approvalState', label: 'Approval State' },
+        { key: 'approvalState', label: 'Approval State', sortable: true },
         { key: 'publish', label: 'Publish' },
         { key: 'imlgs', label: 'IMLGS' },
         { key: 'igsn', label: 'IGSN' },

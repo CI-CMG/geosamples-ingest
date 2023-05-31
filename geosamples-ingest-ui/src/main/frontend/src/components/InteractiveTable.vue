@@ -55,6 +55,9 @@
             <b-link @click="showApproval(data.item)">{{ data.item.approvalState }}</b-link>
           </AuthorizedContent>
         </template>
+        <template v-for="field in tableFields.filter((f) => f.multivalued)" :slot="`cell(${field.key})`" slot-scope="data">
+          {{ data.item[field.key].join(', ') }}
+        </template>
       </b-table>
       <TextPagination
         :updated="(value) => $store.dispatch(`${module}/changePage`, value)"

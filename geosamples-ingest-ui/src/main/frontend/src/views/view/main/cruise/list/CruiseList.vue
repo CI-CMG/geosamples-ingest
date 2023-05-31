@@ -96,11 +96,13 @@ export default {
           key: 'facilityCodes',
           label: 'Facilities',
           sortable: true,
+          multivalued: true,
         },
         {
           key: 'platforms',
           label: 'Platforms',
           sortable: true,
+          multivalued: true,
         },
       ],
     };

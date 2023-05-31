@@ -47,7 +47,7 @@ export default {
         { key: 'compCode4', label: 'Other Component Code 4' },
         { key: 'compCode5', label: 'Other Component Code 5' },
         { key: 'compCode6', label: 'Other Component Code 6' },
-        { key: 'ageCodes', label: 'Geologic Ages' },
+        { key: 'ageCodes', label: 'Geologic Ages', multivalued: true },
         { key: 'weight', label: 'Weight' },
         { key: 'rockLithCode', label: 'Rock Lithology Code' },
         { key: 'rockMinCode', label: 'Rock Mineralogy Code' },

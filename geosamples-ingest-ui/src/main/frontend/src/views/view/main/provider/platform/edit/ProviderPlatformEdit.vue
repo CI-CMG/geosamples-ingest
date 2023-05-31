@@ -82,6 +82,14 @@
           </b-button>
           <b-modal ref="delete-modal" title="Delete Ship/Platform" ok-variant="danger" ok-title="Delete" @ok="doDelete">
             <p class="my-4">Are you sure you want to delete this ship/platform?</p>
+            <template #modal-footer>
+              <b-button variant="secondary" @click="hideModal" class="mb-2 mr-sm-2 mb-sm-0">
+                <b-icon icon="x" class="mr-2"></b-icon> Cancel
+              </b-button>
+              <b-button variant="danger" @click="doDelete" class="mb-2 mr-sm-2 mb-sm-0">
+                <b-icon icon="trash" class="mr-2"></b-icon> Delete
+              </b-button>
+            </template>
           </b-modal>
         </div>
 

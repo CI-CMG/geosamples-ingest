@@ -355,6 +355,14 @@
           </b-button>
           <b-modal ref="delete-modal" title="Delete Sample" ok-variant="danger" ok-title="Delete" @ok="doDelete">
             <p class="my-4">Are you sure you want to delete this sample?</p>
+            <template #modal-footer>
+              <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0" @click="hideModal">
+                <b-icon icon="x" class="mr-2"/>Cancel
+              </b-button>
+              <b-button variant="danger" class="mb-2 mr-sm-2 mb-sm-0" @click="doDelete">
+                <b-icon icon="trash" class="mr-2"/>Delete
+              </b-button>
+            </template>
           </b-modal>
         </div>
       </b-form>
@@ -467,6 +475,10 @@ export default {
 
     showModal() {
       this.$refs['delete-modal'].show();
+    },
+
+    hideModal() {
+      this.$refs['delete-modal'].hide();
     },
 
     doDelete() {

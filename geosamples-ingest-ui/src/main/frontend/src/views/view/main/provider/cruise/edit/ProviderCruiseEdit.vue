@@ -112,7 +112,10 @@
               </b-col>
             </b-row>
           </b-list-group>
-          <b-row v-if="!loadingCruiseSamples">
+          <div v-else class="text-center">
+            <b-spinner/>
+          </div>
+          <b-row v-if="!loadingCruiseSamples && (cruiseSamplesPage === cruiseSamplesTotalPages)">
             <b-col>
               <b-list-group-item class="list-item">
                 <b-button pill variant="secondary" @click="showAddSampleModal" :disabled="!isEdit">
@@ -121,9 +124,6 @@
               </b-list-group-item>
             </b-col>
           </b-row>
-          <div v-else class="text-center">
-            <b-spinner/>
-          </div>
           <template #footer>
             <b-pagination
               class="mt-2"
@@ -316,7 +316,7 @@ export default {
 
   computed: {
     ...mapState('providerCruise', ['deleting', 'loading', 'saving', 'options', 'loadingOptions']),
-    ...mapState('providerSample', ['loadingCruiseSamples', 'cruiseSamplesPage', 'cruiseSamplesTotalItems', 'cruiseSamplesItemsPerPage']),
+    ...mapState('providerSample', ['loadingCruiseSamples', 'cruiseSamplesPage', 'cruiseSamplesTotalItems', 'cruiseSamplesItemsPerPage', 'cruiseSamplesTotalPages']),
     ...mapGetters('providerCruiseForm',
       [
         'getValue',

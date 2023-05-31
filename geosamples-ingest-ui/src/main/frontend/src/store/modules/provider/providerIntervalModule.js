@@ -55,9 +55,18 @@ export default {
 
     options: {},
     loadingOptions: false,
+
+    sampleIntervals: [],
+    sampleIntervalPage: 1,
+    sampleIntervalTotalPages: 1,
+    sampleIntervalTotalItems: 0,
+    sampleIntervalItemsPerPage: 20,
   },
 
   mutations: {
+    setSampleIntervalPage(state, page) {
+      state.sampleIntervalPage = page;
+    },
     loadRequest(state) {
       state.loading = true;
     },
@@ -148,7 +157,16 @@ export default {
     loadSampleIntervalsRequest(state) {
       state.loadingSampleIntervals = true;
     },
-    loadSampleIntervalsComplete(state) {
+    loadSampleIntervalsSuccess(state, {
+      items, page, totalPages, totalItems,
+    }) {
+      state.loadingSampleIntervals = false;
+      state.sampleIntervals = items;
+      state.sampleIntervalPage = page;
+      state.sampleIntervalTotalPages = totalPages;
+      state.sampleIntervalTotalItems = totalItems;
+    },
+    loadSampleIntervalsFailure(state) {
       state.loadingSampleIntervals = false;
     },
     setPage(state, page) {
@@ -224,11 +242,15 @@ export default {
         },
       );
     },
-    searchByImlgs({ commit }, imlgs) {
+    searchByImlgs({ state, commit }, imlgs) {
       commit('loadSampleIntervalsRequest');
-      return loadAll(`/provider/interval?imlgs=${imlgs}`, ({ id, interval }) => ({ id, interval })).then((options) => {
-        commit('loadSampleIntervalsComplete');
-        return options;
+      return apiService.get(`/provider/interval?imlgs=${imlgs}&page=${state.sampleIntervalPage}&itemsPerPage=${state.sampleIntervalItemsPerPage}`).then(({ data }) => {
+        commit('loadSampleIntervalsSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadSampleIntervalsFailure');
+        throw error;
       });
     },
     load({ commit }, id) {

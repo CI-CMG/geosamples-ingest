@@ -330,18 +330,32 @@
                   </b-button>
                 </b-list-group-item>
               </b-col>
-              <b-col>
-                <b-list-group-item class="interval-button">
-                  <b-button pill variant="secondary" @click="showAddIntervalModal" :disabled="!isEdit">
-                    <b-icon icon="plus"/>
-                  </b-button>
-                </b-list-group-item>
-              </b-col>
             </b-row>
           </b-list-group>
-          <div v-else>
-            <b-spinner style="position:absolute; top: 50%; right: 50%"/>
+          <div v-else class="text-center">
+            <b-spinner/>
           </div>
+          <b-row v-if="!loadingIntervals && (sampleIntervalPage === sampleIntervalTotalPages)">
+            <b-col>
+              <b-list-group-item class="interval-button">
+                <b-button pill variant="secondary" @click="showAddIntervalModal" :disabled="!isEdit">
+                  <b-icon icon="plus"/>
+                </b-button>
+              </b-list-group-item>
+            </b-col>
+          </b-row>
+          <template #footer>
+            <b-pagination
+              class="mt-2"
+              :value="sampleIntervalPage"
+              :total-rows="sampleIntervalTotalItems"
+              :per-page="sampleIntervalItemsPerPage"
+              @input="updateSampleIntervalPage"
+              pills
+              size="med"
+              align="center"
+            />
+          </template>
         </b-card>
         <div>
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
@@ -367,10 +381,10 @@
         </div>
       </b-form>
       <b-modal ref="edit-interval-modal" size="xl" hide-header hide-footer>
-        <ProviderIntervalEdit v-if="intervals[currentInterval]" :id="intervals[currentInterval].id" :within-modal="true" :post-save="closeEditAndRefreshIntervals" :post-delete="closeEditAfterDeleteAndRefreshSamples" :imlgs="id" :interval-number="intervals[currentInterval].interval"/>
+        <ProviderIntervalEdit v-if="intervals[currentInterval]" :id="intervals[currentInterval].id" :within-modal="true" :post-save="closeEditAndRefreshIntervals" :post-delete="closeEditAfterDeleteAndRefreshIntervals" :imlgs="id" :interval-number="intervals[currentInterval].interval"/>
       </b-modal>
       <b-modal ref="add-interval-modal" size="xl" hide-header hide-footer>
-        <ProviderIntervalEdit :within-modal="true" :post-save="closeAddAndRefreshIntervals" :post-delete="closeAddAfterDeleteAndRefreshSamples" :imlgs="id" :interval-number="intervals.length === 0 ? 1 : intervals[intervals.length - 1].interval + 1"/>
+        <ProviderIntervalEdit :within-modal="true" :post-save="closeAddAndRefreshIntervals" :post-delete="closeAddAfterDeleteAndRefreshIntervals" :imlgs="id" :interval-number="intervals.length === 0 ? 1 : intervals[intervals.length - 1].interval + 1"/>
       </b-modal>
     </div>
   </div>
@@ -450,6 +464,12 @@ export default {
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
     ...mapMutations('providerSample', ['updateCruiseOptions']),
+    ...mapMutations('providerInterval', ['setSampleIntervalPage']),
+
+    updateSampleIntervalPage(page) {
+      this.setSampleIntervalPage(page);
+      this.refreshIntervals();
+    },
 
     isValidDate(value) {
       if (value) {
@@ -557,43 +577,35 @@ export default {
       }
     },
 
-    closeAddAndRefreshIntervals() {
-      this.$refs['add-interval-modal'].hide();
+    refreshIntervals() {
       this.searchByImlgs(this.id).then(
-        (intervals) => {
-          this.intervals = intervals;
+        (data) => {
+          this.intervals = data.items.map((i) => ({ id: i.id, interval: i.interval }));
         },
       );
+    },
+
+    closeAddAndRefreshIntervals() {
+      this.$refs['add-interval-modal'].hide();
+      this.refreshIntervals();
       this.makeIntervalSuccessToast();
     },
 
     closeEditAndRefreshIntervals() {
       this.$refs['edit-interval-modal'].hide();
-      this.searchByImlgs(this.id).then(
-        (intervals) => {
-          this.intervals = intervals;
-        },
-      );
+      this.refreshIntervals();
       this.makeIntervalSuccessToast();
     },
 
-    closeEditAfterDeleteAndRefreshSamples() {
+    closeEditAfterDeleteAndRefreshIntervals() {
       this.$refs['edit-interval-modal'].hide();
-      this.searchByImlgs(this.id).then(
-        (intervals) => {
-          this.intervals = intervals;
-        },
-      );
+      this.refreshIntervals();
       this.makeIntervalDeleteToast();
     },
 
-    closeAddAfterDeleteAndRefreshSamples() {
+    closeAddAfterDeleteAndRefreshIntervals() {
       this.$refs['add-interval-modal'].hide();
-      this.searchByImlgs(this.id).then(
-        (intervals) => {
-          this.intervals = intervals;
-        },
-      );
+      this.refreshIntervals();
       this.makeIntervalDeleteToast();
     },
   },
@@ -604,6 +616,7 @@ export default {
       loadingIntervals: (state) => state.providerInterval.loadingSampleIntervals,
     }),
     ...mapGetters('providerSampleForm', ['getValue', 'formDirty', 'formHasUntouchedErrors', 'getError', 'isTouched']),
+    ...mapState('providerInterval', ['sampleIntervalPage', 'sampleIntervalTotalItems', 'sampleIntervalItemsPerPage', 'sampleIntervalTotalPages']),
 
     ready() {
       return !this.loading && !this.loadingOptions && !this.saving && !this.loadingIntervals;
@@ -658,8 +671,8 @@ export default {
           this.selectPlatform({ value: sample.platform.toUpperCase() });
           this.selectCruise(this.currentItem);
           this.searchByImlgs(sample.imlgs).then(
-            (intervals) => {
-              this.intervals = intervals;
+            (data) => {
+              this.intervals = data.items.map((i) => ({ id: i.id, interval: i.interval }));
             },
           );
           this.submit().then(

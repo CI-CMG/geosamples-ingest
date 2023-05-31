@@ -239,17 +239,34 @@
           <b-row>
             <b-col>
               <b-form-group label="Geologic Age" :label-for="ageCodesId">
-                <b-form-select
-                  :id="ageCodesId"
-                  v-if="!loadingOptions"
-                  :state="showError('ageCodes')"
-                  @blur="() => setTouched({path: 'ageCodes', touched: true})"
-                  :value="selectedAges"
-                  :options="optionsAgeCode"
-                  @change="setGeologicAgeValues"
-                  multiple
-                />
-                <b-skeleton v-else/>
+                <div v-if="!loadingOptions">
+                  <b-input-group v-for="(age, index) in getValue('ageCodes')" :key="index" class="list-item mb-2">
+                    <b-form-select
+                      type="text"
+                      :value="age.value"
+                      @blur="() => setTouched({path: 'ageCodes', touched: true})"
+                      :options="optionsAgeCode"
+                      @change="(value) => setAgeCode(index, value)"
+                    />
+                    <b-input-group-append>
+                      <b-button class="input-group-append text-danger" variant="text" @click="deleteAgeCode(index)">
+                        <b-icon icon="trash" class="mr-2" />Remove
+                      </b-button>
+                    </b-input-group-append>
+                  </b-input-group>
+                  <b-input-group-addon>
+                    <b-button variant="text" @click="addAgeCode" class="text-primary">
+                      <b-icon icon="plus" class="mr-2" />Add
+                    </b-button>
+                  </b-input-group-addon>
+                </div>
+                <div v-else>
+                  <b-skeleton width="25%"/>
+                  <b-skeleton width="10%"/>
+                  <b-skeleton width="15%"/>
+                  <b-skeleton width="5%"/>
+                  <b-skeleton width="30%"/>
+                </div>
                 <b-form-invalid-feedback>{{ getError('ageCodes') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -549,14 +566,14 @@ export default {
       );
     },
 
-    setGeologicAgeValues(values) {
-      const existingSize = this.getValue('ageCodes').length;
-      for (let i = 0; i < existingSize; i += 1) {
-        this.deleteFromArray('ageCodes[0]');
-      }
-      for (let k = 0; k < values.length; k += 1) {
-        this.addToArray({ path: 'ageCodes', value: values[k] });
-      }
+    setAgeCode(index, value) {
+      this.setValue({ path: `ageCodes[${index}]`, value });
+    },
+    addAgeCode() {
+      this.addToArray({ path: 'ageCodes', value: '' });
+    },
+    deleteAgeCode(index) {
+      this.deleteFromArray(`ageCodes[${index}]`);
     },
   },
 
@@ -623,14 +640,13 @@ export default {
       const { deviceCode: field } = this.options;
       return field || [];
     },
-
-    selectedAges() {
-      const ages = this.getValue('ageCodes');
-      if (!ages) {
-        return [];
-      }
-      return ages.map((x) => x.value);
-    },
   },
 };
 </script>
+
+<style scoped>
+.list-item {
+  background: none;
+  border: none;
+}
+</style>

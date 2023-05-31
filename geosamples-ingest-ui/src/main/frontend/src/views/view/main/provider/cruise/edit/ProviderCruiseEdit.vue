@@ -47,15 +47,27 @@
           </b-form-group>
 
           <b-form-group label="Platforms" :label-for="platformsId">
-            <b-form-select
-              :id="platformsId"
-              v-if="!showSkeleton"
-              @blur="() => setTouched({path: 'platforms', touched: true})"
-              :value="selectedPlatforms"
-              :options="platformOptions"
-              @change="setPlatforms"
-              multiple
-            />
+            <div v-if="!showSkeleton">
+              <b-input-group v-for="(platform, index) in getValue('platforms')" :key="index" class="list-item mb-2">
+                <b-form-select
+                  type="text"
+                  :value="platform.value"
+                  @blur="() => setTouched({path: 'platforms', touched: true})"
+                  :options="platformOptions"
+                  @change="(value) => setPlatform(index, value)"
+                />
+                <b-input-group-append>
+                  <b-button class="input-group-append text-danger" variant="text" @click="deletePlatform(index)">
+                    <b-icon icon="trash" class="mr-2" />Remove
+                  </b-button>
+                </b-input-group-append>
+              </b-input-group>
+              <b-input-group-addon>
+                <b-button @click="addPlatform" variant="text" class="text-primary">
+                  <b-icon icon="plus" class="mr-2"/>Add Platform
+                </b-button>
+              </b-input-group-addon>
+            </div>
             <div v-else>
               <b-skeleton width="85%"/>
               <b-skeleton width="50%"/>
@@ -68,27 +80,23 @@
 
           <b-form-group label="Legs" :label-for="legsId">
             <b-list-group>
-              <b-list-group-item v-for="(leg, index) in getValue('legs')" :key="index" class="list-item">
-                <b-row>
-                  <b-col cols="10">
-                    <b-form-input
-                      type="text"
-                      :value="leg.value"
-                      @update="(value) => setLeg(index, value)"
-                    />
-                  </b-col>
-                  <b-col cols="2">
-                    <b-button @click="deleteLeg(index)" variant="text" class="text-danger">
-                      <b-icon icon="trash" class="mr-2" />Remove
-                    </b-button>
-                  </b-col>
-                </b-row>
-              </b-list-group-item>
-              <b-list-group-item class="list-item">
+              <b-input-group v-for="(leg, index) in getValue('legs')" :key="index" class="list-item mb-2">
+                <b-form-input
+                  type="text"
+                  :value="leg.value"
+                  @update="(value) => setLeg(index, value)"
+                />
+                <b-input-group-append>
+                  <b-button class="input-group-append text-danger" variant="text" @click="deleteLeg(index)">
+                    <b-icon icon="trash" class="mr-2" />Remove
+                  </b-button>
+                </b-input-group-append>
+              </b-input-group>
+              <b-input-group-addon>
                 <b-button @click="addLeg" variant="text" class="text-primary">
                   <b-icon icon="plus" class="mr-2"/>Add Leg
                 </b-button>
-              </b-list-group-item>
+              </b-input-group-addon>
             </b-list-group>
           </b-form-group>
         </b-card>
@@ -230,6 +238,15 @@ export default {
       for (let k = 0; k < values.length; k += 1) {
         this.addToArray({ path: 'platforms', value: values[k] });
       }
+    },
+    setPlatform(index, value) {
+      this.setValue({ path: `platforms[${index}]`, value });
+    },
+    deletePlatform(index) {
+      this.deleteFromArray(`platforms[${index}]`);
+    },
+    addPlatform() {
+      this.addToArray({ path: 'platforms', value: '' });
     },
     setLeg(index, value) {
       this.setValue({ path: `legs[${index}]`, value });

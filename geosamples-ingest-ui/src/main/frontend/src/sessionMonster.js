@@ -88,11 +88,10 @@ const refreshAccessToken = (stored, router) => {
             errorData = data;
           }
         }
-        const message = errorData ? JSON.stringify(errorData) : 'Authentication Failed';
-        store.commit('app/addErrors', [message]);
+        const message = errorData ? 'Access token expired, please log in again' : 'Authentication Failed';
         updateState('');
-        router.push({ name: 'View' });
-        throw error;
+        store.commit('app/addErrors', [message]);
+        router.push({ name: 'Home' });
       },
     );
   } else {

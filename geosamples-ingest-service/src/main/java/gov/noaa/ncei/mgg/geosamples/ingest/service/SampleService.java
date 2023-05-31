@@ -60,6 +60,7 @@ public class SampleService extends
     map.put("cruise", "cruise.cruiseName");
     map.put("platform", "cruisePlatform.platform.platform");
     map.put("deviceCode", "device.deviceCode");
+    map.put("approvalState", String.format("%s.%s", CuratorsSampleTsqpEntity_.APPROVAL, GeosamplesApprovalEntity_.APPROVAL_STATE));
     viewToEntitySortMapping = Collections.unmodifiableMap(map);
   }
 

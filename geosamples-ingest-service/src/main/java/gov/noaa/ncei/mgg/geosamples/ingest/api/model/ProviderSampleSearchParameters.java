@@ -25,7 +25,7 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(ProviderSampleView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(SampleView.class) String> order = DEFAULT_SORT;
 
 
   private List<String> imlgs = new ArrayList<>(0);

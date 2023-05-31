@@ -9,7 +9,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
     "sample",
     "facilityCode",
     "platform",
-    "deviceCode"
+    "deviceCode",
+    "approvalState",
 })
 public class SampleView extends ProviderSampleView {
   private ApprovalState approvalState;

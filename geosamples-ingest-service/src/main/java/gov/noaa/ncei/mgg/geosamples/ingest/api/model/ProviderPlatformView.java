@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 @Sortable({
     "platform",
     "masterId",
-    "icesCode"
+    "icesCode",
 })
 public class ProviderPlatformView {
 

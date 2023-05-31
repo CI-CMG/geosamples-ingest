@@ -92,9 +92,11 @@ export default {
     },
 
     setSortBy(state, sortBy) {
+      console.log(sortBy);
       state.sortBy = sortBy;
     },
     setSortDesc(state, sortDesc) {
+      console.log(sortDesc);
       state.sortDesc = sortDesc;
     },
     clearParams(state) {

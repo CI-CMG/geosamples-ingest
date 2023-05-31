@@ -16,6 +16,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserReposito
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +33,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlatformService extends
     ApprovalResourceServiceBase<Long, PlatformMasterEntity, PlatformSearchParameters, PlatformView, PlatformMasterRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(PlatformView.class);
+  private static final Map<String, String> viewToEntitySortMapping;
+
+  static {
+
+    Map<String, String> map = new HashMap<>();
+    map.put("platform", PlatformMasterEntity_.PLATFORM);
+    map.put("masterId", PlatformMasterEntity_.MASTER_ID);
+    map.put("icesCode", PlatformMasterEntity_.ICES_CODE);
+    map.put("approvalState", String.format("%s.%s", PlatformMasterEntity_.APPROVAL, GeosamplesApprovalEntity_.APPROVAL_STATE));
+    viewToEntitySortMapping = Collections.unmodifiableMap(map);
+
+  }
 
   private final PlatformMasterRepository platformMasterRepository;
   private final GeosamplesUserRepository geosamplesUserRepository;

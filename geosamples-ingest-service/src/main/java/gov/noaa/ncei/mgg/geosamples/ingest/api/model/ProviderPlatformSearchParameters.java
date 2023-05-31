@@ -17,7 +17,7 @@ public class ProviderPlatformSearchParameters implements PagingAndSortingParamet
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(ProviderPlatformView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(PlatformView.class) String> order = DEFAULT_SORT;
 
   @Min(1)
   private int page = 1;

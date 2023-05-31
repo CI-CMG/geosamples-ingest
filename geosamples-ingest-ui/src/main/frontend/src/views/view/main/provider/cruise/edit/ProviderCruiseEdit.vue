@@ -110,18 +110,31 @@
                   </b-button>
                 </b-list-group-item>
               </b-col>
-              <b-col>
-                <b-list-group-item class="list-item">
-                  <b-button pill variant="secondary" @click="showAddSampleModal" :disabled="!isEdit">
-                    <b-icon icon="plus"/>
-                  </b-button>
-                </b-list-group-item>
-              </b-col>
             </b-row>
           </b-list-group>
-          <div v-else>
-            <b-spinner style="position:absolute; top: 50%; right: 50%"/>
+          <b-row v-if="!loadingCruiseSamples">
+            <b-col>
+              <b-list-group-item class="list-item">
+                <b-button pill variant="secondary" @click="showAddSampleModal" :disabled="!isEdit">
+                  <b-icon icon="plus"/>
+                </b-button>
+              </b-list-group-item>
+            </b-col>
+          </b-row>
+          <div v-else class="text-center">
+            <b-spinner/>
           </div>
+          <template #footer>
+            <b-pagination
+              class="mt-2"
+              :value="cruiseSamplesPage"
+              @input="updateCruiseSamplesPage"
+              :total-rows="cruiseSamplesTotalItems"
+              :per-page="cruiseSamplesItemsPerPage"
+              pills size="med"
+              align="center"
+            />
+          </template>
         </b-card>
         <div>
           <b-button v-if="showSubmit" type="submit" variant="primary" class="mb-2 mr-sm-2 mb-sm-0 mr-3">
@@ -194,9 +207,14 @@ export default {
         'deleteFromArray',
         'addToArray',
       ]),
+    ...mapMutations('providerSample', ['setCruiseSamplesPage']),
     ...mapActions('providerCruise', ['load', 'save', 'delete', 'loadOptions']),
     ...mapActions('providerSample', ['searchByCruiseNameAndCruiseYear']),
     ...mapActions('providerCruiseForm', ['submit', 'reset']),
+    updateCruiseSamplesPage(page) {
+      this.setCruiseSamplesPage(page);
+      this.refreshSamples(false);
+    },
     makeSuccessToast() {
       this.$bvToast.hide();
       this.$bvToast.toast('Cruise saved successfully', {
@@ -267,8 +285,8 @@ export default {
     },
     refreshSamples(updatedSample) {
       this.searchByCruiseNameAndCruiseYear({ cruiseName: this.initialCruise.cruiseName, cruiseYear: this.initialCruise.year }).then(
-        (samples) => {
-          this.samples = samples;
+        (data) => {
+          this.samples = data.items.map((d) => ({ imlgs: d.imlgs, sample: d.sample }));
           if (updatedSample) {
             this.currentSample = this.samples.findIndex((s) => s.imlgs === updatedSample.imlgs);
           }
@@ -298,7 +316,7 @@ export default {
 
   computed: {
     ...mapState('providerCruise', ['deleting', 'loading', 'saving', 'options', 'loadingOptions']),
-    ...mapState('providerSample', ['loadingCruiseSamples']),
+    ...mapState('providerSample', ['loadingCruiseSamples', 'cruiseSamplesPage', 'cruiseSamplesTotalItems', 'cruiseSamplesItemsPerPage']),
     ...mapGetters('providerCruiseForm',
       [
         'getValue',
@@ -326,13 +344,6 @@ export default {
       const { platform: field } = this.options;
       return field || [];
     },
-    selectedPlatforms() {
-      const ages = this.getValue('platforms');
-      if (!ages) {
-        return [];
-      }
-      return ages.map((x) => x.value);
-    },
   },
   watch: {
     id(oldId, newId) {
@@ -355,8 +366,8 @@ export default {
           this.initialize(existing);
           this.initialCruise = existing;
           this.searchByCruiseNameAndCruiseYear({ cruiseName: existing.cruiseName, cruiseYear: existing.year }).then(
-            (samples) => {
-              this.samples = samples;
+            (data) => {
+              this.samples = data.items.map((d) => ({ imlgs: d.imlgs, sample: d.sample }));
             },
           );
         },

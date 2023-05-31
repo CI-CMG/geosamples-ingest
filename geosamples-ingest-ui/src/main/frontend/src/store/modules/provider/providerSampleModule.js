@@ -68,9 +68,17 @@ export default {
     cruiseOptions: [],
     loadingCruises: false,
     loadingCruiseSamples: false,
+    cruiseSamples: [],
+    cruiseSamplesPage: 1,
+    cruiseSamplesTotalPages: 1,
+    cruiseSamplesTotalItems: 0,
+    cruiseSamplesItemsPerPage: 20,
   },
 
   mutations: {
+    setCruiseSamplesPage(state, page) {
+      state.cruiseSamplesPage = page;
+    },
     loadRequest(state) {
       state.loading = true;
     },
@@ -217,8 +225,18 @@ export default {
     loadCruiseSamplesRequest(state) {
       state.loadingCruiseSamples = true;
     },
+    loadCruiseSamplesSuccess(state, {
+      items, page, totalItems, totalPages, itemsPerPage,
+    }) {
+      state.cruiseSamples = items;
+      state.cruiseSamplesPage = page;
+      state.cruiseSamplesTotalPages = totalPages;
+      state.cruiseSamplesTotalItems = totalItems;
+      state.cruiseSamplesItemsPerPage = itemsPerPage;
 
-    loadCruiseSamplesComplete(state) {
+      state.loadingCruiseSamples = false;
+    },
+    loadCruiseSamplesFailure(state) {
       state.loadingCruiseSamples = false;
     },
 
@@ -232,11 +250,15 @@ export default {
   },
 
   actions: {
-    searchByCruiseNameAndCruiseYear({ commit }, { cruiseName, cruiseYear }) {
+    searchByCruiseNameAndCruiseYear({ state, commit }, { cruiseName, cruiseYear }) {
       commit('loadCruiseSamplesRequest');
-      return loadAll(`provider/sample?cruise=${cruiseName}&cruiseYear=${cruiseYear}`, ({ imlgs, sample }) => ({ imlgs, sample })).then((options) => {
-        commit('loadCruiseSamplesComplete');
-        return options;
+      return apiService.get(`provider/sample?cruise=${cruiseName}&cruiseYear=${cruiseYear}&page=${state.cruiseSamplesPage}&itemsPerPage=${state.cruiseSamplesItemsPerPage}`).then(({ data }) => {
+        commit('loadCruiseSamplesSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadCruiseSamplesFailure');
+        throw error;
       });
     },
 

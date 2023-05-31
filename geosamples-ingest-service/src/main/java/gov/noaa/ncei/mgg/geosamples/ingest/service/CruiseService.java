@@ -39,7 +39,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class CruiseService extends
     ApprovalResourceServiceBase<Long, CuratorsCruiseEntity, CruiseSearchParameters, CruiseView, CuratorsCruiseRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(CruiseView.class);
+  private static final Map<String, String> viewToEntitySortMapping;
+
+  static {
+
+    Map<String, String> map = new HashMap<>();
+    map.put("id", CuratorsCruiseEntity_.ID);
+    map.put("year", CuratorsCruiseEntity_.YEAR);
+    map.put("cruiseName", CuratorsCruiseEntity_.CRUISE_NAME);
+    map.put("publish", CuratorsCruiseEntity_.PUBLISH);
+    map.put("approvalState", String.format("%s.%s", CuratorsCruiseEntity_.APPROVAL, GeosamplesApprovalEntity_.APPROVAL_STATE));
+    viewToEntitySortMapping = map;
+
+  }
 
   private final CuratorsCruiseRepository curatorsCruiseRepository;
   private final PlatformMasterRepository platformMasterRepository;

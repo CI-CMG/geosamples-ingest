@@ -23,7 +23,7 @@ public class ProviderCruiseSearchParameters implements PagingAndSortingParameter
 
   @NotNull
   @Size(min = 1)
-  private List<@ValidSort(ProviderCruiseWriteView.class) String> order = DEFAULT_SORT;
+  private List<@ValidSort(CruiseView.class) String> order = DEFAULT_SORT;
 
   private List<String> cruiseNameContains = new ArrayList<>(0);
   private List<String> cruiseNameEquals = new ArrayList<>(0);

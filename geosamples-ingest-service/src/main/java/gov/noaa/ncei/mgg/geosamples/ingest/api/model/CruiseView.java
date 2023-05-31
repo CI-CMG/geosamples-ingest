@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
     "id",
     "year",
     "cruiseName",
-    "publish"
+    "publish",
+    "approvalState",
 })
 public class CruiseView extends ProviderCruiseWriteView {
   private ApprovalState approvalState;

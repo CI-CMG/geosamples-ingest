@@ -75,7 +75,7 @@ export default {
         {
           key: 'approvalState',
           label: 'Approval State',
-          sortable: false,
+          sortable: true,
         },
         {
           key: 'cruiseName',

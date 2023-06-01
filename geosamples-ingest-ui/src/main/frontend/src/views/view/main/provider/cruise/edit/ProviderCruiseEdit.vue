@@ -47,50 +47,62 @@
           </b-form-group>
 
           <b-form-group label="Platforms" :label-for="platformsId">
-            <div v-if="!showSkeleton">
-              <b-input-group v-for="(platform, index) in getValue('platforms')" :key="index" class="list-item mb-2">
-                <b-form-select
-                  type="text"
-                  :value="platform.value"
-                  @blur="() => setTouched({path: 'platforms', touched: true})"
-                  :options="platformOptions"
-                  @change="(value) => setPlatform(index, value)"
-                />
-                <b-input-group-append>
-                  <b-button class="input-group-append text-danger" variant="text" @click="deletePlatform(index)">
-                    <b-icon icon="trash" class="mr-2" />Remove
-                  </b-button>
-                </b-input-group-append>
-              </b-input-group>
-              <b-input-group-addon>
-                <b-button @click="addPlatform" variant="text" class="text-primary">
-                  <b-icon icon="plus" class="mr-2"/>Add Platform
-                </b-button>
-              </b-input-group-addon>
-            </div>
-            <div v-else>
-              <b-skeleton width="85%"/>
-              <b-skeleton width="50%"/>
-              <b-skeleton width="95%"/>
-              <b-skeleton width="35%"/>
-              <b-skeleton width="60%"/>
-            </div>
+            <b-input-group v-for="(platform, index) in getValue('platforms')" :key="index" class="list-item mb-2">
+              <b-container fluid>
+                <b-row>
+                  <b-col>
+                    <v-select
+                      style="background: white;"
+                      :options="platformOptions"
+                      :value="platform.value"
+                      label="text"
+                      @input="(option) => option ? setPlatform(index, option.value) : () => {}"
+                      @search="(name) => searchPlatform(name)"
+                      :clearable="false"
+                    >
+                      <template #spinner>
+                        <b-spinner v-if="loadingPlatformOptions" class="align-middle" style="margin-left: 10px;" small variant="primary"/>
+                      </template>
+                      <template #open-indicator="{ attributes }">
+                        <b-icon v-bind="attributes" icon="caret-down-fill" class="align-middle" style="margin-left: 10px;"/>
+                      </template>
+                    </v-select>
+                  </b-col>
+                  <b-col>
+                    <b-button class="input-group-append text-danger" variant="text" @click="deletePlatform(index)">
+                      <b-icon icon="trash" class="mr-2" />Remove
+                    </b-button>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-input-group>
+            <b-input-group-addon>
+              <b-button @click="addPlatform" variant="text" class="text-primary">
+                <b-icon icon="plus" class="mr-2"/>Add Platform
+              </b-button>
+            </b-input-group-addon>
             <b-form-invalid-feedback>{{ getError('platforms') }}</b-form-invalid-feedback>
           </b-form-group>
 
           <b-form-group label="Legs" :label-for="legsId">
             <b-list-group>
               <b-input-group v-for="(leg, index) in getValue('legs')" :key="index" class="list-item mb-2">
-                <b-form-input
-                  type="text"
-                  :value="leg.value"
-                  @update="(value) => setLeg(index, value)"
-                />
-                <b-input-group-append>
-                  <b-button class="input-group-append text-danger" variant="text" @click="deleteLeg(index)">
-                    <b-icon icon="trash" class="mr-2" />Remove
-                  </b-button>
-                </b-input-group-append>
+                <b-container fluid>
+                  <b-row>
+                    <b-col>
+                      <b-form-input
+                        type="text"
+                        :value="leg.value"
+                        @update="(value) => setLeg(index, value)"
+                      />
+                    </b-col>
+                    <b-col>
+                      <b-button class="input-group-append text-danger" variant="text" @click="deleteLeg(index)">
+                        <b-icon icon="trash" class="mr-2" />Remove
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
               </b-input-group>
               <b-input-group-addon>
                 <b-button @click="addLeg" variant="text" class="text-primary">
@@ -208,9 +220,13 @@ export default {
         'addToArray',
       ]),
     ...mapMutations('providerSample', ['setCruiseSamplesPage']),
-    ...mapActions('providerCruise', ['load', 'save', 'delete', 'loadOptions']),
+    ...mapActions('providerCruise', ['load', 'save', 'delete', 'searchPlatformsByName']),
     ...mapActions('providerSample', ['searchByCruiseNameAndCruiseYear']),
     ...mapActions('providerCruiseForm', ['submit', 'reset']),
+    searchPlatform(name) {
+      this.searchPlatformsByName(name);
+    },
+
     updateCruiseSamplesPage(page) {
       this.setCruiseSamplesPage(page);
       this.refreshSamples(false);
@@ -315,7 +331,7 @@ export default {
   },
 
   computed: {
-    ...mapState('providerCruise', ['deleting', 'loading', 'saving', 'options', 'loadingOptions']),
+    ...mapState('providerCruise', ['deleting', 'loading', 'saving', 'loadingPlatformOptions', 'platformOptions']),
     ...mapState('providerSample', ['loadingCruiseSamples', 'cruiseSamplesPage', 'cruiseSamplesTotalItems', 'cruiseSamplesItemsPerPage', 'cruiseSamplesTotalPages']),
     ...mapGetters('providerCruiseForm',
       [
@@ -325,9 +341,6 @@ export default {
         'isTouched',
         'formHasUntouchedErrors',
       ]),
-    showSkeleton() {
-      return this.saving || !this.ready;
-    },
     ready() {
       return !this.loading && !this.loadingOptions && !this.saving;
     },
@@ -339,10 +352,6 @@ export default {
     },
     isEdit() {
       return this.id || this.id === 0;
-    },
-    platformOptions() {
-      const { platform: field } = this.options;
-      return field || [];
     },
   },
   watch: {
@@ -359,7 +368,7 @@ export default {
       this.makeSuccessToast();
       sessionStorage.removeItem('saveSuccess');
     }
-    this.loadOptions();
+    this.searchPlatformsByName(null);
     if (this.id != null) {
       this.load(this.id).then(
         (existing) => {

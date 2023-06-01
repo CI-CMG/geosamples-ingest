@@ -58,23 +58,13 @@ export default {
     saving: false,
     deleting: false,
     loadingApproval: false,
-    options: {},
-    loadingOptions: false,
+
+    platformOptions: [],
+    loadingPlatformOptions: false,
 
   },
 
   mutations: {
-    loadOptionsRequest(state) {
-      state.loadingOptions = true;
-    },
-
-    loadOptionsComplete(state) {
-      state.loadingOptions = false;
-    },
-
-    updateOptions(state, options) {
-      state.options = options;
-    },
 
     loadRequest(state) {
       state.loading = true;
@@ -176,19 +166,34 @@ export default {
     loadApprovalComplete(state) {
       state.loadingApproval = false;
     },
+    loadPlatformOptionsRequest(state) {
+      state.loadingPlatformOptions = true;
+    },
+    loadPlatformOptionsSuccess(state, { items }) {
+      state.loadingPlatformOptions = false;
+      state.platformOptions = items.map(({ platform }) => ({ value: platform, text: platform }));
+    },
+    loadPlatformOptionsFailure(state) {
+      state.loadingPlatformOptions = false;
+    },
   },
 
   actions: {
-    loadOptions({ commit }) {
-      commit('loadOptionsRequest');
-      commit('updateOptions', {});
-      const nextOpts = {};
-
-      Promise.all([
-        loadAll('/provider/platform', ({ platform }) => ({ value: platform.toUpperCase(), text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
-      ]).then(() => {
-        commit('updateOptions', nextOpts);
-        commit('loadOptionsComplete');
+    searchPlatformsByName({ commit }, name) {
+      commit('loadPlatformOptionsRequest');
+      return apiService.get('/provider/platform', {
+        params: {
+          platform: name,
+          page: 1,
+          itemsPerPage: 10,
+        },
+      }).then(({ data }) => {
+        commit('loadPlatformOptionsSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadPlatformOptionsFailure', error);
+        throw error;
       });
     },
 

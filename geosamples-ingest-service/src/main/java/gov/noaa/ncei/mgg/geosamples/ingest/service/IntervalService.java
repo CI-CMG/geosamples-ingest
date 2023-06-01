@@ -308,4 +308,9 @@ public class IntervalService extends
       }
     }
   }
+
+  @Override
+  protected void revokeChildResourceApproval(CuratorsIntervalEntity entity) {
+    // intervals have no child resources
+  }
 }

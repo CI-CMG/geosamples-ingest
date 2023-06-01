@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SimpleItemsView;
@@ -71,18 +72,21 @@ public class SampleService extends
   private final CuratorsCruisePlatformRepository curatorsCruisePlatformRepository;
   private final CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository;
 
+  private final IntervalService intervalService;
+
   @Autowired
   public SampleService(CuratorsSampleTsqpRepository curatorsSampleTsqpRepository,
       CuratorsIntervalRepository curatorsIntervalRepository, SampleDataUtils sampleDataUtils,
       ServiceProperties serviceProperties,
       CuratorsCruisePlatformRepository curatorsCruisePlatformRepository,
-      CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository) {
+      CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository, IntervalService intervalService) {
     this.curatorsSampleTsqpRepository = curatorsSampleTsqpRepository;
     this.curatorsIntervalRepository = curatorsIntervalRepository;
     this.sampleDataUtils = sampleDataUtils;
     this.serviceProperties = serviceProperties;
     this.curatorsCruisePlatformRepository = curatorsCruisePlatformRepository;
     this.curatorsCruiseFacilityRepository = curatorsCruiseFacilityRepository;
+    this.intervalService = intervalService;
   }
 
   public SimpleItemsView<SampleView> patch(SimpleItemsView<SampleView> patch) {
@@ -393,5 +397,15 @@ public class SampleService extends
         );
       }
     }
+  }
+
+  @Override
+  protected void revokeChildResourceApproval(CuratorsSampleTsqpEntity entity) {
+    entity.getIntervals().forEach(interval -> {
+      ApprovalView approvalView = new ApprovalView();
+      approvalView.setApprovalState(ApprovalState.REJECTED);
+      approvalView.setComment("Sample rejected");
+      intervalService.updateApproval(approvalView, interval.getId());
+    });
   }
 }

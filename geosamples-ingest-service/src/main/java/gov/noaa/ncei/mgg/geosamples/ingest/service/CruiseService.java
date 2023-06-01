@@ -2,8 +2,12 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CruiseView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleSearchParameters;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.SampleView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
@@ -17,9 +21,9 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
-import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsLegRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,14 +61,17 @@ public class CruiseService extends
   private final PlatformMasterRepository platformMasterRepository;
   private final CuratorsFacilityRepository curatorsFacilityRepository;
 
+  private final SampleService sampleService;
+
   @Autowired
   public CruiseService(CuratorsCruiseRepository curatorsCruiseRepository,
       PlatformMasterRepository platformMasterRepository,
       CuratorsFacilityRepository curatorsFacilityRepository,
-      CuratorsLegRepository curatorsLegRepository) {
+      SampleService sampleService) {
     this.curatorsCruiseRepository = curatorsCruiseRepository;
     this.platformMasterRepository = platformMasterRepository;
     this.curatorsFacilityRepository = curatorsFacilityRepository;
+    this.sampleService = sampleService;
   }
 
   @Override
@@ -251,6 +258,20 @@ public class CruiseService extends
               ApiError.builder().error(String.format("Platform %s is not approved", pm.getPlatform().getPlatform())).build());
         }
       }
+    });
+  }
+
+  @Override
+  protected void revokeChildResourceApproval(CuratorsCruiseEntity entity) {
+    SampleSearchParameters params = new SampleSearchParameters();
+    params.setCruiseYear(Collections.singletonList((int) entity.getYear()));
+    params.setCruise(Collections.singletonList(entity.getCruiseName()));
+    PagedItemsView<SampleView> page = sampleService.search(params);
+    page.getItems().forEach(sample -> {
+      ApprovalView approval = new ApprovalView();
+      approval.setApprovalState(ApprovalState.REJECTED);
+      approval.setComment("Cruise rejected");
+      sampleService.updateApproval(approval, sample.getImlgs());
     });
   }
 }

@@ -17,6 +17,8 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
 
   protected abstract void validateParentResourceApproval(E entity);
 
+  protected abstract void revokeChildResourceApproval(E entity);
+
   public ApprovalView getApproval(I id) {
     E entity = getRequiredEntity(id);
     ApprovalView view = new ApprovalView();
@@ -68,6 +70,9 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
       validateParentResourceApproval(entity);
     }
     updateEntityApproval(entity, view);
+    if (entity.getApproval().getApprovalState().equals(ApprovalState.REJECTED)) {
+      revokeChildResourceApproval(entity);
+    }
     return toView(getRepository().save(entity));
   }
 

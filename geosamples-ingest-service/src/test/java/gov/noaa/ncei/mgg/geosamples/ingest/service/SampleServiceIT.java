@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import okhttp3.mockwebserver.Dispatcher;
@@ -430,6 +429,14 @@ public class SampleServiceIT {
           .filter(smpl -> smpl.getSample().equals("AQ-001"))
           .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
 
+      sample.getIntervals().forEach(interval -> {
+        interval.setPublish(true);
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.APPROVED);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
       approval.setApprovalState(ApprovalState.APPROVED);
       sample.setApproval(approval);
@@ -452,7 +459,53 @@ public class SampleServiceIT {
       assertEquals(ApprovalState.REJECTED, sample.getApproval().getApprovalState());
       assertEquals("There are some issues here", sample.getApproval().getComment());
       assertFalse(sample.isPublish());
+
+      sample.getIntervals().forEach(
+          interval -> {
+            assertFalse(interval.isPublish());
+            assertEquals(ApprovalState.REJECTED, interval.getApproval().getApprovalState());
+            assertEquals("Sample rejected", interval.getApproval().getComment());
+          }
+      );
     });
+  }
+  @Test
+  public void testReviewSampleRevokeApprovalNoChildApprovals() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+
+    uploadFile();
+
+    CuratorsSampleTsqpEntity sampleEntity = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(() -> new IllegalStateException("Sample does not exist: AQ-001"));
+
+      sample.getIntervals().forEach(interval -> {
+        interval.setPublish(true);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      sample.setApproval(approval);
+
+      sample.setPublish(true);
+      return curatorsSampleTsqpRepository.save(sample);
+    });
+    assertNotNull(sampleEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.REJECTED);
+    approvalView.setComment("There are some issues here");
+    ApiException exception = assertThrows(ApiException.class, () -> sampleService.updateApproval(approvalView, sampleEntity.getImlgs()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Cannot update non-existent approval", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

@@ -18,6 +18,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseFacilityEnti
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruisePlatformEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsLegEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEntity;
@@ -25,6 +26,8 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
@@ -41,6 +44,12 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.commons.io.FileUtils;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -60,6 +70,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.LinkedMultiValueMap;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("it")
@@ -117,6 +128,7 @@ public class CruiseServiceIT {
   @BeforeEach
   public void before() {
     txTemplate.executeWithoutResult(s -> {
+      curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
@@ -143,6 +155,7 @@ public class CruiseServiceIT {
   @AfterEach
   public void after() {
     txTemplate.executeWithoutResult(s -> {
+      curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
@@ -161,6 +174,10 @@ public class CruiseServiceIT {
 
   @Autowired
   private CruiseService cruiseService;
+  @Autowired
+  private CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
+  @Autowired
+  private CuratorsIntervalRepository curatorsIntervalRepository;
 
   @Test
   public void testReviewCruise() throws Exception {
@@ -234,10 +251,33 @@ public class CruiseServiceIT {
 
   @Test
   public void testReviewCruiseRevokeApproval() throws Exception {
-    createCruise(Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
 
     CuratorsCruiseEntity cruiseEntity = txTemplate.execute(s -> {
-      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-10", (short) 2021).orElseThrow(
+
+      curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .forEach(smpl -> {
+            smpl.setPublish(true);
+            GeosamplesApprovalEntity sampleApproval = new GeosamplesApprovalEntity();
+            sampleApproval.setApprovalState(ApprovalState.APPROVED);
+            smpl.setApproval(sampleApproval);
+            smpl = curatorsSampleTsqpRepository.save(smpl);
+            smpl.getIntervals().forEach(interval -> {
+              interval.setPublish(true);
+              GeosamplesApprovalEntity intervalApproval = new GeosamplesApprovalEntity();
+              intervalApproval.setApprovalState(ApprovalState.APPROVED);
+              interval.setApproval(intervalApproval);
+              curatorsIntervalRepository.save(interval);
+            });
+          });
+
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-01", (short) 2021).orElseThrow(
           () -> new RuntimeException("Cruise not found")
       );
 
@@ -263,7 +303,64 @@ public class CruiseServiceIT {
       assertEquals(ApprovalState.REJECTED, resultCruise.getApproval().getApprovalState());
       assertEquals("There's a problem here", resultCruise.getApproval().getComment());
       assertFalse(resultCruise.isPublish());
+
+      curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .forEach(smpl -> {
+            assertFalse(smpl.isPublish());
+            assertEquals(ApprovalState.REJECTED, smpl.getApproval().getApprovalState());
+            assertEquals("Cruise rejected", smpl.getApproval().getComment());
+            smpl.getIntervals().forEach(interval -> {
+              assertFalse(interval.isPublish());
+              assertEquals(ApprovalState.REJECTED, interval.getApproval().getApprovalState());
+              assertEquals("Sample rejected", interval.getApproval().getComment());
+            });
+          });
     });
+  }
+
+  @Test
+  public void testReviewCruiseRevokeApprovalNoChildApprovals() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    CuratorsCruiseEntity cruiseEntity = txTemplate.execute(s -> {
+
+      curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .forEach(smpl -> {
+            smpl.setPublish(true);
+            smpl = curatorsSampleTsqpRepository.save(smpl);
+            smpl.getIntervals().forEach(interval -> {
+              interval.setPublish(true);
+              curatorsIntervalRepository.save(interval);
+            });
+          });
+
+      CuratorsCruiseEntity cruise = curatorsCruiseRepository.findByCruiseNameAndYear("AQ-01", (short) 2021).orElseThrow(
+          () -> new RuntimeException("Cruise not found")
+      );
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      cruise.setApproval(approval);
+      cruise.setPublish(true);
+      return curatorsCruiseRepository.save(cruise);
+    });
+    assertNotNull(cruiseEntity);
+
+    ApprovalView approvalView = new ApprovalView();
+    approvalView.setApprovalState(ApprovalState.REJECTED);
+    approvalView.setComment("There's a problem here");
+    ApiException exception = assertThrows(ApiException.class, () -> cruiseService.updateApproval(approvalView, cruiseEntity.getId()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFlashErrors().size());
+    assertEquals("Cannot update non-existent approval", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -421,8 +518,37 @@ public class CruiseServiceIT {
     assertEquals("AQ-11", cruiseViews.getItems().get(1).getCruiseName());
   }
 
+  private void uploadFile() throws Exception {
+    LinkedMultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+    parameters.add("file", new ClassPathResource("imlgs_sample_good_full.xlsm"));
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.setBearerAuth(createJwt());
+
+    HttpEntity<LinkedMultiValueMap<String, Object>> entity = new HttpEntity<>(parameters, headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/curator-data/upload", HttpMethod.POST, entity, String.class);
+
+    assertEquals(200, response.getStatusCode().value());
+  }
+
   private void createCruise(List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {
     createCruise("AQ-10", facilityCodes, platforms, legs);
+  }
+
+  private static String createJwt() throws IOException, JoseException {
+    JwtClaims claims = new JwtClaims();
+    claims.setIssuer("http://localhost:20158");
+    claims.setSubject("martin");
+    JsonWebSignature jws = new JsonWebSignature();
+    jws.setPayload(claims.toJson());
+    JsonWebKeySet jwks = new JsonWebKeySet(FileUtils.readFileToString(Paths.get("src/test/resources/jwks.json").toFile(), StandardCharsets.UTF_8));
+    RsaJsonWebKey jwk = (RsaJsonWebKey) jwks.getJsonWebKeys().get(0);
+    jws.setKey(jwk.getPrivateKey());
+    jws.setKeyIdHeaderValue(jwk.getKeyId());
+    jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
+    return jws.getCompactSerialization();
   }
 
   private void createCruise(@Nullable String cruiseId, List<String> facilityCodes, List<String> platforms, List<String> legs) throws Exception {

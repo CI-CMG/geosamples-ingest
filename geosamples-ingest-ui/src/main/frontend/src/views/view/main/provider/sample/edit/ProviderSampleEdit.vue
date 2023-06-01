@@ -32,16 +32,22 @@
             <template #label>
               Ship Name<span><strong style="color: red"> *</strong></span>
             </template>
-            <b-form-select
-              v-if="!loadingOptions"
-              required
-              :id="platformId"
-              :options="optionsPlatform"
+            <v-select
+              style="background: white"
+              :options="platformOptions"
               :value="getValue('platform')"
-              @change="(value) => selectPlatform({ path: 'platform', value })"
-              :state="showError('platform')"
-            />
-            <b-skeleton v-else/>
+              label="text"
+              @input="(option) => selectPlatform({ path: 'platform', value:  option.value })"
+              @search="(name) => searchPlatform(name)"
+              :clearable="true"
+            >
+              <template #spinner>
+                <b-spinner v-if="loadingPlatformOptions" class="align-middle" style="margin-left: 10px;" small variant="primary"/>
+              </template>
+              <template #open-indicator="{ attributes }">
+                <b-icon v-bind="attributes" icon="caret-down-fill" class="align-middle" style="margin-left: 10px;"/>
+              </template>
+            </v-select>
             <b-form-invalid-feedback>{{ getError('platform') }}</b-form-invalid-feedback>
           </b-form-group>
           <b-row>
@@ -459,12 +465,16 @@ export default {
   },
 
   methods: {
-    ...mapActions('providerSample', ['delete', 'save', 'loadOptions', 'loadLegOptions', 'loadCruiseOptions', 'load']),
+    ...mapActions('providerSample', ['delete', 'save', 'loadOptions', 'loadLegOptions', 'loadCruiseOptions', 'load', 'searchPlatformsByName']),
     ...mapActions('providerInterval', ['searchByImlgs']),
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
     ...mapMutations('providerSample', ['updateCruiseOptions']),
     ...mapMutations('providerInterval', ['setSampleIntervalPage']),
+
+    searchPlatform(name) {
+      this.searchPlatformsByName(name);
+    },
 
     updateSampleIntervalPage(page) {
       this.setSampleIntervalPage(page);
@@ -611,7 +621,7 @@ export default {
   },
 
   computed: {
-    ...mapState('providerSample', ['loading', 'options', 'legOptions', 'loadingOptions', 'loadingLegs', 'saving', 'cruiseOptions', 'loadingCruises']),
+    ...mapState('providerSample', ['loading', 'options', 'legOptions', 'loadingOptions', 'loadingLegs', 'saving', 'cruiseOptions', 'loadingCruises', 'loadingPlatformOptions', 'platformOptions']),
     ...mapState({
       loadingIntervals: (state) => state.providerInterval.loadingSampleIntervals,
     }),
@@ -634,16 +644,6 @@ export default {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);
     },
 
-    optionsPlatform() {
-      const { platform: field } = this.options;
-      if (!field) {
-        return [];
-      } if (this.cruise) {
-        return field.filter((option) => this.cruise.platforms.includes(option.value));
-      }
-      return field;
-    },
-
     optionsDeviceCode() {
       const { deviceCode: field } = this.options;
       return field || [];
@@ -662,6 +662,7 @@ export default {
 
   created() {
     this.loadOptions();
+    this.searchPlatformsByName(null);
     if (this.id) {
       this.load(this.id).then(
         (sample) => {

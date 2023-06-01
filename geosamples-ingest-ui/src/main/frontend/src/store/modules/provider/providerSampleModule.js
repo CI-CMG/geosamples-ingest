@@ -73,6 +73,9 @@ export default {
     cruiseSamplesTotalPages: 1,
     cruiseSamplesTotalItems: 0,
     cruiseSamplesItemsPerPage: 20,
+
+    platformOptions: [],
+    loadingPlatformOptions: false,
   },
 
   mutations: {
@@ -247,6 +250,19 @@ export default {
         state.page = page;
       }
     },
+
+    loadPlatformOptionsRequest(state) {
+      state.loadingPlatformOptions = true;
+    },
+
+    loadPlatformOptionsSuccess(state, { items }) {
+      state.platformOptions = items.map((item) => ({ value: item.platform.toUpperCase(), text: item.platform }));
+      state.loadingPlatformOptions = false;
+    },
+
+    loadPlatformOptionsFailure(state) {
+      state.loadingPlatformOptions = false;
+    },
   },
 
   actions: {
@@ -268,13 +284,30 @@ export default {
       const nextOpts = {};
 
       Promise.all([
-        loadAll('/provider/platform', ({ platform }) => ({ value: platform.toUpperCase(), text: platform })).then(sortOptions).then((options) => { nextOpts.platform = options; return options; }),
         loadAll('/device', ({ deviceCode, device }) => ({ value: deviceCode, text: device })).then(sortOptions).then((options) => { nextOpts.deviceCode = options; return options; }),
         loadAll('/storage-method', ({ storageMethodCode, storageMethod }) => ({ value: storageMethodCode, text: storageMethod })).then(sortOptions).then((options) => { nextOpts.storageMethCode = options; return options; }),
         loadAll('/province', ({ provinceCode, province }) => ({ value: provinceCode, text: province })).then(sortOptions).then((options) => { nextOpts.provinceCode = options; return options; }),
       ]).then(() => {
         commit('updateOptions', nextOpts);
         commit('loadOptionsComplete');
+      });
+    },
+
+    searchPlatformsByName({ commit }, name) {
+      commit('loadPlatformOptionsRequest');
+      return apiService.get('/provider/platform', {
+        params: {
+          platform: name,
+          page: 1,
+          itemsPerPage: 10,
+        },
+      }).then(({ data }) => {
+        commit('loadPlatformOptionsSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadPlatformOptionsFailure');
+        throw error;
       });
     },
 

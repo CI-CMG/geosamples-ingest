@@ -188,6 +188,7 @@ export default {
         loadAll('/lithology', ({ lithology, lithologyCode }) => ({ value: lithologyCode, text: lithology })).then(sortOptions).then((options) => { nextOpts.lithologyCode = options; return options; }),
         loadAll('/texture', ({ texture, textureCode }) => ({ value: textureCode, text: texture })).then(sortOptions).then((options) => { nextOpts.textureCode = options; return options; }),
         loadAll('/age', ({ age, ageCode }) => ({ value: ageCode, text: age })).then(sortOptions).then((options) => { nextOpts.ageCode = options; return options; }),
+        loadAll('/rock-lithology', ({ rockLithology, rockLithologyCode }) => ({ value: rockLithologyCode, text: rockLithology })).then(sortOptions).then((options) => { nextOpts.rockLithologyCode = options; return options; }),
         loadAll('/rock-mineral', ({ rockMineral, rockMineralCode }) => ({ value: rockMineralCode, text: rockMineral })).then(sortOptions).then((options) => { nextOpts.rockMineralCode = options; return options; }),
         loadAll('/weathering', ({ weathering, weatheringCode }) => ({ value: weatheringCode, text: weathering })).then(sortOptions).then((options) => { nextOpts.weathMetaCode = options; return options; }),
         loadAll('/remark', ({ remark, remarkCode }) => ({ value: remarkCode, text: remark })).then(sortOptions).then((options) => { nextOpts.remarkCode = options; return options; }),

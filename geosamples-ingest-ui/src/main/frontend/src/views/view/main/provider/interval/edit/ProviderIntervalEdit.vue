@@ -278,7 +278,7 @@
                   type="text"
                   v-if="!loadingOptions"
                   :id="rockLithCodeId"
-                  :options="optionsLithologyCode"
+                  :options="optionsRockLithologyCode"
                   :value="getValue('rockLithCode')"
                   @change="(value) => setValue({ path: 'rockLithCode', value })"
                   :state="showError('rockLithCode')"
@@ -613,6 +613,11 @@ export default {
 
     optionsAgeCode() {
       const { ageCode: field } = this.options;
+      return field || [];
+    },
+
+    optionsRockLithologyCode() {
+      const { rockLithologyCode: field } = this.options;
       return field || [];
     },
 

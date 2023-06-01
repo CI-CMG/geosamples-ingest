@@ -335,7 +335,7 @@
           <div v-else class="text-center">
             <b-spinner/>
           </div>
-          <b-row v-if="!loadingIntervals && (sampleIntervalPage === sampleIntervalTotalPages)">
+          <b-row v-if="!loadingIntervals && (sampleIntervalPage === sampleIntervalTotalPages || sampleIntervalTotalItems === 0)">
             <b-col>
               <b-list-group-item class="interval-button">
                 <b-button pill variant="secondary" @click="showAddIntervalModal" :disabled="!isEdit">

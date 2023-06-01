@@ -115,7 +115,7 @@
           <div v-else class="text-center">
             <b-spinner/>
           </div>
-          <b-row v-if="!loadingCruiseSamples && (cruiseSamplesPage === cruiseSamplesTotalPages)">
+          <b-row v-if="!loadingCruiseSamples && (cruiseSamplesPage === cruiseSamplesTotalPages || cruiseSamplesTotalItems === 0)">
             <b-col>
               <b-list-group-item class="list-item">
                 <b-button pill variant="secondary" @click="showAddSampleModal" :disabled="!isEdit">

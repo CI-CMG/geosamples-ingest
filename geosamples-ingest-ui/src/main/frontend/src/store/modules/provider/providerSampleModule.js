@@ -217,12 +217,13 @@ export default {
       state.loadingCruises = true;
     },
 
-    loadCruiseOptionsComplete(state) {
+    loadCruiseOptionsSuccess(state, { items }) {
+      state.cruiseOptions = items.map(({ cruiseName, year }) => ({ text: `${cruiseName} (${year})`, value: { cruiseName, year } }));
       state.loadingCruises = false;
     },
 
-    updateCruiseOptions(state, cruiseOptions) {
-      state.cruiseOptions = cruiseOptions;
+    loadCruiseOptionsFailure(state) {
+      state.loadingCruises = false;
     },
 
     loadCruiseSamplesRequest(state) {
@@ -322,15 +323,23 @@ export default {
       });
     },
 
-    loadCruiseOptions({ commit }, platformName) {
+    loadCruiseOptions({ commit }, { platformName, cruiseName }) {
       commit('loadCruiseOptionsRequest');
-      commit('updateCruiseOptions', []);
-      return loadAll(`/provider/cruise?platformEquals=${platformName}`, ({ cruiseName, year }) => ({ text: `${cruiseName} (${year})`, value: { cruiseName, year } })).then(sortOptions).then(
-        (options) => {
-          commit('updateCruiseOptions', options);
-          commit('loadCruiseOptionsComplete');
+      return apiService.get('/provider/cruise', {
+        params: {
+          platformEquals: platformName,
+          cruiseNameContains: cruiseName,
+          page: 1,
+          itemsPerPage: 10,
         },
-      );
+      }).then(({ data }) => {
+        commit('loadCruiseOptionsSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadCruiseOptionsFailure');
+        throw error;
+      });
     },
 
     // eslint-disable-next-line no-unused-vars

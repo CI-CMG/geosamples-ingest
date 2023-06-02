@@ -39,7 +39,7 @@
               label="text"
               @input="(option) => selectPlatform({ path: 'platform', value:  option.value })"
               @search="(name) => searchPlatform(name)"
-              :clearable="true"
+              :clearable="false"
             >
               <template #spinner>
                 <b-spinner v-if="loadingPlatformOptions" class="align-middle" style="margin-left: 10px;" small variant="primary"/>
@@ -56,17 +56,23 @@
                 <template #label>
                   Cruise ID<span><strong style="color: red"> *</strong></span>
                 </template>
-                <b-form-select
-                  required
-                  v-if="!loadingCruises"
+                <v-select
                   :disabled="Boolean(cruise) || !getValue('platform')"
-                  :id="cruiseId"
+                  style="background: white"
                   :options="cruiseOptions"
-                  :value="this.currentItem"
-                  @change="(value) => selectCruise(value)"
-                  :state="showError('cruise')"
-                />
-                <b-skeleton v-else/>
+                  :value="this.currentItem ? `${this.currentItem.cruiseName} (${this.currentItem.year})` : null"
+                  label="text"
+                  @input="(option) => selectCruise(option.value)"
+                  @search="(name) => loadCruiseOptions({ platformName: getValue('platform'), cruiseName: name })"
+                  :clearable="false"
+                >
+                  <template #spinner>
+                    <b-spinner v-if="loadingCruises" class="align-middle" style="margin-left: 10px;" small variant="primary"/>
+                  </template>
+                  <template #open-indicator="{ attributes }">
+                    <b-icon v-bind="attributes" icon="caret-down-fill" class="align-middle" style="margin-left: 10px;"/>
+                  </template>
+                </v-select>
                 <b-form-invalid-feedback>{{ getError('cruise') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -473,7 +479,11 @@ export default {
     ...mapMutations('providerInterval', ['setSampleIntervalPage']),
 
     searchPlatform(name) {
-      this.searchPlatformsByName(name);
+      if (this.cruise) {
+        this.searchPlatformsByName(this.cruise.platforms.join(','));
+      } else {
+        this.searchPlatformsByName(name);
+      }
     },
 
     updateSampleIntervalPage(page) {
@@ -574,16 +584,24 @@ export default {
     },
 
     selectCruise(value) {
+      this.currentItem = value;
       this.setValue({ path: 'cruise', value: value.cruiseName });
       this.loadLegOptions(value);
     },
 
     selectPlatform(value) {
+      if (this.isTouched('platform')) {
+        if (!this.cruise) {
+          this.setValue({ path: 'cruise', value: null });
+          this.setValue({ path: 'leg', value: [] });
+          this.currentItem = null;
+        }
+      }
       this.setValue({ path: 'platform', value: value.value });
       if (!this.cruise) {
         this.setValue({ path: 'cruise', value: null });
         this.setValue({ path: 'leg', value: [] });
-        this.loadCruiseOptions(value.value);
+        this.loadCruiseOptions({ platformName: value.value, cruiseName: null });
       }
     },
 
@@ -662,13 +680,13 @@ export default {
 
   created() {
     this.loadOptions();
-    this.searchPlatformsByName(null);
+    this.searchPlatform(null);
     if (this.id) {
       this.load(this.id).then(
         (sample) => {
           this.currentItem = { cruiseName: sample.cruise, year: sample.cruiseYear };
           this.initialize(sample);
-          this.loadCruiseOptions(sample.platform);
+          this.loadCruiseOptions(sample.platform, null);
           this.selectPlatform({ value: sample.platform.toUpperCase() });
           this.selectCruise(this.currentItem);
           this.searchByImlgs(sample.imlgs).then(

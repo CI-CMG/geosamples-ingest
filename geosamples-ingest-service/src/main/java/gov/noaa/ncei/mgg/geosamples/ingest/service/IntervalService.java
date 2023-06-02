@@ -208,12 +208,12 @@ public class IntervalService extends
     setMm.accept(converter.getMm());
   }
 
-  private <R> void setRelation(Supplier<String> codeGetter, Function<String, Optional<R>> find, Consumer<R> setter) {
+  private <R> void setRelation(Supplier<String> codeGetter, Function<String, Optional<R>> find, Consumer<R> setter, String apiField) {
     R relationEntity = null;
     String code = codeGetter.get();
     if(StringUtils.isNotBlank(code)) {
       relationEntity = find.apply(code)
-          .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().error("Relation not found: " + code).build()));
+          .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, ApiError.builder().fieldError(apiField, String.format("Relation not found: %s", code)).build()));
     }
     setter.accept(relationEntity);
   }
@@ -231,16 +231,16 @@ public class IntervalService extends
     setCmMm(view::getDepthTop, entity::setDepthTop, entity::setDepthTopMm);
     setCmMm(view::getDepthBot, entity::setDepthBot, entity::setDepthBotMm);
 
-    setRelation(view::getLithCode1, curatorsLithologyRepository::findByLithologyCode, entity::setLith1);
-    setRelation(view::getTextCode1, curatorsTextureRepository::findByTextureCode, entity::setText1);
-    setRelation(view::getLithCode2, curatorsLithologyRepository::findByLithologyCode, entity::setLith2);
-    setRelation(view::getTextCode2, curatorsTextureRepository::findByTextureCode, entity::setText2);
-    setRelation(view::getCompCode1, curatorsLithologyRepository::findByLithologyCode, entity::setComp1);
-    setRelation(view::getCompCode2, curatorsLithologyRepository::findByLithologyCode, entity::setComp2);
-    setRelation(view::getCompCode3, curatorsLithologyRepository::findByLithologyCode, entity::setComp3);
-    setRelation(view::getCompCode4, curatorsLithologyRepository::findByLithologyCode, entity::setComp4);
-    setRelation(view::getCompCode5, curatorsLithologyRepository::findByLithologyCode, entity::setComp5);
-    setRelation(view::getCompCode6, curatorsLithologyRepository::findByLithologyCode, entity::setComp6);
+    setRelation(view::getLithCode1, curatorsLithologyRepository::findByLithologyCode, entity::setLith1, "lithCode1");
+    setRelation(view::getTextCode1, curatorsTextureRepository::findByTextureCode, entity::setText1, "textCode1");
+    setRelation(view::getLithCode2, curatorsLithologyRepository::findByLithologyCode, entity::setLith2, "lithCode2");
+    setRelation(view::getTextCode2, curatorsTextureRepository::findByTextureCode, entity::setText2, "textCode2");
+    setRelation(view::getCompCode1, curatorsLithologyRepository::findByLithologyCode, entity::setComp1, "compCode1");
+    setRelation(view::getCompCode2, curatorsLithologyRepository::findByLithologyCode, entity::setComp2, "compCode2");
+    setRelation(view::getCompCode3, curatorsLithologyRepository::findByLithologyCode, entity::setComp3, "compCode3");
+    setRelation(view::getCompCode4, curatorsLithologyRepository::findByLithologyCode, entity::setComp4, "compCode4");
+    setRelation(view::getCompCode5, curatorsLithologyRepository::findByLithologyCode, entity::setComp5, "compCode5");
+    setRelation(view::getCompCode6, curatorsLithologyRepository::findByLithologyCode, entity::setComp6, "compCode6");
 
     entity.setDescription(view.getDescription());
 
@@ -258,10 +258,10 @@ public class IntervalService extends
 
     entity.setWeight(view.getWeight());
 
-    setRelation(view::getRockLithCode, curatorsRockLithRepository::findByRockLithCode, entity::setRockLith);
-    setRelation(view::getRockMinCode, curatorsRockMinRepository::findByRockMinCode, entity::setRockMin);
-    setRelation(view::getWeathMetaCode, curatorsWeathMetaRepository::findByWeathMetaCode, entity::setWeathMeta);
-    setRelation(view::getRemarkCode, curatorsRemarkRepository::findByRemarkCode, entity::setRemark);
+    setRelation(view::getRockLithCode, curatorsRockLithRepository::findByRockLithCode, entity::setRockLith, "rockLithCode");
+    setRelation(view::getRockMinCode, curatorsRockMinRepository::findByRockMinCode, entity::setRockMin, "rockMinCode");
+    setRelation(view::getWeathMetaCode, curatorsWeathMetaRepository::findByWeathMetaCode, entity::setWeathMeta, "weathMetaCode");
+    setRelation(view::getRemarkCode, curatorsRemarkRepository::findByRemarkCode, entity::setRemark, "remarkCode");
 
     String munsell;
       String munsellCode = view.getMunsellCode();

@@ -1279,7 +1279,7 @@ public class ProviderIntervalServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit approved interval: %s (%s)", intervalView.getInterval(), intervalView.getImlgs()), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

@@ -53,20 +53,32 @@ public class ProviderPlatformService extends ProviderServiceBase<Long, PlatformM
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userInfo, PlatformView view) {
+  protected void throwIfUserCannotAccessResource(String userInfo, PlatformView view) throws ApiException {
     if (view.getCreatedBy() == null) {
-      return true;
+      throw new ApiException(
+          HttpStatus.NOT_FOUND,
+          ApiError.builder().error(HttpStatus.NOT_FOUND.getReasonPhrase()).build()
+      );
     }
 
     if (view.getApprovalState() == null) {
-      return true;
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder()
+              .error(String.format("Cannot edit platform without approval state: %s", view.getPlatform()))
+              .build()
+      );
     }
 
     if (view.getApprovalState().equals(ApprovalState.APPROVED)) {
-      return true;
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder()
+              .error(String.format("Cannot edit approved platform: %s", view.getPlatform()))
+              .build()
+      );
     }
 
-    return !view.getCreatedBy().equals(userInfo);
   }
 
   @Override

@@ -33,8 +33,15 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userInfo, SampleView view) {
-    return view.getApprovalState().equals(ApprovalState.APPROVED);
+  protected void throwIfUserCannotAccessResource(String userInfo, SampleView view) throws ApiException {
+    if (view.getApprovalState().equals(ApprovalState.APPROVED)) {
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder()
+              .error(String.format("Cannot edit approved sample: %s", String.format("%s (%s)", view.getSample(), view.getCruise())))
+              .build()
+      );
+    }
   }
 
   @Override

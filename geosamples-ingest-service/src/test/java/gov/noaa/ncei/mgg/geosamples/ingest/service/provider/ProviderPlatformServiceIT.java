@@ -832,7 +832,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit approved platform: %s", platformMaster.getPlatform()), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -989,7 +989,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit platform without approval state: %s", platformMaster.getPlatform()), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1132,7 +1132,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit approved platform: %s", platformMaster.getPlatform()), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1201,7 +1201,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit platform without approval state: %s", platformMaster.getPlatform()), exception.getApiError().getFlashErrors().get(0));
   }
 
   private void cleanDB() {

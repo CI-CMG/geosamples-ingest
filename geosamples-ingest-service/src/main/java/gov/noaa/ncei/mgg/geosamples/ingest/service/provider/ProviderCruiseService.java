@@ -36,8 +36,23 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
   }
 
   @Override
-  protected boolean userCannotModifyResource(String userInfo, CruiseView view) {
-    return view.getFacilityCodes().size() > 1 || view.getApprovalState().equals(ApprovalState.APPROVED);
+  protected void throwIfUserCannotAccessResource(String userInfo, CruiseView view) throws ApiException {
+    if (view.getFacilityCodes().size() > 1) {
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder()
+              .error(String.format("%s cannot be updated while it is associated with more than one facility", String.format("%s (%s)", view.getCruiseName(), view.getYear())))
+              .build()
+      );
+    }
+    if (view.getApprovalState().equals(ApprovalState.APPROVED)) {
+      throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          ApiError.builder()
+              .error(String.format("Cannot edit approved cruise: %s", String.format("%s (%s)", view.getCruiseName(), view.getYear())))
+              .build()
+      );
+    }
   }
 
   @Override

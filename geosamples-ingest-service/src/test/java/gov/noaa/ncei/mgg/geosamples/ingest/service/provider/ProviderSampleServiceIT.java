@@ -1258,7 +1258,7 @@ public class ProviderSampleServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit approved sample: %s", String.format("%s (%s)", providerSampleView.getSample(), providerSampleView.getCruise())), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

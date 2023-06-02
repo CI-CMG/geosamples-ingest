@@ -31,7 +31,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
   }
 
   protected abstract boolean userCanAccessResource(String userInfo, V view);
-  protected abstract boolean userCannotModifyResource(String userInfo, V view);
+  protected abstract void throwIfUserCannotAccessResource(String userInfo, V view) throws ApiException;
   public abstract ApiException getIntegrityViolationException();
   protected abstract V toResourceView(String userInfo, PV view, @Nullable V existing);
   protected abstract S transformSearchParameters(PS searchParameters, String userInfo);
@@ -64,9 +64,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
     if (userCanAccessResource(userInfo, existing)) {
-      if (userCannotModifyResource(userInfo, existing)) {
-        throw getCannotEditException();
-      }
+      throwIfUserCannotAccessResource(userInfo, existing);
       approvalServiceBase.update(toResourceView(userInfo, view, existing), id);
       ApprovalView approvalView = new ApprovalView();
       approvalView.setApprovalState(ApprovalState.PENDING);
@@ -79,9 +77,7 @@ public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS e
     String userInfo = getUserInfo(authentication);
     V existing = approvalServiceBase.get(id);
     if (userCanAccessResource(userInfo, existing)) {
-      if (userCannotModifyResource(userInfo, existing)) {
-        throw getCannotEditException();
-      }
+      throwIfUserCannotAccessResource(userInfo, existing);
       return approvalServiceBase.delete(id);
     }
     throw approvalServiceBase.getNotFoundException();

@@ -1297,7 +1297,7 @@ public class ProviderCruiseServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("Cannot edit approved cruise: %s", String.format("%s (%s)", cruiseEntity.getCruiseName(), cruiseEntity.getYear())), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1625,7 +1625,7 @@ public class ProviderCruiseServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("%s cannot be updated while it is associated with more than one facility", String.format("%s (%s)", cruiseEntity.getCruiseName(), cruiseEntity.getYear())), exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test
@@ -1882,7 +1882,7 @@ public class ProviderCruiseServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(0, exception.getApiError().getFormErrors().size());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
-    assertEquals("User cannot update", exception.getApiError().getFlashErrors().get(0));
+    assertEquals(String.format("%s cannot be updated while it is associated with more than one facility", String.format("%s (%s)", cruiseEntity.getCruiseName(), cruiseEntity.getYear())), exception.getApiError().getFlashErrors().get(0));
   }
 
   private void cleanDB() {

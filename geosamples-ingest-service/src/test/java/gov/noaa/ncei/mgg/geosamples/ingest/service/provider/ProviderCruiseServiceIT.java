@@ -481,6 +481,183 @@ public class ProviderCruiseServiceIT {
   }
 
   @Test
+  public void testSearchProviderCruisesByApprovalState() {
+    CuratorsFacilityEntity facility = transactionTemplate.execute(s -> {
+      CuratorsFacilityEntity f = new CuratorsFacilityEntity();
+      f.setFacilityCode("TST");
+      f.setFacility("Test Facility");
+      f.setInstCode("TST");
+      f.setLastUpdate(Instant.now());
+      return curatorsFacilityRepository.save(f);
+    });
+    assertNotNull(facility);
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(facility);
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformEntity = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      return platformMasterRepository.save(platform);
+    });
+
+    transactionTemplate.executeWithoutResult(s -> {
+      List<CuratorsCruiseEntity> cruises = new ArrayList<>();
+
+      CuratorsCruiseEntity cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(true);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      CuratorsCruiseFacilityEntity facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      CuratorsCruisePlatformEntity platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      CuratorsLegEntity leg = new CuratorsLegEntity();
+      leg.setLegName("TST");
+      leg.setCruise(cruise);
+      leg.setPublish(true);
+      cruise.addLeg(leg);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      cruise.setApproval(approval);
+
+      curatorsCruiseRepository.save(cruise);
+
+      cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST2");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(true);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      leg = new CuratorsLegEntity();
+      leg.setLegName("TST2");
+      leg.setCruise(cruise);
+      leg.setPublish(true);
+      cruise.addLeg(leg);
+
+      approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      cruise.setApproval(approval);
+
+      cruise = curatorsCruiseRepository.save(cruise);
+      cruises.add(cruise);
+
+      cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST3");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(true);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      leg = new CuratorsLegEntity();
+      leg.setLegName("TST3");
+      leg.setCruise(cruise);
+      leg.setPublish(true);
+      cruise.addLeg(leg);
+
+      approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.REJECTED);
+      cruise.setApproval(approval);
+
+      curatorsCruiseRepository.save(cruise);
+
+      cruise = new CuratorsCruiseEntity();
+      cruise.setCruiseName("TST4");
+      cruise.setYear((short) 2020);
+      cruise.setPublish(true);
+      cruise = curatorsCruiseRepository.save(cruise);
+
+      facilityMapping = new CuratorsCruiseFacilityEntity();
+      facilityMapping.setFacility(facility);
+      facilityMapping.setCruise(cruise);
+      cruise.addFacilityMapping(facilityMapping);
+
+      platformMapping = new CuratorsCruisePlatformEntity();
+      platformMapping.setPlatform(platformEntity);
+      platformMapping.setCruise(cruise);
+      cruise.addPlatformMapping(platformMapping);
+
+      leg = new CuratorsLegEntity();
+      leg.setLegName("TST4");
+      leg.setCruise(cruise);
+      leg.setPublish(true);
+      cruise.addLeg(leg);
+
+      approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      cruise.setApproval(approval);
+
+      cruise = curatorsCruiseRepository.save(cruise);
+      cruises.add(cruise);
+
+      Authentication authentication = mock(Authentication.class);
+      when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+      ProviderCruiseSearchParameters searchParameters = new ProviderCruiseSearchParameters();
+      searchParameters.setPage(1);
+      searchParameters.setItemsPerPage(10);
+      searchParameters.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+      PagedItemsView<CruiseView> results = providerCruiseService.search(searchParameters, authentication);
+      assertNotNull(results);
+      assertEquals(2, results.getTotalItems());
+      assertEquals(1, results.getPage());
+      assertEquals(10, results.getItemsPerPage());
+      assertEquals(1, results.getTotalPages());
+      assertEquals(2, results.getItems().size());
+
+      assertEquals(cruises.get(0).getId(), results.getItems().get(0).getId());
+      assertEquals((int) cruises.get(0).getYear(), results.getItems().get(0).getYear());
+      assertEquals(cruises.get(0).getCruiseName(), results.getItems().get(0).getCruiseName());
+      assertEquals(1, results.getItems().get(0).getLegs().size());
+      assertEquals(cruises.get(0).getLegs().get(0).getLegName(), results.getItems().get(0).getLegs().get(0));
+      assertEquals(1, results.getItems().get(0).getPlatforms().size());
+      assertEquals(cruises.get(0).getPlatformMappings().get(0).getPlatform().getPlatform(), results.getItems().get(0).getPlatforms().get(0));
+
+      assertEquals(cruises.get(1).getId(), results.getItems().get(1).getId());
+      assertEquals((int) cruises.get(1).getYear(), results.getItems().get(1).getYear());
+      assertEquals(cruises.get(1).getCruiseName(), results.getItems().get(1).getCruiseName());
+      assertEquals(1, results.getItems().get(1).getLegs().size());
+      assertEquals(cruises.get(1).getLegs().get(0).getLegName(), results.getItems().get(1).getLegs().get(0));
+      assertEquals(1, results.getItems().get(1).getPlatforms().size());
+      assertEquals(cruises.get(1).getPlatformMappings().get(0).getPlatform().getPlatform(), results.getItems().get(1).getPlatforms().get(0));
+    });
+  }
+
+  @Test
   public void testSearchProviderCruisesBelongingToFacility() {
     CuratorsFacilityEntity facility1 = transactionTemplate.execute(s -> {
       CuratorsFacilityEntity f = new CuratorsFacilityEntity();

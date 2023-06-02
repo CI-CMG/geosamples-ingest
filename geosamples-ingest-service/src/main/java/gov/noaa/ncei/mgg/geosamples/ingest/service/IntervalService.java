@@ -99,6 +99,8 @@ public class IntervalService extends
     List<Integer> interval = searchParameters.getInterval();
     List<String> imlgs = searchParameters.getImlgs().stream().map(s -> s.trim().toLowerCase(Locale.ENGLISH)).collect(Collectors.toList());
     List<String> facilityCode = searchParameters.getFacilityCode();
+    List<ApprovalState> approvalState = searchParameters.getApprovalState();
+    List<Boolean> publish = searchParameters.getPublish();
 
     if (!interval.isEmpty()) {
       specs.add(SearchUtils.equal(interval, CuratorsIntervalEntity_.INTERVAL));
@@ -114,6 +116,20 @@ public class IntervalService extends
                   .join(CuratorsSampleTsqpEntity_.CRUISE_FACILITY)
                   .join(CuratorsCruiseFacilityEntity_.FACILITY)
                   .get(CuratorsFacilityEntity_.FACILITY_CODE)
+          )
+      );
+    }
+    if (!approvalState.isEmpty()) {
+      specs.add(SearchUtils.equal(
+          approvalState.stream().map(ApprovalState::name).collect(Collectors.toList()),
+          e -> e.join(CuratorsIntervalEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
+      ));
+    }
+    if (!publish.isEmpty()) {
+      specs.add(
+          SearchUtils.equal(
+              publish.stream().map((p) -> p ? "Y" : "N").collect(Collectors.toList()),
+              CuratorsIntervalEntity_.PUBLISH
           )
       );
     }

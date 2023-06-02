@@ -119,6 +119,8 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
     intervalSearchParameters.setOrder(searchParameters.getOrder());
     intervalSearchParameters.setInterval(searchParameters.getInterval());
     intervalSearchParameters.setImlgs(searchParameters.getImlgs());
+    intervalSearchParameters.setApprovalState(searchParameters.getApprovalState());
+    intervalSearchParameters.setPublish(searchParameters.getPublish());
     return intervalSearchParameters;
   }
 }

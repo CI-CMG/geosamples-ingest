@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,10 @@ public class ProviderIntervalSearchParameters implements PagingAndSortingParamet
   private List<Integer> interval = new ArrayList<>(0);
   private List<String> imlgs = new ArrayList<>(0);
 
+  private List<Boolean> publish = new ArrayList<>(0);
+
+  private List<ApprovalState> approvalState = new ArrayList<>(0);
+
   public List<String> getImlgs() {
     return imlgs;
   }
@@ -48,6 +53,28 @@ public class ProviderIntervalSearchParameters implements PagingAndSortingParamet
       interval = new ArrayList<>(0);
     }
     this.interval = interval;
+  }
+
+  public List<ApprovalState> getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(List<ApprovalState> approvalState) {
+    if (approvalState == null) {
+      approvalState = new ArrayList<>(0);
+    }
+    this.approvalState = approvalState;
+  }
+
+  public List<Boolean> getPublish() {
+    return publish;
+  }
+
+  public void setPublish(List<Boolean> publish) {
+    if (publish == null) {
+      publish = new ArrayList<>(0);
+    }
+    this.publish = publish;
   }
 
   @Override

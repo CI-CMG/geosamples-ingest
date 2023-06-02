@@ -61,6 +61,9 @@ export default {
     sampleIntervalTotalPages: 1,
     sampleIntervalTotalItems: 0,
     sampleIntervalItemsPerPage: 20,
+
+    sampleOptions: [],
+    loadingSampleOptions: false,
   },
 
   mutations: {
@@ -176,6 +179,16 @@ export default {
         state.page = page;
       }
     },
+    loadSampleOptionsRequest(state) {
+      state.loadingSampleOptions = true;
+    },
+    loadSampleOptionsSuccess(state, { items }) {
+      state.loadingSampleOptions = false;
+      state.sampleOptions = items.map(({ sample, cruise, imlgs }) => ({ value: imlgs, text: `${sample} (${cruise})` }));
+    },
+    loadSampleOptionsFailure(state) {
+      state.loadingSampleOptions = false;
+    },
   },
 
   actions: {
@@ -198,6 +211,18 @@ export default {
       ]).then(() => {
         commit('updateOptions', nextOpts);
         commit('loadOptionsComplete');
+      });
+    },
+
+    searchSamplesByName({ commit }, name) {
+      commit('loadSampleOptionsRequest');
+      return apiService.get('/provider/sample', { params: { sample: name, page: 1, itemsPerPage: 10 } }).then(({ data }) => {
+        commit('loadSampleOptionsSuccess', data);
+        return data;
+      },
+      (error) => {
+        commit('loadSampleOptionsFailure');
+        throw error;
       });
     },
 

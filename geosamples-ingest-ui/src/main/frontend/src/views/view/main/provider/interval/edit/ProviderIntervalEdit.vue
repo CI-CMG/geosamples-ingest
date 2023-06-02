@@ -20,17 +20,24 @@
                 <template #label>
                   Sample ID<span><strong style="color: red"> *</strong></span>
                 </template>
-                <b-form-select
+                <v-select
                   :disabled="Boolean(imlgs)"
-                  v-if="!loadingOptions"
-                  required
-                  :id="imlgsId"
-                  :options="optionsIMLGS"
-                  :value="getValue('imlgs')"
-                  @change="(value) => setValue({ path: 'imlgs', value })"
-                  :state="showError('imlgs')"
-                />
-                <b-skeleton v-else/>
+                  style="background: white"
+                  :options="sampleOptions"
+                  :value="selectedSample"
+                  label="text"
+                  @input="(option) => selectSample(option)"
+                  @search="(name) => searchSamplesByName(name)"
+                  @open="searchSamplesByName(null)"
+                  :clearable="false"
+                >
+                  <template #spinner>
+                    <b-spinner v-if="loadingSampleOptions" class="align-middle" style="margin-left: 10px" small variant="primary"/>
+                  </template>
+                  <template #open-indicator="{ attributes }">
+                    <b-icon v-bind="attributes" icon="caret-down-fill" class="align-middle" style="margin-left: 10px"/>
+                  </template>
+                </v-select>
                 <b-form-invalid-feedback>{{ getError('imlgs') }}</b-form-invalid-feedback>
               </b-form-group>
             </b-col>
@@ -452,6 +459,7 @@ export default {
 
   data() {
     return {
+      selectedSample: null,
       imlgsId: null,
       intervalId: null,
       depthTopId: null,
@@ -512,14 +520,26 @@ export default {
     this.loadOptions();
     if (this.id) {
       this.load(this.id).then(
-        (sample) => {
-          this.initialize(sample);
+        (interval) => {
+          this.initialize(interval);
+          this.loadSample(interval.imlgs).then(
+            ({ sample, cruise }) => {
+              this.selectedSample = `${sample} (${cruise})`;
+            },
+          );
         },
       );
     } else {
       this.initialize({
         imlgs: this.imlgs,
       });
+      if (this.imlgs) {
+        this.loadSample(this.imlgs).then(
+          ({ sample, cruise }) => {
+            this.selectedSample = `${sample} (${cruise})`;
+          },
+        );
+      }
       this.setValue({ path: 'interval', value: this.intervalNumber });
       this.submit().then(
         (i) => {
@@ -530,9 +550,15 @@ export default {
   },
 
   methods: {
-    ...mapActions('providerInterval', ['delete', 'save', 'loadOptions', 'load']),
+    ...mapActions('providerInterval', ['delete', 'save', 'loadOptions', 'load', 'searchSamplesByName']),
+    ...mapActions('providerSample', { loadSample: 'load' }),
     ...mapActions('providerIntervalForm', ['submit', 'reset']),
     ...mapMutations('providerIntervalForm', ['initialize', 'setValue', 'deleteFromArray', 'addToArray', 'setTouched']),
+
+    selectSample(option) {
+      this.setValue({ path: 'imlgs', value: option.value });
+      this.selectedSample = option.text;
+    },
 
     showModal() {
       this.$refs['delete-modal'].show();
@@ -578,7 +604,7 @@ export default {
   },
 
   computed: {
-    ...mapState('providerInterval', ['loading', 'saving', 'loadingOptions', 'options']),
+    ...mapState('providerInterval', ['loading', 'saving', 'loadingOptions', 'options', 'sampleOptions', 'loadingSampleOptions']),
     ...mapGetters('providerIntervalForm', ['getValue', 'isTouched', 'getError', 'formDirty', 'formHasUntouchedErrors']),
     ready() {
       return !this.loading && !this.loadingOptions && !this.saving;
@@ -598,11 +624,6 @@ export default {
 
     optionsLithologyCode() {
       const { lithologyCode: field } = this.options;
-      return field || [];
-    },
-
-    optionsIMLGS() {
-      const { imlgs: field } = this.options;
       return field || [];
     },
 

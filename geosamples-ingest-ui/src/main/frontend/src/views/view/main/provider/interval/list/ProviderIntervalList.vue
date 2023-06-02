@@ -9,7 +9,7 @@
     :fields="[
       { label: 'IMLGS', value: params.imlgs, set: setImlgs },
       { label: 'Interval', value: params.interval, set: setSearchInterval },
-      { label: 'Publish', value: params.publish, set: setPublish, options: [
+      { label: 'Published', value: params.publish, set: setPublish, options: [
         true,
         false,
       ] },

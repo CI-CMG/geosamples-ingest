@@ -485,6 +485,111 @@ public class ProviderPlatformServiceIT {
   }
 
   @Test
+  public void testSearchProviderPlatformByApprovalState() {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();
+      geosamplesUserEntity.setUserName("gabby");
+      geosamplesUserEntity.setDisplayName("Gabby");
+      return geosamplesUserRepository.save(geosamplesUserEntity);
+    });
+    assertNotNull(userEntity);
+
+    PlatformMasterEntity platformMaster1 = transactionTemplate.execute(s -> {
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.APPROVED);
+
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setMasterId(1);
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("http://example.com");
+      platform.setApproval(approvalEntity);
+      platform.setCreatedBy(userEntity);
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster1);
+
+    PlatformMasterEntity platformMaster2 = transactionTemplate.execute(s -> {
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.PENDING);
+
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST2");
+      platform.setMasterId(2);
+      platform.setPrefix("TST2");
+      platform.setIcesCode("TST2");
+      platform.setSourceUri("http://example.com");
+      platform.setApproval(approvalEntity);
+      platform.setCreatedBy(userEntity);
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster2);
+
+    PlatformMasterEntity platformMaster3 = transactionTemplate.execute(s -> {
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.REJECTED);
+
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST3");
+      platform.setMasterId(3);
+      platform.setPrefix("TST3");
+      platform.setIcesCode("TST3");
+      platform.setSourceUri("http://example.com");
+      platform.setApproval(approvalEntity);
+      platform.setCreatedBy(userEntity);
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster3);
+
+    PlatformMasterEntity platformMaster4 = transactionTemplate.execute(s -> {
+      GeosamplesApprovalEntity approvalEntity = new GeosamplesApprovalEntity();
+      approvalEntity.setApprovalState(ApprovalState.APPROVED);
+
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST4");
+      platform.setMasterId(4);
+      platform.setPrefix("TST4");
+      platform.setIcesCode("TST4");
+      platform.setSourceUri("http://example.com");
+      platform.setApproval(approvalEntity);
+      platform.setCreatedBy(userEntity);
+      return platformMasterRepository.save(platform);
+    });
+    assertNotNull(platformMaster4);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ProviderPlatformSearchParameters searchParameters = new ProviderPlatformSearchParameters();
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(4);
+    searchParameters.setOrder(Collections.singletonList("platform:asc"));
+    searchParameters.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+
+    PagedItemsView<PlatformView> pagedItemsView = providerPlatformService.search(searchParameters, authentication);
+    assertEquals(1, pagedItemsView.getPage());
+    assertEquals(4, pagedItemsView.getItemsPerPage());
+    assertEquals(2, pagedItemsView.getTotalItems());
+    assertEquals(1, pagedItemsView.getTotalPages());
+    assertEquals(2, pagedItemsView.getItems().size());
+
+    assertEquals(platformMaster1.getId(), pagedItemsView.getItems().get(0).getId());
+    assertEquals(platformMaster1.getPlatform(), pagedItemsView.getItems().get(0).getPlatform());
+    assertEquals(platformMaster1.getMasterId(), pagedItemsView.getItems().get(0).getMasterId());
+    assertEquals(platformMaster1.getPrefix(), pagedItemsView.getItems().get(0).getPrefix());
+    assertEquals(platformMaster1.getIcesCode(), pagedItemsView.getItems().get(0).getIcesCode());
+    assertEquals(platformMaster1.getSourceUri(), pagedItemsView.getItems().get(0).getSourceUri());
+
+    assertEquals(platformMaster4.getId(), pagedItemsView.getItems().get(1).getId());
+    assertEquals(platformMaster4.getPlatform(), pagedItemsView.getItems().get(1).getPlatform());
+    assertEquals(platformMaster4.getMasterId(), pagedItemsView.getItems().get(1).getMasterId());
+    assertEquals(platformMaster4.getPrefix(), pagedItemsView.getItems().get(1).getPrefix());
+    assertEquals(platformMaster4.getIcesCode(), pagedItemsView.getItems().get(1).getIcesCode());
+    assertEquals(platformMaster4.getSourceUri(), pagedItemsView.getItems().get(1).getSourceUri());
+  }
+
+  @Test
   public void testSearchProviderPlatformNoResults() {
     GeosamplesUserEntity userEntity1 = transactionTemplate.execute(s -> {
       GeosamplesUserEntity geosamplesUserEntity = new GeosamplesUserEntity();

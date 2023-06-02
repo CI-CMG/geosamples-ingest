@@ -7,13 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.PlatformMasterRepository;
+import java.util.Collections;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -199,9 +202,75 @@ public class PlatformServiceIT {
     assertEquals("Cannot change approved item to pending", exception.getApiError().getFlashErrors().get(0));
   }
 
+  @Test
+  public void testSearchByApprovalState() {
+    PlatformMasterEntity expectedPlatform = transactionTemplate.execute(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST");
+      platform.setPrefix("TST");
+      platform.setIcesCode("TST");
+      platform.setSourceUri("TST");
+      platform.setMasterId(1);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.APPROVED);
+      platform.setApproval(approval);
+
+      return platformMasterRepository.save(platform);
+    });
+
+    transactionTemplate.executeWithoutResult(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST2");
+      platform.setPrefix("TST2");
+      platform.setIcesCode("TST2");
+      platform.setSourceUri("TST2");
+      platform.setMasterId(2);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      platform.setApproval(approval);
+
+      platformMasterRepository.save(platform);
+    });
+
+    transactionTemplate.executeWithoutResult(s -> {
+      PlatformMasterEntity platform = new PlatformMasterEntity();
+      platform.setPlatform("TST3");
+      platform.setPrefix("TST3");
+      platform.setIcesCode("TST3");
+      platform.setSourceUri("TST3");
+      platform.setMasterId(3);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.REJECTED);
+      platform.setApproval(approval);
+
+      platformMasterRepository.save(platform);
+    });
+    assertNotNull(expectedPlatform);
+
+    PlatformSearchParameters params = new PlatformSearchParameters();
+    params.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+    params.setPage(1);
+    params.setItemsPerPage(10);
+
+    PagedItemsView<PlatformView> results = platformService.search(params);
+    assertEquals(1, results.getItems().size());
+    assertEquals(1, results.getTotalItems());
+    assertEquals(1, results.getTotalPages());
+    assertEquals(10, results.getItemsPerPage());
+    assertEquals(1, results.getPage());
+
+    assertEquals(expectedPlatform.getId(), results.getItems().get(0).getId());
+  }
+
   private void cleanDB() {
     transactionTemplate.executeWithoutResult(s -> {
       platformMasterRepository.findByPlatformNormalized("TST").ifPresent(platformMasterRepository::delete);
+      platformMasterRepository.findByPlatformNormalized("TST1").ifPresent(platformMasterRepository::delete);
+      platformMasterRepository.findByPlatformNormalized("TST2").ifPresent(platformMasterRepository::delete);
+      platformMasterRepository.findByPlatformNormalized("TST3").ifPresent(platformMasterRepository::delete);
       geosamplesUserRepository.findById("gabby").ifPresent(geosamplesUserRepository::delete);
     });
   }

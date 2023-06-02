@@ -249,7 +249,7 @@ public class IntervalService extends
             .map(a -> curatorsAgeRepository.findByAgeCode(a).orElseThrow(
                     () -> new ApiException(
                         HttpStatus.NOT_FOUND,
-                        ApiError.builder().error(String.format("Area not found for code: %s", a)).build()
+                        ApiError.builder().error(String.format("Age not found for code: %s", a)).build()
                     )
             ))
             .collect(Collectors.toList())

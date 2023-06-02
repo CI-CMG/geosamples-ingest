@@ -40,6 +40,7 @@ const model = {
   weathMetaCode: ['string'],
   remarkCode: ['string'],
   munsellCode: ['string'],
+  approvalState: ['string'],
   area: 'string',
   swCoordinate: 'string',
   neCoordinate: 'string',

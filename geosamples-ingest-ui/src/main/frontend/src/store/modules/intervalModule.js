@@ -26,6 +26,7 @@ const fields = [
   'munsellCode',
   'swCoordinate',
   'neCoordinate',
+  'approvalState',
 ];
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {

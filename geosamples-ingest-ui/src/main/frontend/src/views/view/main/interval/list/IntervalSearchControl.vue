@@ -40,6 +40,7 @@
           </b-row>
           <b-row>
             <SearchCardColSelect title="Rock Glass Remarks & Mn/Fe Oxide" field="remarkCode" :options="optionsRemarkCode" module="intervalSearchForm"/>
+            <SearchCardColSelect title="Approval State" field="approvalState" :options="['PENDING', 'REJECTED', 'APPROVED']" module="intervalSearchForm"/>
           </b-row>
         </b-container>
 

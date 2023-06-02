@@ -16,7 +16,7 @@
           <b-row>
             <SearchCardCol title="IGSN" field="igsn" module="sampleSearchForm"/>
             <SearchCardColSelect title="Approval State" field="approvalState" :options="['APPROVED', 'PENDING', 'REJECTED']" module="sampleSearchForm"/>
-            <SearchCardColSelect title="Publish" field="publish" :options="[true, false]" module="sampleSearchForm"/>
+            <SearchCardColSingleSelect title="Publish" field="publish" :options="['', 'true', 'false']" module="sampleSearchForm"/>
           </b-row>
           <b-row>
             <SeachCardBoundingBox title="Within Area" module="sampleSearchForm"/>
@@ -55,6 +55,7 @@ import SearchCardCol from '@/components/SearchCardCol.vue';
 import SearchCardColSelect from '@/components/SearchCardColSelect.vue';
 import SortModal from '@/components/SortModal.vue';
 import SeachCardBoundingBox from '@/components/SearchCardBoundingBox.vue';
+import SearchCardColSingleSelect from '@/components/SearchCardColSingleSelect.vue';
 
 const concatQuoted = (list) => list.map((v) => `'${v}'`).join(',');
 const concat = (list) => list.join(',');
@@ -63,6 +64,7 @@ const contains = (prefix, list) => (list && list.length ? `${prefix} Contains ${
 
 export default {
   components: {
+    SearchCardColSingleSelect,
     SearchCardCol,
     SearchCardColSelect,
     SortModal,

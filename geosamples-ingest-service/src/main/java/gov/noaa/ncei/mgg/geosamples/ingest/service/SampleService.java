@@ -203,7 +203,12 @@ public class SampleService extends
       specs.add(within(normalizeArea(area)));
     }
     if (!publish.isEmpty()) {
-      specs.add(SearchUtils.equal(publish, CuratorsSampleTsqpEntity_.PUBLISH));
+      specs.add(
+          SearchUtils.equal(
+              publish,
+              CuratorsSampleTsqpEntity_.PUBLISH
+          )
+      );
     }
 
     return specs;

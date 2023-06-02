@@ -75,15 +75,17 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
     try {
       return service.delete(replaceSlash(id), authentication);
     } catch (DataIntegrityViolationException e) {
-      if (e.getRootCause() != null && e.getRootCause().getMessage().contains("child record found")) {
+      Throwable mostSpecificCause = e.getMostSpecificCause();
+      if (mostSpecificCause.getMessage() != null && mostSpecificCause.getMessage().contains("child record found")) {
         throw new ApiException(
             HttpStatus.BAD_REQUEST,
             ApiError.builder()
                 .error(getAttachedToChildMessage())
                 .build()
         );
+      } else {
+        throw service.getIntegrityViolationException();
       }
-      throw service.getIntegrityViolationException();
     }
   }
 

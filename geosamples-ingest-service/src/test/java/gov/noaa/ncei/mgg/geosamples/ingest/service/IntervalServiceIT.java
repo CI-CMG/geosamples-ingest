@@ -635,7 +635,7 @@ public class IntervalServiceIT {
     assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
     assertEquals(1, exception.getApiError().getFlashErrors().size());
     assertEquals(0, exception.getApiError().getFormErrors().size());
-    assertEquals("Cannot update approved item", exception.getApiError().getFlashErrors().get(0));
+    assertEquals("Cannot change approved item to pending", exception.getApiError().getFlashErrors().get(0));
   }
 
   @Test

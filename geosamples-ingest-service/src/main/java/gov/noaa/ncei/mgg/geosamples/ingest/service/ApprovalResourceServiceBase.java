@@ -62,7 +62,7 @@ public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<
       if (!entity.getApproval().getApprovalState().equals(ApprovalState.REJECTED) && !entity.getApproval().getApprovalState().equals(ApprovalState.PENDING)) {
         throw new ApiException(
             HttpStatus.BAD_REQUEST,
-            ApiError.builder().error("Cannot update approved item").build()
+            ApiError.builder().error("Cannot change approved item to pending").build()
         );
       }
     }

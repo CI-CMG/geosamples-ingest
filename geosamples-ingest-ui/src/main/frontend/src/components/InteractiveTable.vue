@@ -46,9 +46,12 @@
         :sort-by="sortBy"
         :sort-desc="sortDesc">
         <template :slot="`cell(${editField})`" slot-scope="data">
-          <AuthorizedContent :authorities="[editAuthority]" :fallback-text="data.item[editField]">
+          <AuthorizedContent v-if="isApproval && data.item.approvalState !== 'APPROVED'" :authorities="[editAuthority]" :fallback-text="data.item[editField]">
             <b-link :to="{ name: editRoute, params: { id: data.item[editParameter] }}">{{ data.item[editField] }}</b-link>
           </AuthorizedContent>
+          <div v-else>
+            {{ data.item[editField] }}
+          </div>
         </template>
         <template v-if="isApproval" slot="cell(approvalState)" slot-scope="data">
           <AuthorizedContent :authorities="[editAuthority]" :fallback-text="data.item.approvalState">

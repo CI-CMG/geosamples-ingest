@@ -19,8 +19,8 @@
         'REJECTED',
       ] },
       { label: 'Published', value: params.publish, set: setPublish, options: [
-        true,
-        false,
+        'true',
+        'false',
       ]}
     ]"
     :table-fields="tableFields"

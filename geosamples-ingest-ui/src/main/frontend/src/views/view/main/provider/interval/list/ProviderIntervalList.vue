@@ -10,8 +10,8 @@
       { label: 'IMLGS', value: params.imlgs, set: setImlgs },
       { label: 'Interval', value: params.interval, set: setSearchInterval },
       { label: 'Published', value: params.publish, set: setPublish, options: [
-        true,
-        false,
+        'true',
+        'false',
       ] },
       { label: 'Approval State', value: params.approvalState, set: setApprovalState, options: [
         'PENDING',

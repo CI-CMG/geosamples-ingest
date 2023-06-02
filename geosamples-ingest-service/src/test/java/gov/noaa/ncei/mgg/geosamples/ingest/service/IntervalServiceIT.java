@@ -179,6 +179,243 @@ public class IntervalServiceIT {
   }
 
   @Test
+  public void testCreateIntervalIGSNMatchesAttachedSampleIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST");
+      sample =curatorsSampleTsqpRepository.save(sample);
+      IntervalView interval = new IntervalView();
+      interval.setInterval(10);
+      interval.setImlgs(sample.getImlgs());
+      interval.setIgsn(sample.getIgsn());
+      interval.setPublish(true);
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.create(intervalView));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match sample IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
+  public void testUpdateIntervalIGSNMatchesAttachedSampleIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST");
+      sample =curatorsSampleTsqpRepository.save(sample);
+      CuratorsIntervalEntity intervalEntity = sample.getIntervals().get(0);
+      IntervalView interval = new IntervalView();
+      interval.setId(intervalEntity.getId());
+      interval.setInterval(intervalEntity.getInterval());
+      interval.setImlgs(sample.getImlgs());
+      interval.setIgsn(sample.getIgsn());
+      interval.setPublish(intervalEntity.isPublish());
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.update(intervalView, intervalView.getId()));
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match sample IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
+  public void testCreateIntervalIGSNMatchesOtherSampleIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST");
+      sample =curatorsSampleTsqpRepository.save(sample);
+
+      CuratorsSampleTsqpEntity otherSample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found"));
+      IntervalView interval = new IntervalView();
+      interval.setInterval(10);
+      interval.setImlgs(sample.getImlgs());
+      interval.setIgsn(otherSample.getIgsn());
+      interval.setPublish(true);
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.create(intervalView));
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match sample IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
+  public void testUpdateIntervalIGSNMatchesOtherSampleIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST");
+      sample =curatorsSampleTsqpRepository.save(sample);
+
+      CuratorsSampleTsqpEntity otherSample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found"));
+
+      CuratorsIntervalEntity intervalEntity = sample.getIntervals().get(0);
+      IntervalView interval = new IntervalView();
+      interval.setId(intervalEntity.getId());
+      interval.setInterval(intervalEntity.getInterval());
+      interval.setImlgs(sample.getImlgs());
+      interval.setIgsn(otherSample.getIgsn());
+      interval.setPublish(intervalEntity.isPublish());
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.update(intervalView, intervalView.getId()));
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match sample IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
+  public void testCreateIntervalIGSNMatchesOtherIntervalIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST-SAMPLE");
+      sample =curatorsSampleTsqpRepository.save(sample);
+      CuratorsIntervalEntity intervalEntity = sample.getIntervals().get(0);
+      intervalEntity.setIgsn("TEST-INTERVAL");
+      intervalEntity = curatorsIntervalRepository.save(intervalEntity);
+
+      IntervalView interval = new IntervalView();
+      interval.setInterval(10);
+      interval.setImlgs(sample.getImlgs());
+      interval.setIgsn(intervalEntity.getIgsn());
+      interval.setPublish(true);
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.create(intervalView));
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match another interval's IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
+  public void testUpdateIntervalIGSNMatchesOtherIntervalIGSN() throws Exception {
+    createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile();
+
+    IntervalView intervalView = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-01-01 not found"));
+      sample.setIgsn("TEST-SAMPLE");
+      sample =curatorsSampleTsqpRepository.save(sample);
+      CuratorsIntervalEntity intervalEntity = sample.getIntervals().get(0);
+      intervalEntity.setIgsn("TEST-INTERVAL");
+      intervalEntity = curatorsIntervalRepository.save(intervalEntity);
+
+      CuratorsSampleTsqpEntity otherSample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample AQ-001 not found"));
+      CuratorsIntervalEntity otherIntervalEntity = otherSample.getIntervals().get(0);
+
+      IntervalView interval = new IntervalView();
+      interval.setInterval(otherIntervalEntity.getInterval());
+      interval.setId(otherIntervalEntity.getId());
+      interval.setImlgs(otherIntervalEntity.getSample().getImlgs());
+      interval.setIgsn(intervalEntity.getIgsn());
+      interval.setPublish(otherIntervalEntity.isPublish());
+      return interval;
+    });
+    assertNotNull(intervalView);
+
+    ApiException exception = assertThrows(ApiException.class, () -> intervalService.update(intervalView, intervalView.getId()));
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+    assertEquals(0, exception.getApiError().getFlashErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().size());
+    assertEquals(1, exception.getApiError().getFormErrors().keySet().size());
+    assertEquals(1, exception.getApiError().getFormErrors().get("igsn").size());
+    assertEquals("Interval IGSN must not match another interval's IGSN", exception.getApiError().getFormErrors().get("igsn").get(0));
+  }
+
+  @Test
   public void testGetApproval() throws Exception {
     createCruise("AQ-10", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

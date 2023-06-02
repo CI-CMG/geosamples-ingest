@@ -282,6 +282,22 @@ public class IntervalService extends
     }
 
     entity.setPublish(publish);
+    if (view.getIgsn() != null) {
+      if (curatorsSampleTsqpRepository.existsByIgsn(view.getIgsn())) {
+        throw new ApiException(
+            HttpStatus.BAD_REQUEST,
+            ApiError.builder().fieldError("igsn", "Interval IGSN must not match sample IGSN").build()
+        );
+      }
+      if (!view.getIgsn().equals(entity.getIgsn())) { // IGSN has changed
+        if (curatorsIntervalRepository.existsByIgsn(view.getIgsn())) {
+          throw new ApiException(
+              HttpStatus.BAD_REQUEST,
+              ApiError.builder().fieldError("igsn", "Interval IGSN must not match another interval's IGSN").build()
+          );
+        }
+      }
+    }
     entity.setIgsn(view.getIgsn());
   }
 

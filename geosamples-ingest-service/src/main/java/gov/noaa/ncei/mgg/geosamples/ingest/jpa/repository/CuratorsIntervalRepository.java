@@ -11,4 +11,6 @@ public interface CuratorsIntervalRepository extends JpaRepository<CuratorsInterv
 
   List<CuratorsIntervalEntity> findBySample(CuratorsSampleTsqpEntity sample);
   Optional<CuratorsIntervalEntity> findBySampleAndInterval(CuratorsSampleTsqpEntity sample, int interval);
+
+  boolean existsByIgsn(String igsn);
 }

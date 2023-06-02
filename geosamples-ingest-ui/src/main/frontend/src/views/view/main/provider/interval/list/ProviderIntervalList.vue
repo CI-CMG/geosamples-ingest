@@ -6,7 +6,19 @@
     ]"
     module="providerInterval"
     read-authority="ROLE_PROVIDER_INTERVAL_READ"
-    :fields="[]"
+    :fields="[
+      { label: 'IMLGS', value: params.imlgs, set: setImlgs },
+      { label: 'Interval', value: params.interval, set: setSearchInterval },
+      { label: 'Publish', value: params.publish, set: setPublish, options: [
+        true,
+        false,
+      ] },
+      { label: 'Approval State', value: params.approvalState, set: setApprovalState, options: [
+        'PENDING',
+        'APPROVED',
+        'REJECTED'
+      ] },
+    ]"
     :table-fields="tableFields"
     create-route="ProviderIntervalAdd"
     create-text="Add New Subsample/Interval"
@@ -23,6 +35,7 @@
 
 <script>
 import InteractiveTable from '@/components/InteractiveTable.vue';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
   components: { InteractiveTable },
@@ -58,6 +71,14 @@ export default {
         { key: 'intComments', label: 'Comments on Subsample/Interval' },
       ],
     };
+  },
+
+  computed: {
+    ...mapState('providerInterval', ['params']),
+  },
+
+  methods: {
+    ...mapMutations('providerInterval', ['setSearchInterval', 'setImlgs', 'setApprovalState', 'setPublish']),
   },
 };
 </script>

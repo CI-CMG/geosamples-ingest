@@ -10,7 +10,7 @@
         { label: 'Name Contains', value: params.cruiseNameContains, set: setCruiseNameContains },
         { label: 'Name Equals', value: params.cruiseNameEquals, set: setCruiseNameEquals },
         { label: 'Year', value: params.year, set: setYear },
-        { label: 'Publish', value: params.publish, set: setPublish, options: ['true', 'false'] },
+        { label: 'Published', value: params.publish, set: setPublish, options: ['true', 'false'] },
         { label: 'Platform Equals', value: params.platformEquals, set: setPlatformEquals },
         { label: 'Approval State', value: params.approvalState, set: setApprovalState, options: [
           'APPROVED', 'PENDING', 'REJECTED'

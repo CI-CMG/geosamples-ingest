@@ -1,6 +1,11 @@
 import { apiService } from '@/api';
 
-const defaultParams = {};
+const defaultParams = {
+  interval: '',
+  imlgs: '',
+  approvalState: '',
+  publish: '',
+};
 
 const loadAll = (endpoint, transform, result = [], page = 1) => apiService.get(endpoint, {
   params: { page },
@@ -67,8 +72,20 @@ export default {
   },
 
   mutations: {
+    setSearchInterval(state, interval) {
+      state.params.interval = interval;
+    },
+    setImlgs(state, imlgs) {
+      state.params.imlgs = imlgs;
+    },
+    setApprovalState(state, approvalState) {
+      state.params.approvalState = approvalState;
+    },
     setSampleIntervalPage(state, page) {
       state.sampleIntervalPage = page;
+    },
+    setPublish(state, publish) {
+      state.params.publish = publish;
     },
     loadRequest(state) {
       state.loading = true;

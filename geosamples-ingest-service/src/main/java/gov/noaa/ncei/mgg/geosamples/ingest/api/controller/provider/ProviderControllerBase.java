@@ -1,11 +1,14 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller.provider;
 
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.provider.ProviderServiceBase;
 import javax.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public abstract class ProviderControllerBase<PV, V extends PV, PS extends PagingAndSortingParameters, S extends PS, I, T extends ProviderServiceBase<I, ?, PS, S, PV, V, ?>> {
 
   protected final T service;
+
+  protected abstract String getAttachedToChildMessage();
 
   public ProviderControllerBase(T service) {
     this.service = service;
@@ -67,7 +72,19 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
 
   @DeleteMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public V delete(@PathVariable("id") I id, Authentication authentication) {
-    return service.delete(replaceSlash(id), authentication);
+    try {
+      return service.delete(replaceSlash(id), authentication);
+    } catch (DataIntegrityViolationException e) {
+      if (e.getRootCause() != null && e.getRootCause().getMessage().contains("child record found")) {
+        throw new ApiException(
+            HttpStatus.BAD_REQUEST,
+            ApiError.builder()
+                .error(getAttachedToChildMessage())
+                .build()
+        );
+      }
+      throw service.getIntegrityViolationException();
+    }
   }
 
 }

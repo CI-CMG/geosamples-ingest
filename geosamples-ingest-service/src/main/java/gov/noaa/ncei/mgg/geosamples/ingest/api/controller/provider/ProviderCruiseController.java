@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/provider/cruise")
 public class ProviderCruiseController extends ProviderControllerBase<ProviderCruiseWriteView, CruiseView, ProviderCruiseSearchParameters, CruiseSearchParameters, Long, ProviderCruiseService> {
+
+  @Override
+  protected String getAttachedToChildMessage() {
+    return "Cruise cannot be deleted with samples attached";
+  }
+
   @Autowired
   public ProviderCruiseController(ProviderCruiseService service) {
     super(service);

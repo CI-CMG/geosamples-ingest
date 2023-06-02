@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/provider/interval")
 public class ProviderIntervalController extends ProviderControllerBase<ProviderIntervalView, IntervalView, ProviderIntervalSearchParameters, IntervalSearchParameters, Long, ProviderIntervalService> {
+
+  @Override
+  protected String getAttachedToChildMessage() {
+    return null; // Interval has no children
+  }
+
   @Autowired
   public ProviderIntervalController(ProviderIntervalService service) {
     super(service);

@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/provider/sample")
 public class ProviderSampleController extends ProviderControllerBase<ProviderSampleView, SampleView, ProviderSampleSearchParameters, SampleSearchParameters, String, ProviderSampleService> {
+
+  @Override
+  protected String getAttachedToChildMessage() {
+    return null; // Samples can be deleted even if they have children, but the children will also be deleted
+  }
+
   @Autowired
   public ProviderSampleController(ProviderSampleService service) {
     super(service);

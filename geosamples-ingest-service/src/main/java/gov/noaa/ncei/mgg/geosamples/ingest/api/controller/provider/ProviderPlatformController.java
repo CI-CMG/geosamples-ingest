@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProviderPlatformController extends ProviderControllerBase<ProviderPlatformView, PlatformView, ProviderPlatformSearchParameters, PlatformSearchParameters, Long, ProviderPlatformService> {
 
   private final ProviderPlatformService service;
+
+  @Override
+  protected String getAttachedToChildMessage() {
+    return "Platform cannot be deleted with cruises attached";
+  }
+
   @Autowired
   public ProviderPlatformController(ProviderPlatformService service) {
     super(service);

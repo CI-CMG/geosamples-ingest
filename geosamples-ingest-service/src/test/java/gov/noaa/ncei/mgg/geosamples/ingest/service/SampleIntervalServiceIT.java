@@ -170,6 +170,81 @@ public class SampleIntervalServiceIT {
   }
 
   @Test
+  public void testSearchByApprovalState() throws Exception {
+    createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-12", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+    createCruise("AQ-01", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
+
+    uploadFile("imlgs_sample_good_full.xlsm");
+
+    List<Long> approvedIds = txTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      assertEquals(2, sample.getIntervals().size());
+
+      sample.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.APPROVED);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      List<Long> approvedIntervalIds = new ArrayList<>();
+      sample.getIntervals().forEach(interval -> approvedIntervalIds.add(interval.getId()));
+
+      sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      assertEquals(1, sample.getIntervals().size());
+
+      sample.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.REJECTED);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      sample = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-002"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      assertEquals(1, sample.getIntervals().size());
+
+      sample.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.PENDING);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      return approvedIntervalIds;
+    });
+    assertNotNull(approvedIds);
+
+    CombinedIntervalSampleSearchParameters params = new CombinedIntervalSampleSearchParameters();
+    params.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+    params.setPage(1);
+    params.setItemsPerPage(10);
+
+    PagedItemsView<CombinedSampleIntervalView> result = sampleIntervalService.search(params);
+    assertEquals(2, result.getTotalItems());
+    assertEquals(1, result.getTotalPages());
+    assertEquals(2, result.getItems().size());
+    assertEquals(1, result.getPage());
+    assertEquals(10, result.getItemsPerPage());
+
+    assertEquals(approvedIds.get(0), result.getItems().get(0).getIntervalId());
+    assertEquals(approvedIds.get(1), result.getItems().get(1).getIntervalId());
+  }
+
+  @Test
   public void testSearchByFacility() throws Exception {
     createCruise("AQ-10", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));
     createCruise("AQ-11", 2021, Collections.singletonList("GEOMAR"), Collections.singletonList("African Queen"), Arrays.asList("AQ-LEFT-LEG", "AQ-RIGHT-LEG"));

@@ -415,7 +415,7 @@ import ProviderIntervalEdit
 
 export default {
   components: { ProviderIntervalEdit },
-  props: ['id', 'withinModal', 'postSave', 'postDelete', 'cruise'],
+  props: ['id', 'withinModal', 'postSave', 'postDelete', 'cruise', 'previousPi', 'previousLeg', 'previousLake'],
 
   data() {
     return {
@@ -475,7 +475,6 @@ export default {
     ...mapActions('providerInterval', ['searchByImlgs']),
     ...mapActions('providerSampleForm', ['reset', 'submit']),
     ...mapMutations('providerSampleForm', ['setValue', 'initialize']),
-    ...mapMutations('providerSample', ['updateCruiseOptions']),
     ...mapMutations('providerInterval', ['setSampleIntervalPage']),
 
     searchPlatform(name) {
@@ -705,13 +704,17 @@ export default {
       this.initialize();
       if (this.cruise) {
         this.currentItem = { cruiseName: this.cruise.cruiseName, year: this.cruise.year };
-        this.updateCruiseOptions([{ text: `${this.cruise.cruiseName} (${this.cruise.year})`, value: { cruiseName: this.cruise.cruiseName, year: this.cruise.year } }]);
         this.selectPlatform({ value: this.cruise.platforms ? this.cruise.platforms[0] : null });
         this.selectCruise(this.cruise);
       }
       this.submit().then(
         (sample) => {
-          this.initialize(sample);
+          this.initialize({
+            ...sample,
+            pi: this.previousPi,
+            leg: this.previousLeg,
+            lake: this.previousLake,
+          });
         },
       );
     }

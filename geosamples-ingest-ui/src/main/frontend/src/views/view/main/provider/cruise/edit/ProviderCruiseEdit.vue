@@ -176,7 +176,17 @@
         <ProviderSampleEdit v-if="samples[currentSample] && initialCruise" :id="samples[currentSample].imlgs" :within-modal="true" :post-save="refreshSamples" :post-delete="refreshSamplesAndCloseEdit" :cruise="initialCruise"/>
       </b-modal>
       <b-modal ref="add-sample-modal" size="xl" hide-header hide-footer>
-        <ProviderSampleEdit v-if="initialCruise" :id="samples[currentSample] ? samples[currentSample].imlgs : null" :within-modal="true" :post-save="refreshSamples"  :post-delete="refreshSamplesAndCloseAdd" :cruise="initialCruise"/>
+        <ProviderSampleEdit
+          v-if="initialCruise"
+          :id="samples[currentSample] ? samples[currentSample].imlgs : null"
+          :within-modal="true"
+          :post-save="refreshSamples"
+          :post-delete="refreshSamplesAndCloseAdd"
+          :cruise="initialCruise"
+          :previous-pi="samples.length > 0 ? samples[samples.length - 1].pi : null"
+          :previous-leg="samples.length > 0 ? samples[samples.length - 1].leg : null"
+          :previous-lake="samples.length > 0 ? samples[samples.length - 1].lake : null"
+        />
       </b-modal>
     </div>
   </div>
@@ -302,7 +312,9 @@ export default {
     refreshSamples(updatedSample) {
       this.searchByCruiseNameAndCruiseYear({ cruiseName: this.initialCruise.cruiseName, cruiseYear: this.initialCruise.year }).then(
         (data) => {
-          this.samples = data.items.map((d) => ({ imlgs: d.imlgs, sample: d.sample }));
+          this.samples = data.items.map((d) => ({
+            imlgs: d.imlgs, sample: d.sample, pi: d.pi, leg: d.leg, lake: d.lake,
+          }));
           if (updatedSample) {
             this.currentSample = this.samples.findIndex((s) => s.imlgs === updatedSample.imlgs);
           }
@@ -376,7 +388,9 @@ export default {
           this.initialCruise = existing;
           this.searchByCruiseNameAndCruiseYear({ cruiseName: existing.cruiseName, cruiseYear: existing.year }).then(
             (data) => {
-              this.samples = data.items.map((d) => ({ imlgs: d.imlgs, sample: d.sample }));
+              this.samples = data.items.map((d) => ({
+                imlgs: d.imlgs, sample: d.sample, pi: d.pi, leg: d.leg, lake: d.lake,
+              }));
             },
           );
         },

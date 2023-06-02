@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,8 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
   private List<String> weathMetaCode = new ArrayList<>(0);
   private List<String> remarkCode = new ArrayList<>(0);
   private List<String> munsellCode = new ArrayList<>(0);
+
+  private List<ApprovalState> approvalState = new ArrayList<>(0);
   private Geometry area;
 
 
@@ -278,6 +281,17 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
       munsellCode = new ArrayList<>(0);
     }
     this.munsellCode = munsellCode;
+  }
+
+  public List<ApprovalState> getApprovalState() {
+    return approvalState;
+  }
+
+  public void setApprovalState(List<ApprovalState> approvalState) {
+    if(approvalState == null) {
+      approvalState = new ArrayList<>(0);
+    }
+    this.approvalState = approvalState;
   }
 
   public Geometry getArea() {

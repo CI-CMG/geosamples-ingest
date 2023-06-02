@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedIntervalSampleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.CombinedSampleIntervalView;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsAgeEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsCruiseEntity_;
@@ -22,6 +23,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsSampleTsqpEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsStorageMethEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsTextureEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsWeathMetaEntity_;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity_;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity_;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -221,6 +223,16 @@ public final class SampleIntervalUtils {
       specs.add(SearchUtils.contains(cruise, e -> e.join(CuratorsIntervalEntity_.SAMPLE)
           .join(CuratorsSampleTsqpEntity_.CRUISE)
           .get(CuratorsCruiseEntity_.CRUISE_NAME)));
+    }
+
+    List<ApprovalState> approvalState = searchParameters.getApprovalState();
+    if (!approvalState.isEmpty()) {
+      specs.add(
+          SearchUtils.equal(
+              approvalState.stream().map(ApprovalState::name).collect(Collectors.toList()),
+              e -> e.join(CuratorsIntervalEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
+          )
+      );
     }
 
     Geometry area = searchParameters.getArea();

@@ -9,7 +9,7 @@
       { text: 'Subsamples/Intervals', to: { name: 'ProviderIntervalList' } },
       { text: 'Add Subsample/Interval', active: false }
     ]"/>
-    <div>
+    <b-overlay :show="!ready || saving">
       <h1 v-if="isEdit" class="text-primary">Edit Subsample/Interval - {{ getValue('id') }}</h1>
       <h1 v-else class="text-primary">Add Subsample/Interval</h1>
       <b-form @submit.prevent="saveForm" @reset.prevent="reset">
@@ -432,7 +432,9 @@
             <b-icon icon="trash" class="mr-2"/>Delete
           </b-button>
           <b-modal ref="delete-modal" title="Delete Interval" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-            <p class="my-4">Are you sure you want to delete this interval?</p>
+            <b-overlay :show="deleting">
+              <p class="my-4">Are you sure you want to delete this interval?</p>
+            </b-overlay>
             <template #modal-footer>
               <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0" @click="hideModal">
                 <b-icon icon="x" class="mr-2"/>Cancel
@@ -444,7 +446,7 @@
           </b-modal>
         </div>
       </b-form>
-    </div>
+    </b-overlay>
   </div>
 </template>
 
@@ -604,10 +606,10 @@ export default {
   },
 
   computed: {
-    ...mapState('providerInterval', ['loading', 'saving', 'loadingOptions', 'options', 'sampleOptions', 'loadingSampleOptions']),
+    ...mapState('providerInterval', ['deleting', 'loading', 'saving', 'loadingOptions', 'options', 'sampleOptions', 'loadingSampleOptions']),
     ...mapGetters('providerIntervalForm', ['getValue', 'isTouched', 'getError', 'formDirty', 'formHasUntouchedErrors']),
     ready() {
-      return !this.loading && !this.loadingOptions && !this.saving;
+      return !this.isEdit || (!this.loading && !this.saving);
     },
 
     isEdit() {

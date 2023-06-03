@@ -11,8 +11,7 @@
           { text: 'Add Cruise', active: false },
         ]"/>
 
-    <div>
-
+    <b-overlay :show="!ready || saving">
       <h1 v-if="isEdit" class="text-primary">Edit Cruise - {{ getValue('cruiseName') }} {{ getValue('year') }}</h1>
       <h1 v-else class="text-primary">Add New Cruise</h1>
 
@@ -159,7 +158,9 @@
             <b-icon icon="trash" class="mr-2"/>Delete
           </b-button>
           <b-modal ref="delete-modal" title="Delete Cruise" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-            <p class="my-4">Are you sure you want to delete this cruise?</p>
+            <b-overlay :show="deleting">
+              <p class="my-4">Are you sure you want to delete this cruise?</p>
+            </b-overlay>
             <template #modal-footer>
               <b-button variant="secondary" class="mb-2 mr-sm-2 mb-sm-0" @click="hideModal">
                 <b-icon icon="x" class="mr-2"/>Cancel
@@ -188,7 +189,7 @@
           :previous-lake="samples.length > 0 ? samples[samples.length - 1].lake : null"
         />
       </b-modal>
-    </div>
+    </b-overlay>
   </div>
 </template>
 

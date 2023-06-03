@@ -11,8 +11,7 @@
       { text: 'Add Ship/Platform', active: true },
     ]"/>
 
-    <div v-if="ready">
-
+    <b-overlay :show="!ready || saving">
       <h1 v-if="isEdit" class="text-primary">Edit Ship/Platform - {{ getValue('platform') }}</h1>
       <h1 v-else class="text-primary">Add New Ship/Platform</h1>
 
@@ -81,7 +80,9 @@
             <b-icon icon="trash" class="mr-2"></b-icon> Delete
           </b-button>
           <b-modal ref="delete-modal" title="Delete Ship/Platform" ok-variant="danger" ok-title="Delete" @ok="doDelete">
-            <p class="my-4">Are you sure you want to delete this ship/platform?</p>
+            <b-overlay :show="deleting">
+              <p class="my-4">Are you sure you want to delete this ship/platform?</p>
+            </b-overlay>
             <template #modal-footer>
               <b-button variant="secondary" @click="hideModal" class="mb-2 mr-sm-2 mb-sm-0">
                 <b-icon icon="x" class="mr-2"></b-icon> Cancel
@@ -94,10 +95,7 @@
         </div>
 
       </b-form>
-    </div>
-    <div v-else>
-      <b-spinner/>
-    </div>
+    </b-overlay>
   </div>
 </template>
 
@@ -164,7 +162,7 @@ export default {
         'formHasUntouchedErrors',
       ]),
     ready() {
-      return !this.isEdit || !this.loading;
+      return !this.isEdit || (!this.loading && !this.saving);
     },
     showError() {
       return (path) => ((!this.isTouched(path) && this.getError(path)) ? false : null);

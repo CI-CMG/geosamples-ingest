@@ -62,13 +62,13 @@ export default {
     },
 
     deleteRequest(state) {
-      state.saving = true;
+      state.deleting = true;
     },
     deleteSuccess(state) {
-      state.saving = false;
+      state.deleting = false;
     },
     deleteFailure(state) {
-      state.saving = false;
+      state.deleting = false;
     },
 
     firstPage(state) {

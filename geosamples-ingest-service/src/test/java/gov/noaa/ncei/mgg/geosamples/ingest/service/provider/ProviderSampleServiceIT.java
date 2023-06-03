@@ -47,7 +47,9 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -833,6 +835,49 @@ public class ProviderSampleServiceIT {
 
     assertEquals("AQ-003", samples.getItems().get(0).getSample());
     assertEquals("AQ-01-01", samples.getItems().get(1).getSample());
+  }
+
+  @Test
+  public void testSearchByCruiseYear() throws Exception {
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+          () -> new RuntimeException("Facility GEOMAR not found")
+      ));
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    createSamples();
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    ProviderSampleSearchParameters searchParameters = new ProviderSampleSearchParameters();
+    searchParameters.setCruiseYear(Collections.singletonList(2021));
+    searchParameters.setPage(1);
+    searchParameters.setItemsPerPage(10);
+    searchParameters.setOrder(Collections.singletonList("imlgs:asc"));
+
+    List<String> expected = curatorsSampleTsqpRepository.findAll().stream()
+        .sorted(Comparator.comparing(CuratorsSampleTsqpEntity::getImlgs))
+        .map(CuratorsSampleTsqpEntity::getImlgs)
+        .collect(Collectors.toList());
+
+    PagedItemsView<SampleView> samples = providerSampleService.search(searchParameters, authentication);
+    assertEquals(4, samples.getItems().size());
+    assertEquals(1, samples.getPage());
+    assertEquals(10, samples.getItemsPerPage());
+    assertEquals(4, samples.getTotalItems());
+    assertEquals(1, samples.getTotalPages());
+
+    List<String> actual = samples.getItems().stream()
+        .map(SampleView::getImlgs)
+        .collect(Collectors.toList());
+
+    assertEquals(expected, actual);
   }
 
   @Test

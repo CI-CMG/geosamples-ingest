@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -842,6 +841,85 @@ public class ProviderIntervalServiceIT {
     assertEquals(0, result.getTotalItems());
     assertEquals(1, result.getPage());
     assertEquals(10, result.getItemsPerPage());
+  }
+
+  @Test
+  public void testSearchByApprovalState() throws Exception {
+    createSamples();
+
+    GeosamplesUserEntity userEntity = transactionTemplate.execute(s -> {
+      GeosamplesUserEntity user = new GeosamplesUserEntity();
+      user.setUserName("gabby");
+      user.setDisplayName("Gabby");
+      user.setFacility(curatorsFacilityRepository.findByFacilityCode("GEOMAR").orElseThrow(
+              () -> new RuntimeException("Facility not found")
+          )
+      );
+      return geosamplesUserRepository.save(user) ;
+    });
+    assertNotNull(userEntity);
+
+    List<Long> approvedIds = transactionTemplate.execute(s -> {
+      CuratorsSampleTsqpEntity sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-01-01"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      sampleEntity.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.APPROVED);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+      List<Long> approvedIntervalIds = sampleEntity.getIntervals().stream()
+          .map(CuratorsIntervalEntity::getId)
+          .collect(Collectors.toList());
+
+      sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-001"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      sampleEntity.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.PENDING);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
+          .filter(smpl -> smpl.getSample().equals("AQ-002"))
+          .findFirst().orElseThrow(
+              () -> new RuntimeException("Sample not found")
+          );
+      sampleEntity.getIntervals().forEach(interval -> {
+        GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+        approval.setApprovalState(ApprovalState.REJECTED);
+        interval.setApproval(approval);
+        curatorsIntervalRepository.save(interval);
+      });
+
+      return approvedIntervalIds;
+    });
+    assertNotNull(approvedIds);
+
+    ProviderIntervalSearchParameters params = new ProviderIntervalSearchParameters();
+    params.setApprovalState(Collections.singletonList(ApprovalState.APPROVED));
+    params.setPage(1);
+    params.setItemsPerPage(10);
+
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getName()).thenReturn(userEntity.getUserName());
+
+    PagedItemsView<IntervalView> result = providerIntervalService.search(params, authentication);
+    assertEquals(1, result.getTotalPages());
+    assertEquals(2, result.getTotalItems());
+    assertEquals(1, result.getPage());
+    assertEquals(10, result.getItemsPerPage());
+    assertEquals(2, result.getItems().size());
+
+    assertEquals(approvedIds.get(0), result.getItems().get(0).getId());
+    assertEquals(approvedIds.get(1), result.getItems().get(1).getId());
   }
 
   @Test

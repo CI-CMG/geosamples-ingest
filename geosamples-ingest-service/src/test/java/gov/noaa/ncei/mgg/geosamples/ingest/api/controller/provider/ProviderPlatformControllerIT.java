@@ -351,6 +351,75 @@ public class ProviderPlatformControllerIT {
   }
 
   @Test
+  public void testSearchUnapprovedPlatformsCAS() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_PROVIDER_PLATFORM_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<ProviderPlatformView> request = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/platform/unapproved", HttpMethod.GET, request, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testSearchUnapprovedPlatformsCASUnauthorized() throws JoseException, IOException {
+    createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, false);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(JwksGenTest.createJwt("gabby"));
+
+    HttpEntity<ProviderPlatformView> request = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/platform/unapproved", HttpMethod.GET, request, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testSearchUnapprovedPlatformsToken() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_PROVIDER_PLATFORM_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<ProviderPlatformView> request = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/platform/unapproved", HttpMethod.GET, request, String.class);
+    assertEquals(200, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testSearchUnapprovedPlatformsTokenUnauthorized() {
+    final String tokenValue = createUserWithAuthority(Authorities.ROLE_DATA_MANAGER_READ, true);
+    assertNotNull(tokenValue);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    headers.setBearerAuth(tokenValue);
+
+    HttpEntity<ProviderPlatformView> request = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/platform/unapproved", HttpMethod.GET, request, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
+  public void testSearchUnapprovedPlatformsNoAuth() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+    HttpEntity<ProviderPlatformView> request = new HttpEntity<>(headers);
+
+    ResponseEntity<String> response = restTemplate.exchange("/api/v1/provider/platform/unapproved", HttpMethod.GET, request, String.class);
+    assertEquals(403, response.getStatusCodeValue());
+  }
+
+  @Test
   public void testGetApprovalCAS() throws JoseException, IOException {
     createUserWithAuthority(Authorities.ROLE_PROVIDER_PLATFORM_READ, false);
 

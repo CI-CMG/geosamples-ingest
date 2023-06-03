@@ -62,6 +62,7 @@ export default {
         {
           key: 'imlgs',
           label: 'IMLGS',
+          sortable: true,
         },
         {
           key: 'igsn',
@@ -70,12 +71,12 @@ export default {
         {
           key: 'cruise',
           label: 'Cruise',
-          sortable: false,
+          sortable: true,
         },
         {
           key: 'sample',
           label: 'Sample',
-          sortable: false,
+          sortable: true,
         },
         {
           key: 'facilityCode',
@@ -85,11 +86,12 @@ export default {
         {
           key: 'platform',
           label: 'Platform',
-          sortable: false,
+          sortable: true,
         },
         {
           key: 'deviceCode',
           label: 'Sampling Device',
+          sortable: true,
         },
         {
           key: 'beginDate',

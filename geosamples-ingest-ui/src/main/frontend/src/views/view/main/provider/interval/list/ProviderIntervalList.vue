@@ -47,7 +47,7 @@ export default {
         { key: 'publish', label: 'Published' },
         { key: 'imlgs', label: 'IMLGS' },
         { key: 'igsn', label: 'IGSN' },
-        { key: 'interval', label: 'Interval' },
+        { key: 'interval', label: 'Interval', sortable: true },
         { key: 'depthTop', label: 'Depth to Top of Interval' },
         { key: 'depthBot', label: 'Depth to Bottom of Interval' },
         { key: 'lithCode1', label: 'Primary Lithology Code' },

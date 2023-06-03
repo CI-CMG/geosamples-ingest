@@ -63,7 +63,6 @@ export default {
         {
           key: 'platforms',
           label: 'Platforms',
-          sortable: true,
           multivalued: true,
         },
       ],

@@ -227,9 +227,11 @@ export default {
     },
 
     sortChanged({ sortBy, sortDesc }) {
-      this.$store.commit(`${this.module}/setSortBy`, sortBy);
-      this.$store.commit(`${this.module}/setSortDesc`, sortDesc);
-      this.search();
+      if (sortBy) {
+        this.$store.commit(`${this.module}/setSortBy`, sortBy);
+        this.$store.commit(`${this.module}/setSortDesc`, sortDesc);
+        this.search();
+      }
     },
 
     showApproval(item) {

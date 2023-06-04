@@ -12,14 +12,19 @@ alter table ${schema_name}.CURATORS_REMARK
 
 alter table ${schema_name}.CURATORS_INTERVAL
     add (REMARK_SWP number(19));
-update ${schema_name}.CURATORS_INTERVAL
-    set REMARK_SWP = (select CURATORS_REMARK.ID from CURATORS_REMARK join CURATORS_INTERVAL CI on CURATORS_REMARK.REMARK = CI.REMARK);
+
+merge into ${schema_name}.CURATORS_INTERVAL
+    using ${schema_name}.CURATORS_REMARK
+    on (${schema_name}.CURATORS_INTERVAL.REMARK = ${schema_name}.CURATORS_REMARK.REMARK)
+    when matched then
+        update set ${schema_name}.CURATORS_INTERVAL.REMARK_SWP = ${schema_name}.CURATORS_REMARK.ID;
+
 alter table ${schema_name}.CURATORS_INTERVAL
     drop column REMARK;
 alter table ${schema_name}.CURATORS_INTERVAL
     rename column REMARK_SWP to REMARK;
 alter table ${schema_name}.CURATORS_INTERVAL
-    modify (REMARK number(19) constraint CURATORS_INTERVAL_REMARK_FK references CURATORS_REMARK);
+    modify (REMARK number(19) constraint CURATORS_INTERVAL_REMARK_FK references ${schema_name}.CURATORS_REMARK);
 
 
 

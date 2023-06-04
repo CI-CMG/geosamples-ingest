@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -182,12 +183,15 @@ public class ProviderCruiseServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn("gabby");
-    ProviderCruiseWriteView created = providerCruiseService.create(cruise, authentication);
+    CruiseView created = providerCruiseService.create(cruise, authentication);
 
     assertEquals(cruise.getYear(), created.getYear());
     assertEquals(cruise.getCruiseName(), created.getCruiseName());
     assertEquals(cruise.getPlatforms(), created.getPlatforms());
     assertEquals(cruise.getLegs(), created.getLegs());
+    assertEquals("TST", created.getFacilityCodes().get(0));
+    assertEquals(ApprovalState.PENDING, created.getApprovalState());
+    assertFalse(created.getPublish());
 
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsCruiseEntity cruiseEntity = curatorsCruiseRepository.findById(created.getId()).orElseThrow(
@@ -365,7 +369,7 @@ public class ProviderCruiseServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn("gabby");
-      ProviderCruiseWriteView view = providerCruiseService.get(cruise.getId(), authentication);
+      CruiseView view = providerCruiseService.get(cruise.getId(), authentication);
 
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
@@ -374,6 +378,8 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruise.getPlatformMappings().get(0).getPlatform().getPlatform(), view.getPlatforms().get(0));
       assertEquals(1, view.getLegs().size());
       assertEquals(cruise.getLegs().get(0).getLegName(), view.getLegs().get(0));
+      assertEquals(facility.getFacilityCode(), view.getFacilityCodes().get(0));
+      assertTrue(view.getPublish());
     });
   }
 
@@ -646,6 +652,9 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruises.get(0).getLegs().get(0).getLegName(), results.getItems().get(0).getLegs().get(0));
       assertEquals(1, results.getItems().get(0).getPlatforms().size());
       assertEquals(cruises.get(0).getPlatformMappings().get(0).getPlatform().getPlatform(), results.getItems().get(0).getPlatforms().get(0));
+      assertEquals(facility.getFacilityCode(), results.getItems().get(0).getFacilityCodes().get(0));
+      assertEquals(ApprovalState.APPROVED, results.getItems().get(0).getApprovalState());
+      assertTrue(results.getItems().get(0).getPublish());
 
       assertEquals(cruises.get(1).getId(), results.getItems().get(1).getId());
       assertEquals((int) cruises.get(1).getYear(), results.getItems().get(1).getYear());
@@ -654,6 +663,9 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruises.get(1).getLegs().get(0).getLegName(), results.getItems().get(1).getLegs().get(0));
       assertEquals(1, results.getItems().get(1).getPlatforms().size());
       assertEquals(cruises.get(1).getPlatformMappings().get(0).getPlatform().getPlatform(), results.getItems().get(1).getPlatforms().get(0));
+      assertEquals(facility.getFacilityCode(), results.getItems().get(1).getFacilityCodes().get(0));
+      assertEquals(ApprovalState.APPROVED, results.getItems().get(1).getApprovalState());
+      assertTrue(results.getItems().get(1).getPublish());
     });
   }
 
@@ -1270,12 +1282,15 @@ public class ProviderCruiseServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    ProviderCruiseWriteView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
+    CruiseView updated = providerCruiseService.update(cruiseEntity.getId(), view, authentication);
     assertEquals(cruiseEntity.getId(), updated.getId());
     assertEquals(view.getCruiseName(), updated.getCruiseName());
     assertEquals(view.getYear(), updated.getYear());
     assertEquals(view.getPlatforms(), updated.getPlatforms());
     assertEquals(view.getLegs(), updated.getLegs());
+    assertEquals(facility.getFacilityCode(), updated.getFacilityCodes().get(0));
+    assertEquals(ApprovalState.PENDING, updated.getApprovalState());
+    assertEquals(originalPublish, updated.getPublish());
 
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsCruiseEntity cruise = curatorsCruiseRepository.findById(cruiseEntity.getId()).orElseThrow(
@@ -1866,7 +1881,7 @@ public class ProviderCruiseServiceIT {
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-      ProviderCruiseWriteView view = providerCruiseService.delete(cruise.getId(), authentication);
+      CruiseView view = providerCruiseService.delete(cruise.getId(), authentication);
       assertEquals(cruise.getId(), view.getId());
       assertEquals((int) cruise.getYear(), view.getYear());
       assertEquals(cruise.getCruiseName(), view.getCruiseName());
@@ -1874,6 +1889,9 @@ public class ProviderCruiseServiceIT {
       assertEquals(cruise.getPlatformMappings().get(0).getPlatform().getPlatform(), view.getPlatforms().get(0));
       assertEquals(1, view.getLegs().size());
       assertEquals(cruise.getLegs().get(0).getLegName(), view.getLegs().get(0));
+      assertEquals(facility.getFacilityCode(), view.getFacilityCodes().get(0));
+      assertEquals(ApprovalState.PENDING, view.getApprovalState());
+      assertTrue(view.getPublish());
 
       assertEquals(0, curatorsCruiseRepository.count());
     });

@@ -282,7 +282,7 @@ public class ProviderSampleServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    ProviderSampleView created = providerSampleService.create(view, authentication);
+    SampleView created = providerSampleService.create(view, authentication);
     assertNotNull(created.getImlgs());
     assertEquals(view.getCruise(), created.getCruise());
     assertEquals(view.getSample(), created.getSample());
@@ -305,6 +305,9 @@ public class ProviderSampleServiceIT {
     assertEquals(view.getIgsn(), created.getIgsn());
     assertEquals(view.getLeg(), created.getLeg());
     assertEquals(view.getSampleComments(), created.getSampleComments());
+    assertEquals(ApprovalState.PENDING, created.getApprovalState());
+    assertEquals("TST", created.getFacilityCode());
+    assertFalse(created.getPublish());
 
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsSampleTsqpEntity sample = curatorsSampleTsqpRepository.findByImlgs(created.getImlgs()).orElseThrow(
@@ -623,7 +626,7 @@ public class ProviderSampleServiceIT {
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-      ProviderSampleView result = providerSampleService.get(sample.getImlgs(), authentication);
+      SampleView result = providerSampleService.get(sample.getImlgs(), authentication);
       assertNotNull(result);
       assertEquals(sample.getImlgs(), result.getImlgs());
       assertEquals(sample.getCruise().getCruiseName(), result.getCruise());
@@ -648,6 +651,8 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getLake(), result.getLake());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
+      assertEquals("TST", result.getFacilityCode());
+      assertFalse(result.getPublish());
     });
   }
 
@@ -778,7 +783,14 @@ public class ProviderSampleServiceIT {
     assertEquals(1, samples.getTotalPages());
 
     assertEquals("AQ-003", samples.getItems().get(0).getSample());
+    assertEquals(ApprovalState.APPROVED, samples.getItems().get(0).getApprovalState());
+    assertEquals("GEOMAR", samples.getItems().get(0).getFacilityCode());
+    assertFalse(samples.getItems().get(0).getPublish());
+
     assertEquals("AQ-01-01", samples.getItems().get(1).getSample());
+    assertEquals(ApprovalState.APPROVED, samples.getItems().get(1).getApprovalState());
+    assertEquals("GEOMAR", samples.getItems().get(1).getFacilityCode());
+    assertFalse(samples.getItems().get(1).getPublish());
   }
 
   @Test
@@ -1085,7 +1097,7 @@ public class ProviderSampleServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
-      ProviderSampleView result = providerSampleService.update(sampleEntity.getImlgs(), view, authentication);
+      SampleView result = providerSampleService.update(sampleEntity.getImlgs(), view, authentication);
 
       assertEquals(view.getImlgs(), result.getImlgs());
       assertEquals(view.getCruise(), result.getCruise());
@@ -1107,6 +1119,9 @@ public class ProviderSampleServiceIT {
       assertEquals(view.getLake(), result.getLake());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getSampleComments(), result.getSampleComments());
+      assertEquals(ApprovalState.PENDING, result.getApprovalState());
+      assertEquals("GEOMAR", result.getFacilityCode());
+      assertFalse(result.getPublish());
 
       sampleEntity = curatorsSampleTsqpRepository.findAll().stream()
           .filter(smpl -> smpl.getSample().equals("AQ-01-01")).findFirst().orElseThrow(
@@ -1573,7 +1588,7 @@ public class ProviderSampleServiceIT {
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-      ProviderSampleView result = providerSampleService.delete(sample.getImlgs(), authentication);
+      SampleView result = providerSampleService.delete(sample.getImlgs(), authentication);
       assertNotNull(result);
       assertEquals(sample.getImlgs(), result.getImlgs());
       assertEquals(sample.getCruise().getCruiseName(), result.getCruise());
@@ -1598,6 +1613,9 @@ public class ProviderSampleServiceIT {
       assertEquals(sample.getLake(), result.getLake());
       assertEquals(sample.getIgsn(), result.getIgsn());
       assertEquals(sample.getSampleComments(), result.getSampleComments());
+      assertEquals(ApprovalState.PENDING, result.getApprovalState());
+      assertEquals("TST", result.getFacilityCode());
+      assertFalse(result.getPublish());
 
       return result.getImlgs();
     });

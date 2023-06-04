@@ -300,7 +300,7 @@ public class ProviderIntervalServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    ProviderIntervalView result = providerIntervalService.create(intervalView, authentication);
+    IntervalView result = providerIntervalService.create(intervalView, authentication);
     assertEquals(intervalView.getInterval(), result.getInterval());
     assertEquals(intervalView.getDepthTop(), result.getDepthTop());
     assertEquals(intervalView.getDepthBot(), result.getDepthBot());
@@ -327,6 +327,8 @@ public class ProviderIntervalServiceIT {
     assertEquals(intervalView.getIntComments(), result.getIntComments());
     assertEquals(intervalView.getIgsn(), result.getIgsn());
     assertEquals(intervalView.getImlgs(), result.getImlgs());
+    assertEquals(ApprovalState.PENDING, result.getApprovalState());
+    assertFalse(result.getPublish());
 
     transactionTemplate.executeWithoutResult(s -> {
       CuratorsIntervalEntity interval = curatorsIntervalRepository.getReferenceById(result.getId());
@@ -603,7 +605,7 @@ public class ProviderIntervalServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
-      ProviderIntervalView result = providerIntervalService.get(interval.getId(), authentication);
+      IntervalView result = providerIntervalService.get(interval.getId(), authentication);
       assertEquals(interval.getId(), result.getId());
       assertEquals(interval.getInterval(), result.getInterval());
       assertEquals((double) interval.getDepthTop() + 0.5, result.getDepthTop());
@@ -631,6 +633,7 @@ public class ProviderIntervalServiceIT {
       assertEquals(interval.getIntComments(), result.getIntComments());
       assertEquals(interval.getIgsn(), result.getIgsn());
       assertEquals(interval.getSample().getImlgs(), result.getImlgs());
+      assertFalse(result.getPublish());
     });
   }
 
@@ -919,7 +922,12 @@ public class ProviderIntervalServiceIT {
     assertEquals(2, result.getItems().size());
 
     assertEquals(approvedIds.get(0), result.getItems().get(0).getId());
+    assertEquals(ApprovalState.APPROVED, result.getItems().get(0).getApprovalState());
+    assertFalse(result.getItems().get(0).getPublish());
+
     assertEquals(approvedIds.get(1), result.getItems().get(1).getId());
+    assertEquals(ApprovalState.APPROVED, result.getItems().get(1).getApprovalState());
+    assertFalse(result.getItems().get(1).getPublish());
   }
 
   @Test
@@ -1039,7 +1047,7 @@ public class ProviderIntervalServiceIT {
 
       Authentication authentication = mock(Authentication.class);
       when(authentication.getName()).thenReturn(userEntity.getUserName());
-      ProviderIntervalView result = providerIntervalService.update(interval.getId(), view, authentication);
+      IntervalView result = providerIntervalService.update(interval.getId(), view, authentication);
 
       assertEquals(view.getId(), result.getId());
       assertEquals(view.getInterval(), result.getInterval());
@@ -1068,6 +1076,8 @@ public class ProviderIntervalServiceIT {
       assertEquals(view.getIntComments(), result.getIntComments());
       assertEquals(view.getIgsn(), result.getIgsn());
       assertEquals(view.getImlgs(), result.getImlgs());
+      assertEquals(ApprovalState.PENDING, result.getApprovalState());
+      assertFalse(result.getPublish());
 
       interval = curatorsIntervalRepository.findById(interval.getId()).orElseThrow(
           () -> new RuntimeException("Interval not found")
@@ -1586,7 +1596,9 @@ public class ProviderIntervalServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    providerIntervalService.delete(intervalId, authentication);
+    IntervalView intervalView = providerIntervalService.delete(intervalId, authentication);
+    assertEquals(ApprovalState.PENDING, intervalView.getApprovalState());
+    assertFalse(intervalView.getPublish()); // not published
     assertFalse(curatorsIntervalRepository.existsById(intervalId));
   }
 

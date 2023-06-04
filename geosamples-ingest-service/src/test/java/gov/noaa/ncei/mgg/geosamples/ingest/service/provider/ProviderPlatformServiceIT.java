@@ -78,7 +78,7 @@ public class ProviderPlatformServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    ProviderPlatformView resultView = providerPlatformService.create(platformView, authentication);
+    PlatformView resultView = providerPlatformService.create(platformView, authentication);
 
     assertNotNull(resultView.getId());
     assertEquals(platformView.getPlatform(), resultView.getPlatform());
@@ -86,6 +86,8 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformView.getPrefix(), resultView.getPrefix());
     assertEquals(platformView.getIcesCode(), resultView.getIcesCode());
     assertEquals(platformView.getSourceUri(), resultView.getSourceUri());
+    assertEquals(userEntity.getUserName(), resultView.getCreatedBy());
+    assertEquals(ApprovalState.PENDING, resultView.getApprovalState());
 
     transactionTemplate.executeWithoutResult(s -> {
       PlatformMasterEntity resultEntity = platformMasterRepository.findById(resultView.getId()).orElseThrow(
@@ -278,13 +280,19 @@ public class ProviderPlatformServiceIT {
       platform.setIcesCode("TST");
       platform.setSourceUri("http://example.com");
       platform.setCreatedBy(userEntity);
+
+      GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
+      approval.setApprovalState(ApprovalState.PENDING);
+      approval.setComment("comment");
+      platform.setApproval(approval);
+
       return platformMasterRepository.save(platform);
     });
     assertNotNull(platformMaster);
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    ProviderPlatformView resultView = providerPlatformService.get(platformMaster.getId(), authentication);
+    PlatformView resultView = providerPlatformService.get(platformMaster.getId(), authentication);
 
     assertEquals(platformMaster.getId(), resultView.getId());
     assertEquals(platformMaster.getPlatform(), resultView.getPlatform());
@@ -292,6 +300,8 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster.getPrefix(), resultView.getPrefix());
     assertEquals(platformMaster.getIcesCode(), resultView.getIcesCode());
     assertEquals(platformMaster.getSourceUri(), resultView.getSourceUri());
+    assertEquals(platformMaster.getCreatedBy().getUserName(), resultView.getCreatedBy());
+    assertEquals(ApprovalState.PENDING, resultView.getApprovalState());
   }
 
   @Test
@@ -533,6 +543,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster1.getPrefix(), pagedItemsView.getItems().get(0).getPrefix());
     assertEquals(platformMaster1.getIcesCode(), pagedItemsView.getItems().get(0).getIcesCode());
     assertEquals(platformMaster1.getSourceUri(), pagedItemsView.getItems().get(0).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(0).getCreatedBy());
 
     assertEquals(platformMaster2.getId(), pagedItemsView.getItems().get(1).getId());
     assertEquals(platformMaster2.getPlatform(), pagedItemsView.getItems().get(1).getPlatform());
@@ -540,6 +551,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster2.getPrefix(), pagedItemsView.getItems().get(1).getPrefix());
     assertEquals(platformMaster2.getIcesCode(), pagedItemsView.getItems().get(1).getIcesCode());
     assertEquals(platformMaster2.getSourceUri(), pagedItemsView.getItems().get(1).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(1).getCreatedBy());
 
     assertEquals(platformMaster3.getId(), pagedItemsView.getItems().get(2).getId());
     assertEquals(platformMaster3.getPlatform(), pagedItemsView.getItems().get(2).getPlatform());
@@ -547,6 +559,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster3.getPrefix(), pagedItemsView.getItems().get(2).getPrefix());
     assertEquals(platformMaster3.getIcesCode(), pagedItemsView.getItems().get(2).getIcesCode());
     assertEquals(platformMaster3.getSourceUri(), pagedItemsView.getItems().get(2).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(2).getCreatedBy());
 
     assertEquals(platformMaster4.getId(), pagedItemsView.getItems().get(3).getId());
     assertEquals(platformMaster4.getPlatform(), pagedItemsView.getItems().get(3).getPlatform());
@@ -554,6 +567,7 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster4.getPrefix(), pagedItemsView.getItems().get(3).getPrefix());
     assertEquals(platformMaster4.getIcesCode(), pagedItemsView.getItems().get(3).getIcesCode());
     assertEquals(platformMaster4.getSourceUri(), pagedItemsView.getItems().get(3).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(3).getCreatedBy());
   }
 
   @Test
@@ -652,6 +666,8 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster1.getPrefix(), pagedItemsView.getItems().get(0).getPrefix());
     assertEquals(platformMaster1.getIcesCode(), pagedItemsView.getItems().get(0).getIcesCode());
     assertEquals(platformMaster1.getSourceUri(), pagedItemsView.getItems().get(0).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(0).getCreatedBy());
+    assertEquals(ApprovalState.APPROVED, pagedItemsView.getItems().get(0).getApprovalState());
 
     assertEquals(platformMaster4.getId(), pagedItemsView.getItems().get(1).getId());
     assertEquals(platformMaster4.getPlatform(), pagedItemsView.getItems().get(1).getPlatform());
@@ -659,6 +675,8 @@ public class ProviderPlatformServiceIT {
     assertEquals(platformMaster4.getPrefix(), pagedItemsView.getItems().get(1).getPrefix());
     assertEquals(platformMaster4.getIcesCode(), pagedItemsView.getItems().get(1).getIcesCode());
     assertEquals(platformMaster4.getSourceUri(), pagedItemsView.getItems().get(1).getSourceUri());
+    assertEquals(userEntity.getUserName(), pagedItemsView.getItems().get(1).getCreatedBy());
+    assertEquals(ApprovalState.APPROVED, pagedItemsView.getItems().get(1).getApprovalState());
   }
 
   @Test
@@ -881,7 +899,7 @@ public class ProviderPlatformServiceIT {
 
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
-    ProviderPlatformView resultView = providerPlatformService.update(platformMaster.getId(), updateView, authentication);
+    PlatformView resultView = providerPlatformService.update(platformMaster.getId(), updateView, authentication);
 
     assertEquals(updateView.getId(), resultView.getId());
     assertNotEquals(updateView.getPlatform(), resultView.getPlatform());
@@ -890,6 +908,8 @@ public class ProviderPlatformServiceIT {
     assertEquals(updateView.getPrefix(), resultView.getPrefix());
     assertEquals(updateView.getIcesCode(), resultView.getIcesCode());
     assertEquals(updateView.getSourceUri(), resultView.getSourceUri());
+    assertEquals(ApprovalState.PENDING, resultView.getApprovalState());
+    assertEquals(userEntity.getUserName(), resultView.getCreatedBy());
 
     transactionTemplate.executeWithoutResult(s -> {
       PlatformMasterEntity resultEntity = platformMasterRepository.findById(platformMaster.getId()).orElseThrow(
@@ -1199,13 +1219,15 @@ public class ProviderPlatformServiceIT {
     Authentication authentication = mock(Authentication.class);
     when(authentication.getName()).thenReturn(userEntity.getUserName());
 
-    ProviderPlatformView resultView = providerPlatformService.delete(platformMaster.getId(), authentication);
+    PlatformView resultView = providerPlatformService.delete(platformMaster.getId(), authentication);
     assertEquals(platformMaster.getId(), resultView.getId());
     assertEquals(platformMaster.getPlatform(), resultView.getPlatform());
     assertEquals(platformMaster.getMasterId(), resultView.getMasterId());
     assertEquals(platformMaster.getPrefix(), resultView.getPrefix());
     assertEquals(platformMaster.getIcesCode(), resultView.getIcesCode());
     assertEquals(platformMaster.getSourceUri(), resultView.getSourceUri());
+    assertEquals(platformMaster.getApproval().getApprovalState(), resultView.getApprovalState());
+    assertEquals(userEntity.getUserName(), resultView.getCreatedBy());
 
     assertFalse(platformMasterRepository.findById(platformMaster.getId()).isPresent());
   }

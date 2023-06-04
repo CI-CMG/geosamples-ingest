@@ -958,6 +958,24 @@ public class ProviderIntervalServiceIT {
       GeosamplesApprovalEntity approval = new GeosamplesApprovalEntity();
       approval.setApprovalState(ApprovalState.PENDING);
       interval.setApproval(approval);
+
+      interval.setDhCoreId("TEST");
+      interval.setDhCoreInterval(1);
+      interval.setDhCoreLength(1);
+      interval.setdTopInDhCore(1);
+      interval.setdBotInDhCore(1);
+      interval.setdTopInDhCore(1);
+      interval.setdTopMmInDhCore(1);
+      interval.setdBotInDhCore(1);
+      interval.setdBotMmInDhCore(1);
+      interval.setCmcdTop(1);
+      interval.setCmcdBot(1);
+      interval.setDhDevice("TEST");
+      interval.setUnitNumber("TEST");
+      interval.setLake("TEST");
+      interval.setAbsoluteAgeBot("TEST");
+      interval.setAbsoluteAgeBot("TEST");
+
       interval = curatorsIntervalRepository.save(interval);
 
       ProviderIntervalView view = new IntervalView();
@@ -1084,6 +1102,23 @@ public class ProviderIntervalServiceIT {
       assertEquals(result.getImlgs(), interval.getSample().getImlgs());
       assertEquals(originalPublish, interval.isPublish());
       assertEquals(ApprovalState.PENDING, interval.getApproval().getApprovalState());
+
+      assertEquals(interval.getDhCoreId(), "TEST");
+      assertEquals(interval.getDhCoreInterval(), 1);
+      assertEquals(interval.getDhCoreLength(), 1);
+      assertEquals(interval.getdTopInDhCore(), 1);
+      assertEquals(interval.getdBotInDhCore(), 1);
+      assertEquals(interval.getdTopInDhCore(), 1);
+      assertEquals(interval.getdTopMmInDhCore(), 1);
+      assertEquals(interval.getdBotInDhCore(), 1);
+      assertEquals(interval.getdBotMmInDhCore(), 1);
+      assertEquals(interval.getCmcdTop(), 1);
+      assertEquals(interval.getCmcdBot(), 1);
+      assertEquals(interval.getDhDevice(), "TEST");
+      assertEquals(interval.getUnitNumber(), "TEST");
+      assertEquals(interval.getLake(), "TEST");
+      assertEquals(interval.getAbsoluteAgeBot(), "TEST");
+      assertEquals(interval.getAbsoluteAgeBot(), "TEST");
     });
   }
 

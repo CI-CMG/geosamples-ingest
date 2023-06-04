@@ -49,24 +49,7 @@ public class OpenAPIConfiguration {
   @Bean
   public OpenApiCustomiser openApiCustomiser() {
     return openApi -> {
-      openApi.getComponents().getSchemas().putAll(ModelConverters.getInstance().read(ApiError.class));
-      Schema errorResponseSchema = new Schema();
-      errorResponseSchema.setName("ApiError");
-      errorResponseSchema.set$ref("#/components/schemas/ApiError");
-      openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-        ApiResponses apiResponses = operation.getResponses();
-        apiResponses.addApiResponse("3xx", createApiResponse(HttpStatus.FORBIDDEN.getReasonPhrase(), errorResponseSchema));
-        apiResponses.addApiResponse("4xx", createApiResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), errorResponseSchema));
-        apiResponses.addApiResponse("5xx", createApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), errorResponseSchema));
-      }));
     };
-  }
-
-  private ApiResponse createApiResponse(String message, Schema schema) {
-    MediaType mediaType = new MediaType();
-    mediaType.schema(schema);
-    return new ApiResponse().description(message)
-        .content(new Content().addMediaType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE, mediaType));
   }
 
 }

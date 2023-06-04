@@ -1,6 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
+import io.swagger.v3.oas.annotations.Hidden;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@Hidden
 public class SpaController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpaController.class);

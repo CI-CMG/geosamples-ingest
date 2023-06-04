@@ -85,7 +85,7 @@
             </b-nav-item-dropdown>
           </AuthorizedContent>
           <AuthorizedContent :authorities="['ROLE_PROVIDER_PLATFORM_READ']">
-            <b-nav-item :to="{ name: 'ProviderPlatformList' }">Ships/Platforms</b-nav-item>
+            <b-nav-item :to="{ name: 'ProviderPlatformList' }">Unapproved Ships/Platforms</b-nav-item>
           </AuthorizedContent>
           <AuthorizedContent :authorities="['ROLE_PROVIDER_CRUISE_READ']">
             <b-nav-item :to="{ name: 'ProviderCruiseList' }">Cruises</b-nav-item>

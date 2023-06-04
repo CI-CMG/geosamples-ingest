@@ -57,7 +57,7 @@ public class SampleService extends
     Map<String, String> map = new HashMap<>();
     map.put("imlgs", "imlgs");
     map.put("sample", "sample");
-    map.put("facilityCode", "facility.facilityCode");
+    map.put("facilityCode", String.format("%s.%s.%s", CuratorsSampleTsqpEntity_.CRUISE_FACILITY, CuratorsCruiseFacilityEntity_.FACILITY, CuratorsFacilityEntity_.FACILITY_CODE));
     map.put("cruise", "cruise.cruiseName");
     map.put("platform", "cruisePlatform.platform.platform");
     map.put("deviceCode", "device.deviceCode");

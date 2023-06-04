@@ -23,6 +23,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesRoleReposito
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,7 +39,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService extends
     SearchServiceBase<GeosamplesUserEntity, String, UserSearchParameters, UserView, GeosamplesUserRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(UserView.class);
+  private static final Map<String, String> viewToEntitySortMapping;
+
+  static {
+
+    Map<String, String> map = new HashMap<>();
+    map.put("userName", GeosamplesUserEntity_.USER_NAME);
+    map.put("displayName", GeosamplesUserEntity_.DISPLAY_NAME);
+    map.put("role", String.format("%s.%s", GeosamplesUserEntity_.USER_ROLE, GeosamplesRoleEntity_.ROLE_NAME));
+    viewToEntitySortMapping = Collections.unmodifiableMap(map);
+
+  }
 
   private final GeosamplesUserRepository geosamplesUserRepository;
   private final GeosamplesRoleRepository geosamplesRoleRepository;

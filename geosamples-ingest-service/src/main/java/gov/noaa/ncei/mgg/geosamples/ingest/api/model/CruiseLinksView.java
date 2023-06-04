@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
     "platform",
     "dataLink",
     "linkType",
-    "LinkSource",
+    "linkSource",
     "linkLevel",
     "publish"
 })

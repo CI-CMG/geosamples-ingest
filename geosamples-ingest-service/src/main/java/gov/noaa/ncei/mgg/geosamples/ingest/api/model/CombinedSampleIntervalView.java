@@ -17,6 +17,7 @@ import java.util.List;
     "facility",
     "platform",
     "beginDate",
+    "approvalState",
 })
 public class CombinedSampleIntervalView {
 

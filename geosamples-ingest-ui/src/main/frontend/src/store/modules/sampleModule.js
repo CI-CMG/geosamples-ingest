@@ -64,6 +64,7 @@ const sortColumns = {
   sample: 'Sample',
   facilityCode: 'Facility',
   platform: 'Platform',
+  approvalState: 'Approval State',
 };
 
 const parseSortParameters = (sort) => {
@@ -287,9 +288,20 @@ export default {
     searchPage({ commit, state }) {
       commit('searchRequest');
 
+      console.log('searchPage', state);
+
+      let order = null;
+      state.sortParameters.selected.forEach((p) => {
+        if (order == null) {
+          order = `${p.key}:${p.asc ? 'asc' : 'desc'}`;
+        } else {
+          order += `,${p.key}:${p.asc ? 'asc' : 'desc'}`;
+        }
+      });
+
       const params = new URLSearchParams();
       params.append('page', state.page);
-      params.append('order', `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`);
+      params.append('order', order);
       params.append('itemsPerPage', state.itemsPerPage);
 
       if (state.searchParameters) {

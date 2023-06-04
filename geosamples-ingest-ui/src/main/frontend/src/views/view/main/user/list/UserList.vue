@@ -77,7 +77,6 @@ export default {
         {
           key: 'facility.facilityCode',
           label: 'Facility',
-          sortable: true,
         },
       ],
     };

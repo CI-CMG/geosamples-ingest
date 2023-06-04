@@ -76,7 +76,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('sample', ['updateSortParameters', 'firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort', 'updateSearchParameters', 'updateSortParameters']),
+    ...mapMutations('sample', ['firstPage', 'setPage', 'setSortBy', 'setSortDesc', 'clearAll', 'setSort', 'updateSearchParameters', 'updateSortParameters']),
     ...mapActions('sample', ['searchPage', 'accept', 'delete']),
     showModal() {
       this.$refs['delete-modal'].show();
@@ -152,7 +152,6 @@ export default {
         {
           key: 'approvalState',
           label: 'Approval State',
-          sortable: true,
         },
         {
           key: 'selected',

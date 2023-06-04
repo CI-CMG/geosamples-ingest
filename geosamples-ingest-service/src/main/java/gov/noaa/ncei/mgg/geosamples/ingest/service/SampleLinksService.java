@@ -27,9 +27,12 @@ public class SampleLinksService extends
 
   static {
     Map<String, String> map = new HashMap<>();
-    map.put("imlgs", "sample.imlgs");
-    map.put("linkType", "linkType");
+    map.put("imlgs", String.format("%s.%s", CuratorsSampleLinksEntity_.SAMPLE, CuratorsSampleTsqpEntity_.IMLGS));
+    map.put("dataLink", "datalink");
+    map.put("publish", "publish");
     map.put("linkLevel", "linkLevel");
+    map.put("linkSource", "linkSource");
+    map.put("linkType", "linkType");
     viewToEntitySortMapping = Collections.unmodifiableMap(map);
   }
   private final CuratorsSampleLinksRepository curatorsSampleLinksRepository;

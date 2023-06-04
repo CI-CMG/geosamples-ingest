@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @Sortable({
     "userName",
     "displayName",
+    "role"
 })
 public class UserView {
 

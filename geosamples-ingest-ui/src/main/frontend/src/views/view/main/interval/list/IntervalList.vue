@@ -152,7 +152,6 @@ export default {
         {
           key: 'approvalState',
           label: 'Approval State',
-          sortable: true,
         },
         {
           key: 'selected',

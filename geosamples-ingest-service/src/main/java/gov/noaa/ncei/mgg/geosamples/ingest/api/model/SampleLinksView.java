@@ -10,8 +10,11 @@ import javax.validation.constraints.Size;
 
 @Sortable({
     "imlgs",
+    "dataLink",
+    "publish",
+    "linkLevel",
+    "linkSource",
     "linkType",
-    "linkLevel"
 })
 public class SampleLinksView {
   private Long id;

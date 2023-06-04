@@ -30,19 +30,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class CruiseLinksService extends
     SearchServiceBase<CuratorsCruiseLinksEntity, Long, CruiseLinksSearchParameters, CruiseLinksView, CuratorsCruiseLinksRepository> {
 
-  private static final Map<String, String> viewToEntitySortMapping = SearchUtils.mapViewToEntitySort(CruiseLinksView.class);
-//  private static final Map<String, String> viewToEntitySortMapping;
-//
-//  static {
-//    Map<String, String> map = new HashMap<>();
-////    map.put("cruiseName", "cruise.cruiseName");
-////    map.put("platform", "platform.platform");
-//    map.put("id", "id");
-//    map.put("cruiseName", "cruiseName");
-//    map.put("linkType", "linkType");
-//    map.put("linkLevel", "linkLevel");
-//    viewToEntitySortMapping = Collections.unmodifiableMap(map);
-//  }
+  private static final Map<String, String> viewToEntitySortMapping;
+
+  static {
+
+    Map<String, String> map = new HashMap<>();
+    map.put("id", "id");
+    map.put("cruiseName", String.format("%s.%s.%s", CuratorsCruiseLinksEntity_.CRUISE_PLATFORM, CuratorsCruisePlatformEntity_.CRUISE, CuratorsCruiseEntity_.CRUISE_NAME));
+    map.put("cruiseYear", String.format("%s.%s.%s", CuratorsCruiseLinksEntity_.CRUISE_PLATFORM, CuratorsCruisePlatformEntity_.CRUISE, CuratorsCruiseEntity_.YEAR));
+    map.put("legName", String.format("%s", CuratorsCruiseLinksEntity_.LEG));
+    map.put("platform", String.format("%s.%s", CuratorsCruiseLinksEntity_.CRUISE_PLATFORM, CuratorsCruisePlatformEntity_.PLATFORM));
+    map.put("dataLink", "datalink");
+    map.put("linkType", "linkType");
+    map.put("linkLevel", "linkLevel");
+    map.put("linkSource", "linkSource");
+    map.put("publish", "publish");
+    viewToEntitySortMapping = Collections.unmodifiableMap(map);
+
+  }
   private final CuratorsCruiseLinksRepository curatorsCruiseLinksRepository;
   private final SampleDataUtils sampleDataUtils;
   @Autowired

@@ -357,9 +357,21 @@ export default {
     searchPage({ commit, state }) {
       commit('searchRequest');
 
+      let order = null;
+
+      state.sortParameters.selected.forEach((s) => {
+        if (order) {
+          order += `,${s.key}:${s.asc ? 'asc' : 'desc'}`;
+        } else {
+          order = `${s.key}:${s.asc ? 'asc' : 'desc'}`;
+        }
+      });
+
+      console.log('order', order);
+
       const params = new URLSearchParams();
       params.append('page', state.page);
-      params.append('order', `${state.sortBy}:${state.sortDesc ? 'desc' : 'asc'}`);
+      params.append('order', order);
       params.append('itemsPerPage', state.itemsPerPage);
 
       if (state.searchParameters) {

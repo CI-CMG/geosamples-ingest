@@ -3,15 +3,17 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.Sortable;
 import java.util.Locale;
-import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Sortable({
     "imlgs",
+    "dataLink",
+    "publish",
+    "linkLevel",
+    "linkSource",
     "linkType",
-    "linkLevel"
 })
 public class SampleLinksView {
   private Long id;
@@ -48,7 +50,7 @@ public class SampleLinksView {
   }
 
   public void setDataLink(String dataLink) {
-    this.dataLink = dataLink.trim().toUpperCase(Locale.ENGLISH);;
+    this.dataLink = dataLink.trim().toUpperCase(Locale.ENGLISH);
   }
 
   public String getLinkLevel() {
@@ -56,7 +58,7 @@ public class SampleLinksView {
   }
 
   public void setLinkLevel(String linkLevel) {
-    this.linkLevel = linkLevel.trim().toUpperCase(Locale.ENGLISH);;
+    this.linkLevel = linkLevel.trim().toUpperCase(Locale.ENGLISH);
   }
 
   public String getLinkSource() {
@@ -64,7 +66,7 @@ public class SampleLinksView {
   }
 
   public void setLinkSource(String linkSource) {
-    this.linkSource = linkSource.trim().toUpperCase(Locale.ENGLISH);;
+    this.linkSource = linkSource.trim().toUpperCase(Locale.ENGLISH);
   }
 
   public String getLinkType() {
@@ -72,7 +74,7 @@ public class SampleLinksView {
   }
 
   public void setLinkType(String linkType) {
-    this.linkType = linkType.trim().toUpperCase(Locale.ENGLISH);;
+    this.linkType = linkType.trim().toUpperCase(Locale.ENGLISH);
   }
 
   public Boolean getPublish() {

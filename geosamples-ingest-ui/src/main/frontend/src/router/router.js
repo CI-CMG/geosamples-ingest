@@ -82,6 +82,9 @@ import ProviderIntervalEdit from '@/views/view/main/provider/interval/edit/Provi
 import ProviderPlatform from '@/views/view/main/provider/platform/ProviderPlatform.vue';
 import ProviderPlatformList from '@/views/view/main/provider/platform/list/ProviderPlatformList.vue';
 import ProviderPlatformEdit from '@/views/view/main/provider/platform/edit/ProviderPlatformEdit.vue';
+import AdminSwaggerUI from '@/views/view/main/swagger/admin/AdminSwaggerUI.vue';
+import ProviderSwaggerUI from '@/views/view/main/swagger/provider/ProviderSwaggerUI.vue';
+import Swagger from '@/views/view/main/swagger/Swagger.vue';
 
 Vue.use(VueRouter);
 
@@ -680,6 +683,23 @@ const routes = [
             path: 'home',
             name: 'Home',
             component: Home,
+          },
+          {
+            path: 'api-docs',
+            name: 'Swagger',
+            component: Swagger,
+            children: [
+              {
+                path: 'admin',
+                name: 'SwaggerAdmin',
+                component: AdminSwaggerUI,
+              },
+              {
+                path: 'provider',
+                name: 'SwaggerProvider',
+                component: ProviderSwaggerUI,
+              },
+            ],
           },
           {
             path: 'provider',

@@ -69,3 +69,9 @@ spring:
     schemas:
       - '${spring.jpa.properties.hibernate.default_schema}'
     create-schemas: false
+
+springdoc:
+  api-docs:
+    path: /docs/api
+  swagger-ui:
+    enabled: false

@@ -96,6 +96,12 @@
           <AuthorizedContent :authorities="['ROLE_PROVIDER_INTERVAL_READ']">
             <b-nav-item :to="{ name: 'ProviderIntervalList' }">Subsamples/Intervals</b-nav-item>
           </AuthorizedContent>
+          <AuthorizedContent :authorities="['ROLE_USER_READ']">
+            <b-nav-item :to="{ name: 'SwaggerAdmin' }">API Docs</b-nav-item>
+          </AuthorizedContent>
+          <AuthorizedContent :authorities="['ROLE_PROVIDER_SAMPLE_READ', 'ROLE_PROVIDER_CRUISE_READ', 'ROLE_PROVIDER_INTERVAL_READ', 'ROLE_PROVIDER_PLATFORM_READ']">
+            <b-nav-item :to="{ name: 'SwaggerProvider' }">API Docs</b-nav-item>
+          </AuthorizedContent>
         </b-navbar-nav>
       </b-collapse>
 

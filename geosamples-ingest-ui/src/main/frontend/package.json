@@ -27,7 +27,8 @@
     "vue-virtual-scroller": "^1.0.10",
     "vuex": "^3.4.0",
     "vuex-map-fields": "^1.4.1",
-    "vue-select": "^3.20.2"
+    "vue-select": "^3.20.2",
+    "swagger-ui-dist": "^3.52.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -4,6 +4,10 @@ proxy[`^${process.env.VUE_APP_BASE_URL}/api`] = {
   target: process.env.PROXY,
   secure: false,
 };
+proxy[`^${process.env.VUE_APP_BASE_URL}/docs`] = {
+  target: process.env.PROXY,
+  secure: false,
+};
 
 module.exports = {
   publicPath: contextRoot,

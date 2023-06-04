@@ -60,7 +60,9 @@ public class ProviderIntervalService extends ProviderServiceBase<Long, CuratorsI
   public ApiException getIntegrityViolationException() {
     return new ApiException(
         HttpStatus.BAD_REQUEST,
-        ApiError.builder().error("Found conflicting interval").build()
+        ApiError.builder()
+            .fieldError("interval", "Invalid interval number")
+            .build()
     );
   }
 

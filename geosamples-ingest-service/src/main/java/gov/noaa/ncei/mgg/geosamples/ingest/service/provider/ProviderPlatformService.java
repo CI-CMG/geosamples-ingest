@@ -85,7 +85,9 @@ public class ProviderPlatformService extends ProviderServiceBase<Long, PlatformM
   public ApiException getIntegrityViolationException() {
     return new ApiException(
         HttpStatus.BAD_REQUEST,
-        ApiError.builder().error("Found conflicting platform").build()
+        ApiError.builder()
+            .fieldError("platform", "Invalid platform name")
+            .build()
     );
   }
 

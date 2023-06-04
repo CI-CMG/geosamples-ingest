@@ -84,7 +84,12 @@ public abstract class ProviderControllerBase<PV, V extends PV, PS extends Paging
                 .build()
         );
       } else {
-        throw service.getIntegrityViolationException();
+        throw new ApiException(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            ApiError.builder()
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .build()
+        );
       }
     }
   }

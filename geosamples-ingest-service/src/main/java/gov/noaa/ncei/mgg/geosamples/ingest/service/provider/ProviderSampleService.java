@@ -49,7 +49,7 @@ public class ProviderSampleService extends ProviderServiceBase<String, CuratorsS
     return new ApiException(
         HttpStatus.BAD_REQUEST,
         ApiError.builder()
-            .error("Found conflicting sample")
+            .fieldError("igsn", "Invalid IGSN")
             .build()
     );
   }

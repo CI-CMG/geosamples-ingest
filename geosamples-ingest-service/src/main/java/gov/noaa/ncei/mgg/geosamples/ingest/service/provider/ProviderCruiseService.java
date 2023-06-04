@@ -60,7 +60,8 @@ public class ProviderCruiseService extends ProviderServiceBase<Long, CuratorsCru
     return new ApiException(
         HttpStatus.BAD_REQUEST,
         ApiError.builder()
-            .error("Found conflicting cruise")
+            .fieldError("cruiseName", "Invalid combination of cruise name and year")
+            .fieldError("year", "Invalid combination of cruise name and year")
             .build()
     );
   }

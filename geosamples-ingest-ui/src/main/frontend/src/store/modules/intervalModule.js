@@ -367,8 +367,6 @@ export default {
         }
       });
 
-      console.log('order', order);
-
       const params = new URLSearchParams();
       params.append('page', state.page);
       params.append('order', order);

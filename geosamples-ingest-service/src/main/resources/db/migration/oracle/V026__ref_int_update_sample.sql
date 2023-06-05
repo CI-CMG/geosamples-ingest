@@ -214,10 +214,6 @@ update ${schema_name}.CURATORS_SAMPLE_TSQP set LAST_UPDATE = current_timestamp;
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     modify (LAST_UPDATE timestamp constraint CURATORS_SAMPLE_TSQP_LAST_UPDATE_NN not null);
 
--- -- there appears to be duplicates, talk to Clint
--- alter table  ${schema_name}.CURATORS_SAMPLE_TSQP
---     add constraint CURATORS_SAMPLE_TSQP_SAMPLE_CRUISE_FACILITY_ID_DEVICE_UK unique (SAMPLE, CRUISE_ID, DEVICE);
-
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     modify (LAT number(9, 5) constraint CURATORS_SAMPLE_LAT_NN not null);
 
@@ -226,8 +222,6 @@ alter table ${schema_name}.CURATORS_SAMPLE_TSQP
 
 alter table ${schema_name}.CURATORS_SAMPLE_TSQP
     modify (PUBLISH varchar2(1) constraint CURATORS_SAMPLE_TSQP_PUBLISH_NN not null);
-
--- todo combine cored_length and cored_diam to a single floating point number
 
 create or replace trigger ${schema_name}.CURATORS_SAMPLE_TSQP_BI BEFORE
     INSERT ON ${schema_name}.CURATORS_SAMPLE_TSQP FOR EACH ROW

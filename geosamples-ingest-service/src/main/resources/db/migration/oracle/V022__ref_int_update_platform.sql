@@ -27,7 +27,6 @@ update ${schema_name}.PLATFORM_MASTER set ID = ${schema_name}.PLATFORM_MASTER_SE
 
 alter table ${schema_name}.PLATFORM_MASTER drop constraint PLATFORM_MASTER_PK;
 
--- two steps to name an unnamed constraint
 alter table ${schema_name}.PLATFORM_MASTER
     modify (PLATFORM varchar2(50) null);
 alter table ${schema_name}.PLATFORM_MASTER

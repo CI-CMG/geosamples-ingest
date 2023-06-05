@@ -1,19 +1,3 @@
--- create or replace trigger ${schema_name}.curators_age_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_age
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_AGE' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_AGE');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_AGE_bi
     before insert
     on ${schema_name}.CURATORS_AGE
@@ -34,22 +18,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_cruise_links_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_cruise_links
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_CRUISE_LINKS' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_CRUISE_LINKS');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_CRUISE_LINKS_bi
     before insert
@@ -72,22 +40,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_device_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_device
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_DEVICE' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_DEVICE');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_DEVICE_bi
     before insert
     on ${schema_name}.CURATORS_DEVICE
@@ -108,22 +60,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_exhaust_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_exhaust
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_EXHAUST' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_EXHAUST');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_EXHAUST_bi
     before insert
@@ -146,22 +82,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_facility_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_facility
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_FACILITY' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_FACILITY');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_FACILITY_bi
     before insert
     on ${schema_name}.CURATORS_FACILITY
@@ -182,22 +102,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_interval_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_interval
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_INTERVAL' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_INTERVAL');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_INTERVAL_bi
     before insert
@@ -241,22 +145,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_lithology_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_lithology
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_LITHOLOGY' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_LITHOLOGY');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_LITHOLOGY_bi
     before insert
     on ${schema_name}.CURATORS_LITHOLOGY
@@ -277,22 +165,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_munsell_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_munsell
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_MUNSELL' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_MUNSELL');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_MUNSELL_bi
     before insert
@@ -315,22 +187,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_province_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_province
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_PROVINCE' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_PROVINCE');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_PROVINCE_bi
     before insert
     on ${schema_name}.CURATORS_PROVINCE
@@ -351,22 +207,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_remark_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_remark
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_REMARK' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_REMARK');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_REMARK_bi
     before insert
@@ -389,22 +229,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_rock_lith_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_rock_lith
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_ROCK_LITH' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_ROCK_LITH');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_ROCK_LITH_bi
     before insert
     on ${schema_name}.CURATORS_ROCK_LITH
@@ -425,22 +249,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_rock_min_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_rock_min
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_ROCK_MIN' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_ROCK_MIN');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_ROCK_MIN_bi
     before insert
@@ -463,22 +271,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_sample_links_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_sample_links
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_SAMPLE_LINKS' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_SAMPLE_LINKS');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_SAMPLE_LINKS_bi
     before insert
     on ${schema_name}.CURATORS_SAMPLE_LINKS
@@ -500,23 +292,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_sample_tsqp_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_sample_tsqp
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_SAMPLE_TSQP' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_SAMPLE_TSQP');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
-
 create or replace trigger ${schema_name}.CURATORS_SAMPLE_TSQP_BI BEFORE
     INSERT ON ${schema_name}.CURATORS_SAMPLE_TSQP REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
 begin
@@ -525,7 +300,6 @@ begin
         :new.PUBLISH := 'Y';
     end if;
     if :new.OBJECTID is null then
-        -- Assign surrogate id.
         :new.OBJECTID := CURATORS_SEQ.NEXTVAL ;
     end if;
     if :new.IMLGS is null then
@@ -542,22 +316,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_storage_meth_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_storage_meth
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_STORAGE_METH' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_STORAGE_METH');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_STORAGE_METH_bi
     before insert
@@ -580,22 +338,6 @@ begin
 end;
 /
 
--- create or replace trigger ${schema_name}.curators_texture_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_texture
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_TEXTURE' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_TEXTURE');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
-
 create or replace trigger ${schema_name}.CURATORS_TEXTURE_bi
     before insert
     on ${schema_name}.CURATORS_TEXTURE
@@ -616,22 +358,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.curators_weath_meta_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.curators_weath_meta
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'CURATORS_WEATH_META' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'CURATORS_ROCK_META');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.CURATORS_WEATH_META_bi
     before insert
@@ -842,22 +568,6 @@ begin
     :new.previous_state := :old.publish;
 end;
 /
-
--- create or replace trigger ${schema_name}.platform_master_auid
--- AFTER UPDATE or INSERT or DELETE
--- ON ${schema_name}.platform_master
--- REFERENCING OLD AS OLD NEW AS NEW FOR EACH ROW
--- BEGIN
---
--- insert into util.postgres_extract (table_name,date_updated)
--- select 'PLATFORM_MASTER' , sysdate from dual
--- where not exists (select 1 from util.postgres_extract where table_name = 'PLATFORM_MASTER');
---
--- exception
--- when others then
---     raise_application_error(-20002,'Error PostGres Extract -> '||SQLERRM);
--- END;
--- /
 
 create or replace trigger ${schema_name}.PLATFORM_MASTER_bi
     before insert

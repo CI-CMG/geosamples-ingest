@@ -288,8 +288,6 @@ export default {
     searchPage({ commit, state }) {
       commit('searchRequest');
 
-      console.log('searchPage', state);
-
       let order = null;
       state.sortParameters.selected.forEach((p) => {
         if (order == null) {

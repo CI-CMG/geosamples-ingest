@@ -15,9 +15,9 @@ create table ${schema_name}.CURATORS_CRUISE_LINKS_BROKEN_LINKS
 create sequence ${schema_name}.CURATORS_CRUISE_LINKS_SEQ nocache;
 
 alter table  ${schema_name}.CURATORS_CRUISE_LINKS add (
-    ID number(19), --pk
+    ID number(19),
     CRUISE_PLATFORM_ID number(19) constraint CURATORS_CRUISE_LINKS_CRUISE_PLATFORM_ID_FK references ${schema_name}.CURATORS_CRUISE_PLATFORM,
-    LEG_ID number(19) constraint CURATORS_CRUISE_LINKS_LEG_ID_FK references ${schema_name}.CURATORS_LEG -- nullable
+    LEG_ID number(19) constraint CURATORS_CRUISE_LINKS_LEG_ID_FK references ${schema_name}.CURATORS_LEG
     );
 
 update ${schema_name}.CURATORS_CRUISE_LINKS set ID = ${schema_name}.CURATORS_CRUISE_LINKS_SEQ.NEXTVAL;

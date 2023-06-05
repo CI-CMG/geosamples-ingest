@@ -415,7 +415,7 @@ import {
 } from 'vuex';
 import genId from '@/components/idGenerator';
 import ProviderIntervalEdit
-  from '@/views/view/main/provider/interval/edit/ProviderIntervalEdit.vue';
+from '@/views/view/main/provider/interval/edit/ProviderIntervalEdit.vue';
 
 export default {
   components: { ProviderIntervalEdit },

@@ -1,6 +1,5 @@
 import { apiService } from '@/api';
 import { BASE_PATH } from '@/basePath';
-import { coordinates2WktPolygon } from '@/store/modules/shapeUtil';
 
 const fields = [
   'cruiseContains',
@@ -393,12 +392,7 @@ export default {
           }
         });
         if (state.searchParameters.swCoordinate && state.searchParameters.neCoordinate) {
-          params.append(
-            'area',
-            coordinates2WktPolygon(
-              state.searchParameters.swCoordinate, state.searchParameters.neCoordinate,
-            ),
-          );
+          params.append('bbox', `${state.searchParameters.swCoordinate},${state.searchParameters.neCoordinate}`);
         }
       }
 

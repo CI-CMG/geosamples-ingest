@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.validation.ValidBbox;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,9 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
   private List<String> weathMetaCode = new ArrayList<>(0);
   private List<String> remarkCode = new ArrayList<>(0);
   private List<String> munsellCode = new ArrayList<>(0);
-  private Geometry area;
+
+  @ValidBbox
+  private String bbox;
 
 
   public List<String> getCruiseContains() {
@@ -280,12 +283,12 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
     this.munsellCode = munsellCode;
   }
 
-  public Geometry getArea() {
-    return area;
+  public String getBbox() {
+    return bbox;
   }
 
-  public void setArea(Geometry area) {
-    this.area = area;
+  public void setBbox(String bbox) {
+    this.bbox = bbox;
   }
 
   @Override

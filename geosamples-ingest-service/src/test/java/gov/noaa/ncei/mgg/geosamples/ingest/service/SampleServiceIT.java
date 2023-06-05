@@ -185,9 +185,9 @@ public class SampleServiceIT {
 
     uploadFile("imlgs_sample_good_full.xlsm");
 
+    String bbox = "25.97845409376835,38.68356055251447,25.980514030291786,38.68503454336369";
     SampleSearchParameters searchParameters = new SampleSearchParameters();
-    String wkt = "POLYGON((25.97845409376835 38.68503454336369,25.980514030291786 38.68503454336369,25.980514030291786 38.68356055251447,25.97845409376835 38.68356055251447,25.97845409376835 38.68503454336369))";
-    searchParameters.setArea(new WKTReader(geometryFactory).read(wkt));
+    searchParameters.setBbox(bbox);
 
     PagedItemsView<SampleView> pagedItemsView = sampleService.search(searchParameters);
     assertEquals(1, pagedItemsView.getTotalItems());

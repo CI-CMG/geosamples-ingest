@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.validation.ValidBbox;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.locationtech.jts.geom.Geometry;
 
 public class SampleSearchParameters implements PagingAndSortingParameters {
 
@@ -34,7 +34,17 @@ public class SampleSearchParameters implements PagingAndSortingParameters {
   private List<String> platform = new ArrayList<>(0);
   private List<String> deviceCode = new ArrayList<>(0);
   private List<String> igsn = new ArrayList<>(0);
-  private Geometry area;
+
+  @ValidBbox
+  private String bbox;
+
+  public String getBbox() {
+    return bbox;
+  }
+
+  public void setBbox(String bbox) {
+    this.bbox = bbox;
+  }
 
   public List<String> getImlgs() {
     return imlgs;
@@ -111,14 +121,6 @@ public class SampleSearchParameters implements PagingAndSortingParameters {
       igsn = new ArrayList<>(0);
     }
     this.igsn = igsn;
-  }
-
-  public Geometry getArea() {
-    return area;
-  }
-
-  public void setArea(Geometry area) {
-    this.area = area;
   }
 
   @Override

@@ -23,6 +23,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacility
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruisePlatformRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.SampleIntervalUtils.Bbox;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -133,7 +135,6 @@ public class SampleService extends
     List<String> platform = searchParameters.getPlatform();
     List<String> deviceCode = searchParameters.getDeviceCode();
     List<String> igsn = searchParameters.getIgsn();
-    Geometry area = searchParameters.getArea();
 
     if (!imlgs.isEmpty()) {
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
@@ -170,8 +171,14 @@ public class SampleService extends
                       SearchUtils.contains(v.toLowerCase(Locale.ENGLISH))))
               .collect(Collectors.toList()).toArray(new Predicate[0])));
     }
-    if (area != null) {
-      specs.add(within(normalizeArea(area)));
+
+    String bbox = searchParameters.getBbox();
+    if (StringUtils.hasText(bbox)) {
+      Bbox box = Bbox.parse(bbox);
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LON), box.getXMin()));
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LAT), box.getYMin()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LON), box.getXMax()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LAT), box.getYMax()));
     }
 
     return specs;

@@ -318,6 +318,12 @@ public class CombinedIntervalSampleSearchParameters implements PagingAndSortingP
     if (sort == null || sort.isEmpty()) {
       sort = DEFAULT_SORT;
     }
+    if (
+        sort.stream()
+            .noneMatch(s -> s.contains("imlgs"))
+    ) {
+      sort.add("imlgs:asc");
+    }
     this.order = sort;
   }
 }

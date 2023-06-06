@@ -23,7 +23,7 @@
     <connection>scm:git:git@github.com:CI-CMG/geosamples-ingest.git</connection>
     <developerConnection>scm:git:git@github.com:CI-CMG/geosamples-ingest.git</developerConnection>
     <url>https://github.com/CI-CMG/geosamples-ingest</url>
-    <tag>HEAD</tag>
+    <tag>2.2</tag>
   </scm>
 
   <properties>

@@ -1,5 +1,4 @@
 import { apiService } from '@/api';
-import { coordinates2WktPolygon } from '@/store/modules/shapeUtil';
 
 const fields = [
   'imlgs',
@@ -324,10 +323,7 @@ export default {
         });
         if (state.searchParameters.swCoordinate && state.searchParameters.neCoordinate) {
           params.append(
-            'area',
-            coordinates2WktPolygon(
-              state.searchParameters.swCoordinate, state.searchParameters.neCoordinate,
-            ),
+            'bbox', `${state.searchParameters.swCoordinate},${state.searchParameters.neCoordinate}`,
           );
         }
       }

@@ -38,6 +38,7 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 public final class SampleIntervalUtils {
 
@@ -58,6 +59,48 @@ public final class SampleIntervalUtils {
     map.put("beginDate", "sample.beginDate");
     map.put("approvalState", String.format("%s.%s", CuratorsIntervalEntity_.APPROVAL, GeosamplesApprovalEntity_.APPROVAL_STATE));
     SORT_MAPPING = Collections.unmodifiableMap(map);
+  }
+
+  public static class Bbox {
+
+
+    //value was already validated
+    public static Bbox parse(String value) {
+      String[] parts = value.split(",");
+      return new Bbox(
+          Double.parseDouble(parts[0].trim()),
+          Double.parseDouble(parts[1].trim()),
+          Double.parseDouble(parts[2].trim()),
+          Double.parseDouble(parts[3].trim()));
+    }
+
+    private final double xMin;
+    private final double yMin;
+    private final double xMax;
+    private final double yMax;
+
+    private Bbox(double xMin, double yMin, double xMax, double yMax) {
+      this.xMin = xMin;
+      this.yMin = yMin;
+      this.xMax = xMax;
+      this.yMax = yMax;
+    }
+
+    public double getXMin() {
+      return xMin;
+    }
+
+    public double getYMin() {
+      return yMin;
+    }
+
+    public double getXMax() {
+      return xMax;
+    }
+
+    public double getYMax() {
+      return yMax;
+    }
   }
 
   public static List<Specification<CuratorsIntervalEntity>> getBaseSpecs(
@@ -233,9 +276,13 @@ public final class SampleIntervalUtils {
       );
     }
 
-    Geometry area = searchParameters.getArea();
-    if (area != null) {
-      specs.add(within(normalizeArea(area)));
+    String bbox = searchParameters.getBbox();
+    if (StringUtils.hasText(bbox)) {
+      Bbox box = Bbox.parse(bbox);
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.LON), box.getXMin()));
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.LAT), box.getYMin()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.LON), box.getXMax()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsIntervalEntity_.SAMPLE).get(CuratorsSampleTsqpEntity_.LAT), box.getYMax()));
     }
 
     return specs;

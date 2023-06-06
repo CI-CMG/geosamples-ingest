@@ -2,6 +2,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.model;
 
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.ValidSort;
+import gov.noaa.ncei.mgg.geosamples.ingest.api.model.validation.ValidBbox;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +41,9 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
   private List<Boolean> publish = new ArrayList<>(0);
 
   private List<ApprovalState> approvalState = new ArrayList<>(0);
-  private Geometry area;
+
+  @ValidBbox
+  private String bbox;
 
   public List<String> getImlgs() {
     return imlgs;
@@ -141,12 +144,12 @@ public class ProviderSampleSearchParameters implements PagingAndSortingParameter
     this.publish = publish;
   }
 
-  public Geometry getArea() {
-    return area;
+  public String getBbox() {
+    return bbox;
   }
 
-  public void setArea(Geometry area) {
-    this.area = area;
+  public void setBbox(String bbox) {
+    this.bbox = bbox;
   }
 
   @Override

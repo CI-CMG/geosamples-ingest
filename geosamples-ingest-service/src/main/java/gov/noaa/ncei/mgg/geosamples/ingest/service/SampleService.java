@@ -26,6 +26,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacility
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruisePlatformRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
+import gov.noaa.ncei.mgg.geosamples.ingest.service.SampleIntervalUtils.Bbox;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -153,7 +155,6 @@ public class SampleService extends
     List<String> igsn = searchParameters.getIgsn();
     List<ApprovalState> approvalState = searchParameters.getApprovalState();
     List<String> publish = searchParameters.getPublish().stream().map(p -> p ? "Y" : "N").collect(Collectors.toList());
-    Geometry area = searchParameters.getArea();
 
     if (!imlgs.isEmpty()) {
       specs.add(SearchUtils.equal(imlgs, CuratorsSampleTsqpEntity_.IMLGS));
@@ -199,8 +200,13 @@ public class SampleService extends
           e -> e.join(CuratorsSampleTsqpEntity_.APPROVAL).get(GeosamplesApprovalEntity_.APPROVAL_STATE)
       ));
     }
-    if (area != null) {
-      specs.add(within(normalizeArea(area)));
+    String bbox = searchParameters.getBbox();
+    if (StringUtils.hasText(bbox)) {
+      Bbox box = Bbox.parse(bbox);
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LON), box.getXMin()));
+      specs.add((e, cq, cb) -> cb.greaterThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LAT), box.getYMin()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LON), box.getXMax()));
+      specs.add((e, cq, cb) -> cb.lessThanOrEqualTo(e.get(CuratorsSampleTsqpEntity_.LAT), box.getYMax()));
     }
     if (!publish.isEmpty()) {
       specs.add(

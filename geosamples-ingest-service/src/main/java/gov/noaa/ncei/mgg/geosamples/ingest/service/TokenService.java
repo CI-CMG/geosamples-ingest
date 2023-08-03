@@ -1,8 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
-
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.errorhandler.ApiError;
+import gov.noaa.ncei.mgg.errorhandler.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.JwtView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.security.Authorities;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesAuthorityEntity;

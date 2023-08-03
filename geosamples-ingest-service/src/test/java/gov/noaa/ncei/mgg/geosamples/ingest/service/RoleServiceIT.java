@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.errorhandler.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.RoleSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.RoleView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;

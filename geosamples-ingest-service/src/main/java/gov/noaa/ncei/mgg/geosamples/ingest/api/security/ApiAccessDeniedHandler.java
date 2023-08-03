@@ -1,7 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
+import gov.noaa.ncei.mgg.errorhandler.ApiError;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;

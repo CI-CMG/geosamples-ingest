@@ -1,7 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiError;
-import gov.noaa.ncei.mgg.geosamples.ingest.api.error.ApiException;
+import gov.noaa.ncei.mgg.errorhandler.ApiError;
+import gov.noaa.ncei.mgg.errorhandler.ApiException;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformSearchParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.PlatformView;

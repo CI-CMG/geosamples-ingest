@@ -1,5 +1,7 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.error;
 
+import gov.noaa.ncei.mgg.errorhandler.ApiError;
+import gov.noaa.ncei.mgg.errorhandler.ApiException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

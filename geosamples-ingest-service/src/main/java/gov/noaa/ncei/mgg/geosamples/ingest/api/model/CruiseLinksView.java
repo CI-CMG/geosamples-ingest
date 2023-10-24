@@ -65,7 +65,7 @@ public class CruiseLinksView {
 
   public void setDataLink(String dataLink) {
     if(dataLink != null){
-      dataLink = dataLink.trim().toUpperCase(Locale.ENGLISH);
+      dataLink = dataLink.trim();
     }
     this.dataLink = dataLink;
   }

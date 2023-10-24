@@ -51,7 +51,7 @@ public class SampleLinksView {
   }
 
   public void setDataLink(String dataLink) {
-    this.dataLink = dataLink.trim().toUpperCase(Locale.ENGLISH);;
+    this.dataLink = dataLink.trim();
   }
 
   public String getLinkLevel() {

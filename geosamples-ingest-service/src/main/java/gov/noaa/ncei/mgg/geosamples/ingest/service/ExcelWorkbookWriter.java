@@ -165,8 +165,15 @@ public class ExcelWorkbookWriter implements Closeable {
       if (sampleRow.getComments() != null) {
        row.createCell(36).setCellValue(sampleRow.getComments());
       }
+      if(sampleRow.getSampleLake() != null){
+        row.createCell(37).setCellValue(sampleRow.getSampleLake());
+      }
+      if(sampleRow.getSampleComments() != null){
+        row.createCell(38).setCellValue(sampleRow.getSampleComments());
+      }
+
       if (sampleRow.getOtherComponentCodes() != null) {
-        int currentCellNum = 37;
+        int currentCellNum = 39;
         for (String otherComponent : sampleRow.getOtherComponentCodes()) {
           row.createCell(currentCellNum).setCellValue(otherComponent);
           currentCellNum += 1;

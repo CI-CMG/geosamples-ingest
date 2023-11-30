@@ -140,6 +140,8 @@ public class CuratorPreviewPersistenceService {
     sample.setShape(sampleDataUtils.getShape(row.getBeginningLongitude(), row.getBeginningLatitude()));
 
     sample.setShowSampl(serviceProperties.getShowSampleBaseUrl() + sample.getImlgs());
+    sample.setLake(row.getSampleLake());
+    sample.setSampleComments(row.getSampleComments());
     return sample;
   }
 

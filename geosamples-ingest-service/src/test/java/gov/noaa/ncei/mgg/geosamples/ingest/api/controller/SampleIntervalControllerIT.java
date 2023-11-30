@@ -133,7 +133,15 @@ public class SampleIntervalControllerIT {
       curatorsIntervalRepository.deleteAll();
       curatorsIntervalRepository.flush();
       curatorsSampleTsqpRepository.deleteAll();
+      curatorsSampleTsqpRepository.flush();
       curatorsCruiseRepository.deleteAll();
+      curatorsCruiseRepository.flush();
+      if (geosamplesUserRepository.existsById("martin")) {
+        geosamplesUserRepository.deleteById("martin");
+      }
+      if (geosamplesUserRepository.existsById("maurice")) {
+        geosamplesUserRepository.deleteById("maurice");
+      }
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
       geosamplesRoleRepository.getByRoleName("CANNOT READ").ifPresent(geosamplesRoleRepository::delete);
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
@@ -158,10 +166,12 @@ public class SampleIntervalControllerIT {
   @AfterEach
   public void afterEach() throws IOException {
     txTemplate.executeWithoutResult(s -> {
-      curatorsIntervalRepository.deleteAll();
-      curatorsIntervalRepository.flush();
-      curatorsSampleTsqpRepository.deleteAll();
-      curatorsCruiseRepository.deleteAll();
+//      curatorsIntervalRepository.deleteAll();
+//      curatorsIntervalRepository.flush();
+//      curatorsSampleTsqpRepository.deleteAll();
+//      curatorsSampleTsqpRepository.flush();
+//      curatorsCruiseRepository.deleteAll();
+//      curatorsCruiseRepository.flush();
       geosamplesUserRepository.deleteById("martin");
       if (geosamplesUserRepository.existsById("maurice")) {
         geosamplesUserRepository.deleteById("maurice");

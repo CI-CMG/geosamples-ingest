@@ -290,11 +290,11 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(0, view.getCoredDiamMm());
     assertEquals(null, view.getPi());
     assertEquals(null, view.getProvince());
-    assertEquals(null, view.getSampleLake());
+    assertEquals("Lake 4", view.getSampleLake());
     assertNotNull(view.getLastUpdate());
     assertEquals(null, view.getIgsn());
     assertEquals(null, view.getLeg());
-    assertEquals(null, view.getSampleComments());
+    assertEquals("Sample comment 4", view.getSampleComments());
     assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());
@@ -351,11 +351,11 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals(7, view.getCoredDiamMm());
     assertEquals("Rocky", view.getPi());
     assertEquals("11", view.getProvince());
-    assertEquals(null, view.getSampleLake());
+    assertEquals("Lake 1", view.getSampleLake());
     assertNotNull(view.getLastUpdate());
     assertEquals("aasw32111", view.getIgsn());
     assertEquals("AQ-LEFT-LEG", view.getLeg());
-    assertEquals(null, view.getSampleComments());
+    assertEquals("Sample comment 1", view.getSampleComments());
     assertEquals(baseShowSamplUrl + view.getImlgs(), view.getShowSampl());
     assertNotNull(view.getImlgs());
     assertEquals(1, view.getInterval());

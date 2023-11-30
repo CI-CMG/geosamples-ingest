@@ -41,7 +41,10 @@ public enum HeaderNames {
   ISGN("IGSN.*", "IGSN"),
   ALTERNATE_CRUISE_OR_LEG("Alternate Cruise.*|Alternate Leg.*", "Alternate Leg"),
   FREE_FORM_DESCRIPTION_OF_COMPOSITION("Free[ -]?form Description of Composition.*", "Free form Description of Composition"),
-  COMMENTS_ON_SUBSAMPLE_OR_INTERVAL("Comments.*", "Comments");
+  COMMENTS_ON_SUBSAMPLE_OR_INTERVAL("Comments.*", "Comments"),
+  LAKE("Lake.*", "Lake"),
+  SAMPLE_COMMENTS("Sample Comments.*", "Sample Comments");
+// CHILD_IGSN("Interval\\/Subsample IGSN.*", "Interval/Subsample IGSN");
 
 
   private final Pattern match;

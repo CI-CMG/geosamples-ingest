@@ -129,6 +129,11 @@ public class SampleRow {
   private String description;
   @Size(max = 2000, message = "Comments on Subsample/Interval must be at most 2000 characters")
   private String comments;
+  @Size(max = 50, message = "Sample Lake must be at most 50 characters")
+  private String sampleLake;
+
+  @Size(max = 2000, message = "Sample Comments must be at most 2000 characters")
+  private String sampleComments;
 
   public String getSampleId() {
     return sampleId;
@@ -452,5 +457,21 @@ public class SampleRow {
 
   public void setComments(String comments) {
     this.comments = comments;
+  }
+
+  public String getSampleLake() {
+    return sampleLake;
+  }
+
+  public void setSampleLake(String sampleLake) {
+    this.sampleLake = sampleLake;
+  }
+
+  public String getSampleComments() {
+    return sampleComments;
+  }
+
+  public void setSampleComments(String sampleComments) {
+    this.sampleComments = sampleComments;
   }
 }

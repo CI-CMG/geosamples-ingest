@@ -188,6 +188,8 @@ public class ExcelInputService {
     sampleRow.setAlternateCruise(parseString(df, headers, row, HeaderNames.ALTERNATE_CRUISE_OR_LEG));
     sampleRow.setDescription(parseString(df, headers, row, HeaderNames. FREE_FORM_DESCRIPTION_OF_COMPOSITION));
     sampleRow.setComments(parseString(df, headers, row, HeaderNames.COMMENTS_ON_SUBSAMPLE_OR_INTERVAL));
+    sampleRow.setSampleLake(parseString(df, headers, row, HeaderNames.LAKE ));
+    sampleRow.setSampleComments(parseString(df, headers, row, HeaderNames.SAMPLE_COMMENTS));
 
     return sampleRow;
   }

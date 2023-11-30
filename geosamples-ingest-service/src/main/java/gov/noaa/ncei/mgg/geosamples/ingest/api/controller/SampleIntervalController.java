@@ -135,6 +135,8 @@ public class SampleIntervalController {
     sampleRow.setAlternateCruise(view.getLeg());
     sampleRow.setDescription(view.getDescription());
     sampleRow.setComments(view.getIntComments());
+    sampleRow.setSampleLake(view.getSampleLake());
+    sampleRow.setSampleComments(view.getSampleComments());
     return sampleRow;
   }
 

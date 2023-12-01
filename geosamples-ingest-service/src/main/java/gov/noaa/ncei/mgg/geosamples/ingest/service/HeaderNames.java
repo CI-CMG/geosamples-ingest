@@ -28,7 +28,7 @@ public enum HeaderNames {
   SECONDARY_TEXTURE_CODE("Secondary Texture Code.*", "Secondary Texture Code"),
   OTHER_COMPONENT_CODE("Other Component Code.*", true, "Other Component Code"),
   GEOLOGIC_AGE_CODE("Geologic Age Code.*", "Geologic Age Code"),
-  INTERVAL_NUMBER("Interval.*", "Interval"),
+  INTERVAL_NUMBER("(Interval)|(Interval #.*)", "Interval"),
   BULK_WEIGHT("Bulk Weight.*", "Bulk Weight"),
   PHYSIOGRAPHIC_PROVINCE_CODE("Physiographic Province Code.*", "Physiographic Province Code"),
   SAMPLE_LITHOLOGY_CODE("Sample Lithology Code.*", "Sample Lithology Code"),
@@ -39,12 +39,13 @@ public enum HeaderNames {
   PRINCIPAL_INVESTIGATOR("Principal Investigator.*", "Principal Investigator"),
   SAMPLE_NOT_AVAILABLE("Sample Not Available.*", "Sample Not Available"),
   ISGN("IGSN.*", "IGSN"),
+  INTERVAL_IGSN("Interval\\/Subsample IGSN.*", "Interval/Subsample IGSN"),
   ALTERNATE_CRUISE_OR_LEG("Alternate Cruise.*|Alternate Leg.*", "Alternate Leg"),
   FREE_FORM_DESCRIPTION_OF_COMPOSITION("Free[ -]?form Description of Composition.*", "Free form Description of Composition"),
-  COMMENTS_ON_SUBSAMPLE_OR_INTERVAL("Comments.*", "Comments"),
+
   LAKE("Lake.*", "Lake"),
-  SAMPLE_COMMENTS("Sample Comments.*", "Sample Comments");
-// CHILD_IGSN("Interval\\/Subsample IGSN.*", "Interval/Subsample IGSN");
+  SAMPLE_COMMENTS("Sample Comments.*", "Sample Comments"),
+  COMMENTS_ON_SUBSAMPLE_OR_INTERVAL("Comments.*", "Comments");
 
 
   private final Pattern match;

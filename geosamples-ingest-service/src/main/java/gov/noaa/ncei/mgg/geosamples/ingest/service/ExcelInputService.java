@@ -190,6 +190,7 @@ public class ExcelInputService {
     sampleRow.setComments(parseString(df, headers, row, HeaderNames.COMMENTS_ON_SUBSAMPLE_OR_INTERVAL));
     sampleRow.setSampleLake(parseString(df, headers, row, HeaderNames.LAKE ));
     sampleRow.setSampleComments(parseString(df, headers, row, HeaderNames.SAMPLE_COMMENTS));
+    sampleRow.setIntervalIgsn(parseString(df, headers, row, HeaderNames.INTERVAL_IGSN));
 
     return sampleRow;
   }

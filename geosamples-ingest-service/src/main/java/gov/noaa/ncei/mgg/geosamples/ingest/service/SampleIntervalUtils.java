@@ -343,7 +343,6 @@ public final class SampleIntervalUtils {
     view.setSampleComments(sampleEntity.getSampleComments());
     view.setShowSampl(sampleEntity.getShowSampl());
     view.setImlgs(sampleEntity.getImlgs());
-    view.setSampleLake(sampleEntity.getLake());
 
     view.setInterval(entity.getInterval());
     view.setIntervalId(entity.getId());

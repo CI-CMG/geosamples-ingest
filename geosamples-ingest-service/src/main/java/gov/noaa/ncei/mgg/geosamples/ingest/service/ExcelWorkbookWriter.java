@@ -156,24 +156,27 @@ public class ExcelWorkbookWriter implements Closeable {
       if (sampleRow.getIgsn() != null) {
        row.createCell(33).setCellValue(sampleRow.getIgsn());
       }
+      if (sampleRow.getIntervalIgsn() != null) {
+        row.createCell(34).setCellValue(sampleRow.getIntervalIgsn());
+      }
       if (sampleRow.getAlternateCruise() != null) {
-       row.createCell(34).setCellValue(sampleRow.getAlternateCruise());
+       row.createCell(35).setCellValue(sampleRow.getAlternateCruise());
       }
       if (sampleRow.getDescription() != null) {
-       row.createCell(35).setCellValue(sampleRow.getDescription());
+       row.createCell(36).setCellValue(sampleRow.getDescription());
       }
-      if (sampleRow.getComments() != null) {
-       row.createCell(36).setCellValue(sampleRow.getComments());
-      }
+
       if(sampleRow.getSampleLake() != null){
         row.createCell(37).setCellValue(sampleRow.getSampleLake());
       }
       if(sampleRow.getSampleComments() != null){
         row.createCell(38).setCellValue(sampleRow.getSampleComments());
       }
-
+      if (sampleRow.getComments() != null) {
+        row.createCell(39).setCellValue(sampleRow.getComments());
+      }
       if (sampleRow.getOtherComponentCodes() != null) {
-        int currentCellNum = 39;
+        int currentCellNum = 40;
         for (String otherComponent : sampleRow.getOtherComponentCodes()) {
           row.createCell(currentCellNum).setCellValue(otherComponent);
           currentCellNum += 1;

@@ -217,6 +217,7 @@ public class CuratorPreviewPersistenceService {
     interval.setExhaustCode(row.getSampleNotAvailable());
 
     interval.setIntComments(row.getComments());
+    interval.setIgsn(row.getIntervalIgsn());
 
     interval.setPublish(false);
     return interval;

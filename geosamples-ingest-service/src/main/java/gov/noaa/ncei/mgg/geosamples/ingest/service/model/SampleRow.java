@@ -131,9 +131,10 @@ public class SampleRow {
   private String comments;
   @Size(max = 50, message = "Sample Lake must be at most 50 characters")
   private String sampleLake;
-
   @Size(max = 2000, message = "Sample Comments must be at most 2000 characters")
   private String sampleComments;
+  @Size(max = 50, message = "Interval/Subsample IGSN must be at most 50 characters")
+  private String intervalIgsn;
 
   public String getSampleId() {
     return sampleId;
@@ -473,5 +474,13 @@ public class SampleRow {
 
   public void setSampleComments(String sampleComments) {
     this.sampleComments = sampleComments;
+  }
+
+  public String getIntervalIgsn() {
+    return intervalIgsn;
+  }
+
+  public void setIntervalIgsn(String intervalIgsn) {
+    this.intervalIgsn = intervalIgsn;
   }
 }

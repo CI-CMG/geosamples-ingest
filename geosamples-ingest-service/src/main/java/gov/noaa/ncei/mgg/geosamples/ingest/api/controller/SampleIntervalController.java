@@ -137,6 +137,7 @@ public class SampleIntervalController {
     sampleRow.setComments(view.getIntComments());
     sampleRow.setSampleLake(view.getSampleLake());
     sampleRow.setSampleComments(view.getSampleComments());
+    sampleRow.setIntervalIgsn(view.getIntervalIgsn());
     return sampleRow;
   }
 

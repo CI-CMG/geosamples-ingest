@@ -11,8 +11,8 @@
   <artifactId>geosamples-ingest-ui</artifactId>
 
   <properties>
-    <node.version>v14.15.4</node.version>
-    <npm.version>6.14.10</npm.version>
+    <node.version>v16.17.1</node.version>
+    <npm.version>8.15.0</npm.version>
   </properties>
 
 

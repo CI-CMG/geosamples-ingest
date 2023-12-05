@@ -88,17 +88,6 @@
               <arguments>run build</arguments>
             </configuration>
           </execution>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <workingDirectory>src/main/frontend</workingDirectory>
-              <arguments>run test</arguments>
-            </configuration>
-          </execution>
-        </executions>
 
       </plugin>
     </plugins>

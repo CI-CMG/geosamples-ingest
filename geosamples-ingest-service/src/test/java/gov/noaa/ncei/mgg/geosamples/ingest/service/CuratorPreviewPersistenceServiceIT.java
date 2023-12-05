@@ -385,7 +385,7 @@ public class CuratorPreviewPersistenceServiceIT {
     assertEquals("X", view.getExhaustCode());
     assertEquals(null, view.getPhotoLink());
     assertEquals("Test Comments", view.getIntComments());
-    assertEquals(null, view.getIntervalIgsn());
+    assertEquals("child1", view.getIntervalIgsn());
     assertEquals("aasw32111", view.getIntervalParentIsgn());
     assertEquals(false, view.isPublish());
 

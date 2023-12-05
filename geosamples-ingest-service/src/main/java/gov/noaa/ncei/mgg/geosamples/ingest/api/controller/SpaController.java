@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class SpaController {
   private final String indexHtml;
 
   @Autowired
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW")
   public SpaController(
       @Value("classpath:static/index.html") Resource indexHtmlFile,
       @Value("#{servletContext.contextPath}") String servletContextPath,

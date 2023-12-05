@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.ServiceProperties;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +31,7 @@ public class JwksInitializer {
   private String jwksJson;
 
   @Autowired
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW")
   public JwksInitializer(ServiceProperties serviceProperties) {
     try {
       createJwks(serviceProperties);

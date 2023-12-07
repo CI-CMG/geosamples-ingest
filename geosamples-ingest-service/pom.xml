@@ -263,6 +263,7 @@
                       <name>cirescmg/crowbar-db:20210416</name>
                       <alias>geosamples-ingest-test</alias>
                       <run>
+                        <prprivileged>true</prprivileged>
                         <ports>
                           <port>15215:1521</port>
                         </ports>

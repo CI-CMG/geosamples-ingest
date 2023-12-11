@@ -21,6 +21,10 @@ public class SampleView extends ProviderSampleView {
 
   private String showSampl;
 
+  private Double coredDiamMm;
+
+  private Double coredLengthMm;
+
   public ApprovalState getApprovalState() {
     return approvalState;
   }
@@ -51,5 +55,21 @@ public class SampleView extends ProviderSampleView {
 
   public void setShowSampl(String showSampl) {
     this.showSampl = showSampl;
+  }
+
+  public Double getCoredDiamMm() {
+    return coredDiamMm;
+  }
+
+  public void setCoredDiamMm(Double coredDiamMm) {
+    this.coredDiamMm = coredDiamMm;
+  }
+
+  public Double getCoredLengthMm() {
+    return coredLengthMm;
+  }
+
+  public void setCoredLengthMm(Double coredLengthMm) {
+    this.coredLengthMm = coredLengthMm;
   }
 }

@@ -83,6 +83,22 @@ public class CombinedSampleIntervalView {
   private String intervalIgsn;
   private String intervalParentIsgn;
   private Boolean publish;
+  
+  private String dhCoreId;
+  private Double dhCoreLength;
+  private Double dhCoreLengthMm;
+  private Integer dhCoreInterval;
+  private Double dTopInDhCore;
+  private Double dTopMmInDhCore;
+  private Double dBotInDhCore;
+  private Double dBotMmInDhCore;
+  private String dhDevice;
+  private Double cmcdTop;
+  private Double mmcdTop;
+  private Double cmcdBot;
+  private Double mmcdBot;
+  private String absoluteAgeTop;
+  private String absoluteAgeBot;
 
   private ApprovalState approvalState;
 
@@ -568,5 +584,125 @@ public class CombinedSampleIntervalView {
 
   public void setApprovalState(ApprovalState approvalState) {
     this.approvalState = approvalState;
+  }
+
+  public String getDhCoreId() {
+    return dhCoreId;
+  }
+
+  public void setDhCoreId(String dhCoreId) {
+    this.dhCoreId = dhCoreId;
+  }
+
+  public Double getDhCoreLength() {
+    return dhCoreLength;
+  }
+
+  public void setDhCoreLength(Double dhCoreLength) {
+    this.dhCoreLength = dhCoreLength;
+  }
+
+  public Double getDhCoreLengthMm() {
+    return dhCoreLengthMm;
+  }
+
+  public void setDhCoreLengthMm(Double dhCoreLengthMm) {
+    this.dhCoreLengthMm = dhCoreLengthMm;
+  }
+
+  public Integer getDhCoreInterval() {
+    return dhCoreInterval;
+  }
+
+  public void setDhCoreInterval(Integer dhCoreInterval) {
+    this.dhCoreInterval = dhCoreInterval;
+  }
+
+  public Double getdTopInDhCore() {
+    return dTopInDhCore;
+  }
+
+  public void setdTopInDhCore(Double dTopInDhCore) {
+    this.dTopInDhCore = dTopInDhCore;
+  }
+
+  public Double getdTopMmInDhCore() {
+    return dTopMmInDhCore;
+  }
+
+  public void setdTopMmInDhCore(Double dTopMmInDhCore) {
+    this.dTopMmInDhCore = dTopMmInDhCore;
+  }
+
+  public Double getdBotInDhCore() {
+    return dBotInDhCore;
+  }
+
+  public void setdBotInDhCore(Double dBotInDhCore) {
+    this.dBotInDhCore = dBotInDhCore;
+  }
+
+  public Double getdBotMmInDhCore() {
+    return dBotMmInDhCore;
+  }
+
+  public void setdBotMmInDhCore(Double dBotMmInDhCore) {
+    this.dBotMmInDhCore = dBotMmInDhCore;
+  }
+
+  public String getDhDevice() {
+    return dhDevice;
+  }
+
+  public void setDhDevice(String dhDevice) {
+    this.dhDevice = dhDevice;
+  }
+
+  public Double getCmcdTop() {
+    return cmcdTop;
+  }
+
+  public void setCmcdTop(Double cmcdTop) {
+    this.cmcdTop = cmcdTop;
+  }
+
+  public Double getMmcdTop() {
+    return mmcdTop;
+  }
+
+  public void setMmcdTop(Double mmcdTop) {
+    this.mmcdTop = mmcdTop;
+  }
+
+  public Double getCmcdBot() {
+    return cmcdBot;
+  }
+
+  public void setCmcdBot(Double cmcdBot) {
+    this.cmcdBot = cmcdBot;
+  }
+
+  public Double getMmcdBot() {
+    return mmcdBot;
+  }
+
+  public void setMmcdBot(Double mmcdBot) {
+    this.mmcdBot = mmcdBot;
+  }
+
+  public String getAbsoluteAgeTop() {
+    return absoluteAgeTop;
+  }
+
+  public void setAbsoluteAgeTop(String absoluteAgeTop) {
+    this.absoluteAgeTop = absoluteAgeTop;
+  }
+
+  public String getAbsoluteAgeBot() {
+    return absoluteAgeBot;
+  }
+
+  public void setAbsoluteAgeBot(String absoluteAgeBot) {
+    this.absoluteAgeBot = absoluteAgeBot;
   }
 }

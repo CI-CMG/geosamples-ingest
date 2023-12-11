@@ -234,8 +234,16 @@ export default {
           label: 'Cored Length',
         },
         {
+          key: 'coredLengthMm',
+          label: 'Cored Length (mm)',
+        },
+        {
           key: 'coredDiam',
           label: 'Cored Diam.',
+        },
+        {
+          key: 'coredDiamMm',
+          label: 'Cored Diam. (mm)',
         },
         {
           key: 'pi',

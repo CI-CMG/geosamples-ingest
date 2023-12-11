@@ -342,6 +342,23 @@ public class CuratorPreviewPersistenceService {
         if (hasViolation) {
           continue;
         }
+        
+        potInterval.setDhCoreId(existing.getDhCoreId());
+        potInterval.setDhCoreLength(existing.getDhCoreLength());
+        potInterval.setDhCoreLengthMm(existing.getDhCoreLengthMm());
+        potInterval.setDhCoreInterval(existing.getDhCoreInterval());
+        potInterval.setdTopInDhCore(existing.getdTopInDhCore());
+        potInterval.setdTopMmInDhCore(existing.getdTopMmInDhCore());
+        potInterval.setdBotInDhCore(existing.getdBotInDhCore());
+        potInterval.setdBotMmInDhCore(existing.getdBotMmInDhCore());
+        potInterval.setDhDevice(existing.getDhDevice());
+        potInterval.setCmcdTop(existing.getCmcdTop());
+        potInterval.setMmcdTop(existing.getMmcdTop());
+        potInterval.setCmcdBot(existing.getCmcdBot());
+        potInterval.setMmcdBot(existing.getMmcdBot());
+        potInterval.setAbsoluteAgeTop(existing.getAbsoluteAgeTop());
+        potInterval.setAbsoluteAgeBot(existing.getAbsoluteAgeBot());
+        
         if (!existing.isPublish() && !EntitySignificantFields.equals(existing, potInterval)) {
           EntitySignificantFields.copy(potInterval, existing);
           existing = curatorsIntervalRepository.saveAndFlush(existing);

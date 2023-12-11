@@ -269,19 +269,31 @@ public class SampleService extends
     if (entity.getCoredLength() != null) {
       coredLength = Double.valueOf(entity.getCoredLength());
     }
-    if (coredLength != null && entity.getCoredLengthMm() != null) {
+    Double coredLengthMm = null;
+    if (entity.getCoredLengthMm() != null) {
+      coredLengthMm = Double.valueOf(entity.getCoredLengthMm());
+    }
+    if (coredLength != null && coredLengthMm != null) {
       coredLength = coredLength + entity.getCoredLengthMm() / 10D;
     }
     view.setCoredLength(coredLength);
+    view.setCoredLengthMm(coredLengthMm);
 
     Double coredDiam = null;
     if (entity.getCoredDiam() != null) {
       coredDiam = Double.valueOf(entity.getCoredDiam());
     }
-    if (coredDiam != null && entity.getCoredDiamMm() != null) {
+    
+    Double coredDiamMm = null;
+    if (entity.getCoredDiamMm() != null) {
+      coredDiamMm = Double.valueOf(entity.getCoredDiamMm());
+    }
+    
+    if (coredDiam != null && coredDiamMm != null) {
       coredDiam = coredDiam + entity.getCoredDiamMm() / 10D;
     }
     view.setCoredDiam(coredDiam);
+    view.setCoredDiamMm(coredDiamMm);
 
     view.setPi(entity.getPi());
     view.setProvinceCode(entity.getProvince() == null ? null : entity.getProvince().getProvinceCode());

@@ -238,6 +238,66 @@ export default {
           label: 'Storage Meth.',
         },
         {
+          key: 'dhCoreId',
+          label: 'DH Core ID',
+        },
+        {
+          key: 'dhCoreLength',
+          label: 'DH Core Length',
+        },
+        {
+          key: 'dhCoreLengthMm',
+          label: 'DH Core Length (mm)',
+        },
+        {
+          key: 'dhCoreInterval',
+          label: 'DH Core Interval',
+        },
+        {
+          key: 'dTopInDhCore',
+          label: 'D Top In DH Core',
+        },
+        {
+          key: 'dTopMmInDhCore',
+          label: 'D Top In DH Core (mm)',
+        },
+        {
+          key: 'dBotInDhCore',
+          label: 'D Bot In DH Core',
+        },
+        {
+          key: 'dBotMmInDhCore',
+          label: 'D Bot In DH Core (mm)',
+        },
+        {
+          key: 'dhDevice',
+          label: 'DH Device',
+        },
+        {
+          key: 'cmcdTop',
+          label: 'CD Top (cm)',
+        },
+        {
+          key: 'mmcdTop',
+          label: 'CD Top (mm)',
+        },
+        {
+          key: 'cmcdBot',
+          label: 'CD Bot (cm)',
+        },
+        {
+          key: 'mmcdBot',
+          label: 'CD Bot (mm)',
+        },
+        {
+          key: 'absoluteAgeTop',
+          label: 'Absolute Age Top',
+        },
+        {
+          key: 'absoluteAgeBot',
+          label: 'Absolute Age Bottom',
+        },
+        {
           key: 'coredLength',
           label: 'Cored Length',
         },

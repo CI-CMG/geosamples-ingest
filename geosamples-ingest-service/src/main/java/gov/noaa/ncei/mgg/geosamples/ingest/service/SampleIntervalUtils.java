@@ -347,25 +347,25 @@ public final class SampleIntervalUtils {
     // fields requested by Clint to be put back in
     view.setDhCoreId(entity.getDhCoreId());
     
-    view.setDhCoreLength(Double.valueOf(entity.getDhCoreLength()));
-    view.setDhCoreLengthMm(Double.valueOf(entity.getDhCoreLengthMm()));
+    view.setDhCoreLength(entity.getDhCoreLength() == null ? null : Double.valueOf(entity.getDhCoreLength()));
+    view.setDhCoreLengthMm(entity.getDhCoreLengthMm() == null ? null : Double.valueOf(entity.getDhCoreLengthMm()));
     
     view.setDhCoreInterval(entity.getDhCoreInterval());
     
-    view.setdTopInDhCore(Double.valueOf(entity.getdTopInDhCore()));
-    view.setdTopMmInDhCore(Double.valueOf(entity.getdTopMmInDhCore()));
+    view.setdTopInDhCore(entity.getdTopInDhCore() == null ? null : Double.valueOf(entity.getdTopInDhCore()));
+    view.setdTopMmInDhCore(entity.getdTopMmInDhCore() == null ? null : Double.valueOf(entity.getdTopMmInDhCore()));
     
-    view.setdBotInDhCore(Double.valueOf(entity.getdBotInDhCore()));
-    view.setdBotMmInDhCore(Double.valueOf(entity.getdBotMmInDhCore()));
+    view.setdBotInDhCore(entity.getdBotInDhCore() == null ? null : Double.valueOf(entity.getdBotInDhCore()));
+    view.setdBotMmInDhCore(entity.getdBotMmInDhCore() == null ? null : Double.valueOf(entity.getdBotMmInDhCore()));
     
     view.setDhDevice(entity.getDhDevice());
     
-    view.setCmcdTop(Double.valueOf(entity.getCmcdTop()));
-    view.setMmcdTop(Double.valueOf(entity.getMmcdTop()));
+    view.setCmcdTop(entity.getCmcdTop() == null ? null : Double.valueOf(entity.getCmcdTop()));
+    view.setMmcdTop(entity.getMmcdTop() == null ? null : Double.valueOf(entity.getMmcdTop()));
     
     
-    view.setCmcdBot(Double.valueOf(entity.getCmcdBot()));
-    view.setMmcdBot(Double.valueOf(entity.getMmcdBot()));
+    view.setCmcdBot(entity.getCmcdBot() == null ? null : Double.valueOf(entity.getCmcdBot()));
+    view.setMmcdBot(entity.getMmcdBot() == null ? null : Double.valueOf(entity.getMmcdBot()));
     
     view.setAbsoluteAgeTop(entity.getAbsoluteAgeTop());
     view.setAbsoluteAgeBot(entity.getAbsoluteAgeBot());

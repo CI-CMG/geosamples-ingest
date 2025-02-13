@@ -17,6 +17,7 @@
   <modules>
     <module>geosamples-ingest-ui</module>
     <module>geosamples-ingest-service</module>
+    <module>geosamples-ingest-ui-react</module>
   </modules>
 
   <scm>

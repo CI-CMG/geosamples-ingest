@@ -1,0 +1,50 @@
+html {
+  font-size: 13px;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+}
+
+.crowbar-alert {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2000;
+}
+
+.geo-submission-result-cell {
+
+  &.geo-submission-result-error {
+
+    .geo-submission-result-value {
+      background-color: #dc3545;
+      border: 1px solid black;
+    }
+
+  }
+
+  .geo-submission-result-error-message {
+    border: 1px solid #dc3545;
+  }
+
+}
+
+.geo-temp-samples-table {
+  overflow: scroll;
+  width: 100%;
+  table {
+    white-space: nowrap;
+  }
+}
+
+
+.geo-search-card-list {
+  max-height: 150px;
+  overflow-y: scroll;
+}
+
+.geo-column-button-hidden {
+  visibility: hidden;
+}

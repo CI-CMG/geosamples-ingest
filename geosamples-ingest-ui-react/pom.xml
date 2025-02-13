@@ -8,7 +8,7 @@
     <version>2.4.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>geosamples-ingest-ui</artifactId>
+  <artifactId>geosamples-ingest-ui-react</artifactId>
 
   <properties>
     <node.version>v20.16.0</node.version>

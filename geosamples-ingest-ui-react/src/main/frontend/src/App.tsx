@@ -1,16 +1,17 @@
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './pages/home/Home.tsx';
+import Navbar from "./components/navbar/Navbar.tsx"
 
 
 function App() {
 
   return (
       <>
-        <span v-if="hasAuthority">
-          <slot/>
-        </span>
-        <span v-else>
-          {{fallbackText}}
-        </span>
+        <Navbar/>
+
+        {/*TODO: Routes (placeholder home page for now)*/}
+        <Home/>
       </>
   )
 }

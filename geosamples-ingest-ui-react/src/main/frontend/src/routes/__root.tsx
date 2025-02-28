@@ -19,28 +19,28 @@ export const Route = createRootRoute({
                 {/*TODO: Add router */}
                 <NavDropdown title="Controlled Vocabulary" id="controlled-vocabulary-dropdown">
                   <NavDropdown.Item as={Link} to="age">Geologic Age</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="sampling-device">Sampling Device</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="device">Sampling Device</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="facility">Facility</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="lithologic-composition">Lithologic Composition</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="munsell-color-code">Munsell Color Code</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="ship-platform">Ship/Platform</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="physiographic-province">Physiographic Province</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="rock-glass-remarks">Rock Glass Remarks & Mn/Fe Oxide</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="lithology">Lithologic Composition</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="munsell">Munsell Color Code</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="platform">Ship/Platform</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="province">Physiographic Province</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="remark">Rock Glass Remarks & Mn/Fe Oxide</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="rock-lithology">Rock Lithology</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="rock-mineralogy">Rock Mineralogy</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="rock-mineral">Rock Mineralogy</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="storage-method">Storage Method</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="texture">Texture</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="weathering-metamorphism">Weathering/Metamorphism</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="weathering">Weathering/Metamorphism</NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Administration" id="administration-dropdown">
-                  <NavDropdown.Item as={Link} to="users">Users</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="roles">Roles</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="user">Users</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="role">Roles</NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Curator Data" id="curator-data-dropdown">
-                  <NavDropdown.Item as={Link} to="new-submission">New Submission</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="sample-interval">Sample + Interval</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="submit">New Submission</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="interval">Sample + Interval</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="sample">Sample</NavDropdown.Item>
                 </NavDropdown>
 

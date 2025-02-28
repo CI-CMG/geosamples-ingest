@@ -6,14 +6,14 @@ function AgeList() {
     <InteractiveTable
         breadcrumbs={[
           {
+            "active": false,
             "breadcrumbLink": "/",
-            "breadcrumbTitle": "Geosamples Ingest Home",
-            "active": false
+            "breadcrumbTitle": "Geosamples Ingest Home"
           },
           {
+            "active": true,
             "breadcrumbLink": "age",
-            "breadcrumbTitle": "Geologic Age",
-            "active": true
+            "breadcrumbTitle": "Geologic Age"
           }
         ]}
         fields={[
@@ -24,7 +24,7 @@ function AgeList() {
             "label": "Geologic Age Code"
           }
         ]}
-        createText={"Add New Geologic Age"}/>
+        createText={"Add New Geologic Age"}></InteractiveTable>
   </>
 }
 

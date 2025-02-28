@@ -18,7 +18,7 @@ export const Route = createRootRoute({
                 {/*TODO: Dynamically populate navbar Based on authentication? Or not with eye toward two separate applications. */}
                 {/*TODO: Add router */}
                 <NavDropdown title="Controlled Vocabulary" id="controlled-vocabulary-dropdown">
-                  <NavDropdown.Item as={Link} to="geologic-age">Geologic Age</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="age">Geologic Age</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="sampling-device">Sampling Device</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="facility">Facility</NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="lithologic-composition">Lithologic Composition</NavDropdown.Item>
@@ -64,8 +64,6 @@ export const Route = createRootRoute({
                 {/*TODO: Display only when logged in/out*/}
                 <NavLink as={Link} to="profile"  id="profile-nav-item">Insert Username Here</NavLink>
                 <NavLink as={Link} to="login-logout"  id="login-logout-nav-item">Login/Logout</NavLink>
-
-
               </Nav>
             </Navbar.Collapse>
           </Container>

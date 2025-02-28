@@ -1,13 +1,18 @@
+function InteractiveTable () {
+  return  <p>
+    Dynamic breadcrumbs
+    Dynamic search fields
 
+    Search button
+    Clear button
+    Add new facility button
 
-// Dynamic breadcrumbs
-// Dynamic search fields
+    Table
+    Pagination
 
-// Search button
-// Clear button
-// Add new facility button
+    Approval (?)
+  </p>
+}
 
-// Table
-// Pagination
+export default InteractiveTable;
 
-// Approval (?)

@@ -7,16 +7,16 @@ import Table from 'react-bootstrap/Table';
 import TextPagination from "../pagination/TextPagination.tsx";
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
-interface Breadcrumb {
+type Breadcrumb = {
   breadcrumbLink: string;
   breadcrumbTitle: string;
   active: boolean
 }
 
-interface Field {
+type Field = {
   label: string
 }
-interface InteractiveTableProps {
+type InteractiveTableProps = {
   breadcrumbs: Breadcrumb[],
   fields: Field[],
   createText: string

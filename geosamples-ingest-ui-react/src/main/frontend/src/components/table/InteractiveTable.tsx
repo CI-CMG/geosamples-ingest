@@ -6,6 +6,7 @@ import {BsPlusLg} from "react-icons/bs";
 import Table from 'react-bootstrap/Table';
 import TextPagination from "../pagination/TextPagination.tsx";
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import {Link} from "@tanstack/react-router";
 
 type Breadcrumb = {
   breadcrumbLink: string;
@@ -16,6 +17,7 @@ type Breadcrumb = {
 type Field = {
   label: string
 }
+
 type InteractiveTableProps = {
   breadcrumbs: Breadcrumb[],
   fields: Field[],
@@ -25,6 +27,7 @@ type InteractiveTableProps = {
 function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTableProps) {
   return <p>
     <Breadcrumb>
+      {/*TODO: Set breadcrumb to active dynamically*/}
       {breadcrumbs.map((breadcrumb) =>
           <Breadcrumb.Item href={breadcrumb.breadcrumbLink}>{breadcrumb.breadcrumbTitle}</Breadcrumb.Item>
       )}
@@ -35,11 +38,10 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
       <Form.Group className="mb-3" controlId="formBasicEmail">
         {fields.map((field) =>
             <>
-              {/*TODO: Set breadcrumb to active dynamically*/}
-            <Form.Label>{field.label}</Form.Label>
-            <Form.Control type="insert-type"/>
+              <Form.Label>{field.label}</Form.Label>
+              <Form.Control type="insert-type"/>
             </>
-          )}
+        )}
       </Form.Group>
       <Button variant="primary">
         <BsSearch/>
@@ -49,13 +51,15 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
         <BsArrowCounterclockwise/>
         Clear
       </Button>
+      <Link to={"/age/add"}>
       <Button variant="secondary">
         <BsPlusLg/>
-        {createText}
+        Add New {createText}
       </Button>
+      </Link>
     </Form>
 
-    {/*TODO: Insert table DATA dynamically*/}
+    {/*TODO: Insert table DATA dynamically, currently just mapping off of fields*/}
     <Table striped bordered hover>
       <thead>
       <tr>
@@ -67,7 +71,11 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
       <tbody>
       <tr>
         {fields.map((field) =>
-            <td>(Insert Column Data)</td>
+            <td>
+              <Link to={"/age/edit/$ageId"} params={{ageId: "Cambrian"}}>
+                Cambrian
+              </Link>
+            </td>
         )}
       </tr>
       </tbody>

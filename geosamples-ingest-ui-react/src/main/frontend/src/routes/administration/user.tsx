@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/storage-method')({
+export const Route = createFileRoute('/administration/user')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <div>Hello "/storage-method"!</div>
+  return <div>Hello "/user"!</div>
 }

@@ -35,7 +35,7 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
 
     {/*TODO: Sort table*/}
     <Form>
-      <Form.Group className="mb-3" controlId="formBasicEmail">
+      <Form.Group className="mb-3">
         {fields.map((field) =>
             <>
               <Form.Label>{field.label}</Form.Label>
@@ -51,7 +51,7 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
         <BsArrowCounterclockwise/>
         Clear
       </Button>
-      <Link to={"/age/add"}>
+      <Link to={"/controlled-vocabulary/age/add"}>
       <Button variant="secondary">
         <BsPlusLg/>
         Add New {createText}
@@ -70,9 +70,9 @@ function InteractiveTable({breadcrumbs, fields, createText}: InteractiveTablePro
       </thead>
       <tbody>
       <tr>
-        {fields.map((field) =>
+        {fields.map(() =>
             <td>
-              <Link to={"/age/edit/$ageId"} params={{ageId: "Cambrian"}}>
+              <Link to={"/controlled-vocabulary/age/edit/$ageId"} params={{ageId: "Cambrian"}}>
                 Cambrian
               </Link>
             </td>

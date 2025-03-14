@@ -17,36 +17,36 @@ function NavigationBar() {
                 {/*TODO: Dynamically populate navbar Based on authentication? Or not with eye toward two separate applications. */}
                 {/*TODO: Add router */}
                 <NavDropdown title="Controlled Vocabulary" id="controlled-vocabulary-dropdown">
-                  <NavDropdown.Item as={Link} to="age/list">Geologic Age</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="device/list">Sampling Device</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="facility/list">Facility</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="lithology/list">Lithologic Composition</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="munsell/list">Munsell Color Code</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="platform/list">Ship/Platform</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="province/list">Physiographic Province</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="remark/list">Rock Glass Remarks & Mn/Fe Oxide</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="rock-lithology/list">Rock Lithology</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="rock-mineral/list">Rock Mineralogy</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="storage-method/list">Storage Method</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="texture/list">Texture</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="weathering/list">Weathering/Metamorphism</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/age/list">Geologic Age</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/device/list">Sampling Device</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/facility/list">Facility</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/lithology/list">Lithologic Composition</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/munsell/list">Munsell Color Code</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/platform/list">Ship/Platform</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/province/list">Physiographic Province</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/remark/list">Rock Glass Remarks & Mn/Fe Oxide</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/rock-lithology/list">Rock Lithology</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/rock-mineral/list">Rock Mineralogy</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/storage-method/list">Storage Method</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/texture/list">Texture</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="controlled-vocabulary/weathering/list">Weathering/Metamorphism</NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Administration" id="administration-dropdown">
-                  <NavDropdown.Item as={Link} to="user">Users</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="role">Roles</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="administration/user">Users</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="administration/role">Roles</NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Curator Data" id="curator-data-dropdown">
-                  <NavDropdown.Item as={Link} to="submit">New Submission</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="interval">Sample + Interval</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="sample">Sample</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="curator-data/submit/new">New Submission</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="curator-data/interval/list">Sample + Interval</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="curator-data/sample/list">Sample</NavDropdown.Item>
                 </NavDropdown>
 
                 <NavDropdown title="Ancillary Data" id="ancillary-data-dropdown">
-                  <NavDropdown.Item as={Link} to="cruise">Cruise</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="cruise-link">Cruise Link</NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="sample-link">Sample Link</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="ancillary-data/cruise">Cruise</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="ancillary-data/cruise-link">Cruise Link</NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="ancillary-data/sample-link">Sample Link</NavDropdown.Item>
                 </NavDropdown>
 
                 {/*TODO: Show for provider only, do when splitting app*/}

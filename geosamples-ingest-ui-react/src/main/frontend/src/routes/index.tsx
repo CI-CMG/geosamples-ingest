@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import Homepage from "../pages/homepage/Homepage.tsx";
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -7,9 +8,7 @@ export const Route = createFileRoute('/')({
 function Index() {
   return (
       <>
-        <h2> Welcome to the Geosamples API </h2>
-        {/*TODO: Dynamic link to version here*/}
-        <p>Version X.x</p>
+        <Homepage/>
       </>
   )
 }

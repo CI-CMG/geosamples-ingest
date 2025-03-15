@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import App from "./App.tsx";
 
 
 // Import the generated route tree
@@ -25,6 +26,7 @@ if (!rootElement.innerHTML) {
   root.render(
       <StrictMode>
         <RouterProvider router={router} />
+        <App />
       </StrictMode>,
   )
 }

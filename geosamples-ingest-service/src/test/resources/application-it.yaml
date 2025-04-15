@@ -14,10 +14,10 @@ spring:
   jpa:
     properties:
       hibernate:
-        default_schema: CROWBAR_OTHER_3
+        default_schema: MUD
   datasource:
-    url: jdbc:oracle:thin:@localhost:15215/XEPDB1
-    username: CROWBAR_OTHER_3
+    url: jdbc:oracle:thin:@localhost:15215/freepdb1
+    username: MUD
     password: letmein
   flyway:
     enabled: true

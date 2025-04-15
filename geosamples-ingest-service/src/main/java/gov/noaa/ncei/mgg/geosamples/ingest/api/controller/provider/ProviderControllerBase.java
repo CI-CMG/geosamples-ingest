@@ -6,6 +6,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagedItemsView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.provider.ProviderServiceBase;
+import java.io.Serializable;
 import javax.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Validated
-public abstract class ProviderControllerBase<PV, V extends PV, PS extends PagingAndSortingParameters, S extends PS, I, T extends ProviderServiceBase<I, ?, PS, S, PV, V, ?>> {
+public abstract class ProviderControllerBase<PV, V extends PV, PS extends PagingAndSortingParameters, S extends PS, I extends Serializable, T extends ProviderServiceBase<I, ?, PS, S, PV, V, ?>> {
 
   protected final T service;
 

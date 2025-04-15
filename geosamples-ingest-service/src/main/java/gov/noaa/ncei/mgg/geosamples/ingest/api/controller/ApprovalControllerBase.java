@@ -3,6 +3,7 @@ package gov.noaa.ncei.mgg.geosamples.ingest.api.controller;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.ApprovalView;
 import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingParameters;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ApprovalResourceServiceBase;
+import java.io.Serializable;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Validated
-public class ApprovalControllerBase<V, S extends PagingAndSortingParameters, I, T extends ApprovalResourceServiceBase<I, ?, S, V, ?>> extends ControllerBase<V, S, I, T> {
+public class ApprovalControllerBase<V, S extends PagingAndSortingParameters, I extends Serializable, T extends ApprovalResourceServiceBase<I, ?, S, V, ?>> extends ControllerBase<V, S, I, T> {
 
   protected final T service;
 

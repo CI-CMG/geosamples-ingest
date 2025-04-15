@@ -7,13 +7,14 @@ import gov.noaa.ncei.mgg.geosamples.ingest.api.model.paging.PagingAndSortingPara
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalResource;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesApprovalEntity;
+import java.io.Serializable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public abstract class ApprovalResourceServiceBase<I, E extends ApprovalResource<I>, S extends PagingAndSortingParameters, V, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> extends SearchServiceBase<E, I, S, V, R> {
+public abstract class ApprovalResourceServiceBase<I extends Serializable, E extends ApprovalResource<I>, S extends PagingAndSortingParameters, V, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> extends SearchServiceBase<E, I, S, V, R> {
 
   protected abstract void validateParentResourceApproval(E entity);
 

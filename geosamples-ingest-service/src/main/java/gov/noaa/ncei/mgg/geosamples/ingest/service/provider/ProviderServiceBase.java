@@ -10,6 +10,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.ApprovalState;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.CuratorsFacilityEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesUserRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.service.ApprovalResourceServiceBase;
+import java.io.Serializable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public abstract class ProviderServiceBase<I, E extends ApprovalResource<I>, PS extends PagingAndSortingParameters, S extends PS, PV, V extends PV, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> {
+public abstract class ProviderServiceBase<I extends Serializable, E extends ApprovalResource<I>, PS extends PagingAndSortingParameters, S extends PS, PV, V extends PV, R extends JpaSpecificationExecutor<E> & JpaRepository<E, I>> {
 
   private final ApprovalResourceServiceBase<I, E, S, V, R> approvalServiceBase;
 

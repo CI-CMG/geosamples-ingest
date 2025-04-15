@@ -1,5 +1,6 @@
 package gov.noaa.ncei.mgg.geosamples.ingest.service;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gov.noaa.ncei.mgg.geosamples.ingest.config.FormatUtils;
 
 public class PositionDim {
@@ -9,10 +10,12 @@ public class PositionDim {
   private final String minutes;
   private final String direction;
 
+  @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
   public PositionDim() {
     this(null, null, null, null);
   }
 
+  @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
   public PositionDim(Double value, Integer degrees, Double minutes, String direction) {
     this.value = value;
     String min = minutes == null ? null : FormatUtils.doubleToString2LeadingZeros2Decimal(minutes);

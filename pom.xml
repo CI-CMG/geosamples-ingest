@@ -39,7 +39,7 @@
     <connection>scm:git:https://github.com/CI-CMGgeosamples-ingest.git</connection>
     <developerConnection>scm:git:https://github.com/CI-CMG/geosamples-ingest.git</developerConnection>
     <url>https://github.com/CI-CMG/geosamples-ingest</url>
-    <tag>HEAD</tag>
+    <tag>3.0</tag>
   </scm>
 
   <distributionManagement>

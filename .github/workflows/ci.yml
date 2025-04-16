@@ -63,9 +63,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
       - run: mkdir release
-      - run: cp jar/* release/geosamples-api-${{ needs.build.outputs.version }}-exe.jar
-      - run: cp zip/* release/geosamples-api-${{ needs.build.outputs.version }}.zip
-      - run: cp tar/* release/geosamples-api-${{ needs.build.outputs.version }}.tar.gz
+      - run: cp jar/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}-exe.jar
+      - run: cp zip/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}.zip
+      - run: cp tar/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}.tar.gz
       - name: Update branch release
         uses: eine/tip@master
         with:

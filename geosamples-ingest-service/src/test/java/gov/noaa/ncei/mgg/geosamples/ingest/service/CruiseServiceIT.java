@@ -24,6 +24,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEnt
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsIntervalRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsSampleTsqpRepository;
@@ -129,6 +130,7 @@ public class CruiseServiceIT {
     txTemplate.executeWithoutResult(s -> {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
+      curatorsCruiseFacilityRepository.deleteAll();
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
       GeosamplesUserEntity martin = new GeosamplesUserEntity();
       martin.setDisplayName("Marty McPharty");
@@ -156,6 +158,7 @@ public class CruiseServiceIT {
     txTemplate.executeWithoutResult(s -> {
       curatorsSampleTsqpRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
+      curatorsCruiseFacilityRepository.deleteAll();
       geosamplesUserRepository.deleteById("martin");
       geosamplesRoleRepository.getByRoleName("ROLE_ADMIN").ifPresent(geosamplesRoleRepository::delete);
       platformMasterRepository.findByPlatformNormalized("AFRICAN QUEEN").ifPresent((p) -> {
@@ -177,6 +180,8 @@ public class CruiseServiceIT {
   private CuratorsSampleTsqpRepository curatorsSampleTsqpRepository;
   @Autowired
   private CuratorsIntervalRepository curatorsIntervalRepository;
+  @Autowired
+  private CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository;
 
   @Test
   public void testReviewCruise() throws Exception {

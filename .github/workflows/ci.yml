@@ -45,17 +45,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jar
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}-exe.jar"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}-exe.jar"
       - name: Upload Zip
         uses: actions/upload-artifact@v4
         with:
           name: zip
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}.zip"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}.zip"
       - name: Upload Tarball
         uses: actions/upload-artifact@v4
         with:
           name: tar
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}.tar.gz"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}.tar.gz"
   release:
     needs:
       - build

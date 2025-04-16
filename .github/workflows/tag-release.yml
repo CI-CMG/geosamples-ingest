@@ -51,17 +51,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jar
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}-exe.jar"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}-exe.jar"
       - name: Upload Zip
         uses: actions/upload-artifact@v4
         with:
           name: zip
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}.zip"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}.zip"
       - name: Upload Tarball
         uses: actions/upload-artifact@v4
         with:
           name: tar
-          path: "geosamples-ingest-service/target/geosamples-geosamples-ingest-service-${{ env.version }}.tar.gz"
+          path: "geosamples-ingest-service/target/geosamples-ingest-service-${{ env.version }}.tar.gz"
   release:
     needs:
       - build
@@ -69,9 +69,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
       - run: mkdir release
-      - run: cp jar/* release/geosamples-geosamples-ingest-service-${{ needs.build.outputs.version }}-exe.jar
-      - run: cp zip/* release/geosamples-geosamples-ingest-service-${{ needs.build.outputs.version }}.zip
-      - run: cp tar/* release/geosamples-geosamples-ingest-service-${{ needs.build.outputs.version }}.tar.gz
+      - run: cp jar/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}-exe.jar
+      - run: cp zip/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}.zip
+      - run: cp tar/* release/geosamples-ingest-service-${{ needs.build.outputs.version }}.tar.gz
       - name: Update branch release
         uses: eine/tip@master
         with:

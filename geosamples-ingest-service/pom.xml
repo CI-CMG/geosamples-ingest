@@ -152,10 +152,6 @@
       <artifactId>jose4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>gov.noaa.ncei.mgg</groupId>
-      <artifactId>error-handler</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <scope>provided</scope>

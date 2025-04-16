@@ -169,11 +169,6 @@
         <version>4.6.0</version>
         <scope>provided</scope>
       </dependency>
-      <dependency>
-        <groupId>gov.noaa.ncei.mgg</groupId>
-        <artifactId>error-handler</artifactId>
-        <version>1.0.0</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

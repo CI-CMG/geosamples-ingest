@@ -26,6 +26,7 @@ import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleAuthorityEnt
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesRoleEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.GeosamplesUserEntity;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.entity.PlatformMasterEntity;
+import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsCruiseRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.CuratorsFacilityRepository;
 import gov.noaa.ncei.mgg.geosamples.ingest.jpa.repository.GeosamplesAuthorityRepository;
@@ -119,6 +120,9 @@ public class ProviderCruiseServiceIT {
 
   @Autowired
   private ProviderCruiseService providerCruiseService;
+
+  @Autowired
+  private CuratorsCruiseFacilityRepository curatorsCruiseFacilityRepository;
 
   @BeforeEach
   public void beforeEach() {
@@ -2080,8 +2084,11 @@ public class ProviderCruiseServiceIT {
     assertEquals(String.format("%s cannot be updated while it is associated with more than one facility", String.format("%s (%s)", cruiseEntity.getCruiseName(), cruiseEntity.getYear())), exception.getApiError().getFlashErrors().get(0));
   }
 
+
+
   private void cleanDB() {
     transactionTemplate.executeWithoutResult(status -> {
+      curatorsCruiseFacilityRepository.deleteAll();
       curatorsCruiseRepository.deleteAll();
       platformMasterRepository.findByPlatformNormalized("TST").ifPresent(platformMasterRepository::delete);
       platformMasterRepository.findByPlatformNormalized("TST2").ifPresent(platformMasterRepository::delete);

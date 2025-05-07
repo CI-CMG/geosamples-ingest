@@ -68,3 +68,5 @@ buildNumber.properties
 *.iml
 .idea/
 /application.properties
+
+config
